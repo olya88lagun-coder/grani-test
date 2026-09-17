@@ -408,7 +408,7 @@ h3 { font-size: 30px; line-height: 1.2; }
 .stack > * + * { margin-top: 21px; }
 .row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 
-.eyebrow { margin: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.eyebrow { margin: 0; font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 .display { font-size: clamp(44px, 11vw, 74px); line-height: 1.05; letter-spacing: -0.03em; }
 .lead { font-size: 18px; line-height: 1.5; color: var(--ink); margin: 0; }
 .muted { color: var(--ink-soft); font-size: 14px; }
@@ -416,7 +416,7 @@ h3 { font-size: 30px; line-height: 1.2; }
 .tag { display: inline-flex; align-items: center; width: fit-content; padding: 9px 14px; border-radius: 999px; background: var(--bg); color: var(--accent); font-size: 14px; }
 
 /* Панели: глубина только тоном, без теней и цветных рамок */
-.card { background: var(--surface); border-radius: var(--radius); padding: 28px 21px; }
+.card { background: var(--surface); border: 0; border-radius: var(--radius); padding: 28px 21px; margin-inline: 0; min-inline-size: 0; }
 @media (min-width: 760px) { .card { padding: 42px; } }
 .card--2 { background: var(--surface-2); }
 .card--3 { background: var(--surface-3); }
@@ -432,11 +432,12 @@ h3 { font-size: 30px; line-height: 1.2; }
 .button--block { width: 100%; }
 
 .progress { display: grid; gap: 9px; font-size: 14px; }
-.progress__bar { height: 6px; border-radius: 999px; background: var(--bg); overflow: hidden; }
+.progress__bar { height: 6px; border-radius: 999px; background: var(--surface); overflow: hidden; }
 .progress__bar > span { display: block; height: 100%; border-radius: 999px; background: var(--accent); transition: width 200ms ease; }
 
-.question { font-family: var(--font-display); font-weight: 300; font-size: clamp(30px, 7vw, 44px); line-height: 1.15; letter-spacing: -0.02em; color: var(--accent); padding: 0; margin: 0 0 21px; }
-.choices { display: grid; gap: 9px; margin: 0; padding: 0; border: 0; }
+/* legend во fieldset: float убирает его из рамки fieldset, clear у .choices возвращает поток */
+.question { float: left; width: 100%; font-family: var(--font-display); font-weight: 300; font-size: clamp(30px, 7vw, 44px); line-height: 1.15; letter-spacing: -0.02em; color: var(--accent); padding: 0; margin: 0 0 21px; }
+.choices { clear: both; display: grid; gap: 9px; margin: 0; padding: 0; border: 0; }
 .choice { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 14px 18px; border-radius: var(--radius); background: var(--bg); color: var(--ink); font-size: 15px; cursor: pointer; transition: background 200ms ease, color 200ms ease; }
 .choice input { appearance: none; flex: none; display: grid; place-items: center; width: 20px; height: 20px; margin: 0; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--accent); }
 .choice input::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); transform: scale(0); transition: transform 200ms ease; }

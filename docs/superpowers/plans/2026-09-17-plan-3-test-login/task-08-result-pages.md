@@ -262,7 +262,7 @@ import { PENDING_COOKIE } from "@/server/http";
 import { currentUser } from "@/server/viewer";
 import { LoginPanel } from "./LoginPanel";
 
-export const metadata: Metadata = { title: "Вход — Грани" };
+export const metadata: Metadata = { title: "Вход" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const [{ error }, user, store] = await Promise.all([searchParams, currentUser(), cookies()]);
@@ -324,7 +324,7 @@ import { buildResultView } from "@/lib/result-view";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
 
-export const metadata: Metadata = { title: "Мой результат — Грани" };
+export const metadata: Metadata = { title: "Мой результат" };
 
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const [{ id }, user] = await Promise.all([params, requireUser()]);
@@ -403,7 +403,7 @@ import type { Metadata } from "next";
 import { OPERATOR } from "@/lib/legal";
 import { CONSENT_VERSION } from "@/server/login-service";
 
-export const metadata: Metadata = { title: "Согласие на обработку персональных данных — Грани" };
+export const metadata: Metadata = { title: "Согласие на обработку персональных данных" };
 
 export default function ConsentPage() {
   return (
