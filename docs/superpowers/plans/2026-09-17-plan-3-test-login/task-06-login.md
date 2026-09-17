@@ -70,7 +70,7 @@ const ENV: AppEnv = {
   DATABASE_URL: "postgres://unused",
   SESSION_SECRET: "s".repeat(40),
   TELEGRAM_BOT_TOKEN: "123456:TEST-TOKEN",
-  TELEGRAM_BOT_USERNAME: "grani_test_bot",
+  TELEGRAM_BOT_USERNAME: "test_grani_bot",
   VK_CLIENT_ID: "555",
 };
 const NO_COOKIES: LoginCookies = { session: null, pending: null, consent: null };

@@ -119,7 +119,7 @@ DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5433/postgres?sslmode=disabl
 DATABASE_POOL_MAX=1
 SESSION_SECRET=local-dev-secret-local-dev-secret-local
 TELEGRAM_BOT_TOKEN=123456:local-dev-token
-TELEGRAM_BOT_USERNAME=grani_test_bot
+TELEGRAM_BOT_USERNAME=test_grani_bot
 VK_CLIENT_ID=1
 DEV_LOGIN=1
 ```
@@ -150,7 +150,7 @@ const VALID = {
   DATABASE_URL: "postgres://u:p@db:5432/grani",
   SESSION_SECRET: "x".repeat(32),
   TELEGRAM_BOT_TOKEN: "123456:ABC-def_1",
-  TELEGRAM_BOT_USERNAME: "grani_test_bot",
+  TELEGRAM_BOT_USERNAME: "test_grani_bot",
   VK_CLIENT_ID: "54770000",
 };
 

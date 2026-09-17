@@ -33,7 +33,7 @@
 
 Нужны для настоящего входа; до Task 6 работа идёт с dev-входом.
 
-1. **Telegram-бот:** в @BotFather `/newbot` → имя «Грани», username (например `grani_test_bot`) → токен сохранить у себя. `/setdomain` → `grani-test.ru` (для Login Widget).
+1. **Telegram-бот:** в @BotFather `/newbot` → имя «Грани», username `test_grani_bot` (создан) → токен сохранить у себя. `/setdomain` → `grani-test.ru` (для Login Widget).
 2. **VK ID:** на `https://id.vk.ru/business/go` создать приложение (Web) → `client_id`; доверенный Redirect URL `https://grani-test.ru/api/auth/vk/callback`; базовый домен `grani-test.ru`.
 3. **DNS:** A-запись `grani-test.ru` → `200.169.178.231` (выкладка — план 6, но запись можно завести заранее).
 4. Передать агенту: username бота и `client_id` VK (токен бота — только в `.env` самостоятельно).
