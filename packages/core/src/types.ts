@@ -16,7 +16,7 @@ type TypeNameEntry = { readonly name: string; readonly feminine: string | null }
 export const TYPE_NAMES: Readonly<Record<TypeCode, TypeNameEntry>> = {
   "++++": { name: "Вдохновитель", feminine: "Вдохновительница" },
   "+++-": { name: "Реформатор", feminine: "Реформаторка" },
-  "++-+": { name: "Садовник", feminine: "Садовница" },
+  "++-+": { name: "Созидатель", feminine: "Созидательница" },
   "++--": { name: "Архитектор", feminine: null },
   "+-++": { name: "Искра", feminine: null },
   "+-+-": { name: "Бунтарь", feminine: "Бунтарка" },
