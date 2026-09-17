@@ -67,7 +67,7 @@ import { dirname, join } from "node:path";
 import { limitFor } from "./keys";
 
 export function placeholderText(file: string): string {
-  return `${file} `.padEnd(limitFor(file).min, "я");
+  return `${file} `.padEnd(limitFor(file).min, "я").trimEnd();
 }
 
 export function writeLibraryFiles(
