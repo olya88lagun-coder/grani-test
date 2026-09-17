@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   ANSWER_LABELS,
-  STORAGE_KEY,
+  PAGE_SIZE,
   answeredCount,
   firstIncompletePage,
   isComplete,
@@ -13,37 +13,40 @@ import {
   pageCount,
   pageItems,
   parseStoredProgress,
+  submitErrorMessage,
   withAnswer,
 } from "@/lib/test-progress";
 
 type Item = { id: string; text: string };
 
+export type QuestionnaireProps = {
+  items: readonly Item[];
+  storageKey: string;
+  submitUrl: string;
+  submitLabel: string;
+  pageSize?: number;
+};
+
 const ANSWER_VALUES = [1, 2, 3, 4, 5] as const satisfies readonly Answer[];
 
-const SUBMIT_ERRORS: Record<string, string> = {
-  rate_limited: "Слишком много попыток. Подождите минуту и нажмите ещё раз.",
-  invalid_answers: "Не все ответы сохранились. Проверьте экраны теста.",
-};
-const FALLBACK_ERROR = "Не получилось отправить ответы. Проверьте интернет и попробуйте ещё раз.";
-
-function readStorage(): string | null {
+function readStorage(key: string): string | null {
   try {
-    return window.localStorage.getItem(STORAGE_KEY);
+    return window.localStorage.getItem(key);
   } catch {
     return null;
   }
 }
 
-function writeStorage(value: string | null): void {
+function writeStorage(key: string, value: string | null): void {
   try {
-    if (value === null) window.localStorage.removeItem(STORAGE_KEY);
-    else window.localStorage.setItem(STORAGE_KEY, value);
+    if (value === null) window.localStorage.removeItem(key);
+    else window.localStorage.setItem(key, value);
   } catch {
-    // Без localStorage тест проходится, просто прогресс не переживёт перезагрузку
+    // Без localStorage вопросы проходятся, просто прогресс не переживёт перезагрузку
   }
 }
 
-export function TestRunner({ items }: { items: readonly Item[] }) {
+export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageSize = PAGE_SIZE }: QuestionnaireProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [page, setPage] = useState(0);
@@ -54,20 +57,20 @@ export function TestRunner({ items }: { items: readonly Item[] }) {
 
   // localStorage есть только в браузере, поэтому прогресс восстанавливается после гидратации
   useEffect(() => {
-    const saved = parseStoredProgress(readStorage(), items);
+    const saved = parseStoredProgress(readStorage(storageKey), items);
     setAnswers(saved);
-    setPage(firstIncompletePage(items, saved));
+    setPage(firstIncompletePage(items, saved, pageSize));
     setRestored(true);
-  }, [items]);
+  }, [items, storageKey, pageSize]);
 
-  const pages = pageCount(items.length);
+  const pages = pageCount(items.length, pageSize);
   const isLastPage = page === pages - 1;
   const done = answeredCount(items, answers);
 
   function choose(id: string, value: Answer) {
     const next = withAnswer(answers, id, value);
     setAnswers(next);
-    writeStorage(JSON.stringify(next));
+    writeStorage(storageKey, JSON.stringify(next));
   }
 
   function goTo(nextPage: number) {
@@ -81,20 +84,20 @@ export function TestRunner({ items }: { items: readonly Item[] }) {
     setSending(true);
     setError(null);
     try {
-      const response = await fetch("/api/results", {
+      const response = await fetch(submitUrl, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ answers }),
       });
       const body = (await response.json()) as { ok: boolean; redirect?: string; error?: string };
       if (body.ok && body.redirect) {
-        writeStorage(null);
+        writeStorage(storageKey, null);
         router.push(body.redirect);
         return;
       }
-      setError(SUBMIT_ERRORS[body.error ?? ""] ?? FALLBACK_ERROR);
+      setError(submitErrorMessage(body.error));
     } catch {
-      setError(FALLBACK_ERROR);
+      setError(submitErrorMessage(undefined));
     }
     setSending(false);
   }
@@ -116,7 +119,7 @@ export function TestRunner({ items }: { items: readonly Item[] }) {
         Экран {page + 1} из {pages}
       </h1>
 
-      {pageItems(items, page).map((item) => (
+      {pageItems(items, page, pageSize).map((item) => (
         <fieldset key={item.id} className="card">
           <legend className="question">{item.text}</legend>
           <div className="choices">
@@ -149,21 +152,11 @@ export function TestRunner({ items }: { items: readonly Item[] }) {
           </button>
         )}
         {isLastPage ? (
-          <button
-            type="button"
-            className="button"
-            disabled={!isComplete(items, answers) || sending}
-            onClick={submit}
-          >
-            {sending ? "Считаем…" : "Узнать результат"}
+          <button type="button" className="button" disabled={!isComplete(items, answers) || sending} onClick={submit}>
+            {sending ? "Отправляем…" : submitLabel}
           </button>
         ) : (
-          <button
-            type="button"
-            className="button"
-            disabled={!isPageComplete(items, answers, page)}
-            onClick={() => goTo(page + 1)}
-          >
+          <button type="button" className="button" disabled={!isPageComplete(items, answers, page, pageSize)} onClick={() => goTo(page + 1)}>
             Дальше
           </button>
         )}

@@ -46,7 +46,7 @@ describe("custom page size", () => {
 describe("submitErrorMessage", () => {
   test("explains known errors and falls back for the rest", () => {
     expect(submitErrorMessage("already_answered")).toMatch(/уже ответ/i);
-    expect(submitErrorMessage("own_invite")).toMatch(/свою/i);
+    expect(submitErrorMessage("own_invite")).toMatch(/ваша ссылка/i);
     expect(submitErrorMessage("rate_limited")).toMatch(/минуту/i);
     expect(submitErrorMessage(undefined)).toMatch(/интернет/i);
     expect(submitErrorMessage("something_new")).toMatch(/интернет/i);

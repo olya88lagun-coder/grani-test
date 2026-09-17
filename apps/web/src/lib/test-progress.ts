@@ -13,28 +13,42 @@ export const ANSWER_LABELS: Readonly<Record<Answer, string>> = {
 
 type WithId = { readonly id: string };
 
-export function pageCount(total: number): number {
-  return Math.ceil(total / PAGE_SIZE);
-}
-
-export function pageItems<T>(items: readonly T[], page: number): readonly T[] {
-  return items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-}
-
 export function answeredCount(items: readonly WithId[], answers: Answers): number {
   return items.filter((item) => answers[item.id] !== undefined).length;
 }
 
-export function isPageComplete(items: readonly WithId[], answers: Answers, page: number): boolean {
-  return pageItems(items, page).every((item) => answers[item.id] !== undefined);
+export function pageCount(total: number, pageSize = PAGE_SIZE): number {
+  return Math.ceil(total / pageSize);
 }
 
-export function firstIncompletePage(items: readonly WithId[], answers: Answers): number {
-  const pages = pageCount(items.length);
+export function pageItems<T>(items: readonly T[], page: number, pageSize = PAGE_SIZE): readonly T[] {
+  return items.slice(page * pageSize, (page + 1) * pageSize);
+}
+
+export function isPageComplete(items: readonly WithId[], answers: Answers, page: number, pageSize = PAGE_SIZE): boolean {
+  return pageItems(items, page, pageSize).every((item) => answers[item.id] !== undefined);
+}
+
+export function firstIncompletePage(items: readonly WithId[], answers: Answers, pageSize = PAGE_SIZE): number {
+  const pages = pageCount(items.length, pageSize);
   for (let page = 0; page < pages; page += 1) {
-    if (!isPageComplete(items, answers, page)) return page;
+    if (!isPageComplete(items, answers, page, pageSize)) return page;
   }
   return pages - 1;
+}
+
+export const SUBMIT_ERRORS: Readonly<Record<string, string>> = {
+  rate_limited: "Слишком много попыток. Подождите минуту и нажмите ещё раз.",
+  invalid_answers: "Не все ответы сохранились. Проверьте экраны с вопросами.",
+  already_answered: "С этого браузера на вопросы по этой ссылке уже ответили.",
+  own_invite: "Это ваша ссылка: отвечать по ней должны друзья, а не вы.",
+  not_found: "Ссылка не работает. Попросите прислать её ещё раз.",
+};
+
+const SUBMIT_FALLBACK = "Не получилось отправить ответы. Проверьте интернет и попробуйте ещё раз.";
+
+export function submitErrorMessage(code: string | undefined): string {
+  return (code && SUBMIT_ERRORS[code]) || SUBMIT_FALLBACK;
 }
 
 export function isComplete(items: readonly WithId[], answers: Answers): boolean {
