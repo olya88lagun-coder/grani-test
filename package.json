@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "pnpm -r --parallel typecheck",
-    "build:library": "pnpm --filter @grani/content build:library"
+    "build:library": "pnpm --filter @grani/content build:library",
+    "dev:db": "node packages/db/scripts/dev-db.mjs"
   },
   "devDependencies": {
     "@types/node": "26.5.1",
