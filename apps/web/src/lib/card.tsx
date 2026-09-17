@@ -7,23 +7,38 @@ export const CARD_SIZE = { width: 1080, height: 1920 } as const;
 export type CardModel = { name: string; visual: TypeVisual };
 export type CardFont = { name: string; data: Buffer; weight: 300 | 400 | 600; style: "normal" };
 
-// Пути статические: так сборщик Next кладёт шрифты рядом с кодом и они попадают в standalone-сборку.
+// Пути статические и читаются напрямую: так сборщик Next видит каждый файл и кладёт в standalone-сборку только их.
 // Кириллица и латиница у Fontsource в разных файлах — подключаем оба под одним именем.
-const FONT_FILES = [
-  { name: "Cormorant", weight: 300, url: new URL("../../assets/fonts/cormorant-garamond-cyrillic-300-normal.woff", import.meta.url) },
-  { name: "Cormorant", weight: 300, url: new URL("../../assets/fonts/cormorant-garamond-latin-300-normal.woff", import.meta.url) },
-  { name: "Golos", weight: 400, url: new URL("../../assets/fonts/golos-text-cyrillic-400-normal.woff", import.meta.url) },
-  { name: "Golos", weight: 400, url: new URL("../../assets/fonts/golos-text-latin-400-normal.woff", import.meta.url) },
-  { name: "Golos", weight: 600, url: new URL("../../assets/fonts/golos-text-cyrillic-600-normal.woff", import.meta.url) },
-  { name: "Golos", weight: 600, url: new URL("../../assets/fonts/golos-text-latin-600-normal.woff", import.meta.url) },
-] as const;
+const CORMORANT_CYRILLIC = new URL("../../assets/fonts/cormorant-garamond-cyrillic-300-normal.woff", import.meta.url);
+const CORMORANT_LATIN = new URL("../../assets/fonts/cormorant-garamond-latin-300-normal.woff", import.meta.url);
+const GOLOS_CYRILLIC_400 = new URL("../../assets/fonts/golos-text-cyrillic-400-normal.woff", import.meta.url);
+const GOLOS_LATIN_400 = new URL("../../assets/fonts/golos-text-latin-400-normal.woff", import.meta.url);
+const GOLOS_CYRILLIC_600 = new URL("../../assets/fonts/golos-text-cyrillic-600-normal.woff", import.meta.url);
+const GOLOS_LATIN_600 = new URL("../../assets/fonts/golos-text-latin-600-normal.woff", import.meta.url);
+
+async function readCardFonts(): Promise<CardFont[]> {
+  const [cormorantCyrillic, cormorantLatin, golosCyrillic400, golosLatin400, golosCyrillic600, golosLatin600] = await Promise.all([
+    readFile(CORMORANT_CYRILLIC),
+    readFile(CORMORANT_LATIN),
+    readFile(GOLOS_CYRILLIC_400),
+    readFile(GOLOS_LATIN_400),
+    readFile(GOLOS_CYRILLIC_600),
+    readFile(GOLOS_LATIN_600),
+  ]);
+  return [
+    { name: "Cormorant", weight: 300, style: "normal", data: cormorantCyrillic },
+    { name: "Cormorant", weight: 300, style: "normal", data: cormorantLatin },
+    { name: "Golos", weight: 400, style: "normal", data: golosCyrillic400 },
+    { name: "Golos", weight: 400, style: "normal", data: golosLatin400 },
+    { name: "Golos", weight: 600, style: "normal", data: golosCyrillic600 },
+    { name: "Golos", weight: 600, style: "normal", data: golosLatin600 },
+  ];
+}
 
 let fontsPromise: Promise<CardFont[]> | undefined;
 
 export function loadCardFonts(): Promise<CardFont[]> {
-  fontsPromise ??= Promise.all(
-    FONT_FILES.map(async ({ name, weight, url }) => ({ name, weight, style: "normal" as const, data: await readFile(url) })),
-  );
+  fontsPromise ??= readCardFonts();
   return fontsPromise;
 }
 
