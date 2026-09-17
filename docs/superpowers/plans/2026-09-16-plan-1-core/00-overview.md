@@ -1,5 +1,7 @@
 # План 1 — Ядро: монорепо и расчёты `packages/core`
 
+> **Статус: выполнен 2026-09-17.** 79 тестов, покрытие: строки и функции 100%, ветви 97,6%.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Задачи лежат в отдельных файлах `task-NN-*.md` этой папки; выполнять по порядку.
 
 **Goal:** Каркас pnpm-монорепо и пакет `@grani/core` со всеми расчётами продукта — баллы по чертам, тип и уточнение, пограничные значения, сравнение с друзьями, совместимость пары и её уровни, варианты пары по черте, прайс, — покрытыми тестами не меньше чем на 80%.
