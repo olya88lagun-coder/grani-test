@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { createTestDb, getUser, upsertUserFromIdentity, type Database, type IdentityInput } from "./testing";
+import { authIdentities, createTestDb, getUser, upsertUserFromIdentity, type Database, type IdentityInput } from "./testing";
 
 const CONSENT = { version: "2026-09-v1", at: new Date("2026-09-17T10:00:00Z") };
 
@@ -53,6 +53,16 @@ describe("upsertUserFromIdentity", () => {
     const vk = await upsertUserFromIdentity(db, identity({ provider: "vk" }), CONSENT);
 
     expect(vk.ok && vk.user.id).not.toBe(telegram.ok && telegram.user.id);
+  });
+
+  test("a new telegram identity can be notified, a new vk identity cannot", async () => {
+    const tg = await upsertUserFromIdentity(db, identity(), CONSENT);
+    const vk = await upsertUserFromIdentity(db, identity({ provider: "vk", externalId: "vk-1" }), CONSENT);
+
+    const rows = await db.select({ provider: authIdentities.provider, canNotify: authIdentities.canNotify }).from(authIdentities);
+
+    expect(tg.ok && vk.ok).toBe(true);
+    expect(rows).toEqual(expect.arrayContaining([{ provider: "telegram", canNotify: true }, { provider: "vk", canNotify: false }]));
   });
 });
 

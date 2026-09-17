@@ -54,6 +54,8 @@ export async function upsertUserFromIdentity(
       provider: identity.provider,
       externalId: identity.externalId,
       displayName: identity.displayName,
+      // Telegram-виджет запрашивает право писать (request-access=write); ВКонтакте разрешает сообщения отдельно
+      canNotify: identity.provider === "telegram",
     });
     return created!;
   });
