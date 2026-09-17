@@ -2,7 +2,8 @@
 
 **Files:**
 - Create: `apps/web/src/lib/type-visuals.ts`, `apps/web/src/lib/card.tsx`, `apps/web/src/components/TypeGem.tsx`, `apps/web/src/app/cards/[dir]/route.tsx`, `apps/web/src/app/result/[id]/ShareCard.tsx`
-- Modify: `apps/web/package.json` (шрифты для картинок), `apps/web/next.config.ts` (шрифты в standalone), `apps/web/src/app/globals.css` (плитка знака), `apps/web/src/app/result/[id]/page.tsx` (знак типа и блок карточки)
+- Create: `apps/web/assets/fonts/*.woff` (шесть файлов шрифтов для картинок)
+- Modify: `apps/web/src/app/globals.css` (плитка знака), `apps/web/src/app/result/[id]/page.tsx` (знак типа и блок карточки)
 - Test: `apps/web/src/lib/type-visuals.test.ts`, `apps/web/src/lib/card.test.tsx`
 
 **Interfaces:**
@@ -34,14 +35,17 @@
 
 - [ ] **Step 1: Шрифты для картинок**
 
-`next/og` не читает `next/font` и woff2, поэтому для карточки нужны отдельные файлы `.woff`. Их дают пакеты Fontsource (лицензия OFL), скачивать вручную ничего не нужно:
+`next/og` не читает `next/font` и woff2, поэтому для карточки нужны отдельные файлы `.woff`. Их берём из пакетов Fontsource (лицензия OFL) и кладём в репозиторий: Turbopack не умеет подключать `.woff` через `require.resolve` («Unknown module type»), а статический `new URL(..., import.meta.url)` к файлу в `apps/web/assets/fonts` работает и в dev, и в standalone-сборке — так же сделано в wishlist.
 ```bash
 cd /c/dev/grani-test
 export PATH="/c/Users/olya8/AppData/Roaming/npm:$PATH"
-pnpm --filter @grani/web add @fontsource/cormorant-garamond@5.3.0 @fontsource/golos-text@5.3.0
-ls apps/web/node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-{cyrillic,latin}-300-normal.woff apps/web/node_modules/@fontsource/golos-text/files/golos-text-{cyrillic,latin}-{400,600}-normal.woff
+mkdir -p apps/web/assets/fonts && cd apps/web/assets/fonts
+npm pack @fontsource/cormorant-garamond@5.3.0 @fontsource/golos-text@5.3.0
+tar -xzf fontsource-cormorant-garamond-5.3.0.tgz --strip-components=2 package/files/cormorant-garamond-cyrillic-300-normal.woff package/files/cormorant-garamond-latin-300-normal.woff
+tar -xzf fontsource-golos-text-5.3.0.tgz --strip-components=2 package/files/golos-text-cyrillic-400-normal.woff package/files/golos-text-latin-400-normal.woff package/files/golos-text-cyrillic-600-normal.woff package/files/golos-text-latin-600-normal.woff
+rm *.tgz && ls
 ```
-Expected: шесть файлов найдены. Кириллица и латиница лежат в разных файлах; оба подключаются под одним именем шрифта, и `next/og` берёт недостающие буквы из второго файла.
+Expected: шесть файлов `.woff`. Кириллица и латиница лежат в разных файлах; оба подключаются под одним именем шрифта, и `next/og` берёт недостающие буквы из второго файла.
 
 - [ ] **Step 2: Тесты (падают)**
 
@@ -271,7 +275,6 @@ export function TypeGem({ shape, size }: { shape: TypeShape; size: number }) {
 `apps/web/src/lib/card.tsx`:
 ```tsx
 import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
 import type { ReactElement } from "react";
 import { CARD_PALETTE, gemPaths, type TypeVisual } from "./type-visuals";
 
@@ -280,23 +283,22 @@ export const CARD_SIZE = { width: 1080, height: 1920 } as const;
 export type CardModel = { name: string; visual: TypeVisual };
 export type CardFont = { name: string; data: Buffer; weight: 300 | 400 | 600; style: "normal" };
 
-const require = createRequire(import.meta.url);
-
-// Кириллица и латиница у Fontsource в разных файлах — подключаем оба под одним именем
+// Пути статические: так сборщик Next кладёт шрифты рядом с кодом и они попадают в standalone-сборку.
+// Кириллица и латиница у Fontsource в разных файлах — подключаем оба под одним именем.
 const FONT_FILES = [
-  { name: "Cormorant", weight: 300, file: "@fontsource/cormorant-garamond/files/cormorant-garamond-cyrillic-300-normal.woff" },
-  { name: "Cormorant", weight: 300, file: "@fontsource/cormorant-garamond/files/cormorant-garamond-latin-300-normal.woff" },
-  { name: "Golos", weight: 400, file: "@fontsource/golos-text/files/golos-text-cyrillic-400-normal.woff" },
-  { name: "Golos", weight: 400, file: "@fontsource/golos-text/files/golos-text-latin-400-normal.woff" },
-  { name: "Golos", weight: 600, file: "@fontsource/golos-text/files/golos-text-cyrillic-600-normal.woff" },
-  { name: "Golos", weight: 600, file: "@fontsource/golos-text/files/golos-text-latin-600-normal.woff" },
+  { name: "Cormorant", weight: 300, url: new URL("../../assets/fonts/cormorant-garamond-cyrillic-300-normal.woff", import.meta.url) },
+  { name: "Cormorant", weight: 300, url: new URL("../../assets/fonts/cormorant-garamond-latin-300-normal.woff", import.meta.url) },
+  { name: "Golos", weight: 400, url: new URL("../../assets/fonts/golos-text-cyrillic-400-normal.woff", import.meta.url) },
+  { name: "Golos", weight: 400, url: new URL("../../assets/fonts/golos-text-latin-400-normal.woff", import.meta.url) },
+  { name: "Golos", weight: 600, url: new URL("../../assets/fonts/golos-text-cyrillic-600-normal.woff", import.meta.url) },
+  { name: "Golos", weight: 600, url: new URL("../../assets/fonts/golos-text-latin-600-normal.woff", import.meta.url) },
 ] as const;
 
 let fontsPromise: Promise<CardFont[]> | undefined;
 
 export function loadCardFonts(): Promise<CardFont[]> {
   fontsPromise ??= Promise.all(
-    FONT_FILES.map(async ({ name, weight, file }) => ({ name, weight, style: "normal" as const, data: await readFile(require.resolve(file)) })),
+    FONT_FILES.map(async ({ name, weight, url }) => ({ name, weight, style: "normal" as const, data: await readFile(url) })),
   );
   return fontsPromise;
 }
@@ -346,20 +348,6 @@ pnpm vitest run apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.test
 ```
 Expected: PASS. Внешний вид карточки проверяется в Step 7.
 
-Файлы шрифтов читаются с диска во время запроса, поэтому трассировка Next их не видит: их нужно явно включить в standalone-сборку. В `apps/web/next.config.ts` добавить в `nextConfig`:
-```ts
-  // Шрифты карточки читаются с диска в /cards/[dir] — без явного включения их не будет в standalone-сборке
-  outputFileTracingIncludes: {
-    "/cards/[dir]": [
-      "./node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-cyrillic-300-normal.woff",
-      "./node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-300-normal.woff",
-      "./node_modules/@fontsource/golos-text/files/golos-text-cyrillic-400-normal.woff",
-      "./node_modules/@fontsource/golos-text/files/golos-text-latin-400-normal.woff",
-      "./node_modules/@fontsource/golos-text/files/golos-text-cyrillic-600-normal.woff",
-      "./node_modules/@fontsource/golos-text/files/golos-text-latin-600-normal.woff",
-    ],
-  },
-```
 Проверка сборки с карточкой — Task 10, Step 4.
 
 - [ ] **Step 5: Маршрут карточки**
@@ -481,6 +469,6 @@ export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fi
 
 ```bash
 pnpm test && pnpm typecheck
-git add apps/web/package.json apps/web/next.config.ts pnpm-lock.yaml apps/web/src/lib/type-visuals.ts apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.tsx apps/web/src/lib/card.test.tsx apps/web/src/components/TypeGem.tsx apps/web/src/app/globals.css apps/web/src/app/cards apps/web/src/app/result
+git add apps/web/assets apps/web/src/lib/type-visuals.ts apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.tsx apps/web/src/lib/card.test.tsx apps/web/src/components/TypeGem.tsx apps/web/src/app/globals.css apps/web/src/app/cards apps/web/src/app/result
 git commit -m "feat(web): story card with type family tint and faceted sign, share or download from the result page"
 ```

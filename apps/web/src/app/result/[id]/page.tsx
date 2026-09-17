@@ -4,9 +4,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ScaleBar } from "@/components/ScaleBar";
+import { TypeGem } from "@/components/TypeGem";
 import { buildResultView } from "@/lib/result-view";
+import { TYPE_VISUALS } from "@/lib/type-visuals";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
+import { ShareCard } from "./ShareCard";
 
 export const metadata: Metadata = { title: "Мой результат" };
 
@@ -15,13 +18,17 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   const result = await getResultForOwner(getDb(), id, user.id);
   if (!result) notFound();
   const view = buildResultView(getLibrary(), result, user.gender);
+  const visual = TYPE_VISUALS[view.dir];
+  if (!visual) notFound();
 
   return (
     <main className="page">
       <div className="stack">
         <section className="card card--2 stack">
           <div className="row" style={{ gap: 21 }}>
-            {/* Знак типа — Task 9 */}
+            <span className="type-gem" data-family={visual.family}>
+              <TypeGem shape={visual.shape} size={60} />
+            </span>
             <div>
               <span className="tag">{view.stabilityTag}</span>
               <h1 className="display">{view.name}</h1>
@@ -39,7 +46,11 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           ))}
         </section>
 
-        {/* Карточка для сторис — Task 9 */}
+        <ShareCard
+          cardUrl={`/cards/${view.dir}${user.gender === "female" ? "?f=1" : ""}`}
+          fileName={`grani-${view.dir}.png`}
+          typeName={view.name}
+        />
 
         <div className="row">
           <Link className="button button--ghost" href="/test">

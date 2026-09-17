@@ -94,6 +94,10 @@ body .stack > * + * { margin-top: 21px; }
 .scale__fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--accent); }
 .scale__mark { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 
+.type-gem { display: grid; place-items: center; flex: none; width: 96px; height: 96px; border-radius: var(--radius); background: var(--bg); }
+.type-gem[data-family="3"] { background: var(--surface-3); }
+.type-gem[data-family="4"] { background: var(--surface-4); }
+
 .footer { margin-top: 84px; padding-top: 21px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-soft); }
 .footer a { margin-right: 21px; color: var(--ink-soft); }
 
