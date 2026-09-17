@@ -6,3 +6,10 @@ dist/
 .env.*
 !.env.example
 *.log
+!.env.development.example
+.dev-db/
+test-results/
+playwright-report/
+next-env.d.ts
+e2e/test-results/
+e2e/playwright-report/

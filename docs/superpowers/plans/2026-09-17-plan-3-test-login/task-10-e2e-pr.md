@@ -142,7 +142,17 @@ pnpm typecheck
 pnpm test:coverage
 pnpm --filter @grani/web build
 ```
-Expected: typecheck без ошибок; все тесты зелёные; покрытие `packages/*/src`, `apps/web/src/server`, `apps/web/src/lib` ≥ 80% по строкам, функциям, ветвям и выражениям; `next build` собирается без ошибок (сборке нужен `apps/web/.env.development.local` или переменные из `.env.development.example` в окружении).
+Затем проверить карточку в собранном приложении (шрифты должны попасть в standalone):
+```bash
+cp -r apps/web/public apps/web/.next/standalone/apps/web/ && cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/
+(cd apps/web/.next/standalone/apps/web && set -a && . ../../../../.env.development.local && set +a && PORT=3100 node server.js) &
+curl -s -o /dev/null -w "%{http_code} %{content_type}
+" http://localhost:3100/cards/pppp
+kill %1
+```
+Expected: `200 image/png`.
+
+Expected от команд выше: typecheck без ошибок; все тесты зелёные; покрытие `packages/*/src`, `apps/web/src/server`, `apps/web/src/lib` ≥ 80% по строкам, функциям, ветвям и выражениям; `next build` собирается без ошибок (сборке нужен `apps/web/.env.development.local` или переменные из `.env.development.example` в окружении).
 
 Проверить отсутствие секретов в коммитах ветки:
 ```bash

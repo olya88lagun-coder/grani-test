@@ -262,7 +262,7 @@ import { PENDING_COOKIE } from "@/server/http";
 import { currentUser } from "@/server/viewer";
 import { LoginPanel } from "./LoginPanel";
 
-export const metadata: Metadata = { title: "Вход — Грани" };
+export const metadata: Metadata = { title: "Вход" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const [{ error }, user, store] = await Promise.all([searchParams, currentUser(), cookies()]);
@@ -270,18 +270,21 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const env = getEnv();
   const message = loginErrorMessage(error ?? null);
   return (
-    <main className="page">
+    <main className="page stack">
+      <p className="eyebrow">Грани</p>
       <h1 className="display">Вход</h1>
       {message && (
         <p className="error" role="alert">
           {message}
         </p>
       )}
-      <LoginPanel
-        botUsername={env.TELEGRAM_BOT_USERNAME}
-        authUrl={new URL("/api/auth/telegram/widget", env.APP_URL).toString()}
-        hasPendingResult={store.has(PENDING_COOKIE)}
-      />
+      <div className="card">
+        <LoginPanel
+          botUsername={env.TELEGRAM_BOT_USERNAME}
+          authUrl={new URL("/api/auth/telegram/widget", env.APP_URL).toString()}
+          hasPendingResult={store.has(PENDING_COOKIE)}
+        />
+      </div>
     </main>
   );
 }
@@ -324,7 +327,7 @@ import { buildResultView } from "@/lib/result-view";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
 
-export const metadata: Metadata = { title: "Мой результат — Грани" };
+export const metadata: Metadata = { title: "Мой результат" };
 
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const [{ id }, user] = await Promise.all([params, requireUser()]);
@@ -335,13 +338,21 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   return (
     <main className="page">
       <div className="stack">
-        <span className="tag">{view.stabilityTag}</span>
-        <h1 className="display">{view.name}</h1>
-        <p className="lead">{view.shortText}</p>
-        <p className="muted">{view.stabilityText}</p>
+        <section className="card card--2 stack">
+          <div className="row" style={{ gap: 21 }}>
+            {/* Знак типа — Task 9 */}
+            <div>
+              <span className="tag">{view.stabilityTag}</span>
+              <h1 className="display">{view.name}</h1>
+            </div>
+          </div>
+          <p className="lead">{view.shortText}</p>
+          <p className="muted">{view.stabilityText}</p>
+        </section>
 
-        <section className="card stack" aria-labelledby="scales">
-          <h2 id="scales">Пять шкал</h2>
+        <section className="card card--paper stack" aria-labelledby="scales">
+          <p className="eyebrow">Пять шкал личности</p>
+          <h2 id="scales">Из чего складывается тип</h2>
           {view.scales.map((scale) => (
             <ScaleBar key={scale.trait} scale={scale} />
           ))}
@@ -395,7 +406,7 @@ import type { Metadata } from "next";
 import { OPERATOR } from "@/lib/legal";
 import { CONSENT_VERSION } from "@/server/login-service";
 
-export const metadata: Metadata = { title: "Согласие на обработку персональных данных — Грани" };
+export const metadata: Metadata = { title: "Согласие на обработку персональных данных" };
 
 export default function ConsentPage() {
   return (

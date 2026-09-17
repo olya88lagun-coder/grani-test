@@ -29,7 +29,7 @@
   function expiredCookieOptions(options: CookieOptions): CookieOptions; // maxAge 0
   function isSameOrigin(request: Request, appUrl: string): boolean;
   ```
-  CSS-классы для задач 7–9: `.page`, `.page--wide`, `.display`, `.lead`, `.muted`, `.error`, `.card`, `.button`, `.button--ghost`, `.button--block`, `.progress`, `.progress__bar`, `.choices`, `.choice`, `.scale`, `.scale__track`, `.scale__fill`, `.scale__mark`, `.tag`, `.stack`, `.row`, `.footer`.
+  CSS-классы для задач 7–9: `.page`, `.page--wide`, `.eyebrow`, `.display`, `.lead`, `.muted`, `.error`, `.card`, `.card--2`, `.card--3`, `.card--4`, `.card--paper`, `.button`, `.button--lg`, `.button--ghost`, `.button--block`, `.progress`, `.progress__bar`, `.question`, `.choices`, `.choice`, `.scale`, `.scale__head`, `.scale__track`, `.scale__fill`, `.scale__mark`, `.tag`, `.stack`, `.row`, `.footer`; палитры `data-palette="friends"` и `data-palette="pair"`.
 
 Сроки жизни cookie — из Global Constraints. `secure` включается, только если `APP_URL` начинается с `https://`: на `http://localhost` браузер не сохранит Secure-cookie.
 
@@ -326,15 +326,17 @@ export async function GET() {
 
 - [ ] **Step 4: Раскладка и стили**
 
-`apps/web/src/app/layout.tsx` — шрифты по `docs/design/visual-direction.md`. Если `--font-display` — Playfair Display, импортировать оба шрифта, как ниже; если Manrope — удалить импорт `Playfair_Display` и переменную `playfair`:
+Стиль — `docs/design/visual-direction.md` (выбран в Task 1): кремовая «бумага», плоские тонированные панели без теней, заголовки Cormorant Garamond 300, текст Golos Text, один «чернильный» цвет `--accent`. Три палитры переключаются атрибутом `data-palette`; в этом плане все страницы в палитре по умолчанию «Оранжерея», палитры «Туман» и «Глина» заводятся сразу, чтобы план 4 их только применил.
+
+`apps/web/src/app/layout.tsx`:
 ```tsx
 import type { Metadata } from "next";
-import { Manrope, Playfair_Display } from "next/font/google";
+import { Cormorant_Garamond, Golos_Text } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 
-const manrope = Manrope({ subsets: ["latin", "cyrillic"], variable: "--font-manrope" });
-const playfair = Playfair_Display({ subsets: ["latin", "cyrillic"], style: ["normal", "italic"], variable: "--font-playfair" });
+const display = Cormorant_Garamond({ subsets: ["latin", "cyrillic"], weight: ["300"], variable: "--font-cormorant" });
+const body = Golos_Text({ subsets: ["latin", "cyrillic"], weight: ["400", "600"], variable: "--font-golos" });
 
 // Абсолютные адреса для превью ссылок; при сборке образа переменных окружения ещё нет
 const PUBLIC_URL = process.env.APP_URL ?? "https://grani-test.ru";
@@ -349,73 +351,118 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="ru" className={`${manrope.variable} ${playfair.variable}`}>
+    <html lang="ru" className={`${display.variable} ${body.variable}`}>
       <body>{children}</body>
     </html>
   );
 }
 ```
 
-`apps/web/src/app/globals.css` — значения переменных взять из `docs/design/visual-direction.md`; `--font-body: var(--font-manrope)`, `--font-display: var(--font-playfair)` или `var(--font-manrope)`. Если выбрано тёмное направление B, блок `prefers-color-scheme` не нужен; для A и C — оставить только светлую тему (тёмная тема не входит в первую версию).
+`apps/web/src/app/globals.css`:
 ```css
+/* Палитра A «Оранжерея» — тест и личный результат (по умолчанию) */
 :root {
-  --bg: #F3F5F8;
-  --surface: #FFFFFF;
-  --surface-2: #E7ECF2;
-  --ink: #0F172A;
-  --ink-soft: #5B6472;
-  --line: #D5DCE5;
-  --accent: #0F766E;
-  --accent-ink: #FFFFFF;
+  --bg: #FFFEFC;
+  --surface: #E1F4DF;
+  --surface-2: #CFE7D3;
+  --surface-3: #B1DBB8;
+  --surface-4: #B6CED5;
+  --accent: #0F3E17;
+  --accent-hover: #0C2F10;
+  --accent-ink: #FFFEFC;
+  --ink: #222222;
+  --ink-soft: #5E6660;
+  --line: #EFEEEB;
   --danger: #B42318;
-  --radius: 10px;
-  --font-body: var(--font-manrope), system-ui, sans-serif;
-  --font-display: var(--font-manrope), system-ui, sans-serif;
+  --radius: 14px;
+  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-body: var(--font-golos), system-ui, sans-serif;
+}
+
+/* Палитра B «Туман» — как меня видят другие (план 4) */
+[data-palette="friends"] {
+  --bg: #FCFDFE; --surface: #E3EDF2; --surface-2: #D3E2EA; --surface-3: #B9CFDB; --surface-4: #D9D6E8;
+  --accent: #1D3A4F; --accent-hover: #142B3B; --accent-ink: #FCFDFE;
+  --ink: #1F2328; --ink-soft: #5C6670; --line: #E8ECEF;
+}
+
+/* Палитра C «Глина» — совместимость пары (план 4) */
+[data-palette="pair"] {
+  --bg: #FFFCFA; --surface: #F6E8E1; --surface-2: #EED8CF; --surface-3: #E2C2B6; --surface-4: #D8D3C4;
+  --accent: #4A2230; --accent-hover: #3A1A26; --accent-ink: #FFFCFA;
+  --ink: #2A2224; --ink-soft: #6E6164; --line: #F0E8E4;
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--bg); color: var(--ink); }
-body { font-family: var(--font-body); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
-a { color: inherit; }
-:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+[data-palette] { background: var(--bg); color: var(--ink); min-height: 100vh; }
+a { color: var(--accent); text-underline-offset: 4px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 300; color: var(--accent); margin: 0; }
+h2 { font-size: 40px; line-height: 1.2; letter-spacing: -0.01em; }
+h3 { font-size: 30px; line-height: 1.2; }
 
-.page { max-width: 600px; margin: 0 auto; padding: 32px 16px 96px; }
-@media (min-width: 900px) { .page--wide { max-width: 1040px; } }
-.stack > * + * { margin-top: 16px; }
-.row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.page { max-width: 640px; margin: 0 auto; padding: 28px 16px 96px; }
+@media (min-width: 900px) { .page--wide { max-width: 1200px; padding: 42px 28px 120px; } }
+/* body повышает специфичность: иначе margin: 0 у .lead, .eyebrow и других классов ниже отменял бы отступ */
+body .stack > * + * { margin-top: 21px; }
+.row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
 
-.display { font-family: var(--font-display); font-size: clamp(34px, 8vw, 56px); line-height: 1.08; margin: 0 0 16px; letter-spacing: -0.01em; }
-.lead { font-size: 19px; color: var(--ink-soft); margin: 0 0 24px; }
-.muted { color: var(--ink-soft); font-size: 15px; }
+.eyebrow { margin: 0; font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+.display { font-size: clamp(44px, 11vw, 74px); line-height: 1.05; letter-spacing: -0.03em; }
+.lead { font-size: 18px; line-height: 1.5; color: var(--ink); margin: 0; }
+.muted { color: var(--ink-soft); font-size: 14px; }
 .error { color: var(--danger); font-weight: 600; }
-.tag { display: inline-block; padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink-soft); font-size: 14px; font-weight: 600; }
+.tag { display: inline-flex; align-items: center; width: fit-content; padding: 9px 14px; border-radius: 999px; background: var(--bg); color: var(--accent); font-size: 14px; }
 
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+/* Панели: глубина только тоном, без теней и цветных рамок */
+.card { background: var(--surface); border: 0; border-radius: var(--radius); padding: 28px 21px; margin-inline: 0; min-inline-size: 0; }
+@media (min-width: 760px) { .card { padding: 42px; } }
+.card--2 { background: var(--surface-2); }
+.card--3 { background: var(--surface-3); }
+.card--4 { background: var(--surface-4); }
+.card--paper { background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); }
 
-.button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 24px; border: 0; border-radius: var(--radius); background: var(--accent); color: var(--accent-ink); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
-.button:disabled { opacity: 0.5; cursor: not-allowed; }
-.button--ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.button { display: inline-flex; align-items: center; justify-content: center; gap: 12px; min-height: 52px; padding: 14px 21px; border: 0; border-radius: var(--radius); background: var(--accent); color: var(--accent-ink); font: inherit; font-size: 15px; text-decoration: none; cursor: pointer; transition: background 200ms ease; }
+.button:hover { background: var(--accent-hover); }
+.button:disabled { opacity: 0.45; cursor: not-allowed; }
+.button--lg { padding: 21px 28px; font-size: 16px; }
+.button--ghost { background: transparent; color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.button--ghost:hover { background: var(--surface); }
 .button--block { width: 100%; }
 
-.progress { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
-.progress__bar { height: 8px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
-.progress__bar > span { display: block; height: 100%; background: var(--accent); transition: width 200ms ease; }
+.progress { display: grid; gap: 9px; font-size: 14px; }
+.progress__bar { height: 6px; border-radius: 999px; background: var(--surface); overflow: hidden; }
+.progress__bar > span { display: block; height: 100%; border-radius: 999px; background: var(--accent); transition: width 200ms ease; }
 
-.choices { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; border: 0; }
-.choice { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); cursor: pointer; }
-.choice input { width: 20px; height: 20px; accent-color: var(--accent); margin: 0; }
-.choice:has(input:checked) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+/* legend во fieldset: float убирает его из рамки fieldset, clear у .choices возвращает поток */
+.question { float: left; width: 100%; font-family: var(--font-display); font-weight: 300; font-size: clamp(30px, 7vw, 44px); line-height: 1.15; letter-spacing: -0.02em; color: var(--accent); padding: 0; margin: 0 0 21px; }
+.choices { clear: both; display: grid; gap: 9px; margin: 0; padding: 0; border: 0; }
+.choice { display: flex; align-items: center; gap: 14px; min-height: 52px; padding: 14px 18px; border-radius: var(--radius); background: var(--bg); color: var(--ink); font-size: 15px; cursor: pointer; transition: background 200ms ease, color 200ms ease; }
+.choice input { appearance: none; flex: none; display: grid; place-items: center; width: 20px; height: 20px; margin: 0; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--accent); }
+.choice input::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--accent-ink); transform: scale(0); transition: transform 200ms ease; }
+.choice:has(input:checked) { background: var(--accent); color: var(--accent-ink); }
+.choice input:checked { box-shadow: inset 0 0 0 1.5px var(--accent-ink); }
+.choice input:checked::after { transform: scale(1); }
+.choice input[type="checkbox"], .choice input[type="checkbox"]::after { border-radius: 5px; }
+.choice:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-.scale { display: grid; gap: 6px; }
-.scale__head { display: flex; justify-content: space-between; font-weight: 600; }
-.scale__track { position: relative; height: 12px; border-radius: 999px; background: var(--surface-2); }
+.scale { display: grid; gap: 9px; padding-bottom: 21px; border-bottom: 1px solid var(--line); }
+.scale:last-child { border-bottom: 0; padding-bottom: 0; }
+.scale__head { display: flex; justify-content: space-between; align-items: baseline; gap: 9px; }
+.scale__head > :last-child { font-family: var(--font-display); font-size: 34px; line-height: 1; color: var(--accent); }
+.scale__track { position: relative; height: 8px; border-radius: 999px; background: var(--surface); }
 .scale__fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--accent); }
-.scale__mark { font-size: 14px; color: var(--ink-soft); }
+.scale__mark { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 
-.footer { margin-top: 64px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-soft); }
-.footer a { margin-right: 16px; }
+.footer { margin-top: 84px; padding-top: 21px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-soft); }
+.footer a { margin-right: 21px; color: var(--ink-soft); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 ```
-Значения в `:root` выше — направление C «Минерал»; заменить на выбранные в Task 1.
+
+Тёмная тема в первую версию не входит: палитры светлые по решению Task 1.
 
 - [ ] **Step 5: CI**
 

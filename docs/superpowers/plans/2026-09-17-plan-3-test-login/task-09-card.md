@@ -1,40 +1,51 @@
 # Task 9: Карточка «мой тип» для сторис
 
 **Files:**
-- Create: `apps/web/assets/fonts/Manrope-SemiBold.ttf`, `apps/web/assets/fonts/PlayfairDisplay-SemiBoldItalic.ttf` (копии из wishlist)
-- Create: `apps/web/src/lib/type-visuals.ts`, `apps/web/src/lib/card.tsx`, `apps/web/src/app/cards/[dir]/route.tsx`, `apps/web/src/app/result/[id]/ShareCard.tsx`
-- Modify: `apps/web/src/app/result/[id]/page.tsx` (блок карточки)
+- Create: `apps/web/src/lib/type-visuals.ts`, `apps/web/src/lib/card.tsx`, `apps/web/src/components/TypeGem.tsx`, `apps/web/src/app/cards/[dir]/route.tsx`, `apps/web/src/app/result/[id]/ShareCard.tsx`
+- Create: `apps/web/assets/fonts/*.woff` (шесть файлов шрифтов для картинок)
+- Modify: `apps/web/src/app/globals.css` (плитка знака), `apps/web/src/app/result/[id]/page.tsx` (знак типа и блок карточки)
 - Test: `apps/web/src/lib/type-visuals.test.ts`, `apps/web/src/lib/card.test.tsx`
 
 **Interfaces:**
-- Consumes: `TypeCode`, `ALL_TYPE_CODES`, `typeName` (`@grani/core`); `TYPE_DIRS`, `typeCodeToDir` (`@grani/content`); таблица цветов и форм и выбранное направление из `docs/design/visual-direction.md` (Task 1); `ResultView` (Task 8).
+- Consumes: `TypeCode`, `ALL_TYPE_CODES`, `typeName` (`@grani/core`); `TYPE_DIRS`, `typeCodeToDir` (`@grani/content`); раздел «Типы: семья и знак» и «Карточка» из `docs/design/visual-direction.md` (Task 1); `ResultView` (Task 8).
 - Produces:
   ```ts
   // type-visuals.ts
   type TypeShape = "diamond" | "hexagon" | "triangle" | "circle" | "star" | "square" | "pentagon" | "drop";
-  type TypeVisual = { color: string; ink: string; shape: TypeShape };
+  type TypeFamily = 1 | 2 | 3 | 4;
+  type TypeVisual = { family: TypeFamily; shape: TypeShape };
   const TYPE_VISUALS: Readonly<Record<string, TypeVisual>>; // ключ — каталог типа (pppp…mmmm)
+  const CARD_PALETTE: { ink: string; tints: Readonly<Record<TypeFamily, string>> }; // палитра «Оранжерея»
   function dirToTypeCode(dir: string): TypeCode | null;
   function contrastRatio(foreground: string, background: string): number;
-  function shapePath(shape: TypeShape, size: number): string; // SVG path в квадрате size×size
+  function gemPaths(shape: TypeShape, size: number): { outline: string; facets: string }; // SVG path в квадрате size×size
   // card.tsx
   const CARD_SIZE = { width: 1080, height: 1920 };
   type CardModel = { name: string; visual: TypeVisual };
   function cardElement(model: CardModel): ReactElement;
   function loadCardFonts(): Promise<CardFont[]>;
+  // components/TypeGem.tsx
+  function TypeGem(props: { shape: TypeShape; size: number }): ReactElement; // цвет — var(--accent)
   // GET /cards/<dir>[?f=1] → image/png 1080×1920
   ```
 
-Карточка (раздел 4.5 спецификации) не содержит личных данных: только название типа, его цвет и форма, подпись «мой тип» и адрес сайта. Поэтому она рисуется по коду типа и открыта без входа — ссылку можно вставить в сторис или переслать. `?f=1` даёт женскую форму названия, если она есть. Неизвестный каталог → 404.
+Карточка (раздел 4.5 спецификации) не содержит личных данных: только название типа, его знак и тон семьи, подпись «мой тип» и адрес сайта. Поэтому она рисуется по коду типа и открыта без входа — ссылку можно вставить в сторис или переслать. `?f=1` даёт женскую форму названия, если она есть. Неизвестный каталог → 404.
 
-- [ ] **Step 1: Шрифты**
+Цвет типа по стилю из Task 1 — не отдельный яркий цвет, а тон панели по семье (первые две буквы каталога) и гранёный знак: контур, внутренний контур на 45% размера и линии граней от центра к вершинам. Карточка всегда в палитре «Оранжерея» — это раздел личного результата.
 
+- [ ] **Step 1: Шрифты для картинок**
+
+`next/og` не читает `next/font` и woff2, поэтому для карточки нужны отдельные файлы `.woff`. Их берём из пакетов Fontsource (лицензия OFL) и кладём в репозиторий: Turbopack не умеет подключать `.woff` через `require.resolve` («Unknown module type»), а статический `new URL(..., import.meta.url)` к файлу в `apps/web/assets/fonts` работает и в dev, и в standalone-сборке — так же сделано в wishlist.
 ```bash
-mkdir -p /c/dev/grani-test/apps/web/assets/fonts
-cp /c/dev/wishlist/apps/web/assets/fonts/Manrope-SemiBold.ttf /c/dev/wishlist/apps/web/assets/fonts/PlayfairDisplay-SemiBoldItalic.ttf /c/dev/grani-test/apps/web/assets/fonts/
+cd /c/dev/grani-test
+export PATH="/c/Users/olya8/AppData/Roaming/npm:$PATH"
+mkdir -p apps/web/assets/fonts && cd apps/web/assets/fonts
+npm pack @fontsource/cormorant-garamond@5.3.0 @fontsource/golos-text@5.3.0
+tar -xzf fontsource-cormorant-garamond-5.3.0.tgz --strip-components=2 package/files/cormorant-garamond-cyrillic-300-normal.woff package/files/cormorant-garamond-latin-300-normal.woff
+tar -xzf fontsource-golos-text-5.3.0.tgz --strip-components=2 package/files/golos-text-cyrillic-400-normal.woff package/files/golos-text-latin-400-normal.woff package/files/golos-text-cyrillic-600-normal.woff package/files/golos-text-latin-600-normal.woff
+rm *.tgz && ls
 ```
-
-Шрифты под лицензией OFL — копирование и встраивание в картинки разрешены.
+Expected: шесть файлов `.woff`. Кириллица и латиница лежат в разных файлах; оба подключаются под одним именем шрифта, и `next/og` берёт недостающие буквы из второго файла.
 
 - [ ] **Step 2: Тесты (падают)**
 
@@ -43,15 +54,29 @@ cp /c/dev/wishlist/apps/web/assets/fonts/Manrope-SemiBold.ttf /c/dev/wishlist/ap
 import { ALL_TYPE_CODES } from "@grani/core";
 import { TYPE_DIRS, typeCodeToDir } from "@grani/content";
 import { describe, expect, test } from "vitest";
-import { TYPE_VISUALS, contrastRatio, dirToTypeCode, shapePath } from "./type-visuals";
+import { CARD_PALETTE, TYPE_VISUALS, contrastRatio, dirToTypeCode, gemPaths } from "./type-visuals";
 
 describe("TYPE_VISUALS", () => {
   test("has a visual for every type and nothing else", () => {
     expect(Object.keys(TYPE_VISUALS).sort()).toEqual([...TYPE_DIRS].sort());
   });
 
-  test.each(Object.entries(TYPE_VISUALS))("%s keeps text readable on its color", (_dir, visual) => {
-    expect(contrastRatio(visual.ink, visual.color)).toBeGreaterThanOrEqual(4.5);
+  test("family follows openness and conscientiousness", () => {
+    expect(TYPE_VISUALS.pppm?.family).toBe(1);
+    expect(TYPE_VISUALS.pmmp?.family).toBe(2);
+    expect(TYPE_VISUALS.mppm?.family).toBe(3);
+    expect(TYPE_VISUALS.mmmm?.family).toBe(4);
+  });
+
+  test("shapes do not repeat inside a family, so every type is recognizable", () => {
+    for (const family of [1, 2, 3, 4] as const) {
+      const shapes = Object.values(TYPE_VISUALS).filter((visual) => visual.family === family).map((visual) => visual.shape);
+      expect(new Set(shapes).size).toBe(shapes.length);
+    }
+  });
+
+  test.each(Object.entries(CARD_PALETTE.tints))("card ink is readable on family %s tint", (_family, tint) => {
+    expect(contrastRatio(CARD_PALETTE.ink, tint)).toBeGreaterThanOrEqual(7);
   });
 });
 
@@ -73,9 +98,11 @@ describe("dirToTypeCode", () => {
   });
 });
 
-test("every shape has a closed path", () => {
+test("every shape has a closed outline and facet lines", () => {
   for (const visual of Object.values(TYPE_VISUALS)) {
-    expect(shapePath(visual.shape, 100)).toMatch(/^M.*Z$/);
+    const { outline, facets } = gemPaths(visual.shape, 100);
+    expect(outline).toMatch(/^M.*Z$/);
+    expect(facets).toMatch(/^M/);
   }
 });
 ```
@@ -108,39 +135,40 @@ test("fits a long gendered name", async () => {
 ```
 
 ```bash
-export PATH="/c/Users/olya8/AppData/Roaming/npm:$PATH"
 pnpm vitest run apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.test.tsx
 ```
 Expected: FAIL — модулей нет.
 
-- [ ] **Step 3: Цвета и формы типов**
+- [ ] **Step 3: Семьи и знаки типов**
 
-`apps/web/src/lib/type-visuals.ts` — значения `color`, `ink`, `shape` взять из таблицы в `docs/design/visual-direction.md` (итог Task 1); ниже — исходная таблица Task 1:
+`apps/web/src/lib/type-visuals.ts`:
 ```ts
 import { ALL_TYPE_CODES, type TypeCode } from "@grani/core";
 import { typeCodeToDir } from "@grani/content";
 
 export type TypeShape = "diamond" | "hexagon" | "triangle" | "circle" | "star" | "square" | "pentagon" | "drop";
-export type TypeVisual = { color: string; ink: string; shape: TypeShape };
+export type TypeFamily = 1 | 2 | 3 | 4;
+export type TypeVisual = { family: TypeFamily; shape: TypeShape };
 
-export const TYPE_VISUALS: Readonly<Record<string, TypeVisual>> = {
-  pppp: { color: "#F59E0B", ink: "#1F1D1A", shape: "star" },
-  pppm: { color: "#DC2626", ink: "#FFFFFF", shape: "triangle" },
-  ppmp: { color: "#15803D", ink: "#FFFFFF", shape: "hexagon" },
-  ppmm: { color: "#1D4ED8", ink: "#FFFFFF", shape: "square" },
-  pmpp: { color: "#F97316", ink: "#1F1D1A", shape: "star" },
-  pmpm: { color: "#BE185D", ink: "#FFFFFF", shape: "triangle" },
-  pmmp: { color: "#7C3AED", ink: "#FFFFFF", shape: "drop" },
-  pmmm: { color: "#0E7490", ink: "#FFFFFF", shape: "diamond" },
-  mppp: { color: "#65A30D", ink: "#1F1D1A", shape: "hexagon" },
-  mppm: { color: "#B91C1C", ink: "#FFFFFF", shape: "pentagon" },
-  mpmp: { color: "#0F766E", ink: "#FFFFFF", shape: "circle" },
-  mpmm: { color: "#475569", ink: "#FFFFFF", shape: "square" },
-  mmpp: { color: "#EC4899", ink: "#1F1D1A", shape: "circle" },
-  mmpm: { color: "#C2410C", ink: "#FFFFFF", shape: "diamond" },
-  mmmp: { color: "#0EA5E9", ink: "#1F1D1A", shape: "drop" },
-  mmmm: { color: "#6B7280", ink: "#FFFFFF", shape: "pentagon" },
+// docs/design/visual-direction.md, «Типы: семья и знак»
+const SHAPES: Readonly<Record<string, TypeShape>> = {
+  pppp: "star", pppm: "triangle", ppmp: "hexagon", ppmm: "square",
+  pmpp: "star", pmpm: "triangle", pmmp: "drop", pmmm: "diamond",
+  mppp: "hexagon", mppm: "pentagon", mpmp: "circle", mpmm: "square",
+  mmpp: "circle", mmpm: "diamond", mmmp: "drop", mmmm: "pentagon",
 };
+
+const FAMILIES: Readonly<Record<string, TypeFamily>> = { pp: 1, pm: 2, mp: 3, mm: 4 };
+
+export const TYPE_VISUALS: Readonly<Record<string, TypeVisual>> = Object.fromEntries(
+  Object.entries(SHAPES).map(([dir, shape]) => [dir, { family: FAMILIES[dir.slice(0, 2)] as TypeFamily, shape }]),
+);
+
+// Палитра «Оранжерея»: чернила и тоны панелей --surface … --surface-4
+export const CARD_PALETTE = {
+  ink: "#0F3E17",
+  tints: { 1: "#E1F4DF", 2: "#CFE7D3", 3: "#B1DBB8", 4: "#B6CED5" },
+} as const satisfies { ink: string; tints: Readonly<Record<TypeFamily, string>> };
 
 const CODE_BY_DIR: ReadonlyMap<string, TypeCode> = new Map(ALL_TYPE_CODES.map((code) => [typeCodeToDir(code), code]));
 
@@ -163,30 +191,30 @@ export function contrastRatio(foreground: string, background: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-function polygon(points: readonly (readonly [number, number])[]): string {
-  return `M${points.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L")} Z`;
-}
+type Point = readonly [number, number];
 
-function regular(sides: number, size: number, rotation: number, innerRatio?: number): string {
+const toPath = (points: readonly Point[]) => `M${points.map(([x, y]) => `${x.toFixed(1)} ${y.toFixed(1)}`).join(" L")} Z`;
+
+function regular(sides: number, size: number, rotation: number, innerRatio?: number): Point[] {
   const center = size / 2;
   const count = innerRatio === undefined ? sides : sides * 2;
-  const points = Array.from({ length: count }, (_, i) => {
+  return Array.from({ length: count }, (_, i) => {
     const radius = innerRatio !== undefined && i % 2 === 1 ? center * innerRatio : center;
     const angle = rotation + (i * 2 * Math.PI) / count;
     return [center + radius * Math.cos(angle), center + radius * Math.sin(angle)] as const;
   });
-  return polygon(points);
 }
 
 const UP = -Math.PI / 2;
+const INNER_SCALE = 0.45;
 
-export function shapePath(shape: TypeShape, size: number): string {
+function vertices(shape: TypeShape, size: number): Point[] | null {
   const half = size / 2;
   switch (shape) {
     case "square":
-      return polygon([[0, 0], [size, 0], [size, size], [0, size]]);
+      return [[size * 0.08, size * 0.08], [size * 0.92, size * 0.08], [size * 0.92, size * 0.92], [size * 0.08, size * 0.92]];
     case "diamond":
-      return polygon([[half, 0], [size, half], [half, size], [0, half]]);
+      return [[half, 0], [size, half], [half, size], [0, half]];
     case "triangle":
       return regular(3, size, UP);
     case "pentagon":
@@ -194,12 +222,51 @@ export function shapePath(shape: TypeShape, size: number): string {
     case "hexagon":
       return regular(6, size, 0);
     case "star":
-      return regular(5, size, UP, 0.45);
-    case "circle":
-      return `M${half} 0 A${half} ${half} 0 1 1 ${half} ${size} A${half} ${half} 0 1 1 ${half} 0 Z`;
-    case "drop":
-      return `M${half} 0 C${size * 0.85} ${size * 0.4} ${size} ${size * 0.6} ${size} ${size * 0.68} A${half} ${half * 0.64} 0 0 1 0 ${size * 0.68} C0 ${size * 0.6} ${size * 0.15} ${size * 0.4} ${half} 0 Z`;
+      return regular(5, size, UP, 0.42);
+    default:
+      return null;
   }
+}
+
+// Гранёный знак: внешний контур плюс «грани» — внутренний контур и линии от центра к вершинам
+export function gemPaths(shape: TypeShape, size: number): { outline: string; facets: string } {
+  const half = size / 2;
+  const points = vertices(shape, size);
+  if (points) {
+    const inner = points.map(([x, y]) => [half + (x - half) * INNER_SCALE, half + (y - half) * INNER_SCALE] as const);
+    const spokes = (shape === "star" ? points.filter((_, i) => i % 2 === 0) : points)
+      .map(([x, y]) => `M${half} ${half} L${x.toFixed(1)} ${y.toFixed(1)}`)
+      .join(" ");
+    return { outline: toPath(points), facets: `${toPath(inner)} ${spokes}` };
+  }
+  if (shape === "circle") {
+    return {
+      outline: `M${half} 0 A${half} ${half} 0 1 1 ${half} ${size} A${half} ${half} 0 1 1 ${half} 0 Z`,
+      facets: `M${half} ${size * 0.28} A${half * 0.72} ${half * 0.44} 0 1 1 ${half} ${size * 0.72} A${half * 0.72} ${half * 0.44} 0 1 1 ${half} ${size * 0.28} Z M0 ${half} L${size} ${half}`,
+    };
+  }
+  return {
+    outline: `M${half} 0 C${size * 0.85} ${size * 0.4} ${size} ${size * 0.6} ${size} ${size * 0.68} A${half} ${half * 0.64} 0 0 1 0 ${size * 0.68} C0 ${size * 0.6} ${size * 0.15} ${size * 0.4} ${half} 0 Z`,
+    facets: `M${half} ${size * 0.3} C${size * 0.7} ${size * 0.5} ${size * 0.76} ${size * 0.62} ${size * 0.76} ${size * 0.7} A${half * 0.52} ${half * 0.36} 0 0 1 ${size * 0.24} ${size * 0.7} C${size * 0.24} ${size * 0.62} ${size * 0.3} ${size * 0.5} ${half} ${size * 0.3} Z M${half} 0 L${half} ${size}`,
+  };
+}
+```
+
+`apps/web/src/components/TypeGem.tsx`:
+```tsx
+import { gemPaths, type TypeShape } from "@/lib/type-visuals";
+
+export function TypeGem({ shape, size }: { shape: TypeShape; size: number }) {
+  const { outline, facets } = gemPaths(shape, size);
+  const pad = 2;
+  return (
+    <svg width={size} height={size} viewBox={`${-pad} ${-pad} ${size + pad * 2} ${size + pad * 2}`} aria-hidden="true">
+      <g fill="none" stroke="var(--accent)" strokeWidth={1.4} strokeLinejoin="round">
+        <path d={outline} />
+        <path d={facets} opacity={0.45} />
+      </g>
+    </svg>
+  );
 }
 ```
 
@@ -209,33 +276,55 @@ export function shapePath(shape: TypeShape, size: number): string {
 ```tsx
 import { readFile } from "node:fs/promises";
 import type { ReactElement } from "react";
-import { shapePath, type TypeVisual } from "./type-visuals";
+import { CARD_PALETTE, gemPaths, type TypeVisual } from "./type-visuals";
 
 export const CARD_SIZE = { width: 1080, height: 1920 } as const;
 
 export type CardModel = { name: string; visual: TypeVisual };
-export type CardFont = { name: string; data: Buffer; weight: 600; style: "normal" | "italic" };
+export type CardFont = { name: string; data: Buffer; weight: 300 | 400 | 600; style: "normal" };
 
-// Пути статические: так сборщик Next кладёт шрифты рядом с кодом и они попадают в standalone-сборку
-const PLAYFAIR_URL = new URL("../../assets/fonts/PlayfairDisplay-SemiBoldItalic.ttf", import.meta.url);
-const MANROPE_URL = new URL("../../assets/fonts/Manrope-SemiBold.ttf", import.meta.url);
+// Пути статические и читаются напрямую: так сборщик Next видит каждый файл и кладёт в standalone-сборку только их.
+// Кириллица и латиница у Fontsource в разных файлах — подключаем оба под одним именем.
+const CORMORANT_CYRILLIC = new URL("../../assets/fonts/cormorant-garamond-cyrillic-300-normal.woff", import.meta.url);
+const CORMORANT_LATIN = new URL("../../assets/fonts/cormorant-garamond-latin-300-normal.woff", import.meta.url);
+const GOLOS_CYRILLIC_400 = new URL("../../assets/fonts/golos-text-cyrillic-400-normal.woff", import.meta.url);
+const GOLOS_LATIN_400 = new URL("../../assets/fonts/golos-text-latin-400-normal.woff", import.meta.url);
+const GOLOS_CYRILLIC_600 = new URL("../../assets/fonts/golos-text-cyrillic-600-normal.woff", import.meta.url);
+const GOLOS_LATIN_600 = new URL("../../assets/fonts/golos-text-latin-600-normal.woff", import.meta.url);
 
-// Шрифт названия — --font-display выбранного направления (Task 1): "Playfair" для «Бумаги», "Manrope" для остальных
-const DISPLAY_FONT = "Manrope";
-
-export async function loadCardFonts(): Promise<CardFont[]> {
-  const [playfair, manrope] = await Promise.all([readFile(PLAYFAIR_URL), readFile(MANROPE_URL)]);
+async function readCardFonts(): Promise<CardFont[]> {
+  const [cormorantCyrillic, cormorantLatin, golosCyrillic400, golosLatin400, golosCyrillic600, golosLatin600] = await Promise.all([
+    readFile(CORMORANT_CYRILLIC),
+    readFile(CORMORANT_LATIN),
+    readFile(GOLOS_CYRILLIC_400),
+    readFile(GOLOS_LATIN_400),
+    readFile(GOLOS_CYRILLIC_600),
+    readFile(GOLOS_LATIN_600),
+  ]);
   return [
-    { name: "Playfair", data: playfair, weight: 600, style: "italic" },
-    { name: "Manrope", data: manrope, weight: 600, style: "normal" },
+    { name: "Cormorant", weight: 300, style: "normal", data: cormorantCyrillic },
+    { name: "Cormorant", weight: 300, style: "normal", data: cormorantLatin },
+    { name: "Golos", weight: 400, style: "normal", data: golosCyrillic400 },
+    { name: "Golos", weight: 400, style: "normal", data: golosLatin400 },
+    { name: "Golos", weight: 600, style: "normal", data: golosCyrillic600 },
+    { name: "Golos", weight: 600, style: "normal", data: golosLatin600 },
   ];
 }
 
-const SHAPE_SIZE = 560;
+let fontsPromise: Promise<CardFont[]> | undefined;
+
+export function loadCardFonts(): Promise<CardFont[]> {
+  fontsPromise ??= readCardFonts();
+  return fontsPromise;
+}
+
+const GEM_SIZE = 520;
 
 // satori требует явный display: flex у каждого контейнера с несколькими детьми
 export function cardElement({ name, visual }: CardModel): ReactElement {
-  const nameSize = name.length > 14 ? 104 : 136;
+  const { ink, tints } = CARD_PALETTE;
+  const { outline, facets } = gemPaths(visual.shape, GEM_SIZE);
+  const nameSize = name.length > 14 ? 100 : 132;
   return (
     <div
       style={{
@@ -245,23 +334,24 @@ export function cardElement({ name, visual }: CardModel): ReactElement {
         flexDirection: "column",
         justifyContent: "space-between",
         alignItems: "center",
-        padding: "160px 96px 140px",
-        background: visual.color,
-        color: visual.ink,
-        fontFamily: "Manrope",
+        padding: "150px 90px 130px",
+        background: tints[visual.family],
+        color: ink,
+        fontFamily: "Golos",
       }}
     >
-      <div style={{ display: "flex", fontSize: 48, letterSpacing: 6, textTransform: "uppercase", opacity: 0.85 }}>
-        мой тип
-      </div>
-      <svg width={SHAPE_SIZE} height={SHAPE_SIZE} viewBox={`0 0 ${SHAPE_SIZE} ${SHAPE_SIZE}`}>
-        <path d={shapePath(visual.shape, SHAPE_SIZE)} fill={visual.ink} fillOpacity={0.9} />
+      <div style={{ display: "flex", fontSize: 34, fontWeight: 600, letterSpacing: 3, textTransform: "uppercase" }}>мой тип</div>
+      <svg width={GEM_SIZE} height={GEM_SIZE} viewBox={`-4 -4 ${GEM_SIZE + 8} ${GEM_SIZE + 8}`}>
+        <path d={outline} fill="none" stroke={ink} strokeWidth={5} strokeLinejoin="round" />
+        <path d={facets} fill="none" stroke={ink} strokeWidth={5} strokeLinejoin="round" opacity={0.45} />
       </svg>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 48 }}>
-        <div style={{ display: "flex", fontFamily: DISPLAY_FONT, fontSize: nameSize, lineHeight: 1.05, textAlign: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 44 }}>
+        <div
+          style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: nameSize, lineHeight: 1.05, letterSpacing: -2, textAlign: "center" }}
+        >
           {name}
         </div>
-        <div style={{ display: "flex", fontSize: 44, opacity: 0.85 }}>а какой у тебя? grani-test.ru</div>
+        <div style={{ display: "flex", fontSize: 38 }}>а какой у тебя? · grani-test.ru</div>
       </div>
     </div>
   );
@@ -272,6 +362,8 @@ export function cardElement({ name, visual }: CardModel): ReactElement {
 pnpm vitest run apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.test.tsx
 ```
 Expected: PASS. Внешний вид карточки проверяется в Step 7.
+
+Проверка сборки с карточкой — Task 10, Step 4.
 
 - [ ] **Step 5: Маршрут карточки**
 
@@ -334,11 +426,12 @@ export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fi
   }
 
   return (
-    <section className="card stack" aria-labelledby="share">
-      <h2 id="share">Карточка для сторис</h2>
+    <section className="card card--paper stack" aria-labelledby="share">
+      <p className="eyebrow">Для сторис</p>
+      <h2 id="share">Карточка «мой тип»</h2>
       <img src={cardUrl} alt={`Карточка типа «${typeName}»`} width={270} height={480} style={{ borderRadius: "var(--radius)" }} />
       <button type="button" className="button" onClick={share}>
-        Поделиться
+        Поделиться <span aria-hidden="true">→</span>
       </button>
       {status && (
         <p className="muted" role="status">
@@ -360,10 +453,30 @@ export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fi
 ```
 и добавить `import { ShareCard } from "./ShareCard";`.
 
+Там же заменить комментарий `{/* Знак типа — Task 9 */}` на
+```tsx
+            <span className="type-gem" data-family={visual.family}>
+              <TypeGem shape={visual.shape} size={60} />
+            </span>
+```
+после `const view = buildResultView(...)` добавить
+```tsx
+  const visual = TYPE_VISUALS[view.dir];
+  if (!visual) notFound();
+```
+и импорты `import { TypeGem } from "@/components/TypeGem";`, `import { TYPE_VISUALS } from "@/lib/type-visuals";`.
+
+В `apps/web/src/app/globals.css` добавить плитку знака — тон по семье типа (светлее панели `card--2`, на которой стоит, остаётся фон страницы):
+```css
+.type-gem { display: grid; place-items: center; flex: none; width: 96px; height: 96px; border-radius: var(--radius); background: var(--bg); }
+.type-gem[data-family="3"] { background: var(--surface-3); }
+.type-gem[data-family="4"] { background: var(--surface-4); }
+```
+
 - [ ] **Step 7: Проверка в браузере**
 
 С запущенными `pnpm dev:db` и `pnpm dev:web`:
-1. Открыть `/cards/pmpp`, `/cards/mpmp?f=1`, `/cards/pppp` — картинки 1080×1920, название не обрезано, форма по центру, текст читается. Сделать скриншот двух карточек и показать пользователю.
+1. Открыть `/cards/pmpp`, `/cards/mpmp?f=1`, `/cards/mmmm` — картинки 1080×1920, фон разного тона по семье, знак по центру, название антиквой не обрезано, в подписи видны и кириллица, и `grani-test.ru` (без квадратиков вместо букв). Сделать скриншоты карточек и показать пользователю.
 2. `/cards/xxxx` → 404.
 3. На странице результата блок карточки виден; «Поделиться» на десктопе скачивает `grani-<каталог>.png`.
 
@@ -371,6 +484,6 @@ export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fi
 
 ```bash
 pnpm test && pnpm typecheck
-git add apps/web/assets apps/web/src/lib/type-visuals.ts apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.tsx apps/web/src/lib/card.test.tsx apps/web/src/app/cards apps/web/src/app/result
-git commit -m "feat(web): story card for the type with colors and shapes, share or download from the result page"
+git add apps/web/assets apps/web/src/lib/type-visuals.ts apps/web/src/lib/type-visuals.test.ts apps/web/src/lib/card.tsx apps/web/src/lib/card.test.tsx apps/web/src/components/TypeGem.tsx apps/web/src/app/globals.css apps/web/src/app/cards apps/web/src/app/result
+git commit -m "feat(web): story card with type family tint and faceted sign, share or download from the result page"
 ```

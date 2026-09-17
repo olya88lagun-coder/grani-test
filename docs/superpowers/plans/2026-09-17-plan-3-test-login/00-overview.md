@@ -1,5 +1,7 @@
 # План 3 — Тест и вход: сайт, прохождение теста, вход и бесплатный результат
 
+> **Статус: выполнен 2026-09-17.** 280 тестов + 3 сквозных (Playwright); покрытие: строки 94,9%, ветви 90,5%, функции 93,3%, выражения 93,6%. `next build` без предупреждений, карточка проверена в standalone-сборке.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Задачи лежат в отдельных файлах `task-NN-*.md` этой папки; выполнять по порядку.
 
 **Goal:** Работающий локально сайт grani-test.ru: первый экран, тест из 50 вопросов с сохранением прогресса, вход через Telegram или VK ID с согласием на обработку данных, сохранённый результат с типом, уточнением, шкалами и коротким описанием, картинка-карточка «мой тип» для сторис, CI на GitHub.
@@ -14,7 +16,7 @@
 
 ## Global Constraints
 
-- **Значения проекта:** `APP_DOMAIN` = `grani-test.ru`; `APP_URL` = `https://grani-test.ru` (локально `http://localhost:3000`); `TELEGRAM_BOT_USERNAME` и `VK_CLIENT_ID` — от пользователя (см. «Предварительные действия»); git remote `https://github.com/olya88lagun-coder/grani-test.git`; путь `C:\dev\grani-test`.
+- **Значения проекта:** `APP_DOMAIN` = `grani-test.ru`; `APP_URL` = `https://grani-test.ru` (локально `http://localhost:3000`); `TELEGRAM_BOT_USERNAME` = `test_grani_bot`, `VK_CLIENT_ID` = `54776443` (приложение VK ID создано, redirect `https://grani-test.ru/api/auth/vk/callback`); локально `VK_CLIENT_ID=1` — вход VK на localhost не работает, как и Telegram-виджет; git remote `https://github.com/olya88lagun-coder/grani-test.git`; путь `C:\dev\grani-test`.
 - Ветка плана `feat/test-login` от `master` после мержа PR #2. PR в `master` — после зелёного CI и согласия пользователя.
 - Команды pnpm в Git Bash: перед `pnpm ...` выполнить `export PATH="/c/Users/olya8/AppData/Roaming/npm:$PATH"`.
 - Имена пакетов: `@grani/db`, `@grani/web`. Сессионные и служебные cookie: `grani_session` (httpOnly, Secure, SameSite=Lax, 30 дней), `grani_pending` (httpOnly, Secure, SameSite=Lax, 1 день), `grani_consent` (httpOnly, Secure, SameSite=Lax, 1 час), `grani_vk_oauth` (httpOnly, Secure, SameSite=Lax, path `/api/auth/vk`, 10 минут). На `http://localhost` флаг Secure не ставится.
@@ -24,7 +26,7 @@
 - Персональные данные только в РФ: база в проде — на сервере Timeweb (план 6); в этом плане — PGlite локально и в тестах.
 - Секреты только в `.env` на сервере, в GitHub Secrets и в `apps/web/.env.development.local` (не коммитится); в репозитории — `apps/web/.env.development.example` без реальных токенов.
 - Страницы сайта в этом плане закрыты от индексации (`robots: noindex`) — индексация включается в плане 6.
-- Визуальный стиль: имена CSS-переменных фиксированы (Task 1), значения выбирает пользователь в Task 1.
+- Визуальный стиль — `docs/design/visual-direction.md` (выбран в Task 1): кремовая «бумага», плоские тонированные панели без теней, Cormorant Garamond 300 + Golos Text, три палитры по разделам через `data-palette`. Цвета и шрифты берутся только из CSS-переменных.
 - Тесты: Vitest (AAA, имена описывают поведение), сервисы и репозитории — с PGlite; сквозной сценарий — Playwright на локальном приложении. Покрытие `packages/*/src` и `apps/web/src/server` ≥ 80%.
 - **Каждое действие вне репозитория (создание ботов и приложений, DNS, GitHub Settings) делает пользователь**; агент ждёт подтверждения и значений без секретов.
 - Коммиты — conventional commits, без Co-Authored-By.
@@ -74,7 +76,6 @@ packages/db/
   src/results.ts  results.test.ts            createResult, getResultForOwner, getLatestResultId
 apps/web/
   package.json  tsconfig.json  next.config.ts  vitest.config.ts  .env.development.example
-  assets/fonts/Manrope-SemiBold.ttf          (или шрифт из Task 1)
   public/.gitkeep
   src/app/layout.tsx  globals.css  page.tsx
   src/app/test/page.tsx  src/app/test/TestRunner.tsx
