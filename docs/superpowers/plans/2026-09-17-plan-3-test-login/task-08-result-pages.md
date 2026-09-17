@@ -270,18 +270,21 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const env = getEnv();
   const message = loginErrorMessage(error ?? null);
   return (
-    <main className="page">
+    <main className="page stack">
+      <p className="eyebrow">Грани</p>
       <h1 className="display">Вход</h1>
       {message && (
         <p className="error" role="alert">
           {message}
         </p>
       )}
-      <LoginPanel
-        botUsername={env.TELEGRAM_BOT_USERNAME}
-        authUrl={new URL("/api/auth/telegram/widget", env.APP_URL).toString()}
-        hasPendingResult={store.has(PENDING_COOKIE)}
-      />
+      <div className="card">
+        <LoginPanel
+          botUsername={env.TELEGRAM_BOT_USERNAME}
+          authUrl={new URL("/api/auth/telegram/widget", env.APP_URL).toString()}
+          hasPendingResult={store.has(PENDING_COOKIE)}
+        />
+      </div>
     </main>
   );
 }
