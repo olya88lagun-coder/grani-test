@@ -24,7 +24,7 @@
 - Персональные данные только в РФ: база в проде — на сервере Timeweb (план 6); в этом плане — PGlite локально и в тестах.
 - Секреты только в `.env` на сервере, в GitHub Secrets и в `apps/web/.env.development.local` (не коммитится); в репозитории — `apps/web/.env.development.example` без реальных токенов.
 - Страницы сайта в этом плане закрыты от индексации (`robots: noindex`) — индексация включается в плане 6.
-- Визуальный стиль: имена CSS-переменных фиксированы (Task 1), значения выбирает пользователь в Task 1.
+- Визуальный стиль — `docs/design/visual-direction.md` (выбран в Task 1): кремовая «бумага», плоские тонированные панели без теней, Cormorant Garamond 300 + Golos Text, три палитры по разделам через `data-palette`. Цвета и шрифты берутся только из CSS-переменных.
 - Тесты: Vitest (AAA, имена описывают поведение), сервисы и репозитории — с PGlite; сквозной сценарий — Playwright на локальном приложении. Покрытие `packages/*/src` и `apps/web/src/server` ≥ 80%.
 - **Каждое действие вне репозитория (создание ботов и приложений, DNS, GitHub Settings) делает пользователь**; агент ждёт подтверждения и значений без секретов.
 - Коммиты — conventional commits, без Co-Authored-By.
@@ -74,7 +74,6 @@ packages/db/
   src/results.ts  results.test.ts            createResult, getResultForOwner, getLatestResultId
 apps/web/
   package.json  tsconfig.json  next.config.ts  vitest.config.ts  .env.development.example
-  assets/fonts/Manrope-SemiBold.ttf          (или шрифт из Task 1)
   public/.gitkeep
   src/app/layout.tsx  globals.css  page.tsx
   src/app/test/page.tsx  src/app/test/TestRunner.tsx

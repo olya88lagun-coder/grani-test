@@ -335,13 +335,21 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   return (
     <main className="page">
       <div className="stack">
-        <span className="tag">{view.stabilityTag}</span>
-        <h1 className="display">{view.name}</h1>
-        <p className="lead">{view.shortText}</p>
-        <p className="muted">{view.stabilityText}</p>
+        <section className="card card--2 stack">
+          <div className="row" style={{ gap: 21 }}>
+            {/* Знак типа — Task 9 */}
+            <div>
+              <span className="tag">{view.stabilityTag}</span>
+              <h1 className="display">{view.name}</h1>
+            </div>
+          </div>
+          <p className="lead">{view.shortText}</p>
+          <p className="muted">{view.stabilityText}</p>
+        </section>
 
-        <section className="card stack" aria-labelledby="scales">
-          <h2 id="scales">Пять шкал</h2>
+        <section className="card card--paper stack" aria-labelledby="scales">
+          <p className="eyebrow">Пять шкал личности</p>
+          <h2 id="scales">Из чего складывается тип</h2>
           {view.scales.map((scale) => (
             <ScaleBar key={scale.trait} scale={scale} />
           ))}

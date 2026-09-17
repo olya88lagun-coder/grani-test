@@ -322,13 +322,13 @@ export function TestRunner({ items }: { items: readonly Item[] }) {
         </div>
       </div>
 
-      <h1 className="display" ref={headingRef} tabIndex={-1}>
+      <h1 className="eyebrow" ref={headingRef} tabIndex={-1}>
         Экран {page + 1} из {pages}
       </h1>
 
       {pageItems(items, page).map((item) => (
         <fieldset key={item.id} className="card">
-          <legend className="lead">{item.text}</legend>
+          <legend className="question">{item.text}</legend>
           <div className="choices">
             {ANSWER_VALUES.map((value) => (
               <label key={value} className="choice">
@@ -395,14 +395,15 @@ export default function HomePage() {
   return (
     <main className="page">
       <div className="stack">
+        <p className="eyebrow">Тест личности · Большая пятёрка</p>
         <h1 className="display">Узнай свой тип и как тебя видят другие</h1>
         <p className="lead">
           50 коротких утверждений на основе научной модели «Большая пятёрка». В ответ — один из 16 типов, пять шкал
           личности и карточка для сторис.
         </p>
         <div className="row">
-          <Link className="button" href="/test">
-            Пройти тест
+          <Link className="button button--lg" href="/test">
+            Пройти тест <span aria-hidden="true">→</span>
           </Link>
           <span className="muted">10 минут, бесплатно</span>
         </div>
