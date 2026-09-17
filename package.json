@@ -3,12 +3,15 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@12.4.1",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "pnpm -r --parallel typecheck"
+    "typecheck": "pnpm -r --parallel typecheck",
+    "build:library": "pnpm --filter @grani/content build:library"
   },
   "devDependencies": {
     "@types/node": "26.5.1",
