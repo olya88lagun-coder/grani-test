@@ -14,7 +14,7 @@
 
 ## Global Constraints
 
-- **Значения проекта:** `APP_DOMAIN` = `grani-test.ru`; `APP_URL` = `https://grani-test.ru` (локально `http://localhost:3000`); `TELEGRAM_BOT_USERNAME` и `VK_CLIENT_ID` — от пользователя (см. «Предварительные действия»); git remote `https://github.com/olya88lagun-coder/grani-test.git`; путь `C:\dev\grani-test`.
+- **Значения проекта:** `APP_DOMAIN` = `grani-test.ru`; `APP_URL` = `https://grani-test.ru` (локально `http://localhost:3000`); `TELEGRAM_BOT_USERNAME` = `test_grani_bot`, `VK_CLIENT_ID` = `54776443` (приложение VK ID создано, redirect `https://grani-test.ru/api/auth/vk/callback`); локально `VK_CLIENT_ID=1` — вход VK на localhost не работает, как и Telegram-виджет; git remote `https://github.com/olya88lagun-coder/grani-test.git`; путь `C:\dev\grani-test`.
 - Ветка плана `feat/test-login` от `master` после мержа PR #2. PR в `master` — после зелёного CI и согласия пользователя.
 - Команды pnpm в Git Bash: перед `pnpm ...` выполнить `export PATH="/c/Users/olya8/AppData/Roaming/npm:$PATH"`.
 - Имена пакетов: `@grani/db`, `@grani/web`. Сессионные и служебные cookie: `grani_session` (httpOnly, Secure, SameSite=Lax, 30 дней), `grani_pending` (httpOnly, Secure, SameSite=Lax, 1 день), `grani_consent` (httpOnly, Secure, SameSite=Lax, 1 час), `grani_vk_oauth` (httpOnly, Secure, SameSite=Lax, path `/api/auth/vk`, 10 минут). На `http://localhost` флаг Secure не ставится.
