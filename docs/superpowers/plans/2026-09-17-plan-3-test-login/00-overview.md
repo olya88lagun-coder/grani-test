@@ -1,5 +1,7 @@
 # План 3 — Тест и вход: сайт, прохождение теста, вход и бесплатный результат
 
+> **Статус: выполнен 2026-09-17.** 280 тестов + 3 сквозных (Playwright); покрытие: строки 94,9%, ветви 90,5%, функции 93,3%, выражения 93,6%. `next build` без предупреждений, карточка проверена в standalone-сборке.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Задачи лежат в отдельных файлах `task-NN-*.md` этой папки; выполнять по порядку.
 
 **Goal:** Работающий локально сайт grani-test.ru: первый экран, тест из 50 вопросов с сохранением прогресса, вход через Telegram или VK ID с согласием на обработку данных, сохранённый результат с типом, уточнением, шкалами и коротким описанием, картинка-карточка «мой тип» для сторис, CI на GitHub.

@@ -13,9 +13,11 @@
     "typecheck": "pnpm -r --parallel typecheck",
     "build:library": "pnpm --filter @grani/content build:library",
     "dev:db": "node packages/db/scripts/dev-db.mjs",
-    "dev:web": "pnpm --filter @grani/web dev"
+    "dev:web": "pnpm --filter @grani/web dev",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "26.5.1",
     "@vitest/coverage-v8": "5.0.0",
     "typescript": "6.0.3",
