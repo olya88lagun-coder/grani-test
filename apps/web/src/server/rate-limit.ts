@@ -23,6 +23,12 @@ export function createRateLimiter(p: { limit: number; windowMs: number; now?: ()
   };
 }
 
+const FRIEND_ANSWERS_PER_MINUTE = 10;
+const INVITES_PER_MINUTE = 20;
+
+export const friendsLimiter = createRateLimiter({ limit: FRIEND_ANSWERS_PER_MINUTE, windowMs: MINUTE_MS });
+export const invitesLimiter = createRateLimiter({ limit: INVITES_PER_MINUTE, windowMs: MINUTE_MS });
+
 export const resultsLimiter = createRateLimiter({ limit: RESULTS_PER_MINUTE, windowMs: MINUTE_MS });
 
 export function clientKeyFromHeaders(headers: Headers): string {

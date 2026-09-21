@@ -24,12 +24,16 @@ function isAnswer(value: unknown): value is Answer {
   return typeof value === "number" && Number.isInteger(value) && value >= MIN_ANSWER && value <= MAX_ANSWER;
 }
 
-export function parseAnswers(raw: unknown): Answers | null {
+export function parseAnswersFor(ids: ReadonlySet<string>, raw: unknown): Answers | null {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) return null;
   const entries = Object.entries(raw);
-  if (entries.length !== ITEM_IDS.size) return null;
-  for (const [id, value] of entries) if (!ITEM_IDS.has(id) || !isAnswer(value)) return null;
+  if (entries.length !== ids.size) return null;
+  for (const [id, value] of entries) if (!ids.has(id) || !isAnswer(value)) return null;
   return Object.fromEntries(entries) as Answers;
+}
+
+export function parseAnswers(raw: unknown): Answers | null {
+  return parseAnswersFor(ITEM_IDS, raw);
 }
 
 export function computeResult(answers: Answers): ComputedResult {
