@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import {
+  getActivePair,
   acceptPairInvite,
   createTestDb,
   getOrCreatePairInvite,
@@ -87,6 +88,15 @@ describe("acceptPairInvite", () => {
 });
 
 describe("membership and leaving", () => {
+  test("the worker reads an active pair without being a member, but not a left one", async () => {
+    const outcome = await accept((await invite()).token);
+    const pairId = outcome.ok ? outcome.pairId : "";
+
+    expect((await getActivePair(db, pairId))?.members.map((member) => member.user.id)).toEqual([anna.userId, boris.userId]);
+    await leavePair(db, pairId, anna.userId);
+    expect(await getActivePair(db, pairId)).toBeNull();
+  });
+
   test("only members see a pair, and nobody sees it after one leaves", async () => {
     const outcome = await accept((await invite()).token);
     const pairId = outcome.ok ? outcome.pairId : "";

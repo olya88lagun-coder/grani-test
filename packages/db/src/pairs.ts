@@ -1,5 +1,5 @@
 import type { Stability, TraitScores, TypeCode } from "@grani/core";
-import { and, desc, eq, isNull, or } from "drizzle-orm";
+import { and, desc, eq, isNull, or, type SQL } from "drizzle-orm";
 import { type Database } from "./types";
 import { pairInvites, pairs, results } from "./schema";
 import { createInviteToken, isInviteToken } from "./tokens";
@@ -87,16 +87,21 @@ async function loadMember(db: Database, userId: string, resultId: string): Promi
   return user && result ? { user, result } : null;
 }
 
-export async function getPairForMember(db: Database, pairId: string, userId: string): Promise<PairRecord | null> {
-  if (!isUuid(pairId) || !isUuid(userId)) return null;
-  const [row] = await db
-    .select()
-    .from(pairs)
-    .where(and(eq(pairs.id, pairId), isNull(pairs.leftAt), or(eq(pairs.userAId, userId), eq(pairs.userBId, userId))))
-    .limit(1);
+async function loadPair(db: Database, where: SQL | undefined): Promise<PairRecord | null> {
+  const [row] = await db.select().from(pairs).where(where).limit(1);
   if (!row) return null;
   const [a, b] = await Promise.all([loadMember(db, row.userAId, row.resultAId), loadMember(db, row.userBId, row.resultBId)]);
   return a && b ? { id: row.id, createdAt: row.createdAt, members: [a, b] } : null;
+}
+
+export async function getActivePair(db: Database, pairId: string): Promise<PairRecord | null> {
+  if (!isUuid(pairId)) return null;
+  return loadPair(db, and(eq(pairs.id, pairId), isNull(pairs.leftAt)));
+}
+
+export async function getPairForMember(db: Database, pairId: string, userId: string): Promise<PairRecord | null> {
+  if (!isUuid(pairId) || !isUuid(userId)) return null;
+  return loadPair(db, and(eq(pairs.id, pairId), isNull(pairs.leftAt), or(eq(pairs.userAId, userId), eq(pairs.userBId, userId))));
 }
 
 export async function leavePair(db: Database, pairId: string, userId: string): Promise<boolean> {
