@@ -7,7 +7,9 @@ export default defineConfig({
   outputDir: "test-results",
   timeout: 90_000,
   retries: 0,
-  use: { baseURL: "http://localhost:3000", locale: "ru-RU", trace: "retain-on-failure" },
+  // next dev компилирует страницу при первом заходе — переход на новую страницу бывает дольше 5 секунд по умолчанию
+  expect: { timeout: 15_000 },
+  use: { baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000", locale: "ru-RU", trace: "retain-on-failure" },
   projects: [{ name: "mobile", use: { ...devices["Pixel 7"], channel: process.env.PW_CHANNEL ?? "chrome" } }],
   reporter: [["list"], ["html", { outputFolder: "playwright-report", open: "never" }]],
 });

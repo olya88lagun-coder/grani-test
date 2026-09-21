@@ -1,6 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-
-const PAGES = 10;
+import { answerSelfTest } from "./helpers";
 
 async function answerCurrentPage(page: Page, label: string) {
   const choices = page.getByRole("radio", { name: label });
@@ -13,13 +12,7 @@ test("passes the test, logs in and sees the saved result with a story card", asy
   await page.getByRole("link", { name: "Пройти тест" }).click();
   await expect(page).toHaveURL(/\/test$/);
 
-  for (let screen = 1; screen <= PAGES; screen += 1) {
-    await expect(page.getByRole("heading", { name: `Экран ${screen} из ${PAGES}` })).toBeVisible();
-    const next = page.getByRole("button", { name: screen === PAGES ? "Узнать результат" : "Дальше" });
-    await expect(next).toBeDisabled();
-    await answerCurrentPage(page, "Точно про меня");
-    await next.click();
-  }
+  await answerSelfTest(page);
 
   await expect(page).toHaveURL(/\/login$/);
   await expect(page.getByText("Результат посчитан")).toBeVisible();
