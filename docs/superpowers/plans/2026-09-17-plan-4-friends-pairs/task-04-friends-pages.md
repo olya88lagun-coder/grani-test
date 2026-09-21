@@ -251,6 +251,7 @@ export function InviteLink({ endpoint, body, initialUrl, getLabel, shareTitle }:
 .compare__bars { display: grid; gap: 6px; }
 .compare__bar { display: grid; grid-template-columns: 72px 1fr 34px; align-items: center; gap: 9px; font-size: 13px; color: var(--ink-soft); }
 .compare__bar b { font-weight: 400; text-align: right; color: var(--accent); }
+.compare__bar .scale__track { background: var(--bg); }
 .compare__note { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
 ```
 

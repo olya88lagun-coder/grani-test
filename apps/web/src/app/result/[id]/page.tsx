@@ -9,6 +9,7 @@ import { buildResultView } from "@/lib/result-view";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
+import { FriendsBlock } from "./FriendsBlock";
 import { ShareCard } from "./ShareCard";
 
 export const metadata: Metadata = { title: "Мой результат" };
@@ -51,6 +52,8 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           fileName={`grani-${view.dir}.png`}
           typeName={view.name}
         />
+
+        <FriendsBlock resultId={result.id} />
 
         <div className="row">
           <Link className="button button--ghost" href="/test">
