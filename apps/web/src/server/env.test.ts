@@ -12,7 +12,7 @@ const VALID = {
 
 describe("readEnv", () => {
   test("accepts a complete environment", () => {
-    expect(readEnv(VALID)).toEqual(VALID);
+    expect(readEnv(VALID)).toEqual({ ...VALID, vkCommunity: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -21,5 +21,21 @@ describe("readEnv", () => {
     expect(run).toThrow(/SESSION_SECRET/);
     expect(run).toThrow(/VK_CLIENT_ID/);
     expect(run).not.toThrow(/short/);
+  });
+});
+
+describe("VK community settings", () => {
+  const VK = { VK_GROUP_ID: "230000000", VK_CALLBACK_SECRET: "cb-secret", VK_CONFIRMATION_CODE: "a1b2c3" };
+
+  test("are off when not configured", () => {
+    expect(readEnv(VALID).vkCommunity).toBeNull();
+  });
+
+  test("are read together", () => {
+    expect(readEnv({ ...VALID, ...VK }).vkCommunity).toEqual({ groupId: "230000000", callbackSecret: "cb-secret", confirmationCode: "a1b2c3" });
+  });
+
+  test("fail when only some are set", () => {
+    expect(() => readEnv({ ...VALID, VK_GROUP_ID: "230000000" })).toThrow(/VK_CALLBACK_SECRET/);
   });
 });

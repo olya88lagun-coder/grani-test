@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 import {
+  listIdentityNotices,
   addFriendResponse,
   createTestDb,
   getFriendAnsweredNotice,
@@ -41,5 +42,14 @@ describe("getFriendAnsweredNotice", () => {
 
     expect(await getFriendAnsweredNotice(db, inviteId)).toEqual({ ownerUserId: owner.userId, resultId: owner.resultId, friendsCount: 2 });
     expect(await getFriendAnsweredNotice(db, "00000000-0000-0000-0000-000000000000")).toBeNull();
+  });
+});
+
+describe("listIdentityNotices", () => {
+  test("lists every login of the user with its permission", async () => {
+    const vk = await seedUserWithResult(db, { externalId: "333", provider: "vk" });
+
+    expect(await listIdentityNotices(db, vk.userId)).toEqual([{ provider: "vk", canNotify: false }]);
+    expect(await listIdentityNotices(db, "bad")).toEqual([]);
   });
 });

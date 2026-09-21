@@ -34,3 +34,13 @@ export async function getFriendAnsweredNotice(
     .limit(1);
   return row ? { ...row, friendsCount: await countFriendResponses(db, inviteId) } : null;
 }
+
+export type IdentityNotice = { provider: AuthProvider; canNotify: boolean };
+
+export async function listIdentityNotices(db: Database, userId: string): Promise<IdentityNotice[]> {
+  if (!isUuid(userId)) return [];
+  return db
+    .select({ provider: authIdentities.provider, canNotify: authIdentities.canNotify })
+    .from(authIdentities)
+    .where(eq(authIdentities.userId, userId));
+}
