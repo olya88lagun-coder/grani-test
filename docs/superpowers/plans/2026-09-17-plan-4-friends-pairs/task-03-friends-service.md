@@ -417,7 +417,10 @@ export const invitesLimiter = createRateLimiter({ limit: INVITES_PER_MINUTE, win
 `apps/web/package.json` — в `dependencies` добавить `"pg-boss": "12.31.1"`:
 ```bash
 pnpm --filter @grani/web add pg-boss@12.31.1
+pnpm dedupe
 ```
+
+`pnpm dedupe` обязателен: pg-boss приносит `pg`, и без него у `apps/web` и `packages/db` оказываются две копии `drizzle-orm` — typecheck падает с TS2345 в `app/api/health/route.ts` (`sql` из другой копии).
 
 `apps/web/src/server/queue.ts` (по образцу `C:\dev\wishlist\apps\web\src\server\queue.ts`):
 ```ts
