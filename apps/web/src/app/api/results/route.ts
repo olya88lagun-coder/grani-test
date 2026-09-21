@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
-import { isSameOrigin, PENDING_COOKIE, pendingCookieOptions, SESSION_COOKIE } from "@/server/http";
+import { isSameOrigin, PAIR_COOKIE, PENDING_COOKIE, pendingCookieOptions, SESSION_COOKIE } from "@/server/http";
+import { pairReturnPath } from "@/server/pairs-service";
 import { clientKeyFromHeaders, resultsLimiter } from "@/server/rate-limit";
 import { submitAnswers } from "@/server/results-service";
 
@@ -19,7 +20,10 @@ export async function POST(request: NextRequest) {
     request.cookies.get(SESSION_COOKIE)?.value ?? null,
   );
   if (outcome.kind === "invalid") return NextResponse.json({ ok: false, error: "invalid_answers" }, { status: 400 });
-  if (outcome.kind === "saved") return NextResponse.json({ ok: true, redirect: `/result/${outcome.resultId}` });
+  if (outcome.kind === "saved") {
+    const redirect = pairReturnPath(request.cookies.get(PAIR_COOKIE)?.value) ?? `/result/${outcome.resultId}`;
+    return NextResponse.json({ ok: true, redirect });
+  }
   const response = NextResponse.json({ ok: true, redirect: "/login" });
   response.cookies.set(PENDING_COOKIE, outcome.pendingToken, pendingCookieOptions(env.APP_URL));
   return response;

@@ -4,6 +4,7 @@ import {
   CONSENT_COOKIE,
   consentCookieOptions,
   expiredCookieOptions,
+  PAIR_COOKIE,
   PENDING_COOKIE,
   pendingCookieOptions,
   SESSION_COOKIE,
@@ -16,6 +17,7 @@ export function readLoginCookies(request: NextRequest): LoginCookies {
     session: request.cookies.get(SESSION_COOKIE)?.value ?? null,
     pending: request.cookies.get(PENDING_COOKIE)?.value ?? null,
     consent: request.cookies.get(CONSENT_COOKIE)?.value ?? null,
+    pairInvite: request.cookies.get(PAIR_COOKIE)?.value ?? null,
   };
 }
 
