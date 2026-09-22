@@ -1,6 +1,6 @@
 import { FRIEND_ITEMS } from "@grani/content";
 import type { Answers } from "@grani/core";
-import { countFriendResponses, createTestDb, getInviteForResult, seedUserWithResult, type Database } from "@grani/db/testing";
+import { countFriendResponses, createPurchase, createTestDb, getInviteForResult, markPurchaseSucceeded, seedUserWithResult, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { newDeviceId } from "./device";
 import {
@@ -27,7 +27,7 @@ async function answer(value: number, deviceId = newDeviceId(), viewerUserId: str
 
 beforeEach(async () => {
   db = await createTestDb();
-  deps = { db, secret: SECRET, enqueueNotify: vi.fn().mockResolvedValue(undefined) };
+  deps = { db, secret: SECRET, enqueueNotify: vi.fn().mockResolvedValue(undefined), enqueueGenerate: vi.fn().mockResolvedValue(undefined) };
   owner = await seedUserWithResult(db, { externalId: "owner", displayName: "Аня Петрова", gender: "female" });
   token = (await createInviteForOwner(db, owner))!;
 });
@@ -141,5 +141,20 @@ describe("getFriendsSummary", () => {
     expect(summary.friendsCount).toBe(3);
     expect(summary.needed).toBe(0);
     expect(summary.comparison?.traits.extraversion).toEqual({ self: 50, friends: 50, diff: 0, notable: false });
+  });
+});
+
+describe("friends report", () => {
+  test("the third answer enqueues the friends section only when the full report is paid", async () => {
+    await answer(3);
+    await answer(3);
+    await answer(3);
+    expect(deps.enqueueGenerate).not.toHaveBeenCalled();
+
+    const purchase = await createPurchase(db, { userId: owner.userId, product: "full", target: { resultId: owner.resultId }, amountKopecks: 29900 });
+    await markPurchaseSucceeded(db, purchase.id, new Date());
+    await answer(4);
+
+    expect(deps.enqueueGenerate).toHaveBeenCalledWith({ kind: "friends", resultId: owner.resultId });
   });
 });

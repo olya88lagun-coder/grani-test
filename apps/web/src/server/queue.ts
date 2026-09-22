@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
-import { NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, type NotifyJob } from "@grani/core";
+import { GENERATE_JOB_OPTIONS, generateJobKey, NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, type GenerateJob, type NotifyJob } from "@grani/core";
+import { jobIdFor } from "@grani/db";
 import { PgBoss } from "pg-boss";
 import { getEnv } from "./env";
 
@@ -19,12 +19,6 @@ function queue(): Promise<PgBoss> {
   return holder.__graniQueue;
 }
 
-// Одинаковый ключ → одинаковый id задачи: pg-boss не вставит её второй раз
-function jobIdFor(key: string): string {
-  const hex = createHash("sha256").update(key).digest("hex");
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-8${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
-}
-
 export async function enqueueNotify(job: NotifyJob): Promise<void> {
   try {
     const boss = await queue();
@@ -32,5 +26,15 @@ export async function enqueueNotify(job: NotifyJob): Promise<void> {
   } catch (error) {
     // Действие пользователя уже сохранено; потерянное уведомление не должно его ломать
     console.error("enqueue notify failed", { kind: job.kind, error: String(error) });
+  }
+}
+
+export async function enqueueGenerate(job: GenerateJob): Promise<void> {
+  try {
+    const boss = await queue();
+    await boss.send(QUEUES.generate, job, { ...GENERATE_JOB_OPTIONS, id: jobIdFor(generateJobKey(job)) });
+  } catch (error) {
+    // Оплата уже зафиксирована; страница ожидания поставит задачу заново
+    console.error("enqueue generate failed", { kind: job.kind, error: String(error) });
   }
 }

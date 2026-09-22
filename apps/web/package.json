@@ -9,6 +9,7 @@
     "typecheck": "tsc -p tsconfig.json"
   },
   "dependencies": {
+    "@grani/ai": "workspace:*",
     "@grani/content": "workspace:*",
     "@grani/core": "workspace:*",
     "@grani/db": "workspace:*",

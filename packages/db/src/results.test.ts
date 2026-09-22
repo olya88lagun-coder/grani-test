@@ -3,7 +3,9 @@ import {
   createResult,
   createTestDb,
   getLatestResultId,
+  getResult,
   getResultForOwner,
+  seedUserWithResult,
   upsertUserFromIdentity,
   type Database,
   type NewResult,
@@ -63,5 +65,14 @@ describe("results", () => {
     const latest = await createResult(db, { ...newResult(ownerId), typeCode: "----" });
 
     expect(await getLatestResultId(db, ownerId)).toBe(latest.id);
+  });
+});
+
+describe("getResult", () => {
+  test("reads a result by id without an owner check", async () => {
+    const { resultId } = await seedUserWithResult(db, { externalId: "worker-read" });
+
+    expect((await getResult(db, resultId))?.id).toBe(resultId);
+    expect(await getResult(db, "not-a-uuid")).toBeNull();
   });
 });

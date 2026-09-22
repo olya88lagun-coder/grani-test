@@ -1,5 +1,5 @@
-import { FRIEND_ITEMS, friendItemText } from "@grani/content";
-import { compareWithFriends, MIN_FRIENDS, scoreItems, type Answers, type FriendComparison, type Gender, type NotifyJob } from "@grani/core";
+import { compareFriendAnswers, FRIEND_ITEMS, friendItemText } from "@grani/content";
+import { friendsReportDue, MIN_FRIENDS, type Answers, type FriendComparison, type GenerateJob, type Gender, type NotifyJob } from "@grani/core";
 import {
   addFriendResponse,
   countFriendResponses,
@@ -8,12 +8,18 @@ import {
   getOrCreateInvite,
   getResultForOwner,
   listFriendAnswers,
+  listOwnedProducts,
   type Database,
 } from "@grani/db";
 import { deviceHash } from "./device";
 import { parseAnswersFor } from "./results-service";
 
-export type FriendsDeps = { db: Database; secret: string; enqueueNotify: (job: NotifyJob) => Promise<void> };
+export type FriendsDeps = {
+  db: Database;
+  secret: string;
+  enqueueNotify: (job: NotifyJob) => Promise<void>;
+  enqueueGenerate: (job: GenerateJob) => Promise<void>;
+};
 export type FriendsSummary = { inviteToken: string | null; friendsCount: number; needed: number; comparison: FriendComparison | null };
 export type FriendPage = { token: string; ownerFirstName: string; ownerGender: Gender; items: readonly { id: string; text: string }[] };
 export type FriendSubmitOutcome =
@@ -69,6 +75,9 @@ export async function submitFriendAnswers(
   await deps.enqueueNotify({ kind: "friend_answered", inviteId: invite.id, friendsCount }).catch((error: unknown) => {
     console.error("friend notification was not enqueued", { inviteId: invite.id, error: String(error) });
   });
+  // Раздел «как меня видят другие» генерируется один раз, когда оплачен полный разбор и ответили трое
+  const owned = friendsCount >= MIN_FRIENDS ? await listOwnedProducts(deps.db, { resultId: invite.resultId }) : [];
+  if (friendsReportDue(owned, friendsCount)) await deps.enqueueGenerate({ kind: "friends", resultId: invite.resultId });
   return { kind: "added", friendsCount };
 }
 
@@ -82,7 +91,5 @@ export async function getFriendsSummary(db: Database, resultId: string): Promise
 
   const context = await getInviteByToken(db, invite.token);
   if (!context) return { ...base, comparison: null };
-  const selfSubset = scoreItems(FRIEND_ITEMS, context.ownerAnswers);
-  const friendScores = friendAnswers.map((answers) => scoreItems(FRIEND_ITEMS, answers));
-  return { ...base, comparison: compareWithFriends(selfSubset, friendScores) };
+  return { ...base, comparison: compareFriendAnswers(context.ownerAnswers, friendAnswers) };
 }

@@ -1,0 +1,53 @@
+import { formatRub, PRODUCT_PRICES, type Product } from "@grani/core";
+import type { Metadata } from "next";
+import { OFFER_VERSION, OPERATOR } from "@/lib/legal";
+import { REPORT_DISCLAIMER } from "@/lib/report-view";
+import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
+
+export const metadata: Metadata = { title: "Публичная оферта" };
+
+const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
+
+export default function OfferPage() {
+  return (
+    <main className="page">
+      <article className="stack">
+        <h1 className="display">Публичная оферта</h1>
+        <p className="muted">Редакция {OFFER_VERSION}</p>
+        <h2>Исполнитель</h2>
+        <p>
+          {OPERATOR.name}, плательщик налога на профессиональный доход (самозанятая). Почта для вопросов и возвратов:{" "}
+          <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>.
+        </p>
+        <h2>Услуги и цены</h2>
+        <p>Исполнитель предоставляет доступ к текстовым материалам для самопознания на сайте grani-test.ru, составленным по результату теста.</p>
+        <ul>
+          {PRODUCTS.map((product) => (
+            <li key={product}>
+              {PRODUCT_DESCRIPTIONS[product]} — {formatRub(PRODUCT_PRICES[product])}
+            </li>
+          ))}
+        </ul>
+        <p>Главы по сферам доступны после покупки полного разбора. Разбор пары открывается обоим участникам пары, оплачивает любой из них.</p>
+        <h2>Порядок оказания</h2>
+        <p>
+          После подтверждения оплаты материал готовится автоматически, обычно около минуты, и становится доступен на сайте после входа через Telegram или VK ID.
+          Раздел «Как меня видят другие» появляется, когда на вопросы о покупателе ответят не меньше трёх друзей. Услуга считается оказанной, когда материал
+          открыт на сайте.
+        </p>
+        <h2>Возраст</h2>
+        <p>Платные услуги предназначены для лиц старше 18 лет. Оплачивая услугу, покупатель подтверждает, что ему есть 18 лет.</p>
+        <h2>Оплата и чек</h2>
+        <p>Оплата принимается через сервис ЮKassa. Чек формируется в приложении «Мой налог» и отправляется покупателю средствами ЮKassa.</p>
+        <h2>Возвраты</h2>
+        <p>
+          Если оплаченный материал не удалось выдать, исполнитель возвращает деньги полностью — напишите на {OPERATOR.email}. Если участник пары выходит из
+          неё, страница пары и разбор пары скрываются у обоих, деньги за разбор пары не возвращаются.
+        </p>
+        <h2>Данные для подготовки материалов</h2>
+        <p>Для подготовки текста используются только баллы теста и уровни черт — без имени и других данных, по которым можно узнать покупателя.</p>
+        <p className="muted">{REPORT_DISCLAIMER}</p>
+      </article>
+    </main>
+  );
+}

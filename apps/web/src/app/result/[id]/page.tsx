@@ -12,6 +12,7 @@ import { requireUser } from "@/server/viewer";
 import { FriendsBlock } from "./FriendsBlock";
 import { NotificationsBlock } from "./NotificationsBlock";
 import { PairsBlock } from "./PairsBlock";
+import { ReportOffer } from "./ReportOffer";
 import { ShareCard } from "./ShareCard";
 
 export const metadata: Metadata = { title: "Мой результат" };
@@ -56,6 +57,8 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         />
 
         <FriendsBlock resultId={result.id} />
+
+        <ReportOffer result={result} />
 
         <PairsBlock userId={user.id} resultId={result.id} />
 

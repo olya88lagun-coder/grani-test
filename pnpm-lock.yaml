@@ -184,6 +184,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@grani/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@grani/content':
         specifier: workspace:*
         version: link:../../packages/content
@@ -224,6 +227,12 @@ importers:
 
   apps/worker:
     dependencies:
+      '@grani/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
+      '@grani/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@grani/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -243,6 +252,18 @@ importers:
       esbuild:
         specifier: 0.28.2
         version: 0.28.2
+
+  packages/ai:
+    dependencies:
+      '@grani/content':
+        specifier: workspace:*
+        version: link:../content
+      '@grani/core':
+        specifier: workspace:*
+        version: link:../core
+      zod:
+        specifier: 4.6.5
+        version: 4.6.5
 
   packages/content:
     dependencies:

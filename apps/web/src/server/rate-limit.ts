@@ -34,3 +34,7 @@ export const resultsLimiter = createRateLimiter({ limit: RESULTS_PER_MINUTE, win
 export function clientKeyFromHeaders(headers: Headers): string {
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
+
+const PURCHASES_PER_MINUTE = 10;
+
+export const purchasesLimiter = createRateLimiter({ limit: PURCHASES_PER_MINUTE, windowMs: MINUTE_MS });

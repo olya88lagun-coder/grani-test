@@ -1,8 +1,11 @@
-import { QUEUES, type NotifyJob } from "@grani/core";
-import { createDb } from "@grani/db";
+import { getLibrary } from "@grani/content/data";
+import { NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, type GenerateJob, type NotifyJob } from "@grani/core";
+import { createDb, jobIdFor } from "@grani/db";
 import { Api } from "grammy";
 import { PgBoss } from "pg-boss";
+import { createWriter } from "./ai";
 import { readWorkerEnv } from "./env";
+import { runGenerate } from "./generate";
 import { log } from "./log";
 import { runNotify } from "./notify";
 import { dryRunSender, type Senders } from "./senders";
@@ -27,6 +30,23 @@ const boss = new PgBoss({ connectionString: env.DATABASE_URL, max: env.poolMax }
 boss.on("error", (error) => log("error", "pg-boss error", { error: String(error) }));
 await boss.start();
 await boss.createQueue(QUEUES.notify);
+await boss.createQueue(QUEUES.generate);
+
+const writer = createWriter(env.ai, fetch);
+const library = getLibrary();
+const enqueueNotify = async (job: NotifyJob) => {
+  await boss.send(QUEUES.notify, job, { ...NOTIFY_JOB_OPTIONS, id: jobIdFor(notifyJobKey(job)) });
+};
+
+await boss.work<GenerateJob>(QUEUES.generate, async ([job]) => {
+  if (!job) return;
+  try {
+    await runGenerate(job.data, { db, library, writer, log, enqueueNotify });
+  } catch (error) {
+    log("warn", "generate job failed", { kind: job.data.kind, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
+    throw error;
+  }
+});
 
 await boss.work<NotifyJob>(QUEUES.notify, async ([job]) => {
   if (!job) return;
@@ -40,7 +60,7 @@ await boss.work<NotifyJob>(QUEUES.notify, async ([job]) => {
   }
 });
 
-log("info", "worker started", { telegram: senders.telegram !== undefined, vk: senders.vk !== undefined, dryRun: env.dryRun });
+log("info", "worker started", { telegram: senders.telegram !== undefined, vk: senders.vk !== undefined, dryRun: env.dryRun, ai: env.ai.provider });
 
 let stopping = false;
 async function shutdown(signal: string) {

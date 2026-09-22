@@ -1,6 +1,7 @@
-import { compatibilityLevel, compatibilityScore, TRAITS, typeName, type Gender, type Trait } from "@grani/core";
+import { parseSections, type PairSections } from "@grani/ai";
+import { compatibilityLevel, compatibilityScore, formatRub, PRODUCT_PRICES, TRAITS, typeName, unlockedKinds, type Gender, type Product, type Trait } from "@grani/core";
 import { compatibilityTexts, typeCodeToDir, type Library } from "@grani/content";
-import type { PairMember, PairRecord } from "@grani/db";
+import type { PairMember, PairRecord, ReportRecord } from "@grani/db";
 import { firstName } from "@/server/friends-service";
 import { TRAIT_LABELS } from "./result-view";
 
@@ -38,4 +39,27 @@ export function pairConsentLabel(inviterFirstName: string, gender: Gender): stri
   // Без пола местоимение не угадываем: формулировка про обоих не требует ни «её», ни «его», ни склонения имени
   if (gender === null) return `${inviterFirstName} и я увидим типы и шкалы друг друга`;
   return `${inviterFirstName} увидит мой тип и шкалы, а я — ${OBJECT_PRONOUNS[gender]}`;
+}
+
+export const PAIR_SECTION_TITLES: Readonly<Record<keyof PairSections, string>> = {
+  similar: "В чём вы похожи",
+  differences: "Где вы разные и как это использовать",
+  conflicts: "Откуда будут конфликты и как договариваться",
+  home_money: "Быт и деньги",
+  support: "Как поддерживать друг друга",
+};
+
+export type PairReportView =
+  | { state: "available"; price: string }
+  | { state: "preparing" }
+  | { state: "ready"; sections: readonly { key: keyof PairSections; title: string; text: string }[] };
+
+export function buildPairReportView(p: { owned: readonly Product[]; report: ReportRecord | null }): PairReportView {
+  const sections = p.report ? parseSections("pair", p.report.sections) : null;
+  if (sections) {
+    const keys = Object.keys(PAIR_SECTION_TITLES) as (keyof PairSections)[];
+    return { state: "ready", sections: keys.map((key) => ({ key, title: PAIR_SECTION_TITLES[key], text: sections[key] })) };
+  }
+  if (unlockedKinds(p.owned).has("pair")) return { state: "preparing" };
+  return { state: "available", price: formatRub(PRODUCT_PRICES.pair) };
 }

@@ -1,13 +1,7 @@
 import { TRAITS, traitLevel, typeName, isBorderline, type Gender, type Stability, type Trait, type TraitScores, type TypeCode } from "@grani/core";
-import { stabilityText, traitBlock, typeCodeToDir, typeTexts, type Library } from "@grani/content";
+import { stabilityText, TRAIT_LABELS, traitBlock, typeCodeToDir, typeTexts, type Library } from "@grani/content";
 
-export const TRAIT_LABELS: Readonly<Record<Trait, string>> = {
-  openness: "Открытость опыту",
-  conscientiousness: "Добросовестность",
-  extraversion: "Экстраверсия",
-  agreeableness: "Доброжелательность",
-  stability: "Эмоциональная устойчивость",
-};
+export { TRAIT_LABELS } from "@grani/content";
 
 const STABILITY_TAGS: Readonly<Record<Stability, string>> = { calm: "Спокойствие", sensitive: "Чувствительность" };
 

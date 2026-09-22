@@ -7,6 +7,7 @@ import { buildPairView, type PairPerson } from "@/lib/pair-view";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
+import { PairReport } from "./PairReport";
 
 export const metadata: Metadata = { title: "Пара" };
 
@@ -68,6 +69,8 @@ export default async function PairPage({ params }: { params: Promise<{ id: strin
           </div>
         ))}
       </section>
+
+      <PairReport pairId={view.pairId} viewerResultId={pair.members.find((member) => member.user.id === user.id)!.result.id} />
 
       <details className="card card--paper">
         <summary className="muted">Выйти из пары</summary>

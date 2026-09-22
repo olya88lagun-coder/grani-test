@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 
-export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fileName: string; typeName: string }) {
+type ShareCardProps = { cardUrl: string; fileName: string; typeName: string; eyebrow?: string; heading?: string; shareTitle?: string };
+
+export function ShareCard({ cardUrl, fileName, typeName, eyebrow = "Для сторис", heading = "Карточка «мой тип»", shareTitle = `Мой тип — ${typeName}` }: ShareCardProps) {
   const [status, setStatus] = useState<string | null>(null);
 
   // Сторис принимают файл, а не ссылку: сначала пробуем поделиться картинкой, иначе — скачиваем её
@@ -12,7 +14,7 @@ export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fi
       const blob = await (await fetch(cardUrl)).blob();
       const file = new File([blob], fileName, { type: "image/png" });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ files: [file], title: `Мой тип — ${typeName}` });
+        await navigator.share({ files: [file], title: shareTitle });
         return;
       }
       const link = document.createElement("a");
@@ -29,8 +31,8 @@ export function ShareCard({ cardUrl, fileName, typeName }: { cardUrl: string; fi
 
   return (
     <section className="card card--paper stack" aria-labelledby="share">
-      <p className="eyebrow">Для сторис</p>
-      <h2 id="share">Карточка «мой тип»</h2>
+      <p className="eyebrow">{eyebrow}</p>
+      <h2 id="share">{heading}</h2>
       <img src={cardUrl} alt={`Карточка типа «${typeName}»`} width={270} height={480} style={{ borderRadius: "var(--radius)" }} />
       <button type="button" className="button" onClick={share}>
         Поделиться <span aria-hidden="true">→</span>
