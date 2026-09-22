@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Golos_Text } from "next/font/google";
 import type { ReactNode } from "react";
+import { Analytics } from "@/components/Analytics";
 import { Footer } from "@/components/Footer";
+import { YANDEX_VERIFICATION } from "@/lib/analytics";
 import "./globals.css";
 
 const display = Cormorant_Garamond({ subsets: ["latin", "cyrillic"], weight: ["300"], variable: "--font-cormorant" });
@@ -17,6 +19,7 @@ export const metadata: Metadata = {
   // По умолчанию страницы закрыты от поиска: результаты, разборы и ссылки-приглашения личные.
   // Публичные страницы включают индексацию через publicMetadata
   robots: { index: false, follow: false },
+  verification: { yandex: YANDEX_VERIFICATION },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -25,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );

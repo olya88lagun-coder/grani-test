@@ -48,6 +48,7 @@ export async function FriendsBlock({ resultId }: { resultId: string }) {
         initialUrl={shareUrl}
         getLabel="Получить ссылку для друзей"
         shareTitle="Ответь на 20 вопросов обо мне"
+        shareGoal="invite_shared"
       />
     </section>
   );

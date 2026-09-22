@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { withLoginMark } from "../lib/analytics";
 import type { AppEnv } from "./env";
 import {
   CONSENT_COOKIE,
@@ -26,7 +27,7 @@ export function loginResponse(env: AppEnv, outcome: LoginOutcome): NextResponse 
     console.warn("login failed", outcome.error);
     return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(outcome.error)}`, env.APP_URL), 303);
   }
-  const response = NextResponse.redirect(new URL(outcome.redirectTo, env.APP_URL), 303);
+  const response = NextResponse.redirect(new URL(withLoginMark(outcome.redirectTo), env.APP_URL), 303);
   response.cookies.set(SESSION_COOKIE, outcome.sessionToken, sessionCookieOptions(env.APP_URL));
   response.cookies.set(PENDING_COOKIE, "", expiredCookieOptions(pendingCookieOptions(env.APP_URL)));
   response.cookies.set(CONSENT_COOKIE, "", expiredCookieOptions(consentCookieOptions(env.APP_URL)));

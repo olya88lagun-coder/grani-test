@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CookieSettingsButton } from "./CookieSettingsButton";
 
 const LINKS = [
   { href: "/types", label: "Типы личности" },
@@ -19,6 +20,7 @@ export function Footer() {
             {link.label}
           </Link>
         ))}
+        <CookieSettingsButton />
       </nav>
     </footer>
   );

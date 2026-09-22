@@ -21,7 +21,7 @@ export async function PairsBlock({ userId, resultId }: { userId: string; resultI
           ))}
         </ul>
       )}
-      <InviteLink endpoint="/api/pairs/invites" body={{ resultId }} initialUrl={null} getLabel="Позвать партнёра" shareTitle="Проверим нашу совместимость?" />
+      <InviteLink endpoint="/api/pairs/invites" body={{ resultId }} initialUrl={null} getLabel="Позвать партнёра" shareTitle="Проверим нашу совместимость?" shareGoal="pair_invite_shared" />
     </section>
   );
 }

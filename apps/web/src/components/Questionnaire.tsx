@@ -3,6 +3,7 @@
 import type { Answer, Answers } from "@grani/core";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { reachGoal, type Goal } from "@/lib/analytics";
 import {
   ANSWER_LABELS,
   PAGE_SIZE,
@@ -25,6 +26,8 @@ export type QuestionnaireProps = {
   submitUrl: string;
   submitLabel: string;
   pageSize?: number;
+  startGoal?: Goal;
+  finishGoal?: Goal;
 };
 
 const ANSWER_VALUES = [1, 2, 3, 4, 5] as const satisfies readonly Answer[];
@@ -46,7 +49,7 @@ function writeStorage(key: string, value: string | null): void {
   }
 }
 
-export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageSize = PAGE_SIZE }: QuestionnaireProps) {
+export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal }: QuestionnaireProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [page, setPage] = useState(0);
@@ -68,6 +71,8 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
   const done = answeredCount(items, answers);
 
   function choose(id: string, value: Answer) {
+    // Начало — первый ответ в пустом тесте; восстановленный прогресс не считается новым началом
+    if (startGoal && answeredCount(items, answers) === 0) reachGoal(startGoal);
     const next = withAnswer(answers, id, value);
     setAnswers(next);
     writeStorage(storageKey, JSON.stringify(next));
@@ -92,6 +97,7 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
       const body = (await response.json()) as { ok: boolean; redirect?: string; error?: string };
       if (body.ok && body.redirect) {
         writeStorage(storageKey, null);
+        if (finishGoal) reachGoal(finishGoal);
         router.push(body.redirect);
         return;
       }

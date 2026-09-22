@@ -146,6 +146,9 @@ details.card[open] > summary { margin-bottom: 21px; }
 .footer { padding-top: 21px; padding-bottom: 42px; font-size: 14px; color: var(--ink-soft); }
 .footer nav { display: flex; flex-wrap: wrap; gap: 10px 21px; padding-top: 21px; border-top: 1px solid var(--line); }
 .footer a, .footer .link-button { color: var(--ink-soft); }
+.cookie-banner { position: fixed; z-index: 10; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; margin-inline: auto; padding: 21px; border-radius: var(--radius); background: var(--surface-2); color: var(--ink); font-size: 14px; }
+.cookie-banner p { margin: 0 0 14px; }
+body.has-cookie-banner { padding-bottom: 220px; }
 .link-button { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
