@@ -4,13 +4,14 @@ import { verifyTelegramLoginWidget } from "./auth/telegram";
 import { signConsent, signSession, signVkState, verifyConsent, verifySession, verifyVkState } from "./auth/tokens";
 import { buildVkAuthorizeUrl, createPkcePair, exchangeVkCode, fetchVkUser, type FetchFn } from "./auth/vk";
 import type { AppEnv } from "./env";
+import { pairReturnPath } from "./pairs-service";
 import { savePendingResult } from "./results-service";
 
 export const CONSENT_VERSION = "2026-09-v1";
 const STATE_BYTES = 24;
 
 export type LoginDeps = { db: Database; env: AppEnv; now: () => Date; fetchFn: FetchFn };
-export type LoginCookies = { session: string | null; pending: string | null; consent: string | null };
+export type LoginCookies = { session: string | null; pending: string | null; consent: string | null; pairInvite?: string | null };
 export type LoginOutcome = { ok: true; sessionToken: string; redirectTo: string } | { ok: false; error: string };
 
 const vkRedirectUri = (env: AppEnv) => new URL("/api/auth/vk/callback", env.APP_URL).toString();
@@ -30,7 +31,8 @@ export async function completeLogin(deps: LoginDeps, identity: IdentityInput, co
   return {
     ok: true,
     sessionToken: await signSession(userId, deps.env.SESSION_SECRET),
-    redirectTo: resultId ? `/result/${resultId}` : "/test",
+    // Партнёр, пришедший по приглашению, возвращается к согласию; отложенные ответы уже сохранены выше
+    redirectTo: pairReturnPath(cookies.pairInvite) ?? (resultId ? `/result/${resultId}` : "/test"),
   };
 }
 

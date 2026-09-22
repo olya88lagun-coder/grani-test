@@ -2,6 +2,7 @@ export const SESSION_COOKIE = "grani_session";
 export const PENDING_COOKIE = "grani_pending";
 export const CONSENT_COOKIE = "grani_consent";
 export const VK_STATE_COOKIE = "grani_vk_oauth";
+export const PAIR_COOKIE = "grani_pair";
 
 const DAY_SECONDS = 86400;
 const SESSION_MAX_AGE_SECONDS = 30 * DAY_SECONDS;
@@ -18,6 +19,7 @@ function options(appUrl: string, maxAge: number, path = "/"): CookieOptions {
 export const sessionCookieOptions = (appUrl: string) => options(appUrl, SESSION_MAX_AGE_SECONDS);
 export const pendingCookieOptions = (appUrl: string) => options(appUrl, PENDING_MAX_AGE_SECONDS);
 export const consentCookieOptions = (appUrl: string) => options(appUrl, CONSENT_MAX_AGE_SECONDS);
+export const pairCookieOptions = (appUrl: string) => options(appUrl, DAY_SECONDS);
 export const vkStateCookieOptions = (appUrl: string) => options(appUrl, VK_STATE_MAX_AGE_SECONDS, "/api/auth/vk");
 
 export function expiredCookieOptions(cookie: CookieOptions): CookieOptions {

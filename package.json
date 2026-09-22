@@ -14,6 +14,7 @@
     "build:library": "pnpm --filter @grani/content build:library",
     "dev:db": "node packages/db/scripts/dev-db.mjs",
     "dev:web": "pnpm --filter @grani/web dev",
+    "dev:worker": "pnpm --filter @grani/worker dev",
     "test:e2e": "playwright test -c e2e/playwright.config.ts"
   },
   "devDependencies": {

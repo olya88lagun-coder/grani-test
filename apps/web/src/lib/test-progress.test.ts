@@ -8,6 +8,7 @@ import {
   pageCount,
   pageItems,
   parseStoredProgress,
+  submitErrorMessage,
   withAnswer,
 } from "./test-progress";
 
@@ -67,5 +68,24 @@ describe("stored progress", () => {
 
   test.each([null, "", "not json", "[1,2]", "null", "42"])("returns no answers for %j", (raw) => {
     expect(parseStoredProgress(raw, items)).toEqual({});
+  });
+});
+
+describe("custom page size", () => {
+  test("splits and resumes by the given page size", () => {
+    expect(pageCount(12, 4)).toBe(3);
+    expect(pageItems(items, 1, 4).map((item) => item.id)).toEqual(["q-5", "q-6", "q-7", "q-8"]);
+    expect(isPageComplete(items, answerFirst(4), 0, 4)).toBe(true);
+    expect(firstIncompletePage(items, answerFirst(9), 4)).toBe(2);
+  });
+});
+
+describe("submitErrorMessage", () => {
+  test("explains known errors and falls back for the rest", () => {
+    expect(submitErrorMessage("already_answered")).toMatch(/уже ответ/i);
+    expect(submitErrorMessage("own_invite")).toMatch(/ваша ссылка/i);
+    expect(submitErrorMessage("rate_limited")).toMatch(/минуту/i);
+    expect(submitErrorMessage(undefined)).toMatch(/интернет/i);
+    expect(submitErrorMessage("something_new")).toMatch(/интернет/i);
   });
 });

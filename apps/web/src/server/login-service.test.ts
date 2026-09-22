@@ -1,6 +1,6 @@
 import { createHash, createHmac } from "node:crypto";
 import { SELF_ITEMS } from "@grani/content";
-import { createTestDb, getResultForOwner, getUser, type Database } from "@grani/db/testing";
+import { createTestDb, getLatestResultId, getResultForOwner, getUser, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { signPending, verifySession } from "./auth/tokens";
 import type { AppEnv } from "./env";
@@ -24,6 +24,7 @@ const ENV: AppEnv = {
   TELEGRAM_BOT_TOKEN: "123456:TEST-TOKEN",
   TELEGRAM_BOT_USERNAME: "test_grani_bot",
   VK_CLIENT_ID: "555",
+  vkCommunity: null,
 };
 const NO_COOKIES: LoginCookies = { session: null, pending: null, consent: null };
 const ANNA = { provider: "telegram", externalId: "42", displayName: "Аня", gender: null } as const;
@@ -52,6 +53,16 @@ beforeEach(async () => {
 });
 
 describe("completeLogin", () => {
+  test("returns a partner to the pair invite after login, still saving pending answers", async () => {
+    const pairInvite = "p".repeat(24);
+
+    const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent: await giveConsent(deps), pending: await pendingToken(), pairInvite });
+
+    expect(outcome.ok && outcome.redirectTo).toBe(`/p/${pairInvite}`);
+    const userId = outcome.ok ? await verifySession(outcome.sessionToken, ENV.SESSION_SECRET) : null;
+    expect(userId && (await getLatestResultId(db, userId))).toMatch(/^[0-9a-f-]{36}$/);
+  });
+
   test("does not create a user without consent and keeps the answers", async () => {
     const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, pending: await pendingToken() });
 

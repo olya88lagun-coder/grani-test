@@ -36,7 +36,7 @@
   function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void>; // бросает, только если ничего не отправлено и была временная ошибка
 
   // env.ts
-  type WorkerEnv = { DATABASE_URL: string; APP_URL: string; telegramToken: string | null; vkGroupToken: string | null; dryRun: boolean };
+  type WorkerEnv = { DATABASE_URL: string; APP_URL: string; telegramToken: string | null; vkGroupToken: string | null; dryRun: boolean; poolMax: number };
   function readWorkerEnv(source?: Record<string, string | undefined>): WorkerEnv;
   ```
 
@@ -108,7 +108,7 @@ import { readWorkerEnv } from "./env";
 const BASE = { DATABASE_URL: "postgres://u:p@db/grani", APP_URL: "https://grani-test.ru" };
 
 test("works without any messenger configured", () => {
-  expect(readWorkerEnv(BASE)).toEqual({ ...BASE, telegramToken: null, vkGroupToken: null, dryRun: false });
+  expect(readWorkerEnv(BASE)).toEqual({ ...BASE, telegramToken: null, vkGroupToken: null, dryRun: false, poolMax: 3 });
 });
 
 test("reads tokens and the dry run switch", () => {
@@ -117,7 +117,13 @@ test("reads tokens and the dry run switch", () => {
     telegramToken: "123:abc",
     vkGroupToken: "vk1.a.token",
     dryRun: true,
+    poolMax: 3,
   });
+});
+
+test("takes the pool size from DATABASE_POOL_MAX, like the site", () => {
+  expect(readWorkerEnv({ ...BASE, DATABASE_POOL_MAX: "1" }).poolMax).toBe(1);
+  expect(() => readWorkerEnv({ ...BASE, DATABASE_POOL_MAX: "0" })).toThrow(/DATABASE_POOL_MAX/);
 });
 
 test("names invalid variables without printing values", () => {
@@ -304,8 +310,16 @@ describe("pair_created", () => {
   test("asks for a retry only when nothing was delivered because of a temporary error", async () => {
     const { pairId } = await createPair();
     telegram.mockResolvedValue("failed");
+    vk.mockResolvedValue("failed");
 
     await expect(runNotify({ kind: "pair_created", pairId }, deps)).rejects.toThrow(/retry/);
+  });
+
+  test("does not retry when one member already got the message", async () => {
+    const { pairId } = await createPair();
+    telegram.mockResolvedValue("failed");
+
+    await expect(runNotify({ kind: "pair_created", pairId }, deps)).resolves.toBeUndefined();
   });
 
   test("skips providers without a configured sender", async () => {
@@ -357,9 +371,11 @@ const schema = z.object({
   TELEGRAM_BOT_TOKEN: z.string().regex(/^\d+:[\w-]+$/).optional(),
   VK_GROUP_TOKEN: z.string().min(1).optional(),
   NOTIFICATIONS_DRY_RUN: z.enum(["0", "1"]).optional(),
+  // Локальная PGlite-БД путает одновременные запросы с разных соединений: там DATABASE_POOL_MAX=1, как у сайта
+  DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(20).default(3),
 });
 
-export type WorkerEnv = { DATABASE_URL: string; APP_URL: string; telegramToken: string | null; vkGroupToken: string | null; dryRun: boolean };
+export type WorkerEnv = { DATABASE_URL: string; APP_URL: string; telegramToken: string | null; vkGroupToken: string | null; dryRun: boolean; poolMax: number };
 
 export function readWorkerEnv(source: Record<string, string | undefined> = process.env): WorkerEnv {
   const parsed = schema.safeParse(source);
@@ -374,6 +390,7 @@ export function readWorkerEnv(source: Record<string, string | undefined> = proce
     telegramToken: env.TELEGRAM_BOT_TOKEN ?? null,
     vkGroupToken: env.VK_GROUP_TOKEN ?? null,
     dryRun: env.NOTIFICATIONS_DRY_RUN === "1",
+    poolMax: env.DATABASE_POOL_MAX,
   };
 }
 ```
@@ -540,11 +557,10 @@ import { dryRunSender, type Senders } from "./senders";
 import { createTelegramSender } from "./telegram";
 import { createVkSender } from "./vk";
 
-const DB_POOL = 3;
 const SHUTDOWN_TIMEOUT_MS = 20_000;
 
 const env = readWorkerEnv();
-const db = createDb(env.DATABASE_URL, { maxConnections: DB_POOL });
+const db = createDb(env.DATABASE_URL, { maxConnections: env.poolMax });
 
 function buildSenders(): Senders {
   if (env.dryRun) return { telegram: dryRunSender("telegram", log), vk: dryRunSender("vk", log) };
@@ -555,7 +571,7 @@ function buildSenders(): Senders {
 }
 
 const senders = buildSenders();
-const boss = new PgBoss({ connectionString: env.DATABASE_URL, max: DB_POOL });
+const boss = new PgBoss({ connectionString: env.DATABASE_URL, max: env.poolMax });
 boss.on("error", (error) => log("error", "pg-boss error", { error: String(error) }));
 await boss.start();
 await boss.createQueue(QUEUES.notify);
@@ -566,7 +582,8 @@ await boss.work<NotifyJob>(QUEUES.notify, async ([job]) => {
     await runNotify(job.data, { db, senders, appUrl: env.APP_URL, log });
   } catch (error) {
     // pg-boss пометит задачу для повтора, но в лог контейнера без этого ничего не попадёт
-    log("warn", "notify job failed", { kind: job.data.kind, error: String(error) });
+    // У ошибок Drizzle в тексте только запрос, а причина (ECONNRESET, нарушение ограничения) лежит в cause
+    log("warn", "notify job failed", { kind: job.data.kind, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
   }
 });

@@ -16,7 +16,8 @@
 ```ts
 import { expect, type Browser, type BrowserContext, type Page } from "@playwright/test";
 
-const BASE_URL = "http://localhost:3000";
+// Тот же адрес, что в playwright.config.ts: E2E_BASE_URL позволяет гонять сценарии против второго локального сайта
+export const BASE_URL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 
 export async function answerAll(page: Page, p: { pages: number; perPage: number; label: string; submit: string }) {
   for (let screen = 1; screen <= p.pages; screen += 1) {
@@ -48,7 +49,7 @@ export const uniqueName = (prefix: string) => `${prefix} ${Date.now()}${Math.flo
 
 В `e2e/test-flow.spec.ts` заменить цикл ответов первого сценария на `await answerSelfTest(page);` (импорт из `./helpers`), локальный `answerCurrentPage` оставить для сценария с перезагрузкой.
 
-`e2e/playwright.config.ts` не меняется: `baseURL` уже `http://localhost:3000`, а `browser.newContext()` в Playwright наследует `use` проекта.
+В `e2e/playwright.config.ts` заменить `baseURL: "http://localhost:3000"` на `baseURL: process.env.E2E_BASE_URL ?? "http://localhost:3000"`: если на 3000 уже занят другой копией сайта, сценарии запускаются с `E2E_BASE_URL=http://localhost:3001`. Там же `expect: { timeout: 15_000 }`: next dev компилирует страницу при первом заходе, и переход на ещё не открывавшуюся страницу бывает дольше 5 секунд. `browser.newContext()` в Playwright наследует `use` проекта.
 
 - [ ] **Step 2: Путь друга**
 
@@ -86,7 +87,8 @@ test("three friends answer anonymously and the owner sees the comparison", async
   const first = friendContexts[0]!;
   await first.page.goto(inviteUrl);
   await answerFriendForm(first.page);
-  await expect(first.page.getByRole("alert")).toContainText("уже ответили");
+  // Next.js держит на странице свой пустой role="alert" для объявления переходов, поэтому ищем по тексту
+  await expect(first.page.getByRole("alert").filter({ hasText: "уже ответили" })).toBeVisible();
 
   await owner.page.goBack();
   await owner.page.reload();
@@ -106,7 +108,7 @@ test("three friends answer anonymously and the owner sees the comparison", async
 `e2e/pairs.spec.ts`:
 ```ts
 import { expect, test } from "@playwright/test";
-import { answerSelfTest, signedInWithResult, uniqueName } from "./helpers";
+import { answerSelfTest, BASE_URL, signedInWithResult, uniqueName } from "./helpers";
 
 test("a partner takes the test, consents, both see the pair, leaving hides it for both", async ({ browser }) => {
   const anna = await signedInWithResult(browser, uniqueName("Аня"));
@@ -134,7 +136,8 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
   await expect(boris).toHaveURL(/\/pair\/[0-9a-f-]{36}$/);
   const pairUrl = boris.url();
   await expect(boris.locator(".pair-score")).toHaveText(/^\d{1,3}%$/);
-  await expect(boris.getByText("Это не прогноз отношений", { exact: false })).toBeVisible();
+  // Та же мысль есть в тексте уровня совместимости, поэтому ищем дисклеймер по его продолжению
+  await expect(boris.getByText("Это не прогноз отношений: число показывает", { exact: false })).toBeVisible();
 
   // Ссылка одноразовая, пара видна пригласившей
   await anna.page.goto(inviteUrl);
@@ -164,7 +167,7 @@ test("a pair is not created without consent", async ({ browser }) => {
   const vera = await signedInWithResult(browser, uniqueName("Вера"));
   const response = await vera.page.request.post("/api/pairs/accept", {
     data: { token, consent: false },
-    headers: { origin: "http://localhost:3000" },
+    headers: { origin: BASE_URL },
   });
 
   expect(response.status()).toBe(400);

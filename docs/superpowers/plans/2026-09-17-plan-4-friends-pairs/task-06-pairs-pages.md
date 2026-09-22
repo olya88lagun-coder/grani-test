@@ -223,7 +223,7 @@ export default async function PairInvitePage({ params }: { params: Promise<{ tok
       {page.state === "used" && (
         <>
           <h1 className="display">Ссылка уже использована</h1>
-          <p className="lead">Приглашение от {page.inviterFirstName} одноразовое. Если это были не вы, попросите новую ссылку.</p>
+          <p className="lead">Приглашение одноразовое, и по нему уже создана пара. Если это были не вы, попросите новую ссылку.</p>
         </>
       )}
       {page.state === "own" && (
@@ -358,6 +358,7 @@ export default async function PairPage({ params }: { params: Promise<{ id: strin
 .pair-person { display: flex; align-items: center; gap: 14px; }
 .pair-person .type-gem { width: 72px; height: 72px; }
 .pair-score { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: clamp(72px, 20vw, 120px); line-height: 1; color: var(--accent); letter-spacing: -0.03em; }
+.card--paper .compare__bar .scale__track { background: var(--surface); }
 details.card > summary { cursor: pointer; }
 details.card[open] > summary { margin-bottom: 21px; }
 ```

@@ -3,12 +3,17 @@ import {
   consentCookieOptions,
   expiredCookieOptions,
   isSameOrigin,
+  pairCookieOptions,
   pendingCookieOptions,
   sessionCookieOptions,
   vkStateCookieOptions,
 } from "./http";
 
 describe("cookie options", () => {
+  test("keep the pair invite for a day", () => {
+    expect(pairCookieOptions("https://grani-test.ru")).toEqual({ httpOnly: true, secure: true, sameSite: "lax", path: "/", maxAge: 86400 });
+  });
+
   test("are secure on https and not on localhost", () => {
     expect(sessionCookieOptions("https://grani-test.ru").secure).toBe(true);
     expect(sessionCookieOptions("http://localhost:3000").secure).toBe(false);
