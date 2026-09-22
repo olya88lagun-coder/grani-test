@@ -5,8 +5,9 @@ import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
 
-const DEV_DB_PORT = 5433;
-const dataDir = fileURLToPath(new URL("../../../.dev-db", import.meta.url));
+// Вторая база рядом с основной (например, для сквозных тестов): DEV_DB_PORT=5434 DEV_DB_DIR=.dev-db-e2e
+const DEV_DB_PORT = Number(process.env.DEV_DB_PORT ?? 5433);
+const dataDir = fileURLToPath(new URL(`../../../${process.env.DEV_DB_DIR ?? ".dev-db"}`, import.meta.url));
 const migrationsFolder = fileURLToPath(new URL("../drizzle", import.meta.url));
 
 // Типы сообщений расширенного протокола: Parse, Bind, Describe, Execute, Close, Flush; конец пачки — Sync или простой Query
