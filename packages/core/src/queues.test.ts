@@ -13,3 +13,7 @@ test("generation jobs are keyed by target and kind", () => {
   expect(generateJobKey({ kind: "pair", pairId: "p1" })).toBe("generate:p1:pair");
   expect(notifyJobKey({ kind: "report_ready", reportId: "rep1" })).toBe("report_ready:rep1");
 });
+
+test("the chapter bundle is announced once per result", () => {
+  expect(notifyJobKey({ kind: "chapters_ready", resultId: "r1" })).toBe("chapters_ready:r1");
+});

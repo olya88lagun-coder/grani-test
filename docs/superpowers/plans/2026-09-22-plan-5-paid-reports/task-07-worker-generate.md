@@ -438,3 +438,13 @@ Expected: всё зелёное, `apps/worker/dist/main.mjs` собран (би�
 git add packages/db apps/worker apps/web/src/server/queue.ts pnpm-lock.yaml
 git commit -m "feat(worker): generate queue with AI or library fallback, one report per target, report ready notifications"
 ```
+
+## Дополнение (после проверки вживую): одно сообщение на набор глав
+
+За покупку «все четыре главы» приходило четыре сообщения подряд. Теперь:
+- `NotifyJob` получил вид `{ kind: "chapters_ready"; resultId }`, ключ — `chapters_ready:<resultId>`;
+- в `runGenerate` после сохранения главы (`announcementFor`): если у результата куплен `chapters_all`, отдельное `report_ready` не ставится, а когда готовы все четыре главы — ставится `chapters_ready`. Id задачи выводится из результата, поэтому две одновременно закончившиеся «последние» главы дадут одно сообщение;
+- воркер отправляет владельцу «Готово: все четыре главы. Открыть: <APP_URL>/report/<resultId>» (`chaptersReadyText`);
+- главы, купленные по одной, по-прежнему объявляются каждая своим `report_ready`.
+
+Тесты: `queues.test.ts` (ключ), `generate.test.ts` («chapter bundle»), `notify.test.ts` («chapters_ready»), `texts.test.ts`.

@@ -130,3 +130,13 @@ describe("report_ready", () => {
     expect(telegram).not.toHaveBeenCalled();
   });
 });
+
+describe("chapters_ready", () => {
+  test("tells the owner once that all four chapters are ready", async () => {
+    const owner = await seedUserWithResult(db, { externalId: "400" });
+
+    await runNotify({ kind: "chapters_ready", resultId: owner.resultId }, deps);
+
+    expect(telegram).toHaveBeenCalledWith("400", `Готово: все четыре главы. Открыть: ${APP_URL}/report/${owner.resultId}`);
+  });
+});

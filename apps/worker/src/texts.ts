@@ -25,3 +25,7 @@ const READY_TITLES: Readonly<Record<ReportKind, string>> = {
 export function reportReadyText(kind: ReportKind, url: string): string {
   return `Готово: ${READY_TITLES[kind]}. Открыть: ${url}`;
 }
+
+export function chaptersReadyText(url: string): string {
+  return `Готово: все четыре главы. Открыть: ${url}`;
+}

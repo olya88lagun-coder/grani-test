@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { friendAnsweredText, pairCreatedText, reportReadyText } from "./texts";
+import { chaptersReadyText, friendAnsweredText, pairCreatedText, reportReadyText } from "./texts";
 
 const URL = "https://grani-test.ru/result/1";
 
@@ -21,4 +21,8 @@ test("a ready report names what is ready without gender endings", () => {
   expect(reportReadyText("chapter_money", "u")).toBe("Готово: глава «Деньги». Открыть: u");
   expect(reportReadyText("friends", "u")).toBe("Готово: раздел «Как тебя видят другие». Открыть: u");
   expect(reportReadyText("pair", "u")).toBe("Готово: разбор вашей пары. Открыть: u");
+});
+
+test("the chapter bundle has its own message", () => {
+  expect(chaptersReadyText("u")).toBe("Готово: все четыре главы. Открыть: u");
 });

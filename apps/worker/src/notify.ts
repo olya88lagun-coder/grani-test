@@ -2,7 +2,7 @@ import { compatibilityScore, type NotifyJob } from "@grani/core";
 import { getActivePair, getFriendAnsweredNotice, getNotifyTargets, getReportById, getResult, setCanNotify, type Database } from "@grani/db";
 import type { Logger } from "./log";
 import type { Senders } from "./senders";
-import { friendAnsweredText, pairCreatedText, reportReadyText } from "./texts";
+import { chaptersReadyText, friendAnsweredText, pairCreatedText, reportReadyText } from "./texts";
 
 export type NotifyDeps = { db: Database; senders: Senders; appUrl: string; log: Logger };
 
@@ -64,12 +64,20 @@ async function notifyReportReady(deps: NotifyDeps, job: Extract<NotifyJob, { kin
   return (await deliver(deps, result.userId, text)) !== "failed";
 }
 
+async function notifyChaptersReady(deps: NotifyDeps, job: Extract<NotifyJob, { kind: "chapters_ready" }>): Promise<boolean> {
+  const result = await getResult(deps.db, job.resultId);
+  if (!result) return true;
+  return (await deliver(deps, result.userId, chaptersReadyText(new URL(`/report/${result.id}`, deps.appUrl).toString()))) !== "failed";
+}
+
 export async function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void> {
   const done =
     job.kind === "friend_answered"
       ? await notifyFriendAnswered(deps, job)
       : job.kind === "pair_created"
         ? await notifyPairCreated(deps, job)
-        : await notifyReportReady(deps, job);
+        : job.kind === "report_ready"
+          ? await notifyReportReady(deps, job)
+          : await notifyChaptersReady(deps, job);
   if (!done) throw new Error(`Notification ${job.kind} was not delivered, retry later`);
 }

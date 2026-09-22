@@ -1,6 +1,6 @@
 import { buildFriendsInput, buildPairInput, buildPersonalInput, generateReport, type ReportInput, type ReportWriter } from "@grani/ai";
 import { compareFriendAnswers, type Library } from "@grani/content";
-import { friendsReportDue, type GenerateJob, type NotifyJob } from "@grani/core";
+import { CHAPTER_KINDS, friendsReportDue, type GenerateJob, type NotifyJob } from "@grani/core";
 import {
   getActivePair,
   getInviteForResult,
@@ -8,6 +8,7 @@ import {
   getResult,
   listFriendAnswers,
   listOwnedProducts,
+  listReports,
   saveReport,
   type Database,
   type ReportTarget,
@@ -35,6 +36,19 @@ async function buildInput(job: GenerateJob, deps: GenerateDeps): Promise<ReportI
   return comparison ? buildFriendsInput(result, comparison) : null;
 }
 
+const isChapter = (kind: GenerateJob["kind"]) => (CHAPTER_KINDS as readonly string[]).includes(kind);
+
+// Главы из набора «все четыре» объявляются одним сообщением: его ставит та задача, после которой готовы все четыре.
+// Id уведомления выводится из результата, поэтому даже две одновременные «последние» главы дадут одно сообщение
+async function announcementFor(job: GenerateJob, reportId: string, deps: GenerateDeps): Promise<NotifyJob | null> {
+  if (job.kind === "pair" || !isChapter(job.kind)) return { kind: "report_ready", reportId };
+  const target = { resultId: job.resultId };
+  const owned = await listOwnedProducts(deps.db, target);
+  if (!owned.includes("chapters_all")) return { kind: "report_ready", reportId };
+  const ready = new Set((await listReports(deps.db, target)).map((report) => report.kind));
+  return CHAPTER_KINDS.every((kind) => ready.has(kind)) ? { kind: "chapters_ready", resultId: job.resultId } : null;
+}
+
 export async function runGenerate(job: GenerateJob, deps: GenerateDeps): Promise<void> {
   const target = targetOf(job);
   if (await getReport(deps.db, target, job.kind)) return;
@@ -46,5 +60,7 @@ export async function runGenerate(job: GenerateJob, deps: GenerateDeps): Promise
   const generated = await generateReport(deps.writer, input, { log: (message, extra) => deps.log("warn", message, extra) });
   const { report, created } = await saveReport(deps.db, { target, kind: job.kind, sections: generated.sections, source: generated.source });
   deps.log("info", "report generated", { kind: job.kind, source: generated.source, attempts: generated.attempts, created });
-  if (created) await deps.enqueueNotify({ kind: "report_ready", reportId: report.id });
+  if (!created) return;
+  const announcement = await announcementFor(job, report.id, deps);
+  if (announcement) await deps.enqueueNotify(announcement);
 }

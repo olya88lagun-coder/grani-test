@@ -83,3 +83,28 @@ describe("runGenerate", () => {
     expect(deps.enqueueNotify).not.toHaveBeenCalled();
   });
 });
+
+describe("chapter bundle", () => {
+  test("announces all four chapters with one message when the last one is ready", async () => {
+    await payFull();
+    const bundle = await createPurchase(db, { userId: anna.userId, product: "chapters_all", target: { resultId: anna.resultId }, amountKopecks: 24900 });
+    await markPurchaseSucceeded(db, bundle.id, new Date());
+
+    for (const kind of ["chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships"] as const) {
+      await runGenerate({ kind, resultId: anna.resultId }, deps);
+    }
+
+    expect(deps.enqueueNotify).toHaveBeenCalledTimes(1);
+    expect(deps.enqueueNotify).toHaveBeenCalledWith({ kind: "chapters_ready", resultId: anna.resultId });
+  });
+
+  test("a single chapter bought on its own is announced by itself", async () => {
+    await payFull();
+    const single = await createPurchase(db, { userId: anna.userId, product: "chapter_stress", target: { resultId: anna.resultId }, amountKopecks: 9900 });
+    await markPurchaseSucceeded(db, single.id, new Date());
+
+    await runGenerate({ kind: "chapter_stress", resultId: anna.resultId }, deps);
+
+    expect(deps.enqueueNotify).toHaveBeenCalledWith(expect.objectContaining({ kind: "report_ready" }));
+  });
+});
