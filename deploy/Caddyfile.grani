@@ -1,0 +1,4 @@
+grani-test.ru {
+	encode gzip
+	reverse_proxy grani-web:3000
+}
