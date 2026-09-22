@@ -5,3 +5,4 @@ export * from "./friends";
 export * from "./compatibility";
 export * from "./pricing";
 export * from "./queues";
+export * from "./reports";

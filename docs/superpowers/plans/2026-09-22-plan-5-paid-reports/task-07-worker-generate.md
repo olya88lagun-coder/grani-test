@@ -388,7 +388,7 @@ export async function runGenerate(job: GenerateJob, deps: GenerateDeps): Promise
     return (await deliver(deps, result.userId, text)) !== "failed";
   }
   ```
-- `runNotify`:
+- `runNotify` (временный пропуск `report_ready` из Task 1 удалить):
   ```ts
   export async function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void> {
     const done =

@@ -1,5 +1,5 @@
-import { FRIEND_ITEMS, friendItemText } from "@grani/content";
-import { compareWithFriends, MIN_FRIENDS, scoreItems, type Answers, type FriendComparison, type Gender, type NotifyJob } from "@grani/core";
+import { compareFriendAnswers, FRIEND_ITEMS, friendItemText } from "@grani/content";
+import { MIN_FRIENDS, type Answers, type FriendComparison, type Gender, type NotifyJob } from "@grani/core";
 import {
   addFriendResponse,
   countFriendResponses,
@@ -82,7 +82,5 @@ export async function getFriendsSummary(db: Database, resultId: string): Promise
 
   const context = await getInviteByToken(db, invite.token);
   if (!context) return { ...base, comparison: null };
-  const selfSubset = scoreItems(FRIEND_ITEMS, context.ownerAnswers);
-  const friendScores = friendAnswers.map((answers) => scoreItems(FRIEND_ITEMS, answers));
-  return { ...base, comparison: compareWithFriends(selfSubset, friendScores) };
+  return { ...base, comparison: compareFriendAnswers(context.ownerAnswers, friendAnswers) };
 }

@@ -48,6 +48,8 @@ async function notifyPairCreated(deps: NotifyDeps, job: Extract<NotifyJob, { kin
 }
 
 export async function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void> {
+  // report_ready обрабатывается с Task 7 плана 5; до неё такие задачи никто не ставит
+  if (job.kind === "report_ready") return;
   const done = job.kind === "friend_answered" ? await notifyFriendAnswered(deps, job) : await notifyPairCreated(deps, job);
   if (!done) throw new Error(`Notification ${job.kind} was not delivered, retry later`);
 }

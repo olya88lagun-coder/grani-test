@@ -309,6 +309,12 @@ export function compareFriendAnswers(ownerAnswers: Answers, friendAnswers: reado
 ```
 с импортом `compareFriendAnswers` из `@grani/content`; из импорта `@grani/core` убрать ставшие ненужными `compareWithFriends` и `scoreItems`.
 
+В `apps/worker/src/notify.ts` в начало `runNotify` добавить (новый вид уведомления иначе не проходит typecheck; настоящую отправку добавит Task 7):
+```ts
+  // report_ready обрабатывается с Task 7 плана 5; до неё такие задачи никто не ставит
+  if (job.kind === "report_ready") return;
+```
+
 - [ ] **Step 5: Проверка и коммит**
 
 ```bash
@@ -317,6 +323,6 @@ pnpm test && pnpm typecheck
 Expected: всё зелёное (тесты друзей сайта не менялись и проходят).
 
 ```bash
-git add packages/core packages/content/src apps/web/src/lib/result-view.ts apps/web/src/server/friends-service.ts
+git add packages/core packages/content/src apps/web/src/lib/result-view.ts apps/web/src/server/friends-service.ts apps/worker/src/notify.ts
 git commit -m "feat(core): product rules for reports and the generate queue, shared trait labels and friend comparison"
 ```
