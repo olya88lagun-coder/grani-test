@@ -434,7 +434,8 @@ import {
   seedUserWithResult,
   type Database,
 } from "@grani/db/testing";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import type { GenerateJob } from "@grani/core";
+import { beforeEach, describe, expect, test, vi, type Mock } from "vitest";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { GatewayPayment } from "./payments/gateway";
 import { getPurchaseView, startPurchase, syncPayment, type PaymentsDeps } from "./payments-service";
@@ -446,14 +447,14 @@ let db: Database;
 let store: Map<string, GatewayPayment>;
 let gateway: FakeGateway;
 let deps: PaymentsDeps;
-let enqueue: ReturnType<typeof vi.fn>;
+let enqueue: Mock<(job: GenerateJob) => Promise<void>>;
 let anna: { userId: string; resultId: string };
 
 beforeEach(async () => {
   db = await createTestDb();
   store = new Map();
   gateway = createFakeGateway({ appUrl: APP_URL, store });
-  enqueue = vi.fn().mockResolvedValue(undefined);
+  enqueue = vi.fn<(job: GenerateJob) => Promise<void>>().mockResolvedValue(undefined);
   deps = { db, gateway, appUrl: APP_URL, now: () => NOW, enqueueGenerate: enqueue };
   anna = await seedUserWithResult(db, { externalId: "anna" });
 });

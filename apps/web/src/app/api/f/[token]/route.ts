@@ -4,7 +4,7 @@ import { DEVICE_COOKIE, deviceCookieOptions, isDeviceId, newDeviceId } from "@/s
 import { submitFriendAnswers, type FriendSubmitOutcome } from "@/server/friends-service";
 import { isSameOrigin, SESSION_COOKIE } from "@/server/http";
 import { getCurrentUser } from "@/server/login-service";
-import { enqueueNotify } from "@/server/queue";
+import { enqueueGenerate, enqueueNotify } from "@/server/queue";
 import { clientKeyFromHeaders, friendsLimiter } from "@/server/rate-limit";
 
 const ERRORS: Record<Exclude<FriendSubmitOutcome["kind"], "added">, { error: string; status: number }> = {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const raw = typeof body === "object" && body !== null ? (body as { answers?: unknown }).answers : null;
 
   const outcome = await submitFriendAnswers(
-    { db: deps.db, secret: deps.env.SESSION_SECRET, enqueueNotify },
+    { db: deps.db, secret: deps.env.SESSION_SECRET, enqueueNotify, enqueueGenerate },
     { token, raw, deviceId, viewerUserId: viewer?.id ?? null },
   );
   const response =

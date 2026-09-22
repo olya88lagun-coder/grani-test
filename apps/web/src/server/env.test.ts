@@ -12,7 +12,7 @@ const VALID = {
 
 describe("readEnv", () => {
   test("accepts a complete environment", () => {
-    expect(readEnv(VALID)).toEqual({ ...VALID, vkCommunity: null });
+    expect(readEnv(VALID)).toEqual({ ...VALID, vkCommunity: null, payments: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -37,5 +37,17 @@ describe("VK community settings", () => {
 
   test("fail when only some are set", () => {
     expect(() => readEnv({ ...VALID, VK_GROUP_ID: "230000000" })).toThrow(/VK_CALLBACK_SECRET/);
+  });
+});
+
+describe("payment settings", () => {
+  test("read YooKassa keys together", () => {
+    expect(readEnv({ ...VALID, YOOKASSA_SHOP_ID: "123456", YOOKASSA_SECRET_KEY: "live_x" }).payments).toEqual({ kind: "yookassa", shopId: "123456", secretKey: "live_x" });
+    expect(() => readEnv({ ...VALID, YOOKASSA_SHOP_ID: "123456" })).toThrow(/YOOKASSA_SECRET_KEY/);
+  });
+
+  test("fake payments work only outside production", () => {
+    expect(readEnv({ ...VALID, PAYMENTS_FAKE: "1", NODE_ENV: "development" }).payments).toEqual({ kind: "fake" });
+    expect(() => readEnv({ ...VALID, PAYMENTS_FAKE: "1", NODE_ENV: "production" })).toThrow(/PAYMENTS_FAKE/);
   });
 });
