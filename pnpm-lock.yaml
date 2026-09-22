@@ -184,6 +184,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@grani/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@grani/content':
         specifier: workspace:*
         version: link:../../packages/content

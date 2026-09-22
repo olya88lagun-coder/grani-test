@@ -73,6 +73,7 @@ describe("buildReportPreview", () => {
 
     expect(preview.map((section) => section.title)).toEqual(["Портрет", "Сильные стороны", "Слепые зоны", "Инструкция по применению меня", "Как меня видят другие"]);
     for (const section of preview) expect(section.teaser.length).toBeLessThanOrEqual(121);
+    expect(preview[0]!.teaser).not.toMatch(/\.…$/);
   });
 });
 
@@ -146,7 +147,13 @@ export type ReportPageView = {
 };
 
 const TEASER_LENGTH = 120;
-const teaser = (text: string) => (text.length <= TEASER_LENGTH ? text : `${text.slice(0, TEASER_LENGTH).trimEnd()}…`);
+// Первое предложение целиком, если оно короткое; иначе — обрезка по слову с многоточием
+function teaser(text: string): string {
+  const sentence = text.match(/^.+?[.!?](?=\s|$)/)?.[0] ?? text;
+  if (sentence.length <= TEASER_LENGTH) return sentence;
+  const cut = sentence.slice(0, TEASER_LENGTH);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[\s,;:—-]+$/, "")}…`;
+}
 
 export function buildReportPreview(library: Library, result: PersonalScores): readonly PreviewSection[] {
   const full = fallbackSections(buildPersonalInput(library, "full", result)) as FullSections;
