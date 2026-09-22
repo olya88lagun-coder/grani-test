@@ -6,8 +6,9 @@ import { buildVkAuthorizeUrl, createPkcePair, exchangeVkCode, fetchVkUser, type 
 import type { AppEnv } from "./env";
 import { pairReturnPath } from "./pairs-service";
 import { savePendingResult } from "./results-service";
+import { LEGAL_VERSIONS } from "../lib/legal";
 
-export const CONSENT_VERSION = "2026-09-v1";
+export const CONSENT_VERSION = LEGAL_VERSIONS.consent;
 const STATE_BYTES = 24;
 
 export type LoginDeps = { db: Database; env: AppEnv; now: () => Date; fetchFn: FetchFn };

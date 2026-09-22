@@ -10,3 +10,4 @@ export * from "./notify-targets";
 export * from "./reports";
 export * from "./purchases";
 export * from "./job-id";
+export * from "./delete-user";

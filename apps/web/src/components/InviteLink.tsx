@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { reachGoal, type Goal } from "@/lib/analytics";
 
 type InviteLinkProps = {
   endpoint: string;
@@ -8,9 +9,10 @@ type InviteLinkProps = {
   initialUrl: string | null;
   getLabel: string;
   shareTitle: string;
+  shareGoal?: Goal;
 };
 
-export function InviteLink({ endpoint, body, initialUrl, getLabel, shareTitle }: InviteLinkProps) {
+export function InviteLink({ endpoint, body, initialUrl, getLabel, shareTitle, shareGoal }: InviteLinkProps) {
   const [url, setUrl] = useState(initialUrl);
   const [status, setStatus] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -35,9 +37,11 @@ export function InviteLink({ endpoint, body, initialUrl, getLabel, shareTitle }:
     try {
       if (navigator.share) {
         await navigator.share({ title: shareTitle, url });
+        if (shareGoal) reachGoal(shareGoal);
         return;
       }
       await navigator.clipboard.writeText(url);
+      if (shareGoal) reachGoal(shareGoal);
       setStatus("Ссылка скопирована.");
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return;

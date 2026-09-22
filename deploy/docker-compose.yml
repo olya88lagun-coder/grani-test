@@ -1,0 +1,34 @@
+name: grani
+
+services:
+  web:
+    image: ghcr.io/${GHCR_OWNER}/grani-web:latest
+    env_file: .env
+    restart: unless-stopped
+    mem_limit: 350m
+    networks:
+      shared:
+        aliases: [grani-web]
+
+  worker:
+    image: ghcr.io/${GHCR_OWNER}/grani-worker:latest
+    env_file: .env
+    restart: unless-stopped
+    mem_limit: 250m
+    stop_grace_period: 30s
+    # Корневой сертификат Минцифры для GigaChat (NODE_EXTRA_CA_CERTS=/certs/russian_trusted_root_ca.pem); без GigaChat каталог пустой
+    volumes:
+      - ./certs:/certs:ro
+    networks: [shared]
+
+  migrate:
+    image: ghcr.io/${GHCR_OWNER}/grani-migrate:latest
+    env_file: .env
+    profiles: ["tools"]
+    mem_limit: 200m
+    networks: [shared]
+
+networks:
+  shared:
+    external: true
+    name: food-tracker-bot_default

@@ -25,6 +25,15 @@ export function collectLibrary(blocksDir) {
   return library;
 }
 
+// Статьи разбираются и проверяются в TypeScript (src/articles.ts), здесь только собираются
+export function collectArticles(articlesDir) {
+  const articles = {};
+  for (const name of readdirSync(articlesDir).filter((file) => file.endsWith(".md")).sort()) {
+    articles[name.replace(/\.md$/, "")] = readFileSync(join(articlesDir, name), "utf8").replace(/\r\n/g, "\n").trim();
+  }
+  return articles;
+}
+
 if (import.meta.main) {
   const root = join(dirname(fileURLToPath(import.meta.url)), "..");
   const library = collectLibrary(join(root, "blocks"));
@@ -32,4 +41,7 @@ if (import.meta.main) {
   mkdirSync(dirname(output), { recursive: true });
   writeFileSync(output, `${JSON.stringify(library, null, 2)}\n`, "utf8");
   console.log(`library.json written: ${output}`);
+  const articlesOutput = join(root, "src", "generated", "articles.json");
+  writeFileSync(articlesOutput, `${JSON.stringify(collectArticles(join(root, "articles")), null, 2)}\n`, "utf8");
+  console.log(`articles.json written: ${articlesOutput}`);
 }

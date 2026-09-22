@@ -40,6 +40,7 @@ export default async function FriendPage({ params }: { params: Promise<{ token: 
         submitUrl={`/api/f/${token}`}
         submitLabel="Отправить ответы"
         pageSize={FRIEND_PAGE_SIZE}
+        finishGoal="friend_answered"
       />
     </main>
   );
