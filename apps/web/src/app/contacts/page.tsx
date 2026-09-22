@@ -2,9 +2,14 @@ import { formatRub, PRODUCT_PRICES, type Product } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { OPERATOR } from "@/lib/legal";
+import { publicMetadata } from "@/lib/seo";
 import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
 
-export const metadata: Metadata = { title: "Контакты и услуги" };
+export const metadata: Metadata = publicMetadata({
+  title: "Контакты и услуги",
+  description: "Исполнитель, контакты, платные услуги и цены сайта «Грани» — теста личности по Большой пятёрке.",
+  path: "/contacts",
+});
 
 const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
 

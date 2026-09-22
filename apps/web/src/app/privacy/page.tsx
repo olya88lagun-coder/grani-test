@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { publicMetadata } from "@/lib/seo";
 import { DATA_RECIPIENTS, DATA_STORAGE, LEGAL_DATE, LEGAL_VERSIONS, OPERATOR } from "@/lib/legal";
 
-export const metadata: Metadata = { title: "Политика обработки персональных данных" };
+export const metadata: Metadata = publicMetadata({
+  title: "Политика обработки персональных данных",
+  description: "Какие данные собирает сайт «Грани», зачем, кому передаёт, где хранит и как их удалить.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

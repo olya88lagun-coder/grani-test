@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DATA_STORAGE, LEGAL_DATE, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "@/lib/legal";
+import { publicMetadata } from "@/lib/seo";
 import { CONSENT_VERSION } from "@/server/login-service";
 
-export const metadata: Metadata = { title: "Согласие на обработку персональных данных" };
+export const metadata: Metadata = publicMetadata({
+  title: "Согласие на обработку персональных данных",
+  description: "Текст согласия на обработку персональных данных, которое даётся при входе на сайт «Грани».",
+  path: "/consent",
+});
 
 export default function ConsentPage() {
   return (

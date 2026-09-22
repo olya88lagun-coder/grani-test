@@ -2,10 +2,15 @@ import { formatRub, PRODUCT_PRICES, type Product } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LEGAL_DATE, OFFER_VERSION, OPERATOR } from "@/lib/legal";
+import { publicMetadata } from "@/lib/seo";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
 
-export const metadata: Metadata = { title: "Публичная оферта" };
+export const metadata: Metadata = publicMetadata({
+  title: "Публичная оферта",
+  description: "Условия платных разборов сайта «Грани»: услуги и цены, порядок оказания, оплата через ЮKassa, возвраты.",
+  path: "/offer",
+});
 
 const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
 

@@ -124,6 +124,20 @@ details.card[open] > summary { margin-bottom: 21px; }
 .report h3 { margin: 21px 0 0; }
 .tip { display: block; margin-top: 4px; color: var(--ink-soft); }
 
+.crumbs { display: flex; flex-wrap: wrap; gap: 6px 10px; font-size: 14px; color: var(--ink-soft); }
+.crumbs > * + *::before { content: "→"; margin-right: 10px; color: var(--ink-soft); }
+.crumbs a { color: var(--ink-soft); }
+.pole-list, .link-grid, .type-grid { list-style: none; margin: 0; padding: 0; }
+.pole-list { display: flex; flex-wrap: wrap; gap: 9px; }
+.pole-list a { display: inline-block; padding: 9px 14px; border-radius: 999px; background: var(--surface); text-decoration: none; font-size: 14px; }
+.link-grid { display: grid; gap: 10px 21px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.type-grid { display: grid; gap: 14px; }
+@media (min-width: 760px) { .type-grid { grid-template-columns: 1fr 1fr; } }
+.type-tile { display: flex; gap: 21px; align-items: flex-start; }
+.type-tile .type-gem { width: 64px; height: 64px; }
+.type-tile h3 { margin: 0; }
+.type-tile h3 a { text-decoration: none; }
+
 /* Подвал идёт после <main class="page">, у которого уже есть нижний отступ */
 .footer { padding-top: 21px; padding-bottom: 42px; font-size: 14px; color: var(--ink-soft); }
 .footer nav { display: flex; flex-wrap: wrap; gap: 10px 21px; padding-top: 21px; border-top: 1px solid var(--line); }
