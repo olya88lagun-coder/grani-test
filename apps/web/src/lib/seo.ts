@@ -1,5 +1,6 @@
 import { ALL_TYPE_CODES, TRAITS, type Trait, type TypeCode } from "@grani/core";
 import { PAGE_POLES, type PagePole } from "@grani/content";
+import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://grani-test.ru";
@@ -50,7 +51,16 @@ export function traitPath(trait: Trait, pole: PagePole): string {
 const DOCUMENT_PATHS = ["/contacts", "/offer", "/privacy", "/consent"] as const;
 
 export function PUBLIC_PATHS(): string[] {
-  return ["/", "/types", ...ALL_TYPE_CODES.map(typePath), ...TRAIT_PAGES.map((page) => `/traits/${page.slug}`), "/compatibility", ...DOCUMENT_PATHS];
+  return [
+    "/",
+    "/types",
+    ...ALL_TYPE_CODES.map(typePath),
+    ...TRAIT_PAGES.map((page) => `/traits/${page.slug}`),
+    "/compatibility",
+    "/articles",
+    ...getArticles().map((article) => `/articles/${article.slug}`),
+    ...DOCUMENT_PATHS,
+  ];
 }
 
 export function publicMetadata(p: { title: string; description: string; path: string }): Metadata {
@@ -106,4 +116,8 @@ export function firstSentences(text: string, max: number): string {
     out = next;
   }
   return out || cutByWords(flat, max);
+}
+
+export function articleDate(date: string): string {
+  return new Date(`${date}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Moscow" });
 }

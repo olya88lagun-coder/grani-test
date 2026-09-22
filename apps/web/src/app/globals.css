@@ -137,6 +137,10 @@ details.card[open] > summary { margin-bottom: 21px; }
 .type-tile .type-gem { width: 64px; height: 64px; }
 .type-tile h3 { margin: 0; }
 .type-tile h3 a { text-decoration: none; }
+.article-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.article-list h2 { margin: 0; font-size: 28px; }
+.article-list h2 a { text-decoration: none; }
+.display--article { font-size: clamp(36px, 8vw, 56px); }
 
 /* Подвал идёт после <main class="page">, у которого уже есть нижний отступ */
 .footer { padding-top: 21px; padding-bottom: 42px; font-size: 14px; color: var(--ink-soft); }

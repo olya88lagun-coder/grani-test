@@ -1,6 +1,7 @@
 import { ALL_TYPE_CODES, TRAITS } from "@grani/core";
 import { describe, expect, it } from "vitest";
 import {
+  articleDate,
   articleJsonLd,
   breadcrumbs,
   firstSentences,
@@ -47,6 +48,8 @@ describe("PUBLIC_PATHS", () => {
     expect(paths).toEqual(expect.arrayContaining(["/privacy", "/consent", "/offer", "/contacts"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
+    expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(6);
+    expect(paths).toHaveLength(39);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
   });
@@ -79,6 +82,12 @@ describe("metadata", () => {
       datePublished: "2026-09-22",
     });
     expect(articleJsonLd({ title: "Т", description: "О", path: "/types" })).not.toHaveProperty("datePublished");
+  });
+});
+
+describe("articleDate", () => {
+  it("formats a date in Russian", () => {
+    expect(articleDate("2026-09-22")).toBe("22 сентября 2026 г.");
   });
 });
 

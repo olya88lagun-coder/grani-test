@@ -30,4 +30,13 @@ describe("inlineLinks", () => {
     expect(inlineLinks("[А](/a) и [Б](/b)")).toEqual([{ text: "А", href: "/a" }, { text: " и " }, { text: "Б", href: "/b" }]);
     expect(inlineLinks("без ссылок")).toEqual([{ text: "без ссылок" }]);
   });
+
+  it("marks **bold** text", () => {
+    expect(inlineLinks("**Открытость** — это [черта](/traits/openness-high).")).toEqual([
+      { text: "Открытость", strong: true },
+      { text: " — это " },
+      { text: "черта", href: "/traits/openness-high" },
+      { text: "." },
+    ]);
+  });
 });

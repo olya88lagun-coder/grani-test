@@ -4,15 +4,16 @@ import Link from "next/link";
 function Inline({ text }: { text: string }) {
   return (
     <>
-      {inlineLinks(text).map((part, index) =>
-        "href" in part ? (
-          <Link key={index} href={part.href}>
-            {part.text}
-          </Link>
-        ) : (
-          <span key={index}>{part.text}</span>
-        ),
-      )}
+      {inlineLinks(text).map((part, index) => {
+        if ("href" in part)
+          return (
+            <Link key={index} href={part.href}>
+              {part.text}
+            </Link>
+          );
+        if ("strong" in part) return <strong key={index}>{part.text}</strong>;
+        return <span key={index}>{part.text}</span>;
+      })}
     </>
   );
 }

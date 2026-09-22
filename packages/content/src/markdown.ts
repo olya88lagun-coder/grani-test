@@ -17,16 +17,18 @@ export function parseBlocks(text: string): TextBlock[] {
     .map(parseBlock);
 }
 
-export type InlinePart = { text: string } | { text: string; href: string };
+export type InlinePart = { text: string } | { text: string; href: string } | { text: string; strong: true };
 
-// Только внутренние ссылки: тексты ведут на тест и страницы типов, а не наружу
+// Только внутренние ссылки: тексты ведут на тест и страницы типов, а не наружу. Плюс **жирный**
+const INLINE = /\[([^\]]+)\]\((\/[^)\s]*)\)|\*\*([^*]+)\*\*/g;
+
 export function inlineLinks(text: string): InlinePart[] {
   const parts: InlinePart[] = [];
   let last = 0;
-  for (const match of text.matchAll(/\[([^\]]+)\]\((\/[^)\s]*)\)/g)) {
+  for (const match of text.matchAll(INLINE)) {
     const at = match.index;
     if (at > last) parts.push({ text: text.slice(last, at) });
-    parts.push({ text: match[1]!, href: match[2]! });
+    parts.push(match[3] !== undefined ? { text: match[3], strong: true } : { text: match[1]!, href: match[2]! });
     last = at + match[0].length;
   }
   if (last < text.length) parts.push({ text: text.slice(last) });
