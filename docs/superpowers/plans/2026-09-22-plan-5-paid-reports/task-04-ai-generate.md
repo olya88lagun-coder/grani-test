@@ -380,8 +380,8 @@ const HOUR = 3_600_000;
 
 // Токен живёт 30 минут от момента выдачи по часам теста
 function stubFetch(clock: () => number) {
-  return vi.fn(async (url: string) => {
-    if (url === GIGACHAT_OAUTH_URL) return json({ access_token: `token-${clock()}`, expires_at: clock() + 30 * 60_000 });
+  return vi.fn(async (input: string | URL | Request) => {
+    if (String(input) === GIGACHAT_OAUTH_URL) return json({ access_token: `token-${clock()}`, expires_at: clock() + 30 * 60_000 });
     return json({ choices: [{ message: { role: "assistant", content: '{"ok":1}' } }] });
   });
 }
@@ -428,7 +428,7 @@ describe("createGigaChatWriter", () => {
   });
 
   test("throws when the answer has no content", async () => {
-    const fetchFn = vi.fn(async (url: string) => (url === GIGACHAT_OAUTH_URL ? json({ access_token: "t", expires_at: 10 ** 13 }) : json({ choices: [] })));
+    const fetchFn = vi.fn(async (input: string | URL | Request) => (String(input) === GIGACHAT_OAUTH_URL ? json({ access_token: "t", expires_at: 10 ** 13 }) : json({ choices: [] })));
     const writer = createGigaChatWriter({ authKey: "k", scope: "s", fetchFn, now: () => 0 });
 
     await expect(writer.complete(PROMPT, signal())).rejects.toThrow(/no content/);
