@@ -1,5 +1,6 @@
 import { readFile } from "node:fs/promises";
 import type { ReactElement } from "react";
+import type { ManualCardModel } from "./manual-card";
 import { CARD_PALETTE, gemPaths, type TypeVisual } from "./type-visuals";
 
 export const CARD_SIZE = { width: 1080, height: 1920 } as const;
@@ -77,6 +78,52 @@ export function cardElement({ name, visual }: CardModel): ReactElement {
         </div>
         <div style={{ display: "flex", fontSize: 38 }}>а какой у тебя? · grani-test.ru</div>
       </div>
+    </div>
+  );
+}
+
+const MANUAL_GEM_SIZE = 200;
+
+export function manualCardElement({ typeName, visual, lists }: ManualCardModel): ReactElement {
+  const { ink, tints } = CARD_PALETTE;
+  const { outline, facets } = gemPaths(visual.shape, MANUAL_GEM_SIZE);
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        padding: "120px 90px 110px",
+        background: tints[visual.family],
+        color: ink,
+        fontFamily: "Golos",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 40 }}>
+        <svg width={MANUAL_GEM_SIZE} height={MANUAL_GEM_SIZE} viewBox={`-4 -4 ${MANUAL_GEM_SIZE + 8} ${MANUAL_GEM_SIZE + 8}`}>
+          <path d={outline} fill="none" stroke={ink} strokeWidth={4} strokeLinejoin="round" />
+          <path d={facets} fill="none" stroke={ink} strokeWidth={4} strokeLinejoin="round" opacity={0.45} />
+        </svg>
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", fontSize: 30, fontWeight: 600, letterSpacing: 3, textTransform: "uppercase" }}>инструкция по применению меня</div>
+          <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 96, lineHeight: 1.05, letterSpacing: -2 }}>{typeName}</div>
+        </div>
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 56 }}>
+        {lists.map((list) => (
+          <div key={list.title} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+            <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 64 }}>{list.title}</div>
+            {list.items.map((item) => (
+              <div key={item} style={{ display: "flex", fontSize: 34, lineHeight: 1.35 }}>
+                — {item}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", fontSize: 36 }}>узнай свой тип · grani-test.ru</div>
     </div>
   );
 }

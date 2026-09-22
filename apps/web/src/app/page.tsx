@@ -22,6 +22,7 @@ export default function HomePage() {
       </div>
       <footer className="footer">
         <Link href="/consent">Согласие на обработку данных</Link>
+        <Link href="/offer">Оферта</Link>
         <Link href="/me">Мой результат</Link>
       </footer>
     </main>

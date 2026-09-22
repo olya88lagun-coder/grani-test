@@ -1,8 +1,9 @@
 import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedProducts, listReports } from "@grani/db";
-import { unlockedKinds } from "@grani/core";
+import { typeName, unlockedKinds } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ShareCard } from "@/app/result/[id]/ShareCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
 import { Paragraphs } from "@/components/Paragraphs";
@@ -69,6 +70,16 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
             <h3>Что меня бесит</h3>
             <ul>{view.full.manual.annoys.map((item) => <li key={item}>{item}</li>)}</ul>
           </section>
+        )}
+
+        {view.full && (
+          <ShareCard
+            cardUrl={`/cards/manual/${resultId}`}
+            fileName="grani-manual.png"
+            typeName={typeName(result.typeCode, user.gender)}
+            heading="Карточка «инструкция по применению меня»"
+            shareTitle="Инструкция по применению меня"
+          />
         )}
 
         <section className="card stack report" data-palette="friends" aria-labelledby="friends-report">
