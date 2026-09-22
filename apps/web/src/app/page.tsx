@@ -20,11 +20,6 @@ export default function HomePage() {
           Это не диагноз и не приговор, а способ посмотреть на себя со стороны. Ответы можно менять до конца теста.
         </p>
       </div>
-      <footer className="footer">
-        <Link href="/consent">Согласие на обработку данных</Link>
-        <Link href="/offer">Оферта</Link>
-        <Link href="/me">Мой результат</Link>
-      </footer>
     </main>
   );
 }

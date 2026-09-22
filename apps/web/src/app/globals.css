@@ -124,7 +124,10 @@ details.card[open] > summary { margin-bottom: 21px; }
 .report h3 { margin: 21px 0 0; }
 .tip { display: block; margin-top: 4px; color: var(--ink-soft); }
 
-.footer { margin-top: 84px; padding-top: 21px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-soft); }
-.footer a { margin-right: 21px; color: var(--ink-soft); }
+/* Подвал идёт после <main class="page">, у которого уже есть нижний отступ */
+.footer { padding-top: 21px; padding-bottom: 42px; font-size: 14px; color: var(--ink-soft); }
+.footer nav { display: flex; flex-wrap: wrap; gap: 10px 21px; padding-top: 21px; border-top: 1px solid var(--line); }
+.footer a, .footer .link-button { color: var(--ink-soft); }
+.link-button { background: none; border: 0; padding: 0; font: inherit; text-decoration: underline; cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

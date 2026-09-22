@@ -34,7 +34,8 @@ export function LoginPanel({ botUsername, authUrl, hasPendingResult }: { botUser
           <label className="choice">
             <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />
             <span>
-              Я соглашаюсь на <Link href="/consent">обработку персональных данных</Link>
+              Я соглашаюсь на <Link href="/consent">обработку персональных данных</Link> в соответствии с{" "}
+              <Link href="/privacy">политикой</Link>
             </span>
           </label>
           <button type="button" className="button button--block" disabled={!agreed} onClick={confirm}>

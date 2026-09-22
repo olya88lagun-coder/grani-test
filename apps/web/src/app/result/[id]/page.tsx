@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ScaleBar } from "@/components/ScaleBar";
 import { TypeGem } from "@/components/TypeGem";
+import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { buildResultView } from "@/lib/result-view";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 import { getDb } from "@/server/db";
@@ -74,6 +75,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
             </button>
           </form>
         </div>
+        <p className="muted">{REPORT_DISCLAIMER}</p>
       </div>
     </main>
   );
