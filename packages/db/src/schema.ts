@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { REPORT_KINDS } from "@grani/core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["telegram", "vk"]);
 export const genderEnum = pgEnum("gender", ["female", "male"]);
@@ -123,5 +124,65 @@ export const pairs = pgTable(
     index("pairs_user_a_idx").on(t.userAId),
     index("pairs_user_b_idx").on(t.userBId),
     check("pairs_different_users", sql`${t.userAId} <> ${t.userBId}`),
+  ],
+);
+
+export const productEnum = pgEnum("product", [
+  "full",
+  "chapter_money",
+  "chapter_conflict",
+  "chapter_stress",
+  "chapter_relationships",
+  "chapters_all",
+  "pair",
+]);
+export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled", "refunded"]);
+export const reportKindEnum = pgEnum("report_kind", REPORT_KINDS);
+export const reportSourceEnum = pgEnum("report_source", ["ai", "fallback"]);
+
+export type PurchaseStatus = (typeof purchaseStatusEnum.enumValues)[number];
+export type ReportSource = (typeof reportSourceEnum.enumValues)[number];
+
+export const purchases = pgTable(
+  "purchases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    product: productEnum("product").notNull(),
+    // Записи об оплатах переживают удаление данных (налоговый учёт), поэтому ссылка обнуляется, а не удаляет покупку
+    resultId: uuid("result_id").references(() => results.id, { onDelete: "set null" }),
+    pairId: uuid("pair_id").references(() => pairs.id, { onDelete: "set null" }),
+    amountKopecks: integer("amount_kopecks").notNull(),
+    status: purchaseStatusEnum("status").notNull().default("pending"),
+    yookassaPaymentId: text("yookassa_payment_id").unique(),
+    confirmationUrl: text("confirmation_url"),
+    createdAt: createdAt(),
+    paidAt: timestamp("paid_at", { withTimezone: true }),
+  },
+  (t) => [
+    index("purchases_result_idx").on(t.resultId),
+    index("purchases_pair_idx").on(t.pairId),
+    index("purchases_user_idx").on(t.userId, t.createdAt),
+    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}) <= 1`),
+  ],
+);
+
+export const reports = pgTable(
+  "reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    resultId: uuid("result_id").references(() => results.id, { onDelete: "cascade" }),
+    pairId: uuid("pair_id").references(() => pairs.id, { onDelete: "cascade" }),
+    kind: reportKindEnum("kind").notNull(),
+    sections: jsonb("sections").notNull(),
+    source: reportSourceEnum("source").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    uniqueIndex("reports_result_kind_uq").on(t.resultId, t.kind).where(sql`${t.resultId} is not null`),
+    uniqueIndex("reports_pair_kind_uq").on(t.pairId, t.kind).where(sql`${t.pairId} is not null`),
+    check("reports_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}) = 1`),
   ],
 );

@@ -47,3 +47,9 @@ export async function getLatestResultId(db: Database, userId: string): Promise<s
     .limit(1);
   return row?.id ?? null;
 }
+
+export async function getResult(db: Database, resultId: string): Promise<ResultRecord | null> {
+  if (!isUuid(resultId)) return null;
+  const [row] = await db.select().from(results).where(eq(results.id, resultId)).limit(1);
+  return row ? toRecord(row) : null;
+}
