@@ -76,6 +76,11 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </form>
         </div>
         <p className="muted">{REPORT_DISCLAIMER}</p>
+        <p>
+          <Link className="muted" href="/me/delete">
+            Удалить мои данные
+          </Link>
+        </p>
       </div>
     </main>
   );

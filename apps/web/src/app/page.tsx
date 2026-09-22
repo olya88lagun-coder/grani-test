@@ -1,9 +1,15 @@
 import Link from "next/link";
 
-export default function HomePage() {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
+  const { deleted } = await searchParams;
   return (
     <main className="page">
       <div className="stack">
+        {deleted === "1" && (
+          <p className="card card--2" role="status">
+            Данные удалены. Спасибо, что были с нами.
+          </p>
+        )}
         <p className="eyebrow">Тест личности · Большая пятёрка</p>
         <h1 className="display">Узнай свой тип и как тебя видят другие</h1>
         <p className="lead">
