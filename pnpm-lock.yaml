@@ -224,6 +224,12 @@ importers:
 
   apps/worker:
     dependencies:
+      '@grani/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
+      '@grani/content':
+        specifier: workspace:*
+        version: link:../../packages/content
       '@grani/core':
         specifier: workspace:*
         version: link:../../packages/core

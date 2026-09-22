@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { GENERATE_JOB_OPTIONS, generateJobKey, NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, type GenerateJob, type NotifyJob } from "@grani/core";
+import { jobIdFor } from "@grani/db";
 import { PgBoss } from "pg-boss";
 import { getEnv } from "./env";
 
@@ -17,12 +17,6 @@ function queue(): Promise<PgBoss> {
     throw error;
   });
   return holder.__graniQueue;
-}
-
-// Одинаковый ключ → одинаковый id задачи: pg-boss не вставит её второй раз
-function jobIdFor(key: string): string {
-  const hex = createHash("sha256").update(key).digest("hex");
-  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-8${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
 }
 
 export async function enqueueNotify(job: NotifyJob): Promise<void> {

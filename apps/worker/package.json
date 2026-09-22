@@ -8,6 +8,8 @@
     "dev": "node scripts/build.mjs && node --env-file-if-exists=../web/.env.development.local dist/main.mjs"
   },
   "dependencies": {
+    "@grani/ai": "workspace:*",
+    "@grani/content": "workspace:*",
     "@grani/core": "workspace:*",
     "@grani/db": "workspace:*",
     "grammy": "1.46.0",

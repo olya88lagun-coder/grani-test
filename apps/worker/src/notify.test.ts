@@ -6,6 +6,9 @@ import {
   getNotifyTargets,
   getOrCreateInvite,
   getOrCreatePairInvite,
+  leavePair,
+  saveReport,
+  seedPair,
   seedUserWithResult,
   setCanNotify,
   type Database,
@@ -101,5 +104,29 @@ describe("pair_created", () => {
     await runNotify({ kind: "pair_created", pairId }, deps);
 
     expect(vk).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("report_ready", () => {
+  test("tells the owner that the personal report is ready", async () => {
+    const owner = await seedUserWithResult(db, { externalId: "300" });
+    const { report } = await saveReport(db, { target: { resultId: owner.resultId }, kind: "full", sections: {}, source: "fallback" });
+
+    await runNotify({ kind: "report_ready", reportId: report.id }, deps);
+
+    expect(telegram).toHaveBeenCalledWith("300", `Готово: полный разбор. Открыть: ${APP_URL}/report/${owner.resultId}`);
+  });
+
+  test("tells both members about the pair report, nobody after leaving", async () => {
+    const pair = await seedPair(db);
+    const { report } = await saveReport(db, { target: { pairId: pair.pairId }, kind: "pair", sections: {}, source: "fallback" });
+
+    await runNotify({ kind: "report_ready", reportId: report.id }, deps);
+    expect(telegram).toHaveBeenCalledTimes(2);
+
+    telegram.mockClear();
+    await leavePair(db, pair.pairId, pair.a.userId);
+    await runNotify({ kind: "report_ready", reportId: report.id }, deps);
+    expect(telegram).not.toHaveBeenCalled();
   });
 });
