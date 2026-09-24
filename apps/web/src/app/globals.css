@@ -171,7 +171,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
   color: var(--home-ink);
 }
 
-.home-page a { color: var(--home-green); }
+.home-page a:not(.button) { color: var(--home-green); }
 .home-page h1, .home-page h2, .home-page h3, .home-page p { margin: 0; }
 
 .home-hero {

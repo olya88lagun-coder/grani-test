@@ -1,8 +1,11 @@
+import type { TypeCode } from "@grani/core";
+import { typeCodeToDir } from "@grani/content";
+import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypeGem } from "@/components/TypeGem";
-import { publicMetadata } from "@/lib/seo";
-import type { TypeShape } from "@/lib/type-visuals";
+import { articleDate, firstSentences, publicMetadata, typePath } from "@/lib/seo";
+import { TYPE_VISUALS, type TypeVisual } from "@/lib/type-visuals";
 
 const HOME = publicMetadata({
   title: "Грани — тест личности: 16 типов и как тебя видят другие",
@@ -44,19 +47,36 @@ const RESULT_NOTES = [
   { title: "Зоны роста", text: "Иногда берёшь на себя слишком много и доходишь не до конца.", icon: "target" },
 ] as const;
 
-const TYPES: readonly { title: string; shape: TypeShape; family: string; tone: string; text: string }[] = [
-  { title: "Искра", shape: "star", family: "2", tone: "leaf", text: "Энергия. Вдохновение. Новые идеи." },
-  { title: "Архитектор", shape: "square", family: "2", tone: "glass", text: "Структура. Анализ. Результат." },
-  { title: "Мечтатель", shape: "drop", family: "2", tone: "cloud", text: "Воображение. Глубина. Смысл." },
-  { title: "Командир", shape: "triangle", family: "3", tone: "pyramid", text: "Лидерство. Уверенность. Движение." },
-  { title: "Опора", shape: "hexagon", family: "3", tone: "stone", text: "Надёжность. Стабильность. Забота." },
+const TYPES: readonly { code: TypeCode; title: string; tone: string; text: string }[] = [
+  { code: "+-++", title: "Искра", tone: "leaf", text: "Энергия. Вдохновение. Новые идеи." },
+  { code: "++--", title: "Архитектор", tone: "glass", text: "Структура. Анализ. Результат." },
+  { code: "+--+", title: "Мечтатель", tone: "cloud", text: "Воображение. Глубина. Смысл." },
+  { code: "-++-", title: "Командир", tone: "pyramid", text: "Лидерство. Уверенность. Движение." },
+  { code: "-+++", title: "Опора", tone: "stone", text: "Надёжность. Стабильность. Забота." },
+];
+
+const PAIR_TYPE: TypeCode = "++--";
+
+// Значок типа тот же, что в каталоге и на странице типа
+function typeVisual(code: TypeCode): TypeVisual {
+  return TYPE_VISUALS[typeCodeToDir(code)]!;
+}
+
+const ARTICLE_CARDS = [
+  { slug: "ekstravert-introvert", tag: "Личность", tone: "portrait" },
+  { slug: "kak-menya-vidyat", tag: "Психология", tone: "interior" },
+  { slug: "sovmestimost-par", tag: "Отношения", tone: "arch" },
 ] as const;
 
-const ARTICLES = [
-  { title: "Экстраверт ≠ общительный", tag: "Личность", date: "12 сентября 2024", tone: "portrait" },
-  { title: "Почему друзья видят тебя иначе", tag: "Отношения", date: "3 сентября 2024", tone: "interior" },
-  { title: "5 черт, которые влияют на отношения", tag: "Психология", date: "27 августа 2024", tone: "arch" },
-] as const;
+// Карточки — настоящие статьи; пропавший slug роняет сборку, а не прячет карточку
+function homeArticles() {
+  const articles = getArticles();
+  return ARTICLE_CARDS.map((card) => {
+    const article = articles.find((item) => item.slug === card.slug);
+    if (!article) throw new Error(`Home page article not found: ${card.slug}`);
+    return { ...card, article, heading: article.title.split(":")[0]! };
+  });
+}
 
 type IconName = (typeof FEATURES)[number]["icon"] | (typeof RESULT_NOTES)[number]["icon"];
 
@@ -214,9 +234,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <Link className="button button--lg" href="/test">
                 Пройти тест <span aria-hidden="true">→</span>
               </Link>
-              <span className="home-time" aria-label="Примерное время прохождения">
-                ≈ 10 минут
-              </span>
+              <span className="home-time">Бесплатно · ≈ 10 минут</span>
             </div>
           </div>
           <CrystalScene />
@@ -242,8 +260,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <p className="home-kicker">Твой результат</p>
           <h2 id="result-title">Больше, чем просто тип</h2>
           <p>
-            Ты получишь подробный разбор своей личности: твой тип, 5 ключевых черт, сильные стороны, зоны роста и то,
-            как тебя воспринимают другие.
+            Бесплатно ты получишь свой тип, 5 ключевых черт и карточку для сторис. Если захочется глубже — подробный
+            разбор можно открыть отдельно за 299 ₽.
           </p>
           <Link className="button button--lg" href="/test">
             Пройти тест <span aria-hidden="true">→</span>
@@ -296,16 +314,16 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </div>
         <div className="home-type-carousel" aria-label="Примеры типов личности">
           {TYPES.map((type) => (
-            <article className={`home-type-card home-type-card--${type.tone}`} key={type.title}>
+            <article className={`home-type-card home-type-card--${type.tone}`} key={type.code}>
               <div className="home-type-card__art">
-                <span className="type-gem" data-family={type.family}>
-                  <TypeGem shape={type.shape} size={58} />
+                <span className="type-gem" data-family={typeVisual(type.code).family}>
+                  <TypeGem shape={typeVisual(type.code).shape} size={58} />
                 </span>
                 {type.tone === "leaf" && <BotanicalMark />}
               </div>
               <h3>{type.title}</h3>
               <p>{type.text}</p>
-              <Link href="/types" aria-label={`Смотреть тип ${type.title}`}>
+              <Link href={typePath(type.code)} aria-label={`Смотреть тип ${type.title}`}>
                 →
               </Link>
             </article>
@@ -313,7 +331,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </div>
       </section>
 
-      <section className="home-section home-pair" aria-labelledby="pair-title" data-palette="pair">
+      <section className="home-section home-pair" aria-labelledby="pair-title">
         <div className="home-section__copy">
           <p className="home-kicker">Совместимость</p>
           <h2 id="pair-title">Как ваши грани сочетаются</h2>
@@ -337,8 +355,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </div>
           <article className="home-person-card home-person-card--glass">
             <h3>Архитектор</h3>
-            <span className="type-gem" data-family="2">
-              <TypeGem shape="square" size={82} />
+            <span className="type-gem" data-family={typeVisual(PAIR_TYPE).family}>
+              <TypeGem shape={typeVisual(PAIR_TYPE).shape} size={82} />
             </span>
           </article>
           <div className="home-pair-list">
@@ -364,17 +382,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </Link>
         </div>
         <div className="home-article-grid">
-          {ARTICLES.map((article) => (
-            <article className="home-article-card" key={article.title}>
-              <div className={`home-article-card__image home-article-card__image--${article.tone}`}>
-                <span>{article.tag}</span>
+          {homeArticles().map(({ slug, tag, tone, article, heading }) => (
+            <article className="home-article-card" key={slug}>
+              <div className={`home-article-card__image home-article-card__image--${tone}`}>
+                <span>{tag}</span>
               </div>
-              <h3>{article.title}</h3>
-              <p>
-                Разбираем, как разные грани проявляются в жизни и помогают лучше понимать себя и партнёра.
-              </p>
-              <small>{article.date}</small>
-              <Link href="/articles" aria-label={`Открыть статью ${article.title}`}>
+              <h3>{heading}</h3>
+              <p>{firstSentences(article.description, 120)}</p>
+              <small>{articleDate(article.date)}</small>
+              <Link href={`/articles/${slug}`} aria-label={`Открыть статью ${article.title}`}>
                 →
               </Link>
             </article>
