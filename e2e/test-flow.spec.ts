@@ -9,7 +9,7 @@ async function answerCurrentPage(page: Page, label: string) {
 
 test("passes the test, logs in and sees the saved result with a story card", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Пройти тест" }).click();
+  await page.getByRole("link", { name: "Пройти тест" }).first().click();
   await expect(page).toHaveURL(/\/test$/);
 
   await answerSelfTest(page);
