@@ -4,7 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { TelegramLoginButton } from "./TelegramLoginButton";
 
-export function LoginPanel({ botUsername, authUrl, hasPendingResult }: { botUsername: string; authUrl: string; hasPendingResult: boolean }) {
+type TelegramLogin = { botUsername: string; authUrl: string };
+
+export function LoginPanel({ telegram, hasPendingResult }: { telegram: TelegramLogin | null; hasPendingResult: boolean }) {
   const [agreed, setAgreed] = useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,8 +48,8 @@ export function LoginPanel({ botUsername, authUrl, hasPendingResult }: { botUser
 
       {ready && (
         <>
-          <TelegramLoginButton botUsername={botUsername} authUrl={authUrl} />
-          <a className="button button--ghost button--block" href="/api/auth/vk/start">
+          {telegram && <TelegramLoginButton botUsername={telegram.botUsername} authUrl={telegram.authUrl} />}
+          <a className={telegram ? "button button--ghost button--block" : "button button--block"} href="/api/auth/vk/start">
             Войти через VK ID
           </a>
         </>

@@ -38,7 +38,9 @@ export async function completeLogin(deps: LoginDeps, identity: IdentityInput, co
 }
 
 export async function loginWithTelegram(deps: LoginDeps, params: URLSearchParams, cookies: LoginCookies): Promise<LoginOutcome> {
-  const verified = verifyTelegramLoginWidget(params, deps.env.TELEGRAM_BOT_TOKEN, deps.now());
+  // В первой версии вход через Telegram выключен (трансграничная передача данных): бот не настроен — входа нет
+  if (!deps.env.telegram) return { ok: false, error: "telegram_disabled" };
+  const verified = verifyTelegramLoginWidget(params, deps.env.telegram.botToken, deps.now());
   if (!verified.ok) return { ok: false, error: `telegram_${verified.reason}` };
   const { user } = verified;
   return completeLogin(

@@ -8,7 +8,9 @@ describe("legal", () => {
 
   it("names every service that receives personal data", () => {
     const names = DATA_RECIPIENTS.map((r) => r.name);
-    expect(names).toEqual(expect.arrayContaining(["ЮKassa", "Telegram", "ВКонтакте", "Яндекс.Метрика"]));
+    expect(names).toEqual(expect.arrayContaining(["ЮKassa", "ВКонтакте", "Яндекс.Метрика"]));
+    // Вход через Telegram выключен: иностранных получателей быть не должно
+    expect(names).not.toContain("Telegram");
     expect(names.some((n) => n.includes("YandexGPT") && n.includes("GigaChat"))).toBe(true);
   });
 

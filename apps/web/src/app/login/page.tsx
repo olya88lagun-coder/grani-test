@@ -25,8 +25,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       )}
       <div className="card">
         <LoginPanel
-          botUsername={env.TELEGRAM_BOT_USERNAME}
-          authUrl={new URL("/api/auth/telegram/widget", env.APP_URL).toString()}
+          telegram={env.telegram && { botUsername: env.telegram.botUsername, authUrl: new URL("/api/auth/telegram/widget", env.APP_URL).toString() }}
           hasPendingResult={store.has(PENDING_COOKIE)}
         />
       </div>
