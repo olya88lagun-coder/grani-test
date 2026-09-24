@@ -14,6 +14,21 @@ test("the personal instruction speaks to «ты», forbids new facts and describ
   expect(JSON.parse(prompt.user).facts.typeName).toBe("Искра");
 });
 
+// YandexGPT копирует число элементов из примера: с одним объектом в blind_spots возвращал одну зону, и схема отклоняла ответ
+test("the full instruction shows several blind spots and states list sizes outside the examples", () => {
+  const prompt = buildPrompt(buildPersonalInput(getLibrary(), "full", RESULT));
+
+  expect(prompt.system.match(/"tip"/g)?.length).toBeGreaterThanOrEqual(3);
+  expect(prompt.system).toContain("blind_spots — 3–4");
+  expect(prompt.system).toContain("strengths — 4–5");
+});
+
+test("every chapter instruction states the tips count outside the example", () => {
+  for (const kind of ["chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships"] as const) {
+    expect(buildPrompt(buildPersonalInput(getLibrary(), kind, RESULT)).system).toContain("tips — 3–5");
+  }
+});
+
 test("the pair instruction speaks to «вы» and lists the five sections", () => {
   const prompt = buildPrompt(buildPairInput(getLibrary(), RESULT.scores, RESULT.scores));
 
