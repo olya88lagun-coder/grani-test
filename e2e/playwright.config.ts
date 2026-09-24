@@ -10,7 +10,9 @@ export default defineConfig({
   timeout: 90_000,
   retries: 0,
   // next dev компилирует страницу при первом заходе — переход на новую страницу бывает дольше 5 секунд по умолчанию
-  expect: { timeout: 15_000 },
+  expect: { timeout: 20_000 },
+  // Локальная PGlite выполняет запросы по очереди: на четырёх параллельных сценариях отправка формы упиралась в таймаут
+  workers: 2,
   use: {
     baseURL: BASE_URL,
     locale: "ru-RU",

@@ -21,9 +21,8 @@ const ENV: AppEnv = {
   APP_URL: "https://grani-test.ru",
   DATABASE_URL: "postgres://unused",
   SESSION_SECRET: "s".repeat(40),
-  TELEGRAM_BOT_TOKEN: "123456:TEST-TOKEN",
-  TELEGRAM_BOT_USERNAME: "test_grani_bot",
   VK_CLIENT_ID: "555",
+  telegram: { botToken: "123456:TEST-TOKEN", botUsername: "test_grani_bot" },
   vkCommunity: null,
   payments: null,
 };
@@ -40,7 +39,7 @@ function signedWidgetParams(fields: Record<string, string>): URLSearchParams {
     .sort()
     .map((key) => `${key}=${fields[key]}`)
     .join("\n");
-  const secret = createHash("sha256").update(ENV.TELEGRAM_BOT_TOKEN).digest();
+  const secret = createHash("sha256").update(ENV.telegram!.botToken).digest();
   return new URLSearchParams({ ...fields, hash: createHmac("sha256", secret).update(dataCheckString).digest("hex") });
 }
 
@@ -110,6 +109,14 @@ describe("loginWithTelegram", () => {
     const params = new URLSearchParams({ id: "42", first_name: "Аня", auth_date: "1", hash: "00" });
 
     expect(await loginWithTelegram(deps, params, NO_COOKIES)).toEqual({ ok: false, error: "telegram_BAD_HASH" });
+  });
+
+  test("refuses when the Telegram bot is not configured", async () => {
+    const params = signedWidgetParams({ id: "42", first_name: "Аня", auth_date: String(Math.floor(Date.now() / 1000)) });
+
+    const outcome = await loginWithTelegram({ ...deps, env: { ...ENV, telegram: null } }, params, NO_COOKIES);
+
+    expect(outcome).toEqual({ ok: false, error: "telegram_disabled" });
   });
 });
 

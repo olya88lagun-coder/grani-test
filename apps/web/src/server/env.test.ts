@@ -5,14 +5,12 @@ const VALID = {
   APP_URL: "https://grani-test.ru",
   DATABASE_URL: "postgres://u:p@db:5432/grani",
   SESSION_SECRET: "x".repeat(32),
-  TELEGRAM_BOT_TOKEN: "123456:ABC-def_1",
-  TELEGRAM_BOT_USERNAME: "test_grani_bot",
   VK_CLIENT_ID: "54770000",
 };
 
 describe("readEnv", () => {
   test("accepts a complete environment", () => {
-    expect(readEnv(VALID)).toEqual({ ...VALID, vkCommunity: null, payments: null });
+    expect(readEnv(VALID)).toEqual({ ...VALID, telegram: null, vkCommunity: null, payments: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -21,6 +19,22 @@ describe("readEnv", () => {
     expect(run).toThrow(/SESSION_SECRET/);
     expect(run).toThrow(/VK_CLIENT_ID/);
     expect(run).not.toThrow(/short/);
+  });
+});
+
+describe("Telegram login", () => {
+  const TG = { TELEGRAM_BOT_TOKEN: "123456:ABC-def_1", TELEGRAM_BOT_USERNAME: "test_grani_bot" };
+
+  test("is off when the bot is not configured", () => {
+    expect(readEnv(VALID).telegram).toBeNull();
+  });
+
+  test("is read from both variables together", () => {
+    expect(readEnv({ ...VALID, ...TG }).telegram).toEqual({ botToken: "123456:ABC-def_1", botUsername: "test_grani_bot" });
+  });
+
+  test("fails when only one of them is set", () => {
+    expect(() => readEnv({ ...VALID, TELEGRAM_BOT_TOKEN: "123456:ABC-def_1" })).toThrow(/TELEGRAM_BOT_USERNAME/);
   });
 });
 

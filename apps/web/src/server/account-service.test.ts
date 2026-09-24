@@ -8,9 +8,8 @@ const ENV: AppEnv = {
   APP_URL: "https://grani-test.ru",
   DATABASE_URL: "postgres://unused",
   SESSION_SECRET: "s".repeat(40),
-  TELEGRAM_BOT_TOKEN: "123456:TEST-TOKEN",
-  TELEGRAM_BOT_USERNAME: "test_grani_bot",
   VK_CLIENT_ID: "555",
+  telegram: { botToken: "123456:TEST-TOKEN", botUsername: "test_grani_bot" },
   vkCommunity: null,
   payments: null,
 };
