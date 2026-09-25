@@ -14,7 +14,7 @@ const labels = (traits: readonly (keyof typeof TRAIT_LABELS)[]) => traits.map((t
 export default function CompatibilityPage() {
   const library = getLibrary();
   return (
-    <main className="page" data-palette="pair">
+    <main className="page inner-page page--compat" data-palette="pair">
       <article className="stack">
         <Breadcrumbs items={[{ name: "Совместимость пары", path: "/compatibility" }]} />
         <p className="eyebrow">Для двоих</p>
