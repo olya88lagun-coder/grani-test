@@ -1,5 +1,5 @@
 import { ALL_TYPE_CODES, TRAITS, type Trait, type TypeCode } from "@grani/core";
-import { PAGE_POLES, type PagePole } from "@grani/content";
+import { PAGE_POLES, type PagePole, type Source } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import { OPERATOR } from "./legal";
@@ -65,6 +65,7 @@ export function PUBLIC_PATHS(): string[] {
     "/compatibility",
     "/articles",
     ...getArticles().map((article) => `/articles/${article.slug}`),
+    "/about",
     ...DOCUMENT_PATHS,
   ];
 }
@@ -92,7 +93,14 @@ const LOGO_URL = `${SITE_URL}/icon.png`;
 const COVER_URL = `${SITE_URL}${OG_IMAGE.url}`;
 
 // Статья: Google требует картинку и издателя, чтобы показать её расширенным сниппетом
-export function articleJsonLd(p: { title: string; description: string; path: string; datePublished: string; dateModified?: string }) {
+export function articleJsonLd(p: {
+  title: string;
+  description: string;
+  path: string;
+  datePublished: string;
+  dateModified?: string;
+  sources?: readonly Source[];
+}) {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -105,14 +113,17 @@ export function articleJsonLd(p: { title: string; description: string; path: str
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: LOGO_URL } },
     datePublished: p.datePublished,
     dateModified: p.dateModified ?? p.datePublished,
+    ...(p.sources?.length
+      ? { citation: p.sources.map((source) => ({ "@type": "ScholarlyArticle", name: source.title, url: source.url, datePublished: String(source.year) })) }
+      : {}),
   };
 }
 
 // Справочные страницы типов и черт без даты — это страницы сайта, а не статьи
-export function webPageJsonLd(p: { title: string; description: string; path: string }) {
+export function webPageJsonLd(p: { title: string; description: string; path: string; type?: "WebPage" | "AboutPage" }) {
   return {
     "@context": "https://schema.org",
-    "@type": "WebPage",
+    "@type": p.type ?? "WebPage",
     name: p.title,
     description: p.description,
     url: `${SITE_URL}${p.path}`,
@@ -162,7 +173,7 @@ export function llmsTxt(): string {
     ["## 16 типов личности", llmsLink("Все типы", "/types"), ...ALL_TYPE_CODES.map((code) => llmsLink(typeDisplayName(code), typePath(code)))].join("\n"),
     ["## Черты Большой пятёрки", ...TRAIT_PAGES.map((page) => llmsLink(traitPageTitle(page.trait, page.pole), traitPath(page.trait, page.pole)))].join("\n"),
     ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, `/articles/${article.slug}`))].join("\n"),
-    ["## Документы", llmsLink("Контакты", "/contacts"), llmsLink("Оферта и цены", "/offer")].join("\n"),
+    ["## О проекте", llmsLink("О проекте и методике", "/about"), llmsLink("Контакты", "/contacts"), llmsLink("Оферта и цены", "/offer")].join("\n"),
   ].join("\n\n");
 }
 

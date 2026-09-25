@@ -52,11 +52,11 @@ describe("PUBLIC_PATHS", () => {
   it("lists home, 16 types, 10 traits, compatibility and documents, but no private pages", () => {
     const paths = PUBLIC_PATHS();
     expect(paths).toEqual(expect.arrayContaining(["/", "/types", "/types/vdokhnovitel", "/traits", "/traits/stability-low", "/compatibility"]));
-    expect(paths).toEqual(expect.arrayContaining(["/privacy", "/consent", "/offer", "/contacts"]));
+    expect(paths).toEqual(expect.arrayContaining(["/about", "/privacy", "/consent", "/offer", "/contacts"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(6);
-    expect(paths).toHaveLength(40);
+    expect(paths).toHaveLength(41);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
   });
@@ -98,6 +98,17 @@ describe("metadata", () => {
       image: `${SITE_URL}${OG_IMAGE.url}`,
       publisher: { "@type": "Organization", name: "Грани", logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.png` } },
     });
+  });
+
+  it("lists the scholarly sources of an article as citations", () => {
+    const source = { authors: "Vazire S.", year: 2010, title: "Who knows what about a person?", journal: "JPSP", url: "https://doi.org/10.1037/a0017908", note: "…" };
+    const data = articleJsonLd({ title: "Т", description: "О", path: "/articles/kak-menya-vidyat", datePublished: "2026-09-22", sources: [source] });
+    expect(data.citation).toEqual([{ "@type": "ScholarlyArticle", name: "Who knows what about a person?", url: "https://doi.org/10.1037/a0017908", datePublished: "2010" }]);
+    expect(articleJsonLd({ title: "Т", description: "О", path: "/articles/x", datePublished: "2026-09-22" })).not.toHaveProperty("citation");
+  });
+
+  it("marks the about page with its own schema type", () => {
+    expect(webPageJsonLd({ title: "О проекте", description: "О", path: "/about", type: "AboutPage" })["@type"]).toBe("AboutPage");
   });
 
   it("describes a reference page as a web page of the site, not an article", () => {
