@@ -9,7 +9,7 @@ export default function TestPage() {
   // В клиент уходят только id и текст: ключи и источники вопросов не нужны браузеру
   const items = SELF_ITEMS.map((item) => ({ id: item.id, text: item.text }));
   return (
-    <main className="page">
+    <main className="page inner-page page--test">
       <Questionnaire items={items} storageKey={STORAGE_KEY} submitUrl="/api/results" submitLabel="Узнать результат" startGoal="test_start" finishGoal="test_finish" />
     </main>
   );
