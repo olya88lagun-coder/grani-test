@@ -6,6 +6,9 @@ import type { Metadata } from "next";
 export const SITE_URL = "https://grani-test.ru";
 export const SITE_NAME = "Грани";
 
+// Обложка для превью ссылок во ВКонтакте и мессенджерах; относительный адрес дополняется metadataBase
+export const OG_IMAGE = { url: "/og/grani.jpg", width: 1200, height: 630, alt: "Грани — тест личности: узнай себя глубже" } as const;
+
 // Транслитерация названия типа: Яндекс учитывает слова в адресе, а ссылка читается в мессенджере
 export const TYPE_SLUGS: Readonly<Record<TypeCode, string>> = {
   "++++": "vdokhnovitel",
@@ -69,7 +72,8 @@ export function publicMetadata(p: { title: string; description: string; path: st
     description: p.description,
     robots: { index: true, follow: true },
     alternates: { canonical: p.path },
-    openGraph: { title: p.title, description: p.description, url: p.path, type: "website", locale: "ru_RU", siteName: SITE_NAME },
+    openGraph: { title: p.title, description: p.description, url: p.path, type: "website", locale: "ru_RU", siteName: SITE_NAME, images: [OG_IMAGE] },
+    twitter: { card: "summary_large_image", title: p.title, description: p.description, images: [OG_IMAGE.url] },
   };
 }
 

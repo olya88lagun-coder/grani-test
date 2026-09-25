@@ -5,6 +5,7 @@ import {
   articleJsonLd,
   breadcrumbs,
   firstSentences,
+  OG_IMAGE,
   PUBLIC_PATHS,
   publicMetadata,
   SITE_URL,
@@ -61,6 +62,13 @@ describe("metadata", () => {
     expect(meta.robots).toEqual({ index: true, follow: true });
     expect(meta.alternates?.canonical).toBe("/types/vdokhnovitel");
     expect(meta.openGraph).toMatchObject({ title: "Вдохновитель", description: "Описание типа", url: "/types/vdokhnovitel", locale: "ru_RU", siteName: "Грани" });
+  });
+
+  it("gives public pages a large link preview with the site cover", () => {
+    const meta = publicMetadata({ title: "Вдохновитель", description: "Описание типа", path: "/types/vdokhnovitel" });
+    expect(meta.openGraph?.images).toEqual([OG_IMAGE]);
+    expect(meta.twitter).toMatchObject({ card: "summary_large_image", images: [OG_IMAGE.url] });
+    expect(OG_IMAGE).toMatchObject({ url: "/og/grani.jpg", width: 1200, height: 630 });
   });
 
   it("builds a schema.org breadcrumb list with absolute urls", () => {
