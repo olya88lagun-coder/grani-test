@@ -12,7 +12,7 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
   const owned = await listOwnedProducts(getDb(), { resultId: result.id });
   if (unlockedKinds(owned).has("full")) {
     return (
-      <section className="card card--3 stack" aria-labelledby="report">
+      <section className="card stack result-block result-block--report" aria-labelledby="report">
         <p className="eyebrow">Полный разбор</p>
         <h2 id="report">Разбор открыт</h2>
         <div>
@@ -25,8 +25,8 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
   }
   const preview = buildReportPreview(getLibrary(), result);
   return (
-    <section className="card card--3 stack" aria-labelledby="report">
-      <p className="eyebrow">Полный разбор</p>
+    <section className="card stack result-block result-block--report result-block--offer" aria-labelledby="report">
+      <p className="eyebrow">Полный разбор · {formatRub(PRODUCT_PRICES.full)}</p>
       <h2 id="report">Что откроется в полном разборе</h2>
       {preview.map((section) => (
         <div key={section.title} className="preview">
@@ -35,7 +35,9 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
           <p className="preview__blur" aria-hidden="true">{BLURRED}</p>
         </div>
       ))}
-      <BuyButton product="full" targetId={result.id} label={`Открыть за ${formatRub(PRODUCT_PRICES.full)}`} />
+      <div className="result-offer__buy">
+        <BuyButton product="full" targetId={result.id} label={`Открыть за ${formatRub(PRODUCT_PRICES.full)}`} />
+      </div>
       <p className="muted">
         Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет.
       </p>

@@ -5,7 +5,7 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
   const anna = await signedInWithResult(browser, uniqueName("Аня"));
   const resultUrl = anna.page.url();
   await anna.page.getByRole("button", { name: "Позвать партнёра" }).click();
-  const link = anna.page.locator(`section[data-palette="pair"]`).getByRole("textbox", { name: "Ссылка-приглашение" });
+  const link = anna.page.getByRole("region", { name: "Проверить совместимость с партнёром" }).getByRole("textbox", { name: "Ссылка-приглашение" });
   await expect(link).toHaveValue(/\/p\/[A-Za-z0-9_-]{24}$/);
   const inviteUrl = await link.inputValue();
 
@@ -52,7 +52,7 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
 test("a pair is not created without consent", async ({ browser }) => {
   const anna = await signedInWithResult(browser, uniqueName("Аня"));
   await anna.page.getByRole("button", { name: "Позвать партнёра" }).click();
-  const inviteUrl = await anna.page.locator(`section[data-palette="pair"]`).getByRole("textbox", { name: "Ссылка-приглашение" }).inputValue();
+  const inviteUrl = await anna.page.getByRole("region", { name: "Проверить совместимость с партнёром" }).getByRole("textbox", { name: "Ссылка-приглашение" }).inputValue();
   const token = inviteUrl.split("/").at(-1);
 
   const vera = await signedInWithResult(browser, uniqueName("Вера"));

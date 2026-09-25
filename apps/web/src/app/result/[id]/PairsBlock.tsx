@@ -8,7 +8,7 @@ export async function PairsBlock({ userId, resultId }: { userId: string; resultI
   const pairs = await listActivePairs(getDb(), userId);
 
   return (
-    <section className="card stack" data-palette="pair" aria-labelledby="pairs">
+    <section className="card stack result-block result-block--pair" aria-labelledby="pairs">
       <p className="eyebrow">Совместимость</p>
       <h2 id="pairs">Проверить совместимость с партнёром</h2>
       <p className="lead">Партнёр пройдёт тест по вашей ссылке и подтвердит, что готов показать свой тип. Вы оба увидите процент совместимости и шкалы рядом.</p>

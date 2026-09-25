@@ -19,12 +19,6 @@ export const TYPE_VISUALS: Readonly<Record<string, TypeVisual>> = Object.fromEnt
   Object.entries(SHAPES).map(([dir, shape]) => [dir, { family: FAMILIES[dir.slice(0, 2)] as TypeFamily, shape }]),
 );
 
-// Палитра «Оранжерея»: чернила и тоны панелей --surface … --surface-4
-export const CARD_PALETTE = {
-  ink: "#0F3E17",
-  tints: { 1: "#E1F4DF", 2: "#CFE7D3", 3: "#B1DBB8", 4: "#B6CED5" },
-} as const satisfies { ink: string; tints: Readonly<Record<TypeFamily, string>> };
-
 const CODE_BY_DIR: ReadonlyMap<string, TypeCode> = new Map(ALL_TYPE_CODES.map((code) => [typeCodeToDir(code), code]));
 
 export function dirToTypeCode(dir: string): TypeCode | null {

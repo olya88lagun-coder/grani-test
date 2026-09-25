@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { PRODUCT_PRICES } from "@grani/core";
 import { goalForProduct, reachGoal } from "@/lib/analytics";
 import type { PurchaseView } from "@/server/payments-service";
@@ -46,7 +46,7 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
 
   if (view.status === "canceled" || view.status === "refunded") {
     return (
-      <div className="stack">
+      <WaitCard>
         <h1 className="display">Оплата не прошла</h1>
         <p className="lead">Деньги не списаны. Можно попробовать ещё раз.</p>
         <div>
@@ -54,21 +54,26 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
             Вернуться
           </Link>
         </div>
-      </div>
+      </WaitCard>
     );
   }
   if (view.status === "pending") {
     return (
-      <div className="stack" role="status">
+      <WaitCard busy>
         <h1 className="display">Ждём подтверждения оплаты</h1>
         <p className="lead">Обычно это занимает несколько секунд.</p>
-      </div>
+      </WaitCard>
     );
   }
   return (
-    <div className="stack" role="status">
+    <WaitCard busy={!view.ready}>
       <h1 className="display">{view.ready ? "Разбор готов" : "Готовим разбор"}</h1>
-      <p className="lead">Около минуты. Страницу можно не обновлять — когда всё будет готово, придёт сообщение.</p>
+      <p className="lead">Обычно это занимает около минуты. Страницу можно не обновлять — она откроется сама.</p>
+      <ol className="wait-steps">
+        <li className="wait-steps__done">Собираем ответы</li>
+        <li className={view.ready ? "wait-steps__done" : "wait-steps__active"}>Формируем портрет</li>
+        <li className={view.ready ? "wait-steps__done" : undefined}>Откроем страницу автоматически</li>
+      </ol>
       {view.ready && (
         <div>
           <Link className="button" href={view.reportUrl}>
@@ -76,6 +81,16 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
           </Link>
         </div>
       )}
+    </WaitCard>
+  );
+}
+
+// Центральная карточка ожидания; кристалл медленно «дышит», пока идёт работа
+function WaitCard({ busy = false, children }: { busy?: boolean; children: ReactNode }) {
+  return (
+    <div className="wait-card stack" role="status">
+      <img className={busy ? "wait-card__gem wait-card__gem--busy" : "wait-card__gem"} src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+      {children}
     </div>
   );
 }
