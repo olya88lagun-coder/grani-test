@@ -136,12 +136,70 @@ const PITTENGER_2005: Source = {
   note: "почему деление на типы без баллов теряет информацию и тип часто меняется при повторе",
 };
 
+const MCCRAE_COSTA_1989: Source = {
+  authors: "McCrae R. R., Costa P. T.",
+  year: 1989,
+  title: "Reinterpreting the Myers-Briggs Type Indicator from the perspective of the five-factor model of personality",
+  journal: "Journal of Personality",
+  url: "https://doi.org/10.1111/j.1467-6494.1989.tb00759.x",
+  note: "четыре шкалы MBTI совпадают с экстраверсией, открытостью, доброжелательностью и добросовестностью; устойчивости в MBTI нет",
+};
+
+const EYSENCK_1991: Source = {
+  authors: "Eysenck H. J.",
+  year: 1991,
+  title: "Dimensions of personality: 16, 5 or 3? Criteria for a taxonomic paradigm",
+  journal: "Personality and Individual Differences",
+  url: "https://doi.org/10.1016/0191-8869(91)90144-Z",
+  note: "модель Айзенка с осями экстраверсии и нейротизма, на которые ложатся четыре классических темперамента",
+};
+
+const ROTHBART_2007: Source = {
+  authors: "Rothbart M. K.",
+  year: 2007,
+  title: "Temperament, development, and personality",
+  journal: "Current Directions in Psychological Science",
+  url: "https://doi.org/10.1111/j.1467-8721.2007.00505.x",
+  note: "темперамент заметен уже в детстве, и из него со временем вырастают черты личности взрослого",
+};
+
+const FLEESON_2001: Source = {
+  authors: "Fleeson W.",
+  year: 2001,
+  title: "Toward a structure- and process-integrated view of personality: Traits as density distributions of states",
+  journal: "Journal of Personality and Social Psychology",
+  url: "https://doi.org/10.1037/0022-3514.80.6.1011",
+  note: "поведение каждого человека сильно меняется от ситуации к ситуации, черта описывает его в среднем",
+};
+
+const FLEESON_2002: Source = {
+  authors: "Fleeson W., Malanos A. B., Achille N. M.",
+  year: 2002,
+  title:
+    "An intraindividual process approach to the relationship between extraversion and positive affect: Is acting extraverted as “good” as being extraverted?",
+  journal: "Journal of Personality and Social Psychology",
+  url: "https://doi.org/10.1037/0022-3514.83.6.1409",
+  note: "когда люди ведут себя общительнее, они чувствуют больше положительных эмоций — и интроверты тоже",
+};
+
+const GRANT_2013: Source = {
+  authors: "Grant A. M.",
+  year: 2013,
+  title: "Rethinking the extraverted sales ideal: The ambivert advantage",
+  journal: "Psychological Science",
+  url: "https://doi.org/10.1177/0956797612463706",
+  note: "в исследовании продавцов лучший результат показали люди со средней экстраверсией",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "big-five": [GOLDBERG_1992, MCCRAE_COSTA_1997, ROBERTS_2006, SOTO_2019, IPIP_2006],
   "ekstravert-introvert": [LUCAS_2000, DEYOUNG_2007, CHEEK_BUSS_1981],
   "kak-menya-vidyat": [VAZIRE_2010, CONNELLY_ONES_2010],
   "sovmestimost-par": [DYRENFORTH_2010, MALOUFF_2010],
   "test-lichnosti": [IPIP_2006, ROBERTS_DELVECCHIO_2000, PITTENGER_2005],
+  "mbti-i-socionika": [MCCRAE_COSTA_1989, PITTENGER_2005, GOLDBERG_1992],
+  temperament: [EYSENCK_1991, ROTHBART_2007],
+  ambivert: [FLEESON_2001, FLEESON_2002, GRANT_2013],
 };
 
 export const METHOD_SOURCES: readonly Source[] = [GOLDBERG_1992, IPIP_2006, ROBERTS_DELVECCHIO_2000, VAZIRE_2010, DYRENFORTH_2010, MALOUFF_2010];

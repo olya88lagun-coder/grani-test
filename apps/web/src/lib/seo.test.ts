@@ -55,8 +55,8 @@ describe("PUBLIC_PATHS", () => {
     expect(paths).toEqual(expect.arrayContaining(["/about", "/privacy", "/consent", "/offer", "/contacts"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
-    expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(6);
-    expect(paths).toHaveLength(41);
+    expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(9);
+    expect(paths).toHaveLength(44);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
   });
