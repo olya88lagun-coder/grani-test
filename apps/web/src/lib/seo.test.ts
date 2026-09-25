@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   articleDate,
   articleJsonLd,
+  siteJsonLd,
   breadcrumbs,
   firstSentences,
   OG_IMAGE,
@@ -90,6 +91,16 @@ describe("metadata", () => {
       datePublished: "2026-09-22",
     });
     expect(articleJsonLd({ title: "Т", description: "О", path: "/types" })).not.toHaveProperty("datePublished");
+  });
+});
+
+describe("siteJsonLd", () => {
+  it("describes the site and its publisher for the home page", () => {
+    const data = siteJsonLd("Описание");
+    expect(data["@graph"]).toEqual([
+      expect.objectContaining({ "@type": "WebSite", url: SITE_URL, name: "Грани", description: "Описание", inLanguage: "ru" }),
+      expect.objectContaining({ "@type": "Organization", url: SITE_URL, name: "Грани", logo: `${SITE_URL}/icon.png` }),
+    ]);
   });
 });
 
