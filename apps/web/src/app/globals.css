@@ -293,6 +293,16 @@ body.has-cookie-banner { padding-bottom: 220px; }
   letter-spacing: 0;
 }
 
+/* Подпись над фразой — часть заголовка для поиска, но выглядит как прежний надзаголовок */
+.home-hero h1 .home-kicker {
+  display: block;
+  margin-bottom: 25px;
+  font-family: var(--font-body);
+  line-height: 1.55;
+}
+
+.home-title__main { display: block; }
+
 .home-lead {
   display: grid;
   gap: 4px;

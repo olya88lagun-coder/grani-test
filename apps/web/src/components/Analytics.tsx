@@ -14,7 +14,7 @@ import {
   saveChoice,
   type CookieChoice,
 } from "@/lib/analytics";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL } from "@/lib/site";
 
 type YmWindow = Window & { ym?: ((...args: unknown[]) => void) & { a?: unknown[][]; l?: number } };
 

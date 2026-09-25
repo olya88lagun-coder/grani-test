@@ -1,4 +1,4 @@
-import { gemPaths, type TypeShape } from "@/lib/type-visuals";
+import { gemPaths, type TypeShape } from "@/lib/gem-paths";
 
 export function TypeGem({ shape, size }: { shape: TypeShape; size: number }) {
   const { outline, facets } = gemPaths(shape, size);

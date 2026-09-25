@@ -2,18 +2,20 @@ import type { TypeCode } from "@grani/core";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
+import { JsonLd } from "@/components/JsonLd";
 import { TypeGem } from "@/components/TypeGem";
-import { articleDate, firstSentences, publicMetadata, typePath } from "@/lib/seo";
+import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
+import { DeletedNotice } from "./DeletedNotice";
 
-const HOME = publicMetadata({
-  title: "Грани — тест личности: 16 типов и как тебя видят другие",
-  description:
-    "Бесплатный тест личности по Большой пятёрке: 50 утверждений, один из 16 типов, пять шкал и анкета для друзей «Как меня видят другие». 10 минут.",
-  path: "/",
-});
+const HOME_TITLE = "Тест личности «Большая пятёрка»: 16 типов и как тебя видят другие — Грани";
+const HOME_DESCRIPTION =
+  "Бесплатный тест личности по Большой пятёрке: 50 утверждений, один из 16 типов, пять шкал и анкета для друзей «Как меня видят другие». 10 минут.";
+
+const HOME = publicMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" });
 
 // absolute — чтобы шаблон «%s — Грани» не повторил название
-export const metadata: Metadata = { ...HOME, title: { absolute: "Грани — тест личности: 16 типов и как тебя видят другие" } };
+export const metadata: Metadata = { ...HOME, title: { absolute: HOME_TITLE } };
 
 const HERO_TRAITS = [
   { label: "Открытость\nк новому", className: "home-crystal__label--openness" },
@@ -161,8 +163,7 @@ function CrystalScene() {
   );
 }
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ deleted?: string }> }) {
-  const { deleted } = await searchParams;
+export default function HomePage() {
   return (
     <main className="home-page">
       <section className="home-hero" aria-labelledby="home-title">
@@ -187,13 +188,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
         <div className="home-hero__grid">
           <div className="home-hero__copy">
-            {deleted === "1" && (
-              <p className="home-status" role="status">
-                Данные удалены. Спасибо, что были с нами.
-              </p>
-            )}
-            <p className="home-kicker">Научный тест личности</p>
-            <h1 id="home-title">Узнай себя глубже</h1>
+            <Suspense>
+              <DeletedNotice />
+            </Suspense>
+            {/* Поисковое название — в заголовке страницы, визуально это прежняя подпись над крупной фразой */}
+            <h1 id="home-title">
+              <span className="home-kicker">Тест личности «Большая пятёрка»</span>
+              <span className="home-title__main">Узнай себя глубже</span>
+            </h1>
             <p className="home-lead">
               <span>50 утверждений → твой тип личности</span>
               <span>5 ключевых черт → взгляд окружающих → карточка для сторис</span>
@@ -363,6 +365,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           ))}
         </div>
       </section>
+      <JsonLd data={siteJsonLd(HOME_DESCRIPTION)} />
     </main>
   );
 }

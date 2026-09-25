@@ -2,9 +2,9 @@ import { ALL_TYPE_CODES, TRAITS, type Trait, type TypeCode } from "@grani/core";
 import { PAGE_POLES, type PagePole } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
+import { SITE_NAME, SITE_URL } from "./site";
 
-export const SITE_URL = "https://grani-test.ru";
-export const SITE_NAME = "Грани";
+export { SITE_NAME, SITE_URL } from "./site";
 
 // Обложка для превью ссылок во ВКонтакте и мессенджерах; относительный адрес дополняется metadataBase
 export const OG_IMAGE = { url: "/og/grani.jpg", width: 1200, height: 630, alt: "Грани — тест личности: узнай себя глубже" } as const;
@@ -95,6 +95,17 @@ export function articleJsonLd(p: { title: string; description: string; path: str
     mainEntityOfPage: `${SITE_URL}${p.path}`,
     author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
     ...(p.datePublished ? { datePublished: p.datePublished } : {}),
+  };
+}
+
+// Главная: сайт и его издатель одним графом — Яндекс и Google берут отсюда название и логотип
+export function siteJsonLd(description: string) {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "WebSite", name: SITE_NAME, url: SITE_URL, description, inLanguage: "ru" },
+      { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/icon.png` },
+    ],
   };
 }
 
