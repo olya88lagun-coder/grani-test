@@ -15,7 +15,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const env = getEnv();
   const message = loginErrorMessage(error ?? null);
   return (
-    <main className="page stack">
+    <main className="page stack inner-text">
       <p className="eyebrow">Грани</p>
       <h1 className="display">Вход</h1>
       {message && (

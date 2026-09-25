@@ -39,7 +39,7 @@ export default async function TraitPage({ params }: Props) {
   const opposite = oppositePole(page.pole);
 
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }, { name: page.title, path }]} />
         <p className="eyebrow">Черта личности · Большая пятёрка</p>

@@ -32,7 +32,7 @@ export default async function ArticlePage({ params }: Props) {
   const others = getArticles().filter((other) => other.slug !== article.slug);
 
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <Breadcrumbs items={[{ name: "Статьи", path: "/articles" }, { name: article.title, path }]} />
         <h1 className="display display--article">{article.title}</h1>

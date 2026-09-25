@@ -238,6 +238,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
         <article className="home-result-card" aria-label="Пример карточки результата">
           <div className="home-result-card__art">
+            <span className="home-example">Пример</span>
             <img src={TYPE_IMAGES["+-++"]} alt="" width={351} height={723} loading="lazy" decoding="async" />
           </div>
           <p>Твой тип</p>
@@ -313,6 +314,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <h3>Искра</h3>
           </article>
           <div className="home-pair-score">
+            <span className="home-example">Пример</span>
             <span aria-hidden="true">♥</span>
             <strong>78%</strong>
             <p>Совместимость</p>

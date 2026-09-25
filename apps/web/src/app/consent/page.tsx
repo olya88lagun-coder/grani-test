@@ -12,7 +12,7 @@ export const metadata: Metadata = publicMetadata({
 
 export default function ConsentPage() {
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <h1 className="display">Согласие на обработку персональных данных</h1>
         <p className="muted">

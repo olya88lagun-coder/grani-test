@@ -15,7 +15,7 @@ const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
 
 export default function ContactsPage() {
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <h1 className="display">Контакты и услуги</h1>
         <h2>Исполнитель</h2>

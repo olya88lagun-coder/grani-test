@@ -156,6 +156,9 @@ jobs:
           assert_status "404" "fake payments are off in production" "$site/dev/pay/x"
           assert_status "404" "dev login is off in production" "$site/api/dev/login"
           assert_status "200" "home images are served from public" "$site/home/hero-crystal.webp"
+          assert_status "200" "site icon" "$site/favicon.ico"
+          assert_status "200" "link preview cover" "$site/og/grani.jpg"
+          assert_contains 'property="og:image"' "$tmp/home.html" "home link preview"
 
           if ! docker logs --since 5m grani-worker-1 2>&1 | grep -q '"worker started"'; then
             echo "SMOKE TEST FAILED: worker did not start"

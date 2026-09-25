@@ -11,7 +11,7 @@ export const metadata: Metadata = publicMetadata({
 
 export default function PrivacyPage() {
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <h1 className="display">Политика обработки персональных данных</h1>
         <p className="muted">

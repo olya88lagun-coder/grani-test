@@ -16,6 +16,20 @@ test("public pages are indexable and private ones are not", async ({ page, reque
   expect((await request.get("/types/unknown")).status()).toBe(404);
 });
 
+test("inner pages have the site header, pages a link preview and the site an icon", async ({ page, request }) => {
+  await page.goto("/articles");
+  const nav = page.getByRole("navigation", { name: "Основная навигация" });
+  await expect(nav.getByRole("link", { name: "16 типов" })).toBeVisible();
+  await page.getByRole("link", { name: "Грани — на главную" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  // У главной своя навигация в первом экране — общей шапки там нет
+  await expect(page.locator(".site-header")).toHaveCount(0);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/og\/grani\.jpg$/);
+
+  expect((await request.get("/favicon.ico")).status()).toBe(200);
+  expect((await request.get("/og/grani.jpg")).headers()["content-type"]).toContain("image/jpeg");
+});
+
 test.describe("cookie banner", () => {
   // Без заранее сделанного выбора — как у нового посетителя
   test.use({ storageState: { cookies: [], origins: [] } });
