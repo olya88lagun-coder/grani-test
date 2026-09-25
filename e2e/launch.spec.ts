@@ -10,8 +10,8 @@ test("public pages are indexable and private ones are not", async ({ page, reque
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
-  expect(sitemap.match(/<loc>/g)).toHaveLength(41);
-  expect(sitemap.match(/<lastmod>/g)).toHaveLength(6);
+  expect(sitemap.match(/<loc>/g)).toHaveLength(44);
+  expect(sitemap.match(/<lastmod>/g)).toHaveLength(9);
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /result/");
   expect((await request.get("/types/unknown")).status()).toBe(404);

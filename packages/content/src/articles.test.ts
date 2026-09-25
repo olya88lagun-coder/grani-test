@@ -65,10 +65,10 @@ describe("articles", () => {
     expect(rawArticles).toEqual(collectArticles(ARTICLES_DIR.pathname.replace(/^\/([A-Za-z]:)/, "$1")));
   });
 
-  it("has five valid articles with unique slugs and no stop topics", () => {
+  it("has eight valid articles with unique slugs and no stop topics", () => {
     const articles = getArticles();
-    expect(articles).toHaveLength(5);
-    expect(new Set(articles.map((article) => article.slug)).size).toBe(5);
+    expect(articles).toHaveLength(8);
+    expect(new Set(articles.map((article) => article.slug)).size).toBe(8);
     for (const article of articles) {
       const text = [article.title, article.description, article.body].join("\n");
       expect(findStopWords(text), article.slug).toEqual([]);

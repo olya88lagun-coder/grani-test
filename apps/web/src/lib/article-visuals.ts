@@ -9,6 +9,9 @@ export const ARTICLE_VISUALS: Readonly<Record<string, ArticleVisual>> = {
   "ekstravert-introvert": { tag: "Личность", image: "/home/article-extrovert.webp" },
   "kak-menya-vidyat": { tag: "Психология", image: "/home/article-friends.webp" },
   "sovmestimost-par": { tag: "Отношения", image: "/home/article-relationship.webp" },
+  "mbti-i-socionika": { tag: "Наука", image: "/home/type-commander.webp" },
+  temperament: { tag: "Личность", image: "/home/type-dreamer.webp" },
+  ambivert: { tag: "Личность", image: "/home/type-support.webp" },
 };
 
 const FALLBACK_VISUAL: ArticleVisual = { tag: "Статья", image: "/home/hero-atrium.webp" };
