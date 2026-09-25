@@ -26,24 +26,29 @@ const FAMILIES: readonly { family: TypeFamily; title: string }[] = [
 export default function TypesPage() {
   const library = getLibrary();
   return (
-    <main className="page page--wide">
-      <div className="stack">
+    <main className="inner-page inner-page--types">
+      <div className="page page--wide stack">
         <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }]} />
-        <p className="eyebrow">Большая пятёрка</p>
-        <h1 className="display">16 типов личности</h1>
-        <p className="lead">
-          Тип складывается из четырёх черт:{" "}
-          {TYPE_TRAITS.map((trait, index) => (
-            <span key={trait}>
-              {index > 0 && ", "}
-              <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait].toLowerCase()}</Link>
-            </span>
-          ))}
-          . Каждая бывает высокой или низкой — отсюда 16 сочетаний. Пятая черта,{" "}
-          <Link href={traitPath("stability", "high")}>эмоциональная устойчивость</Link>, уточняет тип: спокойный он или чувствительный.
-        </p>
+        <header className="inner-intro">
+          <div className="inner-intro__copy">
+            <p className="eyebrow">Большая пятёрка</p>
+            <h1 className="display">16 типов личности</h1>
+            <p className="lead">
+              Тип складывается из четырёх черт:{" "}
+              {TYPE_TRAITS.map((trait, index) => (
+                <span key={trait}>
+                  {index > 0 && ", "}
+                  <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait].toLowerCase()}</Link>
+                </span>
+              ))}
+              . Каждая бывает высокой или низкой — отсюда 16 сочетаний. Пятая черта,{" "}
+              <Link href={traitPath("stability", "high")}>эмоциональная устойчивость</Link>, уточняет тип: спокойный он или чувствительный.
+            </p>
+          </div>
+          <img className="inner-intro__gem" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+        </header>
         {FAMILIES.map(({ family, title }) => (
-          <section key={family} className="stack" aria-labelledby={`family-${family}`}>
+          <section key={family} className="type-family stack" aria-labelledby={`family-${family}`}>
             <h2 id={`family-${family}`}>{title}</h2>
             <ul className="type-grid">
               {ALL_TYPE_CODES.filter((code) => TYPE_VISUALS[typeCodeToDir(code)]?.family === family).map((code) => {
@@ -51,7 +56,7 @@ export default function TypesPage() {
                 return (
                   <li key={code} className="card card--paper type-tile">
                     <span className="type-gem" data-family={visual.family}>
-                      <TypeGem shape={visual.shape} size={44} />
+                      <TypeGem shape={visual.shape} size={56} />
                     </span>
                     <div className="stack">
                       <h3>
