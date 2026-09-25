@@ -89,7 +89,7 @@ function CardFooter({ text }: { text: string }) {
 
 const nameSize = (name: string, sizes: readonly [number, number, number]) => (name.length > 16 ? sizes[2] : name.length > 11 ? sizes[1] : sizes[0]);
 
-const CRYSTAL_SIZE = { width: 600, height: 702 } as const;
+const CRYSTAL_SIZE = { width: 640, height: 749 } as const;
 
 // Мягкая светлая «пилюля» черты — как теги на странице результата
 function TraitPill({ text }: { text: string }) {
@@ -137,8 +137,8 @@ export function cardElement({ name, keywords, crystal }: CardModel): ReactElemen
           alignItems: "center",
           justifyContent: "center",
           width: 1000,
-          height: 900,
-          marginTop: 12,
+          height: 860,
+          marginTop: 0,
           backgroundImage: "radial-gradient(circle at 50% 46%, rgba(255, 253, 236, 1) 0%, rgba(255, 253, 236, 0.7) 28%, rgba(255, 253, 236, 0) 56%)",
         }}
       >
@@ -154,7 +154,8 @@ export function cardElement({ name, keywords, crystal }: CardModel): ReactElemen
         />
         <img src={crystal} width={CRYSTAL_SIZE.width} height={CRYSTAL_SIZE.height} alt="" />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 26, marginTop: 8 }}>
+      <div style={{ display: "flex", flex: 2 }} />
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 26 }}>
         <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 10, textTransform: "uppercase", color: CARD_MUTED }}>мой тип</div>
         <div
           style={{
@@ -179,7 +180,7 @@ export function cardElement({ name, keywords, crystal }: CardModel): ReactElemen
           ))}
         </div>
       </div>
-      <div style={{ display: "flex", flex: 1 }} />
+      <div style={{ display: "flex", flex: 3 }} />
       <div style={{ display: "flex", width: 72, height: 2, marginBottom: 34, background: "rgba(15, 62, 23, 0.25)" }} />
       <CardFooter text="узнай свой тип · grani-test.ru" />
     </div>
@@ -196,13 +197,13 @@ export function manualCardElement({ typeName, lists }: ManualCardModel): ReactEl
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "88px 72px 80px",
+        padding: "100px 72px 76px",
         backgroundImage: `${CARD_RAYS}, ${CARD_BACKGROUND}`,
         color: CARD_INK,
         fontFamily: "Golos",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 30, marginBottom: 36 }}>
         <CardLogo />
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 52, lineHeight: 1.05, color: CARD_GREEN }}>
@@ -213,15 +214,15 @@ export function manualCardElement({ typeName, lists }: ManualCardModel): ReactEl
           </div>
         </div>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
         {lists.map((list, index) => (
           <div
             key={list.title}
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: 14,
-              padding: "32px 40px",
+              gap: 10,
+              padding: "28px 40px",
               borderRadius: 32,
               background: "rgba(255, 255, 255, 0.92)",
               boxShadow: "0 16px 40px rgba(20, 47, 23, 0.08)",
