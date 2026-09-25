@@ -1,5 +1,4 @@
 import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedProducts, listReports } from "@grani/db";
-import { typeCodeToDir } from "@grani/content";
 import { typeName, unlockedKinds } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -8,9 +7,7 @@ import { ShareCard } from "@/app/result/[id]/ShareCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
 import { Paragraphs } from "@/components/Paragraphs";
-import { TypeGem } from "@/components/TypeGem";
 import { buildReportPageView, REPORT_DISCLAIMER } from "@/lib/report-view";
-import { TYPE_VISUALS } from "@/lib/type-visuals";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
 
@@ -40,7 +37,6 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
     friendsCount: invite ? await countFriendResponses(db, invite.id) : 0,
   });
   const name = typeName(result.typeCode, user.gender);
-  const visual = TYPE_VISUALS[typeCodeToDir(result.typeCode)];
 
   return (
     <main className="inner-page inner-page--report">
@@ -48,27 +44,29 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
       <div className="page page--report stack">
         <header className="report-hero">
           <div className="report-hero__copy">
-            <p className="eyebrow">Полный разбор</p>
+            <p className="eyebrow">Твой полный разбор</p>
             <h1 className="display">{name}</h1>
             <p className="lead">Портрет, сильные стороны, слепые зоны и инструкция по применению — по твоим ответам.</p>
           </div>
-          {visual && (
-            <span className="type-gem report-hero__gem" data-family={visual.family} aria-hidden="true">
-              <TypeGem shape={visual.shape} size={96} />
-            </span>
-          )}
+          <img className="report-hero__crystal" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
         </header>
 
         {view.full ? (
           <>
-            <section className="report-section report-section--portrait" aria-labelledby="portrait">
-              <p className="report-section__number">01</p>
-              <h2 id="portrait">Портрет</h2>
-              <Paragraphs text={view.full.portrait} />
+            <section className="report-portrait" aria-labelledby="portrait">
+              <div className="report-portrait__head">
+                <p className="report-section__number">01</p>
+                <h2 id="portrait">Портрет</h2>
+                <img className="report-portrait__art" src="/home/article-friends.webp" alt="" width={630} height={698} loading="lazy" />
+              </div>
+              <div className="report-portrait__text">
+                <Paragraphs text={view.full.portrait} />
+              </div>
             </section>
 
             <div className="report-duo">
-              <section className="report-section" aria-labelledby="strengths">
+              <section className="report-section report-section--art" aria-labelledby="strengths">
+                <img className="report-section__art" src="/home/type-iskra.webp" alt="" width={351} height={723} loading="lazy" />
                 <p className="report-section__number">02</p>
                 <h2 id="strengths">Сильные стороны</h2>
                 <ul className="report-list">
@@ -77,7 +75,8 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
                   ))}
                 </ul>
               </section>
-              <section className="report-section" aria-labelledby="blind-spots">
+              <section className="report-section report-section--art" aria-labelledby="blind-spots">
+                <img className="report-section__art" src="/home/article-relationship.webp" alt="" width={630} height={698} loading="lazy" />
                 <p className="report-section__number">03</p>
                 <h2 id="blind-spots">Слепые зоны</h2>
                 <ul className="report-list">
@@ -140,10 +139,13 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
           )}
         </section>
 
-        <section className="report-chapters stack" aria-labelledby="chapters">
-          <p className="eyebrow">Главы по сферам</p>
-          <h2 id="chapters">Деньги, конфликты, стресс, отношения</h2>
-          {view.bundle && <BuyButton product="chapters_all" targetId={resultId} label={`Все четыре главы — ${view.bundle.price}`} />}
+        <section className="report-chapters" aria-labelledby="chapters">
+          <div className="report-chapters__intro">
+            <p className="eyebrow">Главы по сферам</p>
+            <h2 id="chapters">Разные грани твоей жизни</h2>
+            <p>Деньги, конфликты, стресс и отношения — как твой тип проявляется в каждой сфере.</p>
+            {view.bundle && <BuyButton product="chapters_all" targetId={resultId} label={`Все четыре главы — ${view.bundle.price}`} />}
+          </div>
           <div className="report-chapters__grid">
             {view.chapters.map((chapter) => (
               <article key={chapter.kind} className={`card stack report-chapter report-chapter--${chapter.state}`}>

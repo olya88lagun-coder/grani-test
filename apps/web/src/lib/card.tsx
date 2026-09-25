@@ -1,11 +1,12 @@
 import { readFile } from "node:fs/promises";
 import type { ReactElement } from "react";
 import type { ManualCardModel } from "./manual-card";
-import { gemPaths, type TypeVisual } from "./type-visuals";
+import { gemPaths } from "./type-visuals";
 
 export const CARD_SIZE = { width: 1080, height: 1920 } as const;
 
-export type CardModel = { name: string; visual: TypeVisual; keywords: readonly string[] };
+// crystal — PNG кристалла главной в виде data URL, см. loadCardCrystal
+export type CardModel = { name: string; keywords: readonly string[]; crystal: string };
 export type CardFont = { name: string; data: Buffer; weight: 300 | 400 | 600; style: "normal" };
 
 // Пути статические и читаются напрямую: так сборщик Next видит каждый файл и кладёт в standalone-сборку только их.
@@ -38,6 +39,15 @@ async function readCardFonts(): Promise<CardFont[]> {
 
 let fontsPromise: Promise<CardFont[]> | undefined;
 
+// Объёмный кристалл главной, заранее уменьшенный до ширины карточки: satori берёт картинки как data URL
+const CRYSTAL = new URL("../../assets/card/crystal.png", import.meta.url);
+let crystalPromise: Promise<string> | undefined;
+
+export function loadCardCrystal(): Promise<string> {
+  crystalPromise ??= readFile(CRYSTAL).then((data) => `data:image/png;base64,${data.toString("base64")}`);
+  return crystalPromise;
+}
+
 export function loadCardFonts(): Promise<CardFont[]> {
   fontsPromise ??= readCardFonts();
   return fontsPromise;
@@ -60,26 +70,6 @@ const CARD_RAYS = [
   "linear-gradient(118deg, rgba(255, 255, 255, 0) 50%, rgba(255, 251, 232, 0.4) 57%, rgba(255, 255, 255, 0) 64%)",
 ].join(", ");
 
-// Грань типа с заливкой: светлая вершина, шалфей, глубокий зелёный внизу
-function FilledGem({ visual, size }: { visual: TypeVisual; size: number }) {
-  const { outline, facets } = gemPaths(visual.shape, size);
-  const id = `gem-${visual.shape}`;
-  return (
-    <svg width={size} height={size} viewBox={`-6 -6 ${size + 12} ${size + 12}`}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#fbf8e9" />
-          <stop offset="0.4" stopColor="#bcd4aa" />
-          <stop offset="0.78" stopColor="#4b7a50" />
-          <stop offset="1" stopColor="#123f1d" />
-        </linearGradient>
-      </defs>
-      <path d={outline} fill={`url(#${id})`} stroke={CARD_GREEN} strokeWidth={size / 110} strokeLinejoin="round" />
-      <path d={facets} fill="none" stroke="#fffdf4" strokeWidth={size / 130} strokeLinejoin="round" opacity={0.75} />
-    </svg>
-  );
-}
-
 function CardLogo() {
   const { outline, facets } = gemPaths("hexagon", 44);
   return (
@@ -99,10 +89,32 @@ function CardFooter({ text }: { text: string }) {
 
 const nameSize = (name: string, sizes: readonly [number, number, number]) => (name.length > 16 ? sizes[2] : name.length > 11 ? sizes[1] : sizes[0]);
 
-const GEM_SIZE = 640;
+const CRYSTAL_SIZE = { width: 600, height: 702 } as const;
 
+// Мягкая светлая «пилюля» черты — как теги на странице результата
+function TraitPill({ text }: { text: string }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        padding: "16px 38px",
+        borderRadius: 999,
+        background: "rgba(255, 255, 255, 0.72)",
+        border: "1.5px solid rgba(15, 62, 23, 0.12)",
+        boxShadow: "0 10px 26px rgba(20, 47, 23, 0.07)",
+        fontSize: 32,
+        color: CARD_INK,
+      }}
+    >
+      {text}
+    </div>
+  );
+}
+
+// Постер: кристалл со светом и тенью, под ним тип и черты по две в ряд, внизу адрес сайта
 // satori требует явный display: flex у каждого контейнера с несколькими детьми
-export function cardElement({ name, visual, keywords }: CardModel): ReactElement {
+export function cardElement({ name, keywords, crystal }: CardModel): ReactElement {
+  const rows = [keywords.slice(0, 2), keywords.slice(2, 4)].filter((row) => row.length > 0);
   return (
     <div
       style={{
@@ -111,7 +123,7 @@ export function cardElement({ name, visual, keywords }: CardModel): ReactElement
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        padding: "92px 80px 84px",
+        padding: "92px 80px 96px",
         backgroundImage: `${CARD_RAYS}, ${CARD_BACKGROUND}`,
         color: CARD_INK,
         fontFamily: "Golos",
@@ -120,24 +132,36 @@ export function cardElement({ name, visual, keywords }: CardModel): ReactElement
       <CardLogo />
       <div
         style={{
+          position: "relative",
           display: "flex",
-          flex: 1,
           alignItems: "center",
           justifyContent: "center",
-          width: 980,
-          backgroundImage: "radial-gradient(circle at 50% 50%, rgba(255, 253, 236, 1) 0%, rgba(255, 253, 236, 0.6) 30%, rgba(255, 253, 236, 0) 58%)",
+          width: 1000,
+          height: 900,
+          marginTop: 12,
+          backgroundImage: "radial-gradient(circle at 50% 46%, rgba(255, 253, 236, 1) 0%, rgba(255, 253, 236, 0.7) 28%, rgba(255, 253, 236, 0) 56%)",
         }}
       >
-        <FilledGem visual={visual} size={GEM_SIZE} />
+        <div
+          style={{
+            position: "absolute",
+            left: 250,
+            bottom: 40,
+            width: 500,
+            height: 90,
+            backgroundImage: "radial-gradient(ellipse at 50% 50%, rgba(30, 64, 32, 0.28) 0%, rgba(30, 64, 32, 0.1) 40%, rgba(30, 64, 32, 0) 70%)",
+          }}
+        />
+        <img src={crystal} width={CRYSTAL_SIZE.width} height={CRYSTAL_SIZE.height} alt="" />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, marginBottom: 64 }}>
-        <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 9, textTransform: "uppercase", color: CARD_MUTED }}>мой тип</div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 26, marginTop: 8 }}>
+        <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 10, textTransform: "uppercase", color: CARD_MUTED }}>мой тип</div>
         <div
           style={{
             display: "flex",
             fontFamily: "Cormorant",
             fontWeight: 300,
-            fontSize: nameSize(name, [172, 132, 108]),
+            fontSize: nameSize(name, [168, 132, 108]),
             lineHeight: 0.95,
             letterSpacing: -3,
             textAlign: "center",
@@ -145,20 +169,18 @@ export function cardElement({ name, visual, keywords }: CardModel): ReactElement
         >
           {name}
         </div>
-        {/* Тезисы по два в строке — без висящей точки при переносе */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginTop: 10, fontSize: 32, color: CARD_GREEN }}>
-          {[keywords.slice(0, 2), keywords.slice(2)].map((row) => (
-            <div key={row.join()} style={{ display: "flex" }}>
-              {row.map((word, index) => (
-                <div key={word} style={{ display: "flex" }}>
-                  {index > 0 ? <span style={{ margin: "0 18px", color: "#9fb596" }}>·</span> : null}
-                  {word}
-                </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18, marginTop: 18 }}>
+          {rows.map((row) => (
+            <div key={row.join()} style={{ display: "flex", gap: 18 }}>
+              {row.map((word) => (
+                <TraitPill key={word} text={word} />
               ))}
             </div>
           ))}
         </div>
       </div>
+      <div style={{ display: "flex", flex: 1 }} />
+      <div style={{ display: "flex", width: 72, height: 2, marginBottom: 34, background: "rgba(15, 62, 23, 0.25)" }} />
       <CardFooter text="узнай свой тип · grani-test.ru" />
     </div>
   );

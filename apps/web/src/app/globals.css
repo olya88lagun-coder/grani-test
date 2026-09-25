@@ -1486,9 +1486,9 @@ body:has(.inner-text)::before {
 .page--result,
 .page--report { max-width: 1180px; }
 
-body .page--result.stack > * + * { margin-top: 30px; }
+body .page--result.stack > * + * { margin-top: 44px; }
 /* Разбор читается как журнал, а не как документ: крупные секции с воздухом между ними */
-body .page--report.stack > * + * { margin-top: 56px; }
+body .page--report.stack > * + * { margin-top: 64px; }
 
 /* Первый экран результата: тип слева, карточка со шкалами справа */
 .result-hero {
@@ -1505,8 +1505,14 @@ body .page--report.stack > * + * { margin-top: 56px; }
 
 .result-hero__copy {
   display: grid;
-  gap: 18px;
+  gap: 22px;
   padding-top: 8px;
+}
+
+.result-hero .lead {
+  max-width: 34em;
+  font-size: 17px;
+  line-height: 1.75;
 }
 
 .result-hero h1 {
@@ -1520,9 +1526,20 @@ body .page--report.stack > * + * { margin-top: 56px; }
 .result-hero__actions {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 10px;
-  margin-top: 8px;
+  margin-top: 10px;
 }
+
+/* Главное действие одно — «Полный разбор»; остальные компактнее и тише */
+.result-hero__actions .button--ghost {
+  min-height: 44px;
+  padding: 10px 18px;
+  font-size: 15px;
+  background: rgba(255, 253, 244, 0.6);
+}
+
+.result-hero__actions .button { white-space: nowrap; }
 
 .result-tags {
   display: flex;
@@ -1534,18 +1551,17 @@ body .page--report.stack > * + * { margin-top: 56px; }
 }
 
 .result-tags li {
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 999px;
-  background: rgba(255, 253, 244, 0.88);
-  box-shadow: inset 0 0 0 1px var(--paper-line);
-  color: var(--accent);
+  background: rgba(255, 253, 244, 0.78);
+  box-shadow: inset 0 0 0 1px var(--paper-line), 0 6px 16px rgba(20, 47, 23, 0.05);
+  color: var(--inner-ink);
   font-size: 14px;
 }
 
 .result-tags .result-tags__accent {
-  background: var(--accent);
-  box-shadow: none;
-  color: var(--accent-ink);
+  background: rgba(214, 226, 199, 0.8);
+  color: var(--accent);
 }
 
 .result-card {
@@ -1562,25 +1578,26 @@ body .page--report.stack > * + * { margin-top: 56px; }
 }
 
 .result-card__head {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding-bottom: 18px;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding-bottom: 20px;
   border-bottom: 1px solid var(--paper-line);
+  text-align: center;
 }
 
-.result-card__head .type-gem,
-.report-hero__gem {
-  border-radius: 20px;
-  background: linear-gradient(145deg, #fffdf4, #e2eed9);
-  box-shadow: inset 0 0 0 1px var(--paper-line);
+/* Объёмный кристалл главной — общий символ «Граней» на результате и в разборе */
+.result-card__crystal,
+.report-hero__crystal {
+  height: auto;
+  filter: drop-shadow(0 16px 22px rgba(13, 51, 22, 0.22));
 }
 
-.result-card__head .type-gem { width: 84px; height: 84px; }
+.result-card__crystal { width: 64px; margin-bottom: 8px; }
 .result-card__head .eyebrow { color: var(--ink-soft); }
 
 .result-card__name {
-  margin: 4px 0 0;
+  margin: 0;
   color: var(--inner-ink);
   font-family: var(--font-display);
   font-size: 34px;
@@ -1719,9 +1736,48 @@ body .page--report.stack > * + * { margin-top: 56px; }
   box-shadow: inset 0 0 0 1px var(--paper-line), var(--paper-shadow);
 }
 
-.report-hero__copy { display: grid; gap: 14px; }
-.report-hero .lead { max-width: 640px; }
-.report-hero__gem { display: none; }
+.report-hero__copy { display: grid; gap: 16px; }
+.report-hero h1 { font-size: clamp(52px, 8vw, 104px); line-height: 0.95; }
+.report-hero .lead { max-width: 560px; line-height: 1.7; }
+.report-hero__crystal { display: none; }
+
+/* Портрет — крупный разворот: заголовок с фотографией слева, текст колонкой чтения справа */
+.report-portrait {
+  display: grid;
+  gap: 28px;
+  padding: 32px 24px;
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(255, 244, 212, 0.6), transparent 70%),
+    var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line), var(--paper-shadow);
+}
+
+.report-portrait__head { display: grid; gap: 14px; align-content: start; }
+.inner-page .report-portrait h2 { font-size: clamp(48px, 7vw, 84px); line-height: 0.95; }
+
+.report-portrait__art {
+  width: 100%;
+  height: 220px;
+  margin-top: 10px;
+  border-radius: 20px;
+  object-fit: cover;
+}
+
+.report-portrait__text p { max-width: 640px; font-size: 18px; line-height: 1.8; }
+.report-portrait__text > * + * { margin-top: 18px; }
+
+/* Сильные стороны и слепые зоны — карточки с фотографией-полосой сверху */
+.report-section--art { overflow: hidden; }
+
+.report-section__art {
+  display: block;
+  width: calc(100% + 48px);
+  max-width: none;
+  height: 140px;
+  margin: -30px -24px 24px;
+  object-fit: cover;
+}
 
 .report-section {
   padding: 30px 24px;
@@ -1738,8 +1794,6 @@ body .page--report.stack > * + * { margin-top: 56px; }
   font-family: var(--font-display);
   font-size: 22px;
 }
-
-.report-section--portrait p { max-width: 760px; font-size: 19px; line-height: 1.7; }
 
 .report-duo { display: grid; gap: 40px; }
 
@@ -1811,9 +1865,43 @@ body .page--report.stack > * + * { margin-top: 56px; }
   padding-left: 18px;
 }
 
-.report-chapters__grid { display: grid; gap: 24px; }
+/* Главы по сферам: вступление на фоне атриума, рядом список глав строками */
+.report-chapters {
+  display: grid;
+  gap: 24px;
+  padding: 20px;
+  border-radius: 28px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line), var(--paper-shadow);
+}
+
+.report-chapters__intro {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  justify-items: start;
+  padding: 28px 24px;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(248, 246, 231, 0.94) 0%, rgba(248, 246, 231, 0.7) 100%),
+    url("/home/hero-atrium.webp") 60% center / cover no-repeat;
+}
+
+.report-chapters__intro p:not(.eyebrow) { margin: 0; color: var(--ink-soft); }
+.report-chapters__grid { display: grid; gap: 12px; align-content: start; }
+.report-chapters__grid .report-chapter { padding: 20px 22px; border-radius: 18px; }
 .report-chapter h3 { color: var(--inner-ink); }
-.report-chapter--ready { grid-column: 1 / -1; }
+
+.report-chapter--available {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.report-chapters__grid .report-chapter--available > * + * { margin-top: 0; }
+.report-chapter--available h3 { font-size: 26px; }
 .report-preparing { margin: 0; }
 
 /* Ожидание после оплаты: центральная карточка */
@@ -1911,29 +1999,108 @@ body .page--report.stack > * + * { margin-top: 56px; }
   .share-card__preview { width: 100%; }
   .report-hero {
     grid-template-columns: minmax(0, 1fr) auto;
-    min-height: 340px;
-    padding: 64px 72px;
+    min-height: 420px;
+    padding: 72px 80px;
     background:
       linear-gradient(90deg, rgba(248, 246, 231, 0.96) 0%, rgba(248, 246, 231, 0.84) 50%, rgba(248, 246, 231, 0.35) 100%),
       url("/home/hero-atrium.webp") center / cover no-repeat;
   }
-  .report-hero__gem { display: grid; width: 150px; height: 150px; }
-  .report-duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .report-hero__crystal { display: block; width: 150px; margin-right: 24px; }
+  .report-duo { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
   .report-manual { padding: 64px; }
   .report-section { padding: 56px 64px; }
+  .report-section__art { width: calc(100% + 128px); height: 180px; margin: -56px -64px 36px; }
   .report-manual__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .report-chapters__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .report-portrait {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 64px;
+    padding: 64px;
+  }
+  .report-portrait__art { height: 300px; }
+  .report-portrait__text { padding-top: 12px; }
+  .report-chapters {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 28px;
+    padding: 28px;
+  }
+  .report-chapters__intro { min-height: 360px; padding: 44px 40px; }
   .wait-card { padding: 52px 56px; }
 }
 
 @media (min-width: 980px) {
   .result-hero {
-    grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
-    gap: 56px;
-    min-height: 600px;
-    padding: 56px 60px;
+    grid-template-columns: minmax(0, 1.25fr) minmax(360px, 0.75fr);
+    gap: 64px;
+    min-height: 620px;
+    padding: 64px 72px;
     background:
       linear-gradient(90deg, rgba(248, 246, 231, 0.96) 0%, rgba(248, 246, 231, 0.84) 46%, rgba(248, 246, 231, 0.3) 100%),
       url("/home/hero-atrium.webp") center / cover no-repeat;
   }
+}
+
+@media (min-width: 1200px) {
+  body .page--report.stack > * + * { margin-top: 88px; }
+}
+
+/* Предложение разбора сразу под первым экраном: зелёная рамка и крупная кнопка — главное действие страницы */
+.inner-page .result-block--offer {
+  box-shadow: inset 0 0 0 2px var(--accent), 0 30px 70px rgba(20, 47, 23, 0.14);
+}
+
+.result-offer__buy .button {
+  width: 100%;
+  min-height: 60px;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+/* На телефоне кнопка разбора идёт сразу под названием типа, до описания — её видно без прокрутки */
+@media (max-width: 979px) {
+  .result-hero__copy > .eyebrow { order: 0; }
+  .result-hero__copy > h1 { order: 1; }
+  .result-hero__actions { order: 2; margin-top: 0; }
+  .result-hero__copy > .lead { order: 3; }
+  .result-tags { order: 4; }
+}
+
+/* Плашка «Полный разбор» внизу экрана — только на телефоне */
+.sticky-cta {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 56px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 18px 40px rgba(15, 62, 23, 0.35);
+  color: var(--accent-ink);
+  font-weight: 600;
+  text-decoration: none;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(24px);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+
+.inner-page a.sticky-cta { color: var(--accent-ink); }
+.sticky-cta--visible { opacity: 1; pointer-events: auto; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sticky-cta { transition: none; }
+}
+
+/* Низ страницы не прячется под плашкой */
+@media (max-width: 759px) {
+  .inner-page--result { padding-bottom: 96px; }
+}
+
+@media (min-width: 760px) {
+  .sticky-cta { display: none; }
+  .result-offer__buy .button { width: auto; padding-inline: 40px; }
 }

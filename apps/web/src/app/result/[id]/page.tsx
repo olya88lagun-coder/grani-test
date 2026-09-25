@@ -1,11 +1,11 @@
 import { getLibrary } from "@grani/content/data";
-import { getResultForOwner } from "@grani/db";
+import { formatRub, PRODUCT_PRICES, unlockedKinds } from "@grani/core";
+import { getResultForOwner, listOwnedProducts } from "@grani/db";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RichText } from "@/components/RichText";
 import { ScaleMeter } from "@/components/ScaleMeter";
-import { TypeGem } from "@/components/TypeGem";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { buildResultView } from "@/lib/result-view";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
@@ -16,6 +16,7 @@ import { NotificationsBlock } from "./NotificationsBlock";
 import { PairsBlock } from "./PairsBlock";
 import { ReportOffer } from "./ReportOffer";
 import { ShareCard } from "./ShareCard";
+import { StickyReportCta } from "./StickyReportCta";
 
 export const metadata: Metadata = { title: "Мой результат" };
 
@@ -41,6 +42,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   const view = buildResultView(getLibrary(), result, user.gender);
   const visual = TYPE_VISUALS[view.dir];
   if (!visual) notFound();
+  const reportOpen = unlockedKinds(await listOwnedProducts(getDb(), { resultId: result.id })).has("full");
 
   return (
     <main className="inner-page inner-page--result">
@@ -59,9 +61,15 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
               ))}
             </ul>
             <div className="result-hero__actions">
-              <a className="button button--lg" href="#report">
-                Полный разбор <span aria-hidden="true">→</span>
-              </a>
+              {reportOpen ? (
+                <Link className="button" href={`/report/${result.id}`}>
+                  Читать полный разбор <span aria-hidden="true">→</span>
+                </Link>
+              ) : (
+                <a className="button" href="#report">
+                  Получить полный разбор <span aria-hidden="true">→</span>
+                </a>
+              )}
               {SECONDARY_ACTIONS.map((action) => (
                 <a key={action.href} className="button button--ghost" href={action.href}>
                   {action.label}
@@ -72,13 +80,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
           <aside className="result-card" aria-labelledby="scales">
             <div className="result-card__head">
-              <span className="type-gem" data-family={visual.family}>
-                <TypeGem shape={visual.shape} size={56} />
-              </span>
-              <div>
-                <p className="eyebrow">Твой тип</p>
-                <p className="result-card__name">{view.name}</p>
-              </div>
+              <img className="result-card__crystal" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+              <p className="eyebrow">Твой тип</p>
+              <p className="result-card__name">{view.name}</p>
             </div>
             <h2 id="scales" className="result-card__title">
               Пять шкал личности
@@ -90,6 +94,8 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
             </div>
           </aside>
         </section>
+
+        <ReportOffer result={result} />
 
         <section className="result-scales" aria-labelledby="scale-texts">
           <p className="eyebrow">Из чего складывается тип</p>
@@ -113,8 +119,6 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
         <FriendsBlock resultId={result.id} />
 
-        <ReportOffer result={result} />
-
         <PairsBlock userId={user.id} resultId={result.id} />
 
         <NotificationsBlock userId={user.id} />
@@ -136,6 +140,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </Link>
         </p>
       </div>
+      {!reportOpen && <StickyReportCta label={`Полный разбор — ${formatRub(PRODUCT_PRICES.full)}`} />}
     </main>
   );
 }
