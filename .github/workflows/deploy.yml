@@ -136,7 +136,8 @@ jobs:
             fi
           }
 
-          assert_contains '<title>Грани — тест личности: 16 типов и как тебя видят другие</title>' "$tmp/home.html" "home title"
+          # Проверяем разметку главной, а не текст заголовка: формулировки для поиска меняются, id первого экрана — нет
+          assert_contains 'id="home-title"' "$tmp/home.html" "home page markup"
           assert_contains 'rel="canonical" href="https://grani-test.ru"' "$tmp/home.html" "home canonical"
           assert_contains 'name="yandex-verification"' "$tmp/home.html" "home yandex verification"
           assert_contains 'content="index, follow"' "$tmp/home.html" "home indexable"
