@@ -2,6 +2,7 @@ import { typeName } from "@grani/core";
 import { ImageResponse } from "next/og";
 import { type NextRequest, NextResponse } from "next/server";
 import { CARD_SIZE, cardElement, loadCardFonts } from "@/lib/card";
+import { typeKeywords } from "@/lib/result-view";
 import { TYPE_VISUALS, dirToTypeCode } from "@/lib/type-visuals";
 
 // Картинка зависит только от типа и формы названия — её можно долго кэшировать
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!code || !visual) return new NextResponse(null, { status: 404 });
   const feminine = request.nextUrl.searchParams.get("f") === "1";
   const name = typeName(code, feminine ? "female" : null);
-  const image = new ImageResponse(cardElement({ name, visual }), { ...CARD_SIZE, fonts: await loadCardFonts() });
+  const image = new ImageResponse(cardElement({ name, visual, keywords: typeKeywords(code) }), { ...CARD_SIZE, fonts: await loadCardFonts() });
   image.headers.set("cache-control", CACHE_CONTROL);
   image.headers.set("content-disposition", `inline; filename="grani-${dir}.png"`);
   return image;

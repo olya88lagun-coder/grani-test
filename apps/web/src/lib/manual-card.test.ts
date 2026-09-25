@@ -14,7 +14,8 @@ describe("shortenItem", () => {
   });
 });
 
-test("takes three items of each manual list", () => {
+// На сторис текст должен читаться с телефона без приближения — по два коротких пункта в разделе
+test("takes two items of each manual list", () => {
   const full = {
     portrait: "п",
     strengths: [],
@@ -25,8 +26,9 @@ test("takes three items of each manual list", () => {
   const model = buildManualCardModel(full, "Искра", TYPE_VISUALS["pmpp"]!);
 
   expect(model.lists).toEqual([
-    { title: "Как со мной работать", items: ["р1", "р2", "р3"] },
-    { title: "Как со мной ссориться", items: ["с1", "с2", "с3"] },
-    { title: "Что меня бесит", items: ["б1", "б2", "б3"] },
+    { title: "Как со мной работать", items: ["р1", "р2"] },
+    { title: "Как со мной спорить", items: ["с1", "с2"] },
+    { title: "Что меня бесит", items: ["б1", "б2"] },
   ]);
+  expect(MANUAL_ITEM_LENGTH).toBeLessThanOrEqual(72);
 });

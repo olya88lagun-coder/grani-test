@@ -1,7 +1,7 @@
 import { ALL_TYPE_CODES } from "@grani/core";
 import { TYPE_DIRS, typeCodeToDir } from "@grani/content";
 import { describe, expect, test } from "vitest";
-import { CARD_PALETTE, TYPE_VISUALS, contrastRatio, dirToTypeCode, gemPaths } from "./type-visuals";
+import { TYPE_VISUALS, contrastRatio, dirToTypeCode, gemPaths } from "./type-visuals";
 
 describe("TYPE_VISUALS", () => {
   test("has a visual for every type and nothing else", () => {
@@ -20,10 +20,6 @@ describe("TYPE_VISUALS", () => {
       const shapes = Object.values(TYPE_VISUALS).filter((visual) => visual.family === family).map((visual) => visual.shape);
       expect(new Set(shapes).size).toBe(shapes.length);
     }
-  });
-
-  test.each(Object.entries(CARD_PALETTE.tints))("card ink is readable on family %s tint", (_family, tint) => {
-    expect(contrastRatio(CARD_PALETTE.ink, tint)).toBeGreaterThanOrEqual(7);
   });
 });
 

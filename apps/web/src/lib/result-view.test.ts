@@ -1,8 +1,8 @@
-import type { TraitScores } from "@grani/core";
+import { ALL_TYPE_CODES, type TraitScores } from "@grani/core";
 import { typeTexts } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import { describe, expect, test } from "vitest";
-import { TRAIT_LABELS, buildResultView } from "./result-view";
+import { TRAIT_LABELS, buildResultView, typeKeywords } from "./result-view";
 
 const scores: TraitScores = { openness: 80, conscientiousness: 30, extraversion: 50, agreeableness: 62, stability: 40 };
 const result = { typeCode: "+-++" as const, stability: "sensitive" as const, scores };
@@ -34,5 +34,17 @@ describe("buildResultView", () => {
 
   test("labels a calm result", () => {
     expect(buildResultView(getLibrary(), { ...result, stability: "calm" }, null).stabilityTag).toBe("Спокойствие");
+  });
+
+  test("names the four poles of the type in trait order", () => {
+    expect(buildResultView(getLibrary(), result, null).keywords).toEqual(["Любопытство", "Спонтанность", "Общительность", "Теплота"]);
+  });
+});
+
+describe("typeKeywords", () => {
+  test("gives every type four distinct words that follow its code", () => {
+    expect(typeKeywords("++++")).toEqual(["Любопытство", "Системность", "Общительность", "Теплота"]);
+    expect(typeKeywords("----")).toEqual(["Практичность", "Спонтанность", "Сосредоточенность", "Прямота"]);
+    for (const code of ALL_TYPE_CODES) expect(new Set(typeKeywords(code)).size).toBe(4);
   });
 });

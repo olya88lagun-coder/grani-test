@@ -3,8 +3,9 @@ import type { TypeVisual } from "./type-visuals";
 
 export type ManualCardModel = { typeName: string; visual: TypeVisual; lists: readonly { title: string; items: readonly string[] }[] };
 
-export const MANUAL_ITEM_LENGTH = 80;
-const ITEMS_PER_LIST = 3;
+// Сторис читают с телефона: два пункта в разделе и не больше двух строк на пункт
+export const MANUAL_ITEM_LENGTH = 72;
+const ITEMS_PER_LIST = 2;
 
 export function shortenItem(text: string, max = MANUAL_ITEM_LENGTH): string {
   const clean = text.trim();
@@ -21,7 +22,7 @@ export function buildManualCardModel(full: FullSections, typeName: string, visua
     visual,
     lists: [
       list("Как со мной работать", full.manual.work),
-      list("Как со мной ссориться", full.manual.fight),
+      list("Как со мной спорить", full.manual.fight),
       list("Что меня бесит", full.manual.annoys),
     ],
   };
