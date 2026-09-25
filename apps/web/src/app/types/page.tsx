@@ -26,7 +26,7 @@ const FAMILIES: readonly { family: TypeFamily; title: string }[] = [
 export default function TypesPage() {
   const library = getLibrary();
   return (
-    <main className="page page--wide">
+    <main className="page page--wide inner-page page--types">
       <div className="stack">
         <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }]} />
         <p className="eyebrow">Большая пятёрка</p>
