@@ -11,6 +11,12 @@ test("three friends answer anonymously and the owner sees the comparison", async
   await expect(link).toHaveValue(/\/f\/[A-Za-z0-9_-]{24}$/);
   const inviteUrl = await link.inputValue();
 
+  // Кнопка «Скопировать» кладёт в буфер ту же ссылку, что в поле
+  await owner.context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: new URL(inviteUrl).origin });
+  await owner.page.getByRole("button", { name: "Скопировать" }).click();
+  await expect(owner.page.getByRole("button", { name: "Скопировано ✓" })).toBeVisible();
+  expect(await owner.page.evaluate(() => navigator.clipboard.readText())).toBe(inviteUrl);
+
   // Владелец по своей ссылке отвечать не может
   await owner.page.goto(inviteUrl);
   await expect(owner.page.getByRole("heading", { name: "Это твоя ссылка" })).toBeVisible();

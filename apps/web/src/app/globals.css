@@ -96,7 +96,11 @@ body .stack > * + * { margin-top: 21px; }
 .type-gem[data-family="3"] { background: var(--surface-3); }
 .type-gem[data-family="4"] { background: var(--surface-4); }
 
-.invite-link { width: 100%; min-height: 52px; padding: 14px 18px; border: 0; border-radius: var(--radius); background: var(--bg); color: var(--ink); font: inherit; font-size: 14px; }
+.invite-link { display: block; width: 100%; min-height: 52px; padding: 14px 18px; border: 0; border-radius: var(--radius); background: var(--bg); color: var(--ink); font: inherit; font-size: 14px; line-height: 1.5; overflow: hidden; resize: none; word-break: break-all; field-sizing: content; }
+.invite-link__actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.invite-link__copy { min-width: 150px; white-space: nowrap; }
+/* Там, где поле не подстраивает высоту под текст, оставляем место под две строки */
+@media (max-width: 560px) { @supports not (field-sizing: content) { .invite-link { min-height: 74px; } } }
 
 .compare { display: grid; gap: 9px; padding-bottom: 21px; border-bottom: 1px solid var(--line); }
 .compare:last-child { border-bottom: 0; padding-bottom: 0; }

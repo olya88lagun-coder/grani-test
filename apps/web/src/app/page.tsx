@@ -31,7 +31,7 @@ const FEATURES = [
   { title: "Показывает твой", text: "уникальный тип", icon: "person" },
   { title: "5 ключевых черт", text: "личности", icon: "bars" },
   { title: "Как тебя видят", text: "другие", icon: "eye" },
-  { title: "Красивую карточку", text: "можно поделиться", icon: "share" },
+  { title: "Карточка для сторис", text: "чтобы поделиться типом", icon: "share" },
 ] as const;
 
 const RESULT_TRAITS = [
