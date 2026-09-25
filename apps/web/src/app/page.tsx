@@ -1,11 +1,9 @@
 import type { TypeCode } from "@grani/core";
-import { typeCodeToDir } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { TypeGem } from "@/components/TypeGem";
 import { articleDate, firstSentences, publicMetadata, typePath } from "@/lib/seo";
-import { TYPE_VISUALS, type TypeVisual } from "@/lib/type-visuals";
 
 const HOME = publicMetadata({
   title: "Грани — тест личности: 16 типов и как тебя видят другие",
@@ -47,7 +45,7 @@ const RESULT_NOTES = [
   { title: "Зоны роста", text: "Иногда берёшь на себя слишком много и доходишь не до конца.", icon: "target" },
 ] as const;
 
-const TYPES: readonly { code: TypeCode; title: string; tone: string; text: string }[] = [
+const TYPES: readonly { code: HomeTypeCode; title: string; tone: string; text: string }[] = [
   { code: "+-++", title: "Искра", tone: "leaf", text: "Энергия. Вдохновение. Новые идеи." },
   { code: "++--", title: "Архитектор", tone: "glass", text: "Структура. Анализ. Результат." },
   { code: "+--+", title: "Мечтатель", tone: "cloud", text: "Воображение. Глубина. Смысл." },
@@ -55,17 +53,21 @@ const TYPES: readonly { code: TypeCode; title: string; tone: string; text: strin
   { code: "-+++", title: "Опора", tone: "stone", text: "Надёжность. Стабильность. Забота." },
 ];
 
-const PAIR_TYPE: TypeCode = "++--";
+// Иллюстрации карточек — ассеты главной из apps/web/public/home
+const TYPE_IMAGES = {
+  "+-++": "/home/type-iskra.webp",
+  "++--": "/home/type-architect.webp",
+  "+--+": "/home/type-dreamer.webp",
+  "-++-": "/home/type-commander.webp",
+  "-+++": "/home/type-support.webp",
+} as const satisfies Partial<Record<TypeCode, string>>;
 
-// Значок типа тот же, что в каталоге и на странице типа
-function typeVisual(code: TypeCode): TypeVisual {
-  return TYPE_VISUALS[typeCodeToDir(code)]!;
-}
+type HomeTypeCode = keyof typeof TYPE_IMAGES;
 
 const ARTICLE_CARDS = [
-  { slug: "ekstravert-introvert", tag: "Личность", tone: "portrait" },
-  { slug: "kak-menya-vidyat", tag: "Психология", tone: "interior" },
-  { slug: "sovmestimost-par", tag: "Отношения", tone: "arch" },
+  { slug: "ekstravert-introvert", tag: "Личность", tone: "portrait", image: "/home/article-extrovert.webp" },
+  { slug: "kak-menya-vidyat", tag: "Психология", tone: "interior", image: "/home/article-friends.webp" },
+  { slug: "sovmestimost-par", tag: "Отношения", tone: "arch", image: "/home/article-relationship.webp" },
 ] as const;
 
 // Карточки — настоящие статьи; пропавший slug роняет сборку, а не прячет карточку
@@ -136,18 +138,6 @@ function HomeIcon({ name }: { name: IconName }) {
   );
 }
 
-function BotanicalMark() {
-  return (
-    <span className="home-botanical" aria-hidden="true">
-      <span />
-      <span />
-      <span />
-      <span />
-      <span />
-    </span>
-  );
-}
-
 function CrystalScene() {
   return (
     <div className="home-crystal" aria-label="Гранёная схема личности">
@@ -166,25 +156,7 @@ function CrystalScene() {
         <circle cx="454" cy="284" r="4" />
         <circle cx="66" cy="284" r="4" />
       </svg>
-      <svg className="home-crystal__gem" viewBox="0 0 320 320" aria-hidden="true">
-        <defs>
-          <linearGradient id="homeGemA" x1="52" y1="24" x2="292" y2="294" gradientUnits="userSpaceOnUse">
-            <stop stopColor="#fbf8e9" />
-            <stop offset="0.35" stopColor="#bbd4a8" />
-            <stop offset="0.72" stopColor="#47794e" />
-            <stop offset="1" stopColor="#113f1d" />
-          </linearGradient>
-        </defs>
-        <path className="home-crystal__base" d="M160 18 286 92 286 232 160 306 34 232 34 92Z" />
-        <path className="home-crystal__facet home-crystal__facet--1" d="M160 18 286 92 160 132 34 92Z" />
-        <path className="home-crystal__facet home-crystal__facet--2" d="M34 92 160 132 92 182 34 232Z" />
-        <path className="home-crystal__facet home-crystal__facet--3" d="M286 92 160 132 228 182 286 232Z" />
-        <path className="home-crystal__facet home-crystal__facet--4" d="M92 182 160 132 228 182 160 306Z" />
-        <path className="home-crystal__facet home-crystal__facet--5" d="M34 232 92 182 160 306Z" />
-        <path className="home-crystal__facet home-crystal__facet--6" d="M286 232 228 182 160 306Z" />
-        <path className="home-crystal__shine" d="M160 18 208 106 160 132 118 104Z" />
-        <path className="home-crystal__lines" d="M160 18v288M34 92h252M34 232h252M34 92l126 40 126-40M92 182h136M34 232l126-100 126 100M92 182l68 124 68-124" />
-      </svg>
+      <img className="home-crystal__image" src="/home/hero-crystal.webp" alt="" width={908} height={1062} fetchPriority="high" />
     </div>
   );
 }
@@ -194,10 +166,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   return (
     <main className="home-page">
       <section className="home-hero" aria-labelledby="home-title">
-        <div className="home-hero__wash" aria-hidden="true" />
-        <div className="home-hero__leaf home-hero__leaf--left" aria-hidden="true" />
-        <div className="home-hero__leaf home-hero__leaf--right" aria-hidden="true" />
-        <div className="home-hero__arch" aria-hidden="true" />
         <header className="home-nav" aria-label="Основная навигация">
           <Link className="home-brand" href="/" aria-label="Грани">
             <span className="home-brand__mark" aria-hidden="true">
@@ -270,7 +238,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
         <article className="home-result-card" aria-label="Пример карточки результата">
           <div className="home-result-card__art">
-            <BotanicalMark />
+            <img src={TYPE_IMAGES["+-++"]} alt="" width={351} height={723} loading="lazy" decoding="async" />
           </div>
           <p>Твой тип</p>
           <h3>Искра</h3>
@@ -316,10 +284,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           {TYPES.map((type) => (
             <article className={`home-type-card home-type-card--${type.tone}`} key={type.code}>
               <div className="home-type-card__art">
-                <span className="type-gem" data-family={typeVisual(type.code).family}>
-                  <TypeGem shape={typeVisual(type.code).shape} size={58} />
-                </span>
-                {type.tone === "leaf" && <BotanicalMark />}
+                <img src={TYPE_IMAGES[type.code]} alt="" width={351} height={723} loading="lazy" decoding="async" />
               </div>
               <h3>{type.title}</h3>
               <p>{type.text}</p>
@@ -344,8 +309,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </div>
         <div className="home-pair__cards" aria-label="Пример совместимости">
           <article className="home-person-card home-person-card--leaf">
+            <img src={TYPE_IMAGES["+-++"]} alt="" width={351} height={723} loading="lazy" decoding="async" />
             <h3>Искра</h3>
-            <BotanicalMark />
           </article>
           <div className="home-pair-score">
             <span aria-hidden="true">♥</span>
@@ -354,10 +319,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <small>Вам легко вместе в развитии, общении и новых идеях.</small>
           </div>
           <article className="home-person-card home-person-card--glass">
+            <img src={TYPE_IMAGES["++--"]} alt="" width={350} height={723} loading="lazy" decoding="async" />
             <h3>Архитектор</h3>
-            <span className="type-gem" data-family={typeVisual(PAIR_TYPE).family}>
-              <TypeGem shape={typeVisual(PAIR_TYPE).shape} size={82} />
-            </span>
           </article>
           <div className="home-pair-list">
             <b>Вам легко вместе в:</b>
@@ -382,9 +345,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           </Link>
         </div>
         <div className="home-article-grid">
-          {homeArticles().map(({ slug, tag, tone, article, heading }) => (
+          {homeArticles().map(({ slug, tag, tone, image, article, heading }) => (
             <article className="home-article-card" key={slug}>
               <div className={`home-article-card__image home-article-card__image--${tone}`}>
+                <img src={image} alt="" width={630} height={698} loading="lazy" decoding="async" />
                 <span>{tag}</span>
               </div>
               <h3>{heading}</h3>
