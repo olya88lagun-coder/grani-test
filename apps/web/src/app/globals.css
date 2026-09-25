@@ -165,9 +165,11 @@ body.has-cookie-banner { padding-bottom: 220px; }
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at 14% 20%, rgba(255, 255, 255, 0.9), transparent 28%),
-    radial-gradient(circle at 92% 8%, rgba(199, 212, 185, 0.55), transparent 32%),
-    linear-gradient(145deg, #f7f4e8 0%, #eef4e8 52%, #f8f1df 100%);
+    radial-gradient(ellipse 38% 9% at 78% 30%, rgba(255, 246, 214, 0.75), transparent 70%),
+    radial-gradient(ellipse 34% 8% at 12% 48%, rgba(255, 250, 232, 0.8), transparent 70%),
+    radial-gradient(ellipse 40% 10% at 88% 66%, rgba(255, 243, 208, 0.6), transparent 70%),
+    radial-gradient(ellipse 36% 9% at 20% 86%, rgba(214, 226, 199, 0.55), transparent 70%),
+    linear-gradient(180deg, #f5f1e4 0%, #f1f3e6 34%, #f7f1df 58%, #eef2e4 80%, #f8f1df 100%);
   color: var(--home-ink);
 }
 
@@ -449,7 +451,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
   grid-template-columns: minmax(280px, 0.42fr) minmax(0, 0.58fr);
   gap: clamp(28px, 4vw, 58px);
   align-items: start;
-  padding: clamp(56px, 6.5vw, 92px) clamp(18px, 7vw, 110px);
+  padding: clamp(44px, 5vw, 72px) clamp(18px, 7vw, 110px);
 }
 
 .home-section::before {
@@ -784,7 +786,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .home-articles {
   grid-template-columns: minmax(260px, 0.28fr) minmax(0, 0.72fr);
-  padding-bottom: clamp(64px, 7vw, 100px);
+  padding-bottom: clamp(56px, 6vw, 84px);
 }
 
 .home-article-grid {
@@ -860,6 +862,72 @@ body.has-cookie-banner { padding-bottom: 220px; }
 .home-article-card small {
   color: #879082;
   font-size: 12px;
+}
+
+/* Атмосфера секций. Фрагменты фото атриума — только из его левой части: стена с тенями листьев
+   и растения у края, без окна и арки (они правее 55% ширины фото). Каждый фрагмент живёт в узкой
+   полосе у края секции, поэтому арка не попадает в кадр на любой ширине экрана. Файл уже загружен
+   первым экраном. isolation держит слой под содержимым секции, но над общим фоном страницы */
+.home-section { isolation: isolate; }
+
+.home-section::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: -1;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.6) 45%, transparent 100%);
+  mask-image: linear-gradient(90deg, #000 0%, rgba(0, 0, 0, 0.6) 45%, transparent 100%);
+}
+
+/* Результат: тени листьев слева, тёплый свет за карточками */
+.home-result {
+  background: radial-gradient(ellipse 36% 48% at 62% 52%, rgba(255, 244, 212, 0.75), transparent 72%);
+}
+
+.home-result::after {
+  left: 0;
+  width: min(40%, 700px);
+  background: url("/home/hero-atrium.webp") 30% 35% / auto 170% no-repeat;
+  opacity: 0.55;
+}
+
+/* Типы: тёплый кремовый участок и мягкая тень растений справа — отражённый фрагмент стены */
+.home-types {
+  background: radial-gradient(ellipse 62% 72% at 32% 55%, rgba(252, 244, 222, 0.85), transparent 75%);
+}
+
+.home-types::after {
+  right: 0;
+  width: min(40%, 700px);
+  background: url("/home/hero-atrium.webp") left 0 top 20% / auto 170% no-repeat;
+  transform: scaleX(-1);
+  opacity: 0.4;
+}
+
+/* Совместимость: светлая диагональная плоскость, как солнечный пол; без фото */
+.home-pair {
+  background:
+    linear-gradient(104deg, transparent 18%, rgba(255, 252, 238, 0.85) 40%, rgba(255, 250, 230, 0.5) 52%, transparent 66%),
+    linear-gradient(104deg, transparent 58%, rgba(255, 248, 224, 0.55) 70%, transparent 80%),
+    linear-gradient(180deg, transparent 55%, rgba(233, 228, 207, 0.45) 100%);
+}
+
+.home-pair::after { display: none; }
+
+/* Статьи: тёплый кремовый фон, зелень по краям — растения атриума слева, зелёный свет справа */
+.home-articles {
+  background:
+    radial-gradient(ellipse 22% 60% at 100% 60%, rgba(150, 178, 132, 0.3), transparent 75%),
+    linear-gradient(180deg, rgba(250, 243, 224, 0.2) 0%, rgba(250, 242, 222, 0.9) 100%);
+}
+
+.home-articles::after {
+  left: 0;
+  width: 7vw;
+  background: url("/home/hero-atrium.webp") left 0 bottom 0 / auto 120% no-repeat;
+  opacity: 0.7;
 }
 
 @media (max-width: 1100px) {
