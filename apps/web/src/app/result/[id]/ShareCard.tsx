@@ -29,19 +29,29 @@ export function ShareCard({ cardUrl, fileName, typeName, eyebrow = "Для ст�
     }
   }
 
+  // Превью рядом с текстом, кнопки — под текстом, а не поверх картинки
   return (
-    <section className="card card--paper stack" aria-labelledby="share">
-      <p className="eyebrow">{eyebrow}</p>
-      <h2 id="share">{heading}</h2>
-      <img src={cardUrl} alt={`Карточка типа «${typeName}»`} width={270} height={480} style={{ borderRadius: "var(--radius)" }} />
-      <button type="button" className="button" onClick={share}>
-        Поделиться <span aria-hidden="true">→</span>
-      </button>
-      {status && (
-        <p className="muted" role="status">
-          {status}
-        </p>
-      )}
+    <section className="share-card" aria-labelledby="share">
+      <img className="share-card__preview" src={cardUrl} alt={`Карточка типа «${typeName}»`} width={1080} height={1920} />
+      <div className="share-card__body">
+        <p className="eyebrow">{eyebrow}</p>
+        <h2 id="share">{heading}</h2>
+        <p className="lead">Сохрани или отправь в сторис.</p>
+        <p className="muted">Картинка 1080×1920 — ровно под размер сторис.</p>
+        <div className="row">
+          <button type="button" className="button" onClick={share}>
+            Поделиться <span aria-hidden="true">→</span>
+          </button>
+          <a className="button button--ghost" href={cardUrl} download={fileName}>
+            Скачать
+          </a>
+        </div>
+        {status && (
+          <p className="muted" role="status">
+            {status}
+          </p>
+        )}
+      </div>
     </section>
   );
 }

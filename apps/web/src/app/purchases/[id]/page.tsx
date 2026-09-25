@@ -13,8 +13,10 @@ export default async function PurchasePage({ params }: { params: Promise<{ id: s
   const view = deps ? await getPurchaseView(deps, { purchaseId: id, userId: user.id }) : null;
   if (!view) notFound();
   return (
-    <main className="page">
-      <PurchaseStatus initial={view} />
+    <main className="inner-page inner-page--wait">
+      <div className="page page--wait">
+        <PurchaseStatus initial={view} />
+      </div>
     </main>
   );
 }

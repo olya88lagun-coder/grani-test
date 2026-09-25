@@ -24,7 +24,8 @@ test("passes the test, logs in and sees the saved result with a story card", asy
   await expect(page).toHaveURL(/\/result\/[0-9a-f-]{36}$/);
   await expect(page.getByRole("heading", { level: 1, name: "Вдохновитель" })).toBeVisible();
   await expect(page.getByText("Чувствительность", { exact: true })).toBeVisible();
-  await expect(page.getByText("Эмоциональная устойчивость", { exact: true })).toBeVisible();
+  // Название шкалы есть и в карточке первого экрана, и в пояснениях ниже
+  await expect(page.getByText("Эмоциональная устойчивость", { exact: true }).first()).toBeVisible();
 
   const card = page.getByRole("img", { name: "Карточка типа «Вдохновитель»" });
   await expect(card).toBeVisible();

@@ -9,7 +9,7 @@ export async function FriendsBlock({ resultId }: { resultId: string }) {
   const shareUrl = view.state === "no_link" ? null : view.shareUrl;
 
   return (
-    <section className="card stack" data-palette="friends" aria-labelledby="friends">
+    <section className="card stack result-block" aria-labelledby="friends">
       <p className="eyebrow">Как тебя видят другие</p>
       <h2 id="friends">{view.state === "ready" ? view.summary : "Узнай, как тебя видят друзья"}</h2>
       {view.state !== "ready" && (

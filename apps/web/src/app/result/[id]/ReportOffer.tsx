@@ -12,7 +12,7 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
   const owned = await listOwnedProducts(getDb(), { resultId: result.id });
   if (unlockedKinds(owned).has("full")) {
     return (
-      <section className="card card--3 stack" aria-labelledby="report">
+      <section className="card stack result-block result-block--report" aria-labelledby="report">
         <p className="eyebrow">Полный разбор</p>
         <h2 id="report">Разбор открыт</h2>
         <div>
@@ -25,7 +25,7 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
   }
   const preview = buildReportPreview(getLibrary(), result);
   return (
-    <section className="card card--3 stack" aria-labelledby="report">
+    <section className="card stack result-block result-block--report" aria-labelledby="report">
       <p className="eyebrow">Полный разбор</p>
       <h2 id="report">Что откроется в полном разборе</h2>
       {preview.map((section) => (
