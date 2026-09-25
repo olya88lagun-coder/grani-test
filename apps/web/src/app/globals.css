@@ -177,8 +177,8 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .home-hero {
   position: relative;
-  min-height: 760px;
-  padding: 22px clamp(18px, 5vw, 92px) 92px;
+  min-height: 660px;
+  padding: 22px clamp(18px, 5vw, 92px) 64px;
   background:
     linear-gradient(90deg, rgba(248, 246, 231, 0.92) 0%, rgba(248, 246, 231, 0.62) 42%, rgba(248, 246, 231, 0.18) 100%),
     url("/home/hero-atrium.webp") center / cover no-repeat;
@@ -264,7 +264,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
   gap: clamp(36px, 7vw, 110px);
   max-width: 1500px;
   margin: 0 auto;
-  padding-top: 58px;
+  padding-top: 34px;
 }
 
 .home-hero__copy {
@@ -406,6 +406,8 @@ body.has-cookie-banner { padding-bottom: 220px; }
 }
 
 .home-feature {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -438,7 +440,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .home-feature b,
 .home-feature small { display: block; }
-.home-feature b { font-size: 13px; font-weight: 400; }
+.home-feature b { font-size: 14px; font-weight: 600; }
 .home-feature small { color: var(--home-ink); font-size: 13px; }
 
 .home-section {
@@ -446,8 +448,8 @@ body.has-cookie-banner { padding-bottom: 220px; }
   display: grid;
   grid-template-columns: minmax(280px, 0.42fr) minmax(0, 0.58fr);
   gap: clamp(28px, 4vw, 58px);
-  align-items: center;
-  padding: clamp(72px, 9vw, 124px) clamp(18px, 7vw, 110px);
+  align-items: start;
+  padding: clamp(56px, 6.5vw, 92px) clamp(18px, 7vw, 110px);
 }
 
 .home-section::before {
@@ -466,9 +468,16 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .home-section__copy h2 {
   color: #050906;
-  font-size: clamp(48px, 6vw, 84px);
+  font-size: clamp(44px, 4.8vw, 70px);
   line-height: 0.9;
 }
+
+.home-section__copy .button {
+  justify-self: start;
+  margin-top: 4px;
+}
+
+.home-section__copy .button--lg { padding: 17px 26px; font-size: 15px; }
 
 .home-section__copy p:not(.home-kicker) {
   color: var(--home-muted);
@@ -478,7 +487,10 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .home-result {
   grid-template-columns: minmax(280px, 0.34fr) minmax(280px, 0.28fr) minmax(360px, 0.38fr);
+  column-gap: clamp(16px, 1.8vw, 26px);
 }
+
+.home-result .home-section__copy { margin-right: clamp(0px, 2.4vw, 34px); }
 
 .home-result-card,
 .home-note-card,
@@ -564,15 +576,15 @@ body.has-cookie-banner { padding-bottom: 220px; }
 .home-note-cards {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
   align-items: stretch;
 }
 
 .home-note-card {
   display: grid;
-  gap: 18px;
-  min-height: 260px;
-  padding: 28px 22px;
+  gap: 14px;
+  min-height: 0;
+  padding: 24px 20px;
 }
 
 .home-note-card h3 {
@@ -772,7 +784,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .home-articles {
   grid-template-columns: minmax(260px, 0.28fr) minmax(0, 0.72fr);
-  padding-bottom: clamp(86px, 10vw, 140px);
+  padding-bottom: clamp(64px, 7vw, 100px);
 }
 
 .home-article-grid {
@@ -785,7 +797,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
   position: relative;
   display: grid;
   gap: 13px;
-  min-height: 330px;
+  min-height: 0;
   padding: 0 0 54px;
   overflow: hidden;
 }
