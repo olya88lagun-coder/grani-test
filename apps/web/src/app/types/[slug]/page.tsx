@@ -9,7 +9,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { RichText } from "@/components/RichText";
 import { TestCta } from "@/components/TestCta";
 import { TypeGem } from "@/components/TypeGem";
-import { articleJsonLd, firstSentences, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath } from "@/lib/seo";
+import { firstSentences, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath, webPageJsonLd } from "@/lib/seo";
 import { POLE_WORDS, typeDisplayName, typePoles } from "@/lib/seo-pages";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 
@@ -84,7 +84,7 @@ export default async function TypePage({ params }: Props) {
             ))}
           </ul>
         </section>
-        <JsonLd data={articleJsonLd({ title: page.title, description: page.description, path: typePath(code) })} />
+        <JsonLd data={webPageJsonLd({ title: page.title, description: page.description, path: typePath(code) })} />
       </article>
     </main>
   );

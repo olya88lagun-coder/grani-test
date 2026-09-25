@@ -2,10 +2,12 @@ import { z } from "zod";
 import { LibraryError } from "./library";
 import { parseBlocks, type TextBlock } from "./markdown";
 
-export type Article = { slug: string; title: string; description: string; date: string; body: string; blocks: TextBlock[] };
+// seoTitle — короткий заголовок для вкладки и выдачи, когда title (он же H1) длиннее 52 знаков
+export type Article = { slug: string; title: string; seoTitle?: string; description: string; date: string; body: string; blocks: TextBlock[] };
 
 const FrontMatter = z.strictObject({
   title: z.string().min(10).max(90),
+  seoTitle: z.string().min(10).max(52).optional(),
   description: z.string().min(50).max(200),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
