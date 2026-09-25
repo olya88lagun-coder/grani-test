@@ -12,7 +12,7 @@ export const metadata = publicMetadata({
 
 export default function ArticlesPage() {
   return (
-    <main className="page">
+    <main className="page inner-text">
       <div className="stack">
         <Breadcrumbs items={[{ name: "Статьи", path: "/articles" }]} />
         <h1 className="display">Статьи</h1>

@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Удалить мои данные" 
 export default async function DeleteDataPage() {
   await requireUser();
   return (
-    <main className="page">
+    <main className="page inner-text">
       <div className="stack">
         <h1 className="display">Удалить мои данные</h1>
         <section className="card stack">

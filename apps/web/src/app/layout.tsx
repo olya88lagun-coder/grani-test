@@ -3,7 +3,9 @@ import { Cormorant_Garamond, Golos_Text } from "next/font/google";
 import type { ReactNode } from "react";
 import { Analytics } from "@/components/Analytics";
 import { Footer } from "@/components/Footer";
+import { SiteHeader } from "@/components/SiteHeader";
 import { YANDEX_VERIFICATION } from "@/lib/analytics";
+import { OG_IMAGE, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
 
 const display = Cormorant_Garamond({ subsets: ["latin", "cyrillic"], weight: ["300"], variable: "--font-cormorant" });
@@ -20,12 +22,16 @@ export const metadata: Metadata = {
   // Публичные страницы включают индексацию через publicMetadata
   robots: { index: false, follow: false },
   verification: { yandex: YANDEX_VERIFICATION },
+  // Обложка и для личных ссылок, которые пересылают в мессенджерах: приглашение в пару, анкета для друга
+  openGraph: { type: "website", locale: "ru_RU", siteName: SITE_NAME, images: [OG_IMAGE] },
+  twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ru" className={`${display.variable} ${body.variable}`}>
       <body>
+        <SiteHeader />
         {children}
         <Footer />
         <Analytics />

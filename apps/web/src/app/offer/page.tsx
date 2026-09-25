@@ -16,7 +16,7 @@ const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
 
 export default function OfferPage() {
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <h1 className="display">Публичная оферта</h1>
         <p className="muted">

@@ -43,28 +43,30 @@ export default async function TypePage({ params }: Props) {
   const name = typeDisplayName(code);
 
   return (
-    <main className="page">
+    <main className="page inner-text">
       <article className="stack">
         <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }, { name, path: typePath(code) }]} />
-        <div className="row" style={{ gap: 21 }}>
-          <span className="type-gem" data-family={visual.family}>
-            <TypeGem shape={visual.shape} size={60} />
-          </span>
-          <div>
-            <p className="eyebrow">Тип личности · Большая пятёрка</p>
-            <h1 className="display">{name}</h1>
+        <header className="type-hero">
+          <div className="row" style={{ gap: 21 }}>
+            <span className="type-gem" data-family={visual.family}>
+              <TypeGem shape={visual.shape} size={60} />
+            </span>
+            <div>
+              <p className="eyebrow">Тип личности · Большая пятёрка</p>
+              <h1 className="display">{name}</h1>
+            </div>
           </div>
-        </div>
-        <ul className="pole-list">
-          {typePoles(code).map(({ trait, pole }) => (
-            <li key={trait}>
-              <Link href={traitPath(trait, pole)}>
-                {TRAIT_LABELS[trait]} — {POLE_WORDS[pole]}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <p className="lead">{texts.short}</p>
+          <ul className="pole-list">
+            {typePoles(code).map(({ trait, pole }) => (
+              <li key={trait}>
+                <Link href={traitPath(trait, pole)}>
+                  {TRAIT_LABELS[trait]} — {POLE_WORDS[pole]}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="lead">{texts.short}</p>
+        </header>
         <RichText text={texts.long} />
         <p>
           Пятая шкала — {TRAIT_LABELS.stability.toLowerCase()} — не меняет тип, а уточняет его: каждый тип бывает спокойным или чувствительным.
