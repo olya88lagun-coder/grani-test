@@ -135,9 +135,6 @@ details.card[open] > summary { margin-bottom: 21px; }
 .type-tile .type-gem { width: 64px; height: 64px; }
 .type-tile h3 { margin: 0; }
 .type-tile h3 a { text-decoration: none; }
-.article-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
-.article-list h2 { margin: 0; font-size: 28px; }
-.article-list h2 a { text-decoration: none; }
 .display--article { font-size: clamp(36px, 8vw, 56px); }
 
 /* Подвал идёт после <main class="page">, у которого уже есть нижний отступ */
@@ -1102,8 +1099,7 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 .inner-intro__copy { display: grid; gap: 16px; }
 .inner-intro .lead { max-width: 680px; }
-.inner-intro__gem,
-.inner-intro__pair { display: none; }
+.inner-intro__gem { display: none; }
 
 @media (min-width: 900px) {
   .inner-intro {
@@ -1118,36 +1114,6 @@ body.has-cookie-banner { padding-bottom: 220px; }
     height: auto;
     filter: drop-shadow(0 26px 26px rgba(13, 51, 22, 0.24)) drop-shadow(0 0 30px rgba(255, 255, 230, 0.6));
   }
-
-  .inner-intro__pair {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-.inner-intro__pair img {
-  width: 104px;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 14px;
-  box-shadow: 0 16px 34px rgba(20, 47, 23, 0.16);
-}
-
-.inner-intro__pair img:first-child { transform: rotate(-5deg); }
-.inner-intro__pair img:last-child { transform: rotate(5deg); }
-
-.inner-intro__pair span {
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  margin-inline: -14px;
-  border-radius: 50%;
-  background: #fffdf6;
-  color: var(--rose);
-  box-shadow: 0 10px 24px rgba(20, 47, 23, 0.12);
 }
 
 /* Призыв пройти тест — как блоки главной */
@@ -1242,7 +1208,87 @@ body.has-cookie-banner { padding-bottom: 220px; }
 }
 
 /* /compatibility: палитра главной, розовый — только акцент */
-.inner-page--pair .eyebrow { color: var(--rose); }
+/* Тёплый пыльно-розовый — только акцент к теме пары: сердце, проценты, значки и лёгкие пятна света */
+.inner-page--pair {
+  --blush: #d4a39c;
+  --blush-ink: #9a5860;
+  --blush-soft: rgba(236, 204, 196, 0.5);
+}
+
+.inner-page--pair::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 30% 18% at 8% 14%, rgba(240, 210, 200, 0.45), transparent 70%),
+    radial-gradient(ellipse 28% 16% at 92% 62%, rgba(240, 210, 200, 0.35), transparent 70%);
+  pointer-events: none;
+}
+
+.inner-page--pair .eyebrow { color: var(--blush-ink); }
+
+/* Первый экран пары: два стеклянных кристалла и сердце между ними */
+.pair-hero {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.pair-hero__card {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: 124px;
+  padding: 24px 14px 18px;
+  border-radius: 28px 28px 20px 20px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(236, 243, 228, 0.62));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 24px 44px rgba(20, 47, 23, 0.14);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  transform: rotate(-4deg);
+}
+
+.pair-hero__card--blush {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(244, 222, 214, 0.72));
+  transform: rotate(4deg);
+}
+
+.pair-hero__card img {
+  width: 72px;
+  height: auto;
+  filter: drop-shadow(0 12px 14px rgba(13, 51, 22, 0.25));
+}
+
+/* Второй кристалл — тот же, перекрашенный в тёплый румянец */
+.pair-hero__card--blush img { filter: hue-rotate(245deg) saturate(0.55) brightness(1.08) drop-shadow(0 12px 14px rgba(120, 60, 60, 0.2)); }
+
+.pair-hero__card span {
+  color: var(--inner-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+.pair-hero__heart {
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-inline: -12px;
+  border-radius: 50%;
+  background: #fffdf6;
+  box-shadow: 0 10px 24px rgba(120, 60, 60, 0.18);
+}
+
+.pair-hero__heart svg { width: 22px; height: 22px; fill: var(--blush); }
+
+@media (min-width: 900px) {
+  .inner-page--pair .inner-intro { grid-template-columns: minmax(0, 1fr) 340px; }
+  .pair-hero__card { width: 140px; padding-top: 30px; }
+  .pair-hero__card img { width: 88px; }
+}
 .inner-page--pair .inner-block > p { max-width: 720px; }
 
 .steps,
@@ -1281,6 +1327,19 @@ body.has-cookie-banner { padding-bottom: 220px; }
   line-height: 1;
 }
 
+.formula__icon {
+  display: block;
+  width: 44px;
+  height: auto;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 8px 10px rgba(13, 51, 22, 0.2));
+}
+
+.formula__icon--venn { width: 64px; height: 40px; filter: none; }
+.formula__icon--venn circle { stroke-width: 1.5; }
+.formula__icon--venn circle:first-child { fill: rgba(137, 170, 128, 0.35); stroke: var(--accent); }
+.formula__icon--venn circle:last-child { fill: var(--blush-soft); stroke: var(--blush-ink); }
+
 .formula strong {
   display: block;
   margin-bottom: 6px;
@@ -1298,6 +1357,52 @@ body.has-cookie-banner { padding-bottom: 220px; }
 
 body .level-grid > .level-card { margin-top: 0; }
 .level-card h3 { font-size: 26px; }
+
+/* Уровни: высокий — тёмно-зелёная карточка, остальные светлые с тёплой подсветкой; проценты — румянцем */
+.level-card__percent {
+  margin: 0;
+  color: var(--blush-ink);
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1;
+}
+
+.inner-page--pair .level-card {
+  background:
+    radial-gradient(ellipse 60% 45% at 100% 0%, var(--blush-soft), transparent 70%),
+    var(--paper);
+}
+
+.inner-page--pair .level-card--excellent {
+  background:
+    radial-gradient(ellipse 60% 45% at 100% 0%, rgba(240, 200, 190, 0.28), transparent 70%),
+    linear-gradient(150deg, #1b5324, #0c3313);
+  box-shadow: 0 30px 60px rgba(15, 62, 23, 0.28);
+  color: rgba(246, 242, 226, 0.88);
+}
+
+.inner-page--pair .level-card--excellent h3 { color: #fffdf4; }
+.level-card--excellent .level-card__percent { color: #f1c9c0; }
+
+@media (min-width: 760px) {
+  .inner-page--pair .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .inner-page--pair .level-card--excellent { grid-column: 1 / -1; }
+}
+
+/* Высокий уровень на широком экране — разворот: процент и фраза слева, пояснение справа */
+@media (min-width: 900px) {
+  .inner-page--pair .level-card--excellent {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-content: start;
+    column-gap: 56px;
+    padding: 44px 48px;
+  }
+
+  .inner-page--pair .level-card--excellent > * { margin-top: 0; }
+  .inner-page--pair .level-card--excellent > h3 { margin-top: 14px; font-size: 32px; }
+  .inner-page--pair .level-card--excellent > p:last-child { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+}
 
 @media (min-width: 900px) {
   .steps { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -2103,4 +2208,258 @@ body .page--report.stack > * + * { margin-top: 64px; }
 @media (min-width: 760px) {
   .sticky-cta { display: none; }
   .result-offer__buy .button { width: auto; padding-inline: 40px; }
+}
+
+/* Статьи: журнальный список и страница статьи */
+.journal-hero {
+  display: grid;
+  gap: 14px;
+  align-content: end;
+  min-height: 260px;
+  padding: 40px 24px;
+  border-radius: 28px;
+  background:
+    linear-gradient(90deg, rgba(248, 246, 231, 0.96) 0%, rgba(248, 246, 231, 0.82) 50%, rgba(248, 246, 231, 0.2) 100%),
+    url("/home/hero-atrium.webp") center / cover no-repeat;
+  box-shadow: inset 0 0 0 1px var(--paper-line), var(--paper-shadow);
+}
+
+.journal-hero .lead { max-width: 520px; }
+
+.article-badge {
+  display: inline-flex;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(214, 226, 199, 0.75);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.journal-featured {
+  display: grid;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line), var(--paper-shadow);
+  color: inherit;
+  text-decoration: none;
+}
+
+.journal-featured__image {
+  order: -1;
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+}
+
+.journal-featured__body {
+  display: grid;
+  gap: 14px;
+  align-content: center;
+  justify-items: start;
+  padding: 28px 24px;
+}
+
+.inner-page .journal-featured h2 { font-size: clamp(30px, 4vw, 46px); line-height: 1.08; }
+.journal-featured__body > p:not(.article-tile__meta) { margin: 0; max-width: 520px; color: var(--ink-soft); }
+
+.article-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.article-tag {
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 253, 244, 0.82);
+  box-shadow: inset 0 0 0 1px var(--paper-line);
+  color: var(--inner-ink);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.article-tag[aria-pressed="true"] { background: var(--accent); box-shadow: none; color: var(--accent-ink); }
+
+.article-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.article-tile {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 22px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line), 0 16px 40px rgba(20, 47, 23, 0.08);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.article-tile:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1px var(--paper-line), 0 24px 50px rgba(20, 47, 23, 0.12); }
+
+.article-tile__image { width: 100%; height: 180px; object-fit: cover; }
+
+.article-tile__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px 22px 22px;
+}
+
+.inner-page .article-tile__title { margin: 0; color: var(--inner-ink); font-size: 24px; line-height: 1.15; }
+.article-tile__text { margin: 0; color: var(--ink-soft); font-size: 15px; }
+.article-tile__meta { margin: auto 0 0; padding-top: 4px; color: var(--ink-soft); font-size: 13px; }
+
+/* Страница статьи: колонка чтения по центру, картинка и карточки — шире */
+.page--article { max-width: 980px; }
+
+.page--article > :is(.article-hero, .article-insight, .article-body, .five-traits) {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+
+.article-hero { display: grid; gap: 16px; }
+
+.article-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.article-hero__image {
+  width: 100%;
+  height: clamp(220px, 42vw, 440px);
+  object-fit: cover;
+  border-radius: 28px;
+  box-shadow: var(--paper-shadow);
+}
+
+.article-insight {
+  position: relative;
+  margin: 0;
+  padding: 28px 28px 28px 72px;
+  border-radius: 22px;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line);
+}
+
+.article-insight::before {
+  content: "\201C";
+  position: absolute;
+  top: 12px;
+  left: 24px;
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1;
+}
+
+.article-insight p {
+  margin: 0;
+  color: var(--inner-ink);
+  font-family: var(--font-display);
+  font-size: 23px;
+  line-height: 1.35;
+}
+
+.article-body p,
+.article-body li { font-size: 18px; line-height: 1.75; }
+.article-body > * + * { margin-top: 18px; }
+
+.five-traits {
+  padding: 28px 22px;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(255, 244, 212, 0.7), transparent 70%),
+    var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line), var(--paper-shadow);
+}
+
+.five-traits__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 20px;
+  margin-bottom: 16px;
+}
+
+.five-traits__head p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.five-traits ul { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+
+.five-traits li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 0 0 1px var(--paper-line);
+}
+
+.five-traits__name {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--inner-ink);
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+.five-traits__name::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: linear-gradient(135deg, #bcd4aa, var(--accent));
+  transform: rotate(45deg);
+}
+
+.five-traits__links { display: flex; gap: 8px; color: var(--ink-soft); font-size: 15px; }
+
+/* Призыв пройти тест на статьях и совместимости — с атриумом справа */
+:is(.inner-page--articles, .inner-page--article, .inner-page--pair) .test-cta {
+  background:
+    linear-gradient(90deg, rgba(248, 246, 231, 0.97) 0%, rgba(248, 246, 231, 0.88) 55%, rgba(248, 246, 231, 0.25) 100%),
+    url("/home/hero-atrium.webp") 70% center / cover no-repeat;
+}
+
+@media (max-width: 759px) {
+  .article-insight { padding: 24px 22px 24px 54px; }
+  .article-insight::before { left: 16px; font-size: 52px; }
+  .article-insight p { font-size: 20px; }
+}
+
+@media (min-width: 760px) {
+  .journal-hero { min-height: 340px; padding: 64px 72px; }
+  .five-traits { padding: 36px 40px; }
+}
+
+@media (min-width: 900px) {
+  .journal-featured { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); }
+  .journal-featured__image { order: 0; height: 100%; min-height: 380px; }
+  .journal-featured__body { padding: 48px 52px; }
+  body .page--article.stack > * + * { margin-top: 40px; }
+  /* Все остальные статьи остаются в ссылках — сетка два на два вместо одинокой четвёртой карточки */
+  .article-grid--more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .article-grid--more .article-tile { flex-direction: row; }
+  .article-grid--more .article-tile__image { width: 38%; height: auto; min-height: 100%; }
 }

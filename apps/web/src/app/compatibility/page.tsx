@@ -11,6 +11,14 @@ export const metadata = publicMetadata({ title: "Тест на совмести�
 
 const labels = (traits: readonly (keyof typeof TRAIT_LABELS)[]) => traits.map((trait) => TRAIT_LABELS[trait].toLowerCase()).join(", ");
 
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.7 3.8 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.9 1.3-1.8 2.9-2.9 4.9-2.9 3.3 0 5.5 3.2 4.3 6.6-1.7 4.8-9.2 9.4-9.2 9.4z" />
+    </svg>
+  );
+}
+
 // Палитра главной вместо «Глины»: розовый остаётся только акцентом — надзаголовок, сердце, проценты уровней
 export default function CompatibilityPage() {
   const library = getLibrary();
@@ -24,10 +32,18 @@ export default function CompatibilityPage() {
             <h1 className="display">Тест на совместимость пары</h1>
             <p className="lead">{DESCRIPTION}</p>
           </div>
-          <div className="inner-intro__pair" aria-hidden="true">
-            <img src="/home/type-iskra.webp" alt="" width={351} height={723} />
-            <span>♥</span>
-            <img src="/home/type-architect.webp" alt="" width={350} height={723} />
+          <div className="pair-hero" aria-hidden="true">
+            <div className="pair-hero__card">
+              <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+              <span>Ты</span>
+            </div>
+            <span className="pair-hero__heart">
+              <HeartIcon />
+            </span>
+            <div className="pair-hero__card pair-hero__card--blush">
+              <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+              <span>Партнёр</span>
+            </div>
           </div>
         </header>
 
@@ -50,9 +66,14 @@ export default function CompatibilityPage() {
           <p>Процент складывается из двух равных частей:</p>
           <ul className="formula">
             <li>
+              <img className="formula__icon" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
               <strong>Ресурс пары</strong> — {labels(RESOURCE_TRAITS)} обоих. Чем они выше, тем легче договариваться и переживать трудности.
             </li>
             <li>
+              <svg className="formula__icon formula__icon--venn" viewBox="0 0 64 40" aria-hidden="true">
+                <circle cx="24" cy="20" r="16" />
+                <circle cx="40" cy="20" r="16" />
+              </svg>
               <strong>Похожесть</strong> — насколько близки ваши {labels(SIMILARITY_TRAITS)}. В этих чертах похожие люди обычно понимают
               друг друга без объяснений.
             </li>
@@ -65,8 +86,8 @@ export default function CompatibilityPage() {
             {COMPATIBILITY_LEVELS.map(({ min, level }) => {
               const texts = compatibilityTexts(library, level);
               return (
-                <section key={level} className="card stack level-card">
-                  <p className="eyebrow">от {min}%</p>
+                <section key={level} className={`card stack level-card level-card--${level}`}>
+                  <p className="level-card__percent">от {min}%</p>
                   <h3>{texts.phrase}</h3>
                   <p>{texts.text}</p>
                 </section>
