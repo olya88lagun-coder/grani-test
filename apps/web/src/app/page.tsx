@@ -15,8 +15,18 @@ const HOME_DESCRIPTION =
 
 const HOME = publicMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" });
 
+// Превью ссылки во ВКонтакте и мессенджерах показывает одну строку — около 40 знаков, поэтому
+// для шеринга свой короткий заголовок и живое описание; <title> для поиска остаётся полным
+const SHARE_TITLE = "Тест личности «Большая пятёрка» — Грани";
+const SHARE_DESCRIPTION = "10 минут и 50 утверждений: твой тип, пять черт и как тебя видят друзья. Бесплатно.";
+
 // absolute — чтобы шаблон «%s — Грани» не повторил название
-export const metadata: Metadata = { ...HOME, title: { absolute: HOME_TITLE } };
+export const metadata: Metadata = {
+  ...HOME,
+  title: { absolute: HOME_TITLE },
+  openGraph: { ...HOME.openGraph, title: SHARE_TITLE, description: SHARE_DESCRIPTION },
+  twitter: { ...HOME.twitter, title: SHARE_TITLE, description: SHARE_DESCRIPTION },
+};
 
 const HERO_TRAITS = [
   { label: "Открытость\nк новому", className: "home-crystal__label--openness" },
