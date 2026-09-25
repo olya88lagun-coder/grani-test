@@ -1,5 +1,5 @@
 import { TRAITS } from "@grani/core";
-import { TRAIT_LABELS } from "@grani/content";
+import { ARTICLE_SOURCES, TRAIT_LABELS } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import { ArticleTile } from "@/components/ArticleTile";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { RichText } from "@/components/RichText";
+import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, articleJsonLd, publicMetadata, traitPath } from "@/lib/seo";
@@ -58,6 +59,7 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
   const path = `/articles/${article.slug}`;
   const card = articleCard(article);
+  const sources = ARTICLE_SOURCES[article.slug] ?? [];
   const others = getArticles()
     .filter((other) => other.slug !== article.slug)
     .map(articleCard);
@@ -80,6 +82,7 @@ export default async function ArticlePage({ params }: Props) {
         <div className="article-body">
           <RichText text={article.body} />
         </div>
+        <SourceList sources={sources} />
         <FiveTraits />
         <TestCta title="Узнай больше о себе" />
         <section className="stack" aria-labelledby="more">
@@ -92,7 +95,7 @@ export default async function ArticlePage({ params }: Props) {
             ))}
           </ul>
         </section>
-        <JsonLd data={articleJsonLd({ title: article.title, description: article.description, path, datePublished: article.date })} />
+        <JsonLd data={articleJsonLd({ title: article.title, description: article.description, path, datePublished: article.date, sources })} />
       </article>
     </main>
   );

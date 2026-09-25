@@ -180,7 +180,7 @@ export default function HomePage() {
             <Link href="/types">16 типов</Link>
             <Link href="/compatibility">Совместимость</Link>
             <Link href="/articles">Статьи</Link>
-            <Link href="#about">О проекте</Link>
+            <Link href="/about">О проекте</Link>
           </nav>
           <Link className="home-login" href="/me">
             Войти

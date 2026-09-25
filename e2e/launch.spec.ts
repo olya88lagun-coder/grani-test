@@ -10,7 +10,7 @@ test("public pages are indexable and private ones are not", async ({ page, reque
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
-  expect(sitemap.match(/<loc>/g)).toHaveLength(40);
+  expect(sitemap.match(/<loc>/g)).toHaveLength(41);
   expect(sitemap.match(/<lastmod>/g)).toHaveLength(6);
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /result/");
@@ -29,6 +29,17 @@ test("trait pages sit under their own section and the site serves llms.txt with 
   expect(await llms.text()).toContain("/types/iskra)");
   expect(llms.headers()["x-content-type-options"]).toBe("nosniff");
   expect(llms.headers()["strict-transport-security"]).toContain("max-age=");
+});
+
+test("articles cite their sources and the about page explains the method", async ({ page }) => {
+  await page.goto("/articles/kak-menya-vidyat");
+  const sources = page.getByRole("region", { name: "Источники" });
+  await expect(sources.getByRole("link").first()).toHaveAttribute("href", /^https:\/\/doi\.org\/10\./);
+
+  await page.getByRole("contentinfo").getByRole("link", { name: "О проекте и методике" }).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("О проекте и методике");
+  await expect(page.getByRole("heading", { name: "Ограничения" })).toBeVisible();
 });
 
 test("inner pages have the site header, pages a link preview and the site an icon", async ({ page, request }) => {

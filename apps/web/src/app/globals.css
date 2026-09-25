@@ -2334,7 +2334,7 @@ body .page--report.stack > * + * { margin-top: 64px; }
 /* Страница статьи: колонка чтения по центру, картинка и карточки — шире */
 .page--article { max-width: 980px; }
 
-.page--article > :is(.article-hero, .article-insight, .article-body, .five-traits) {
+.page--article > :is(.article-hero, .article-insight, .article-body, .sources, .five-traits) {
   width: 100%;
   max-width: 760px;
   margin-inline: auto;
@@ -2391,6 +2391,12 @@ body .page--report.stack > * + * { margin-top: 64px; }
 .article-body p,
 .article-body li { font-size: 18px; line-height: 1.75; }
 .article-body > * + * { margin-top: 18px; }
+
+/* Источники: мельче основного текста, длинные названия статей переносятся по словам */
+.sources h2 { margin: 0 0 12px; font-size: 22px; }
+.sources__list { margin: 0; padding-left: 22px; display: grid; gap: 10px; }
+.sources__list li { font-size: 14px; line-height: 1.55; color: var(--ink-soft); overflow-wrap: anywhere; }
+.sources__list a { color: var(--ink); }
 
 .five-traits {
   padding: 28px 22px;
