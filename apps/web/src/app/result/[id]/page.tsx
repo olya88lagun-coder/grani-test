@@ -19,12 +19,20 @@ import { ShareCard } from "./ShareCard";
 
 export const metadata: Metadata = { title: "Мой результат" };
 
-// Быстрые переходы к разделам ниже; якоря — id заголовков этих разделов
-const ACTIONS = [
-  { href: "#share", title: "Карточка для сторис", text: "Сохрани свой тип картинкой" },
-  { href: "#friends", title: "Как тебя видят друзья", text: "Анонимная анкета для трёх друзей" },
-  { href: "#report", title: "Полный разбор", text: "Портрет, сильные стороны, слепые зоны" },
+// Главные действия первого экрана ведут к разделам ниже; якоря — id их заголовков
+const SECONDARY_ACTIONS = [
+  { href: "#share", label: "Карточка для сторис" },
+  { href: "#friends", label: "Позвать друзей" },
 ] as const;
+
+// Длинные названия («Вдохновительница», «Тихая хранительница») не должны заходить на карточку шкал:
+// размер заголовка зависит от самого длинного слова, переносится название только по пробелам
+function nameSizeClass(name: string): string {
+  const longestWord = Math.max(...name.split(/\s+/).map((word) => word.length));
+  if (longestWord > 13) return "result-hero__name--l";
+  if (longestWord > 10) return "result-hero__name--m";
+  return "";
+}
 
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
   const [{ id }, user] = await Promise.all([params, requireUser()]);
@@ -40,7 +48,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
         <section className="result-hero" aria-labelledby="result-name">
           <div className="result-hero__copy">
             <p className="eyebrow">Твой результат</p>
-            <h1 id="result-name" className="display">
+            <h1 id="result-name" className={`display ${nameSizeClass(view.name)}`}>
               {view.name}
             </h1>
             <p className="lead">{view.shortText}</p>
@@ -50,7 +58,16 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
                 <li key={word}>{word}</li>
               ))}
             </ul>
-            <p className="muted">{view.stabilityText}</p>
+            <div className="result-hero__actions">
+              <a className="button button--lg" href="#report">
+                Полный разбор <span aria-hidden="true">→</span>
+              </a>
+              {SECONDARY_ACTIONS.map((action) => (
+                <a key={action.href} className="button button--ghost" href={action.href}>
+                  {action.label}
+                </a>
+              ))}
+            </div>
           </div>
 
           <aside className="result-card" aria-labelledby="scales">
@@ -74,18 +91,10 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </aside>
         </section>
 
-        <nav className="result-actions" aria-label="Что дальше">
-          {ACTIONS.map((action) => (
-            <a key={action.href} className="result-action" href={action.href}>
-              <span className="result-action__title">{action.title}</span>
-              <span className="result-action__text">{action.text}</span>
-            </a>
-          ))}
-        </nav>
-
         <section className="result-scales" aria-labelledby="scale-texts">
           <p className="eyebrow">Из чего складывается тип</p>
           <h2 id="scale-texts">Что значат твои шкалы</h2>
+          <p className="result-scales__intro">{view.stabilityText}</p>
           <div className="result-scales__grid">
             {view.scales.map((scale) => (
               <article key={scale.trait} className="result-scale">

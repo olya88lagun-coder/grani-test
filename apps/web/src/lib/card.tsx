@@ -54,7 +54,11 @@ const CARD_BACKGROUND = [
   "radial-gradient(circle at 8% 62%, rgba(214, 226, 199, 0.75) 0%, rgba(214, 226, 199, 0) 46%)",
   "linear-gradient(180deg, #f8f4e7 0%, #f0f3e6 52%, #e1eada 100%)",
 ].join(", ");
-const PANEL = { background: "rgba(255, 253, 244, 0.82)", border: "2px solid rgba(15, 62, 23, 0.1)", borderRadius: 36 } as const;
+// Диагональные лучи света поверх фона — как солнце через окно атриума на главной
+const CARD_RAYS = [
+  "linear-gradient(118deg, rgba(255, 255, 255, 0) 24%, rgba(255, 251, 232, 0.6) 34%, rgba(255, 255, 255, 0) 44%)",
+  "linear-gradient(118deg, rgba(255, 255, 255, 0) 50%, rgba(255, 251, 232, 0.4) 57%, rgba(255, 255, 255, 0) 64%)",
+].join(", ");
 
 // Грань типа с заливкой: светлая вершина, шалфей, глубокий зелёный внизу
 function FilledGem({ visual, size }: { visual: TypeVisual; size: number }) {
@@ -70,36 +74,32 @@ function FilledGem({ visual, size }: { visual: TypeVisual; size: number }) {
           <stop offset="1" stopColor="#123f1d" />
         </linearGradient>
       </defs>
-      <path d={outline} fill={`url(#${id})`} stroke={CARD_GREEN} strokeWidth={size / 90} strokeLinejoin="round" />
-      <path d={facets} fill="none" stroke="#fffdf4" strokeWidth={size / 110} strokeLinejoin="round" opacity={0.7} />
+      <path d={outline} fill={`url(#${id})`} stroke={CARD_GREEN} strokeWidth={size / 110} strokeLinejoin="round" />
+      <path d={facets} fill="none" stroke="#fffdf4" strokeWidth={size / 130} strokeLinejoin="round" opacity={0.75} />
     </svg>
   );
 }
 
 function CardLogo() {
-  const { outline, facets } = gemPaths("hexagon", 52);
+  const { outline, facets } = gemPaths("hexagon", 44);
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-      <svg width={52} height={52} viewBox="-3 -3 58 58">
-        <path d={outline} fill="none" stroke={CARD_GREEN} strokeWidth={2.5} strokeLinejoin="round" />
-        <path d={facets} fill="none" stroke={CARD_GREEN} strokeWidth={2.5} strokeLinejoin="round" opacity={0.45} />
+    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      <svg width={44} height={44} viewBox="-3 -3 50 50">
+        <path d={outline} fill="none" stroke={CARD_GREEN} strokeWidth={2.2} strokeLinejoin="round" />
+        <path d={facets} fill="none" stroke={CARD_GREEN} strokeWidth={2.2} strokeLinejoin="round" opacity={0.45} />
       </svg>
-      <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 60, color: CARD_INK }}>грани</div>
+      <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 50, color: CARD_INK }}>грани</div>
     </div>
   );
 }
 
 function CardFooter({ text }: { text: string }) {
-  return (
-    <div style={{ display: "flex", justifyContent: "center", paddingTop: 34, borderTop: "2px solid rgba(15, 62, 23, 0.14)", fontSize: 34, color: CARD_GREEN }}>
-      {text}
-    </div>
-  );
+  return <div style={{ display: "flex", justifyContent: "center", fontSize: 30, letterSpacing: 1, color: CARD_MUTED }}>{text}</div>;
 }
 
 const nameSize = (name: string, sizes: readonly [number, number, number]) => (name.length > 16 ? sizes[2] : name.length > 11 ? sizes[1] : sizes[0]);
 
-const GEM_SIZE = 580;
+const GEM_SIZE = 640;
 
 // satori требует явный display: flex у каждого контейнера с несколькими детьми
 export function cardElement({ name, visual, keywords }: CardModel): ReactElement {
@@ -110,47 +110,51 @@ export function cardElement({ name, visual, keywords }: CardModel): ReactElement
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        padding: "100px 90px 96px",
-        backgroundImage: CARD_BACKGROUND,
+        alignItems: "center",
+        padding: "92px 80px 84px",
+        backgroundImage: `${CARD_RAYS}, ${CARD_BACKGROUND}`,
         color: CARD_INK,
         fontFamily: "Golos",
       }}
     >
       <CardLogo />
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 800,
-            height: 740,
-            backgroundImage: "radial-gradient(circle at 50% 50%, rgba(255, 253, 236, 0.95) 0%, rgba(255, 253, 236, 0) 62%)",
-          }}
-        >
-          <FilledGem visual={visual} size={GEM_SIZE} />
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flex: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          width: 980,
+          backgroundImage: "radial-gradient(circle at 50% 50%, rgba(255, 253, 236, 1) 0%, rgba(255, 253, 236, 0.6) 30%, rgba(255, 253, 236, 0) 58%)",
+        }}
+      >
+        <FilledGem visual={visual} size={GEM_SIZE} />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 28 }}>
-        <div style={{ display: "flex", fontSize: 30, fontWeight: 600, letterSpacing: 7, textTransform: "uppercase", color: CARD_MUTED }}>мой тип</div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 22, marginBottom: 64 }}>
+        <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 9, textTransform: "uppercase", color: CARD_MUTED }}>мой тип</div>
         <div
           style={{
             display: "flex",
             fontFamily: "Cormorant",
             fontWeight: 300,
-            fontSize: nameSize(name, [150, 118, 98]),
-            lineHeight: 1,
-            letterSpacing: -2,
+            fontSize: nameSize(name, [172, 132, 108]),
+            lineHeight: 0.95,
+            letterSpacing: -3,
             textAlign: "center",
           }}
         >
           {name}
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 18, maxWidth: 860, marginTop: 14 }}>
-          {keywords.map((word) => (
-            <div key={word} style={{ display: "flex", padding: "16px 30px", fontSize: 34, color: CARD_GREEN, ...PANEL, borderRadius: 999 }}>
-              {word}
+        {/* Тезисы по два в строке — без висящей точки при переносе */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginTop: 10, fontSize: 32, color: CARD_GREEN }}>
+          {[keywords.slice(0, 2), keywords.slice(2)].map((row) => (
+            <div key={row.join()} style={{ display: "flex" }}>
+              {row.map((word, index) => (
+                <div key={word} style={{ display: "flex" }}>
+                  {index > 0 ? <span style={{ margin: "0 18px", color: "#9fb596" }}>·</span> : null}
+                  {word}
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -160,24 +164,8 @@ export function cardElement({ name, visual, keywords }: CardModel): ReactElement
   );
 }
 
-// Значки разделов инструкции: лист — работа, реплика — спор, молния — раздражение
-const MANUAL_ICONS: readonly string[] = [
-  "M5 19C5 10 10 5 19 5c0 9-5 14-14 14Zm0 0 8-8",
-  "M4 5h16v11H10l-6 4V5Z",
-  "M13 3 5 14h6l-1 7 8-11h-6l1-7Z",
-];
-
-function ManualIcon({ path }: { path: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 76, height: 76, borderRadius: 999, background: "#e3ebd9" }}>
-      <svg width={40} height={40} viewBox="0 0 24 24">
-        <path d={path} fill="none" stroke={CARD_GREEN} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </div>
-  );
-}
-
-export function manualCardElement({ typeName, visual, lists }: ManualCardModel): ReactElement {
+// Разделы инструкции — почти белые панели с номером: крупный тёмный текст без лишних деталей
+export function manualCardElement({ typeName, lists }: ManualCardModel): ReactElement {
   return (
     <div
       style={{
@@ -186,35 +174,43 @@ export function manualCardElement({ typeName, visual, lists }: ManualCardModel):
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "96px 84px 92px",
-        backgroundImage: CARD_BACKGROUND,
+        padding: "88px 72px 80px",
+        backgroundImage: `${CARD_RAYS}, ${CARD_BACKGROUND}`,
         color: CARD_INK,
         fontFamily: "Golos",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 34 }}>
-          <CardLogo />
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-            <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 54, lineHeight: 1.05, color: CARD_GREEN }}>
-              Инструкция по применению меня
-            </div>
-            <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: nameSize(typeName, [124, 104, 88]), lineHeight: 1, letterSpacing: -2 }}>
-              {typeName}
-            </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+        <CardLogo />
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 52, lineHeight: 1.05, color: CARD_GREEN }}>
+            Инструкция по применению меня
+          </div>
+          <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: nameSize(typeName, [120, 100, 86]), lineHeight: 1, letterSpacing: -2 }}>
+            {typeName}
           </div>
         </div>
-        <FilledGem visual={visual} size={170} />
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 26 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
         {lists.map((list, index) => (
-          <div key={list.title} style={{ display: "flex", flexDirection: "column", gap: 16, padding: "34px 40px", ...PANEL }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 24 }}>
-              <ManualIcon path={MANUAL_ICONS[index] ?? MANUAL_ICONS[0]!} />
-              <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 58, color: CARD_INK }}>{list.title}</div>
+          <div
+            key={list.title}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 14,
+              padding: "32px 40px",
+              borderRadius: 32,
+              background: "rgba(255, 255, 255, 0.92)",
+              boxShadow: "0 16px 40px rgba(20, 47, 23, 0.08)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "baseline", gap: 18 }}>
+              <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 2, color: "#7a9a70" }}>{`0${index + 1}`}</div>
+              <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 60, color: CARD_GREEN }}>{list.title}</div>
             </div>
             {list.items.map((item) => (
-              <div key={item} style={{ display: "flex", gap: 16, fontSize: 36, lineHeight: 1.36 }}>
+              <div key={item} style={{ display: "flex", gap: 16, fontSize: 39, lineHeight: 1.32, color: CARD_INK }}>
                 <div style={{ display: "flex", color: CARD_GREEN }}>—</div>
                 <div style={{ display: "flex", flex: 1 }}>{item}</div>
               </div>
