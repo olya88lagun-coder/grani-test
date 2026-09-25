@@ -105,7 +105,19 @@ docker exec food-tracker-bot-caddy-1 caddy validate --config /tmp/Caddyfile --ad
   && docker exec food-tracker-bot-caddy-1 caddy reload --config /tmp/Caddyfile --adapter caddyfile
 ```
 
-Сертификат для `grani-test.ru` Caddy получает сам при первом запросе. Запись `www.grani-test.ru` не заведена, поэтому блока для `www` нет.
+Сертификат для `grani-test.ru` Caddy получает сам при первом запросе.
+
+### www → основной домен
+
+DNS-запись `www.grani-test.ru` указывает на сервер, но без своего блока в Caddy на неё не выдаётся сертификат и браузер показывает ошибку TLS. Блок редиректа дописывается так же, только `>>`, после чего выполняется тот же `validate` и `reload`, что выше:
+
+```bash
+cd /opt/food-tracker-bot
+cp Caddyfile Caddyfile.bak-$(date +%Y%m%d%H%M%S)
+grep -q "www.grani-test.ru" Caddyfile || printf "\nwww.grani-test.ru {\n\tredir https://grani-test.ru{uri} permanent\n}\n" >> Caddyfile
+```
+
+Проверка: `curl -sI https://www.grani-test.ru/types | head -3` → `301` и `Location: https://grani-test.ru/types`.
 
 ## 7. Автоматическая выкладка
 

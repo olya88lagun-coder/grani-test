@@ -1,4 +1,5 @@
 import { ALL_TYPE_CODES, TRAITS } from "@grani/core";
+import { getArticles } from "@grani/content/data";
 import { describe, expect, it } from "vitest";
 import {
   articleDate,
@@ -6,6 +7,8 @@ import {
   siteJsonLd,
   breadcrumbs,
   firstSentences,
+  lastModified,
+  llmsTxt,
   OG_IMAGE,
   PUBLIC_PATHS,
   publicMetadata,
@@ -16,7 +19,9 @@ import {
   TYPE_SLUGS,
   typeBySlug,
   typePath,
+  webPageJsonLd,
 } from "./seo";
+import { OPERATOR } from "./legal";
 
 describe("type slugs", () => {
   it("gives every type a unique latin slug that maps back to the type", () => {
@@ -46,12 +51,12 @@ describe("trait pages", () => {
 describe("PUBLIC_PATHS", () => {
   it("lists home, 16 types, 10 traits, compatibility and documents, but no private pages", () => {
     const paths = PUBLIC_PATHS();
-    expect(paths).toEqual(expect.arrayContaining(["/", "/types", "/types/vdokhnovitel", "/traits/stability-low", "/compatibility"]));
+    expect(paths).toEqual(expect.arrayContaining(["/", "/types", "/types/vdokhnovitel", "/traits", "/traits/stability-low", "/compatibility"]));
     expect(paths).toEqual(expect.arrayContaining(["/privacy", "/consent", "/offer", "/contacts"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(6);
-    expect(paths).toHaveLength(39);
+    expect(paths).toHaveLength(40);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
   });
@@ -83,24 +88,66 @@ describe("metadata", () => {
     });
   });
 
-  it("builds an article with an absolute page url and an optional date", () => {
+  it("builds a dated article with the cover image and the publisher", () => {
     expect(articleJsonLd({ title: "Т", description: "О", path: "/articles/big-five", datePublished: "2026-09-22" })).toMatchObject({
       "@type": "Article",
       headline: "Т",
       mainEntityOfPage: `${SITE_URL}/articles/big-five`,
       datePublished: "2026-09-22",
+      dateModified: "2026-09-22",
+      image: `${SITE_URL}${OG_IMAGE.url}`,
+      publisher: { "@type": "Organization", name: "Грани", logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.png` } },
     });
-    expect(articleJsonLd({ title: "Т", description: "О", path: "/types" })).not.toHaveProperty("datePublished");
+  });
+
+  it("describes a reference page as a web page of the site, not an article", () => {
+    expect(webPageJsonLd({ title: "Искра", description: "О", path: "/types/iskra" })).toEqual({
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: "Искра",
+      description: "О",
+      url: `${SITE_URL}/types/iskra`,
+      inLanguage: "ru",
+      isPartOf: { "@type": "WebSite", name: "Грани", url: SITE_URL },
+      primaryImageOfPage: `${SITE_URL}${OG_IMAGE.url}`,
+    });
+  });
+});
+
+describe("lastModified", () => {
+  it("dates an article by its own date and the article list by the newest one", () => {
+    const newest = getArticles()[0]!;
+    expect(lastModified(`/articles/${newest.slug}`)).toBe(newest.date);
+    expect(lastModified("/articles")).toBe(newest.date);
+    expect(lastModified("/types/iskra")).toBeUndefined();
   });
 });
 
 describe("siteJsonLd", () => {
-  it("describes the site and its publisher for the home page", () => {
+  it("describes the site and its publisher with a contact e-mail for the home page", () => {
     const data = siteJsonLd("Описание");
     expect(data["@graph"]).toEqual([
       expect.objectContaining({ "@type": "WebSite", url: SITE_URL, name: "Грани", description: "Описание", inLanguage: "ru" }),
-      expect.objectContaining({ "@type": "Organization", url: SITE_URL, name: "Грани", logo: `${SITE_URL}/icon.png` }),
+      expect.objectContaining({
+        "@type": "Organization",
+        url: SITE_URL,
+        name: "Грани",
+        logo: `${SITE_URL}/icon.png`,
+        contactPoint: { "@type": "ContactPoint", contactType: "customer support", email: OPERATOR.email, availableLanguage: "ru" },
+      }),
     ]);
+  });
+});
+
+describe("llmsTxt", () => {
+  it("lists the test, every type, trait and article with absolute links", () => {
+    const text = llmsTxt();
+    expect(text.startsWith("# Грани\n\n> ")).toBe(true);
+    const links = [...text.matchAll(/\]\((https:[^)]+)\)/g)].map((match) => match[1]!);
+    expect(links).toEqual(expect.arrayContaining([`${SITE_URL}/`, `${SITE_URL}/types/iskra`, `${SITE_URL}/traits/stability-low`, `${SITE_URL}/articles/big-five`]));
+    expect(links.filter((link) => link.includes("/types/"))).toHaveLength(16);
+    expect(links.filter((link) => link.includes("/traits/"))).toHaveLength(10);
+    expect(links.every((link) => link.startsWith(SITE_URL))).toBe(true);
   });
 });
 

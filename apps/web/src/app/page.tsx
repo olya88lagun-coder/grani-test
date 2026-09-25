@@ -8,7 +8,8 @@ import { TypeGem } from "@/components/TypeGem";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
 
-const HOME_TITLE = "Тест личности «Большая пятёрка»: 16 типов и как тебя видят другие — Грани";
+// До 60 знаков вместе с брендом — длиннее поисковики обрежут
+const HOME_TITLE = "Бесплатный тест личности «Большая пятёрка»: 16 типов — Грани";
 const HOME_DESCRIPTION =
   "Бесплатный тест личности по Большой пятёрке: 50 утверждений, один из 16 типов, пять шкал и анкета для друзей «Как меня видят другие». 10 минут.";
 

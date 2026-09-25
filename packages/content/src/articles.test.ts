@@ -35,6 +35,13 @@ describe("parseArticle", () => {
     ]);
   });
 
+  it("reads an optional short title for search results", () => {
+    expect(parseArticle("demo", RAW, SHORT)).not.toHaveProperty("seoTitle");
+    const withSeo = RAW.replace("date:", "seoTitle: Большая пятёрка коротко\ndate:");
+    expect(parseArticle("demo", withSeo, SHORT).seoTitle).toBe("Большая пятёрка коротко");
+    expect(() => parseArticle("long-seo", RAW.replace("date:", `seoTitle: ${"я".repeat(53)}\ndate:`), SHORT)).toThrow(/seoTitle/);
+  });
+
   it("names the file when front matter is missing or invalid", () => {
     expect(() => parseArticle("broken", "Просто текст", SHORT)).toThrow(/articles\/broken\.md: no front matter/);
     expect(() => parseArticle("bad-date", RAW.replace("2026-09-22", "вчера"), SHORT)).toThrow(/bad-date.*date/);
@@ -65,6 +72,13 @@ describe("articles", () => {
     for (const article of articles) {
       const text = [article.title, article.description, article.body].join("\n");
       expect(findStopWords(text), article.slug).toEqual([]);
+    }
+  });
+
+  // Шаблон «%s — Грани» добавляет 8 знаков; поисковики обрезают заголовок после ~60
+  it("keeps every search title within 52 characters", () => {
+    for (const article of getArticles()) {
+      expect((article.seoTitle ?? article.title).length, article.slug).toBeLessThanOrEqual(52);
     }
   });
 

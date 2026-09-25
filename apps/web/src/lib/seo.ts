@@ -2,6 +2,8 @@ import { ALL_TYPE_CODES, TRAITS, type Trait, type TypeCode } from "@grani/core";
 import { PAGE_POLES, type PagePole } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
+import { OPERATOR } from "./legal";
+import { traitPageTitle, typeDisplayName } from "./seo-pages";
 import { SITE_NAME, SITE_URL } from "./site";
 
 export { SITE_NAME, SITE_URL } from "./site";
@@ -58,6 +60,7 @@ export function PUBLIC_PATHS(): string[] {
     "/",
     "/types",
     ...ALL_TYPE_CODES.map(typePath),
+    "/traits",
     ...TRAIT_PAGES.map((page) => `/traits/${page.slug}`),
     "/compatibility",
     "/articles",
@@ -85,7 +88,11 @@ export function breadcrumbs(items: readonly { name: string; path: string }[]) {
   };
 }
 
-export function articleJsonLd(p: { title: string; description: string; path: string; datePublished?: string }) {
+const LOGO_URL = `${SITE_URL}/icon.png`;
+const COVER_URL = `${SITE_URL}${OG_IMAGE.url}`;
+
+// Статья: Google требует картинку и издателя, чтобы показать её расширенным сниппетом
+export function articleJsonLd(p: { title: string; description: string; path: string; datePublished: string; dateModified?: string }) {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -93,8 +100,25 @@ export function articleJsonLd(p: { title: string; description: string; path: str
     description: p.description,
     inLanguage: "ru",
     mainEntityOfPage: `${SITE_URL}${p.path}`,
+    image: COVER_URL,
     author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    ...(p.datePublished ? { datePublished: p.datePublished } : {}),
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: LOGO_URL } },
+    datePublished: p.datePublished,
+    dateModified: p.dateModified ?? p.datePublished,
+  };
+}
+
+// Справочные страницы типов и черт без даты — это страницы сайта, а не статьи
+export function webPageJsonLd(p: { title: string; description: string; path: string }) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: p.title,
+    description: p.description,
+    url: `${SITE_URL}${p.path}`,
+    inLanguage: "ru",
+    isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL },
+    primaryImageOfPage: COVER_URL,
   };
 }
 
@@ -104,9 +128,42 @@ export function siteJsonLd(description: string) {
     "@context": "https://schema.org",
     "@graph": [
       { "@type": "WebSite", name: SITE_NAME, url: SITE_URL, description, inLanguage: "ru" },
-      { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: `${SITE_URL}/icon.png` },
+      {
+        "@type": "Organization",
+        name: SITE_NAME,
+        url: SITE_URL,
+        logo: LOGO_URL,
+        contactPoint: { "@type": "ContactPoint", contactType: "customer support", email: OPERATOR.email, availableLanguage: "ru" },
+      },
     ],
   };
+}
+
+// Дата для lastmod в sitemap: у статей она есть, у остальных страниц честной даты правки нет — лучше не указывать
+export function lastModified(path: string): string | undefined {
+  const articles = getArticles();
+  if (path === "/articles") return articles[0]?.date;
+  return articles.find((article) => path === `/articles/${article.slug}`)?.date;
+}
+
+const LLMS_INTRO =
+  "Грани — бесплатный онлайн-тест личности по модели «Большая пятёрка» (Big Five, OCEAN) на основе опросника IPIP-50. " +
+  "50 утверждений дают профиль по пяти чертам и один из 16 типов. Друзья могут оценить человека по той же шкале — " +
+  "так видно, как его видят другие. Есть тест совместимости пары.";
+
+const llmsLink = (name: string, path: string) => `- [${name}](${SITE_URL}${path})`;
+
+// Карта сайта для ИИ-ассистентов (llmstxt.org): что это за сайт и где лежат ключевые страницы
+export function llmsTxt(): string {
+  return [
+    `# ${SITE_NAME}`,
+    `> ${LLMS_INTRO}`,
+    ["## Тест", llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility")].join("\n"),
+    ["## 16 типов личности", llmsLink("Все типы", "/types"), ...ALL_TYPE_CODES.map((code) => llmsLink(typeDisplayName(code), typePath(code)))].join("\n"),
+    ["## Черты Большой пятёрки", ...TRAIT_PAGES.map((page) => llmsLink(traitPageTitle(page.trait, page.pole), traitPath(page.trait, page.pole)))].join("\n"),
+    ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, `/articles/${article.slug}`))].join("\n"),
+    ["## Документы", llmsLink("Контакты", "/contacts"), llmsLink("Оферта и цены", "/offer")].join("\n"),
+  ].join("\n\n");
 }
 
 function cutByWords(text: string, max: number): string {

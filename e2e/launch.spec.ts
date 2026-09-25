@@ -10,10 +10,25 @@ test("public pages are indexable and private ones are not", async ({ page, reque
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
-  expect(sitemap.match(/<loc>/g)).toHaveLength(39);
+  expect(sitemap.match(/<loc>/g)).toHaveLength(40);
+  expect(sitemap.match(/<lastmod>/g)).toHaveLength(6);
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /result/");
   expect((await request.get("/types/unknown")).status()).toBe(404);
+});
+
+test("trait pages sit under their own section and the site serves llms.txt with security headers", async ({ page, request }) => {
+  await page.goto("/traits/openness-high");
+  await page.getByRole("navigation", { name: "Навигация" }).getByRole("link", { name: "Черты личности" }).click();
+  await expect(page).toHaveURL(/\/traits$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Черты личности");
+  await expect(page.getByRole("link", { name: "Низкая экстраверсия" })).toBeVisible();
+
+  const llms = await request.get("/llms.txt");
+  expect(llms.headers()["content-type"]).toContain("text/plain");
+  expect(await llms.text()).toContain("/types/iskra)");
+  expect(llms.headers()["x-content-type-options"]).toBe("nosniff");
+  expect(llms.headers()["strict-transport-security"]).toContain("max-age=");
 });
 
 test("inner pages have the site header, pages a link preview and the site an icon", async ({ page, request }) => {

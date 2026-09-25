@@ -25,7 +25,7 @@ const findArticle = (slug: string) => getArticles().find((article) => article.sl
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = findArticle((await params).slug);
   if (!article) return {};
-  const meta = publicMetadata({ title: article.title, description: article.description, path: `/articles/${article.slug}` });
+  const meta = publicMetadata({ title: article.seoTitle ?? article.title, description: article.description, path: `/articles/${article.slug}` });
   return { ...meta, openGraph: { ...meta.openGraph, type: "article", publishedTime: article.date } };
 }
 

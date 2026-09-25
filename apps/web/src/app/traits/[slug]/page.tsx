@@ -7,7 +7,7 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { Paragraphs } from "@/components/Paragraphs";
 import { TestCta } from "@/components/TestCta";
-import { articleJsonLd, firstSentences, publicMetadata, TRAIT_PAGES, traitPageBySlug, traitPath, typePath } from "@/lib/seo";
+import { firstSentences, publicMetadata, TRAIT_PAGES, traitPageBySlug, traitPath, typePath, webPageJsonLd } from "@/lib/seo";
 import { oppositePole, traitPageTitle, typeDisplayName, typesWithPole } from "@/lib/seo-pages";
 
 export const dynamicParams = false;
@@ -41,7 +41,7 @@ export default async function TraitPage({ params }: Props) {
   return (
     <main className="page inner-text">
       <article className="stack">
-        <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }, { name: page.title, path }]} />
+        <Breadcrumbs items={[{ name: "Черты личности", path: "/traits" }, { name: page.title, path }]} />
         <p className="eyebrow">Черта личности · Большая пятёрка</p>
         <h1 className="display">{page.title}</h1>
         <Paragraphs text={page.intro} />
@@ -66,7 +66,7 @@ export default async function TraitPage({ params }: Props) {
           <Link href={traitPath(page.trait, opposite)}>{traitPageTitle(page.trait, opposite)}</Link> — противоположный полюс этой черты.
         </p>
         <TestCta title="Узнай свой уровень" />
-        <JsonLd data={articleJsonLd({ title: page.title, description: page.description, path })} />
+        <JsonLd data={webPageJsonLd({ title: page.title, description: page.description, path })} />
       </article>
     </main>
   );
