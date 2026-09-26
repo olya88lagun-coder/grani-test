@@ -186,3 +186,15 @@ export const reports = pgTable(
     check("reports_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}) = 1`),
   ],
 );
+
+// Результат теста до входа, переносимый в другой браузер по короткому коду (встроенный браузер ВК → Safari)
+export const pendingHandoffs = pgTable(
+  "pending_handoffs",
+  {
+    code: text("code").primaryKey(),
+    pendingToken: text("pending_token").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("pending_handoffs_expires_idx").on(t.expiresAt)],
+);

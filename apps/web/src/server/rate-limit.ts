@@ -31,6 +31,9 @@ export const invitesLimiter = createRateLimiter({ limit: INVITES_PER_MINUTE, win
 
 export const resultsLimiter = createRateLimiter({ limit: RESULTS_PER_MINUTE, windowMs: MINUTE_MS });
 
+const HANDOFFS_PER_MINUTE = 10;
+export const handoffLimiter = createRateLimiter({ limit: HANDOFFS_PER_MINUTE, windowMs: MINUTE_MS });
+
 export function clientKeyFromHeaders(headers: Headers): string {
   return headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 }
