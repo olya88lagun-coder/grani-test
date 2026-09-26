@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AccountLink } from "./AccountLink";
 import { TypeGem } from "./TypeGem";
 
 const LINKS = [
@@ -43,9 +44,7 @@ function SiteNav({ pathname }: { pathname: string }) {
           </Link>
         ))}
       </nav>
-      <Link className="site-login" href="/me">
-        Войти
-      </Link>
+      <AccountLink className="site-login" />
     </>
   );
 }

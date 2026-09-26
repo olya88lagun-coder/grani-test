@@ -3,6 +3,7 @@ import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
+import { AccountLink } from "@/components/AccountLink";
 import { JsonLd } from "@/components/JsonLd";
 import { TypeGem } from "@/components/TypeGem";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
@@ -192,9 +193,7 @@ export default function HomePage() {
             <Link href="/articles">Статьи</Link>
             <Link href="/about">О проекте</Link>
           </nav>
-          <Link className="home-login" href="/me">
-            Войти
-          </Link>
+          <AccountLink className="home-login" />
         </header>
 
         <div className="home-hero__grid">
