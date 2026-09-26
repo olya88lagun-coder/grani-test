@@ -5,6 +5,7 @@ import { loginErrorMessage } from "@/lib/login-errors";
 import { getEnv } from "@/server/env";
 import { PENDING_COOKIE } from "@/server/http";
 import { currentUser } from "@/server/viewer";
+import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { LoginPanel } from "./LoginPanel";
 
 export const metadata: Metadata = { title: "Вход" };
@@ -23,12 +24,14 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           {message}
         </p>
       )}
+      <InAppBrowserNotice place="login" hasPendingResult={store.has(PENDING_COOKIE)} />
       <div className="card">
         <LoginPanel
           telegram={env.telegram && { botUsername: env.telegram.botUsername, authUrl: new URL("/api/auth/telegram/widget", env.APP_URL).toString() }}
           hasPendingResult={store.has(PENDING_COOKIE)}
         />
       </div>
+      <InAppBrowserNotice place="login-fallback" hasPendingResult={store.has(PENDING_COOKIE)} />
     </main>
   );
 }

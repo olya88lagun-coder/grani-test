@@ -2483,3 +2483,21 @@ body .page--report.stack > * + * { margin-top: 64px; }
   .article-grid--more .article-tile { flex-direction: row; }
   .article-grid--more .article-tile__image { width: 38%; height: auto; min-height: 100%; }
 }
+
+/* Встроенный браузер приложения: заметная плашка с просьбой открыть сайт в Safari или Chrome */
+.in-app-notice {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin-bottom: 20px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: #fff6dc;
+  box-shadow: inset 0 0 0 2px #e3c56f;
+  color: #2b2410;
+}
+
+.in-app-notice h2 { margin: 0; color: #2b2410; font-size: 24px; }
+.in-app-notice p { margin: 0; line-height: 1.55; }
+.handoff-fallback { display: grid; gap: 6px; font-size: 14px; }
+.handoff-fallback .link-button { justify-self: start; color: var(--ink-soft); }

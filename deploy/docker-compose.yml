@@ -6,6 +6,11 @@ services:
     env_file: .env
     restart: unless-stopped
     mem_limit: 350m
+    # Логи в journald переживают пересоздание контейнера при деплое: journalctl CONTAINER_TAG=grani-web
+    logging:
+      driver: journald
+      options:
+        tag: grani-web
     networks:
       shared:
         aliases: [grani-web]
@@ -16,6 +21,10 @@ services:
     restart: unless-stopped
     mem_limit: 250m
     stop_grace_period: 30s
+    logging:
+      driver: journald
+      options:
+        tag: grani-worker
     # Корневой сертификат Минцифры для GigaChat (NODE_EXTRA_CA_CERTS=/certs/russian_trusted_root_ca.pem); без GigaChat каталог пустой
     volumes:
       - ./certs:/certs:ro

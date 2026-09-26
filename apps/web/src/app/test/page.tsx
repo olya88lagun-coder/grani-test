@@ -1,5 +1,6 @@
 import { SELF_ITEMS } from "@grani/content";
 import type { Metadata } from "next";
+import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { Questionnaire } from "@/components/Questionnaire";
 import { STORAGE_KEY } from "@/lib/test-progress";
 
@@ -14,6 +15,7 @@ export default function TestPage() {
         <div className="inner-mark" aria-hidden="true">
           <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
         </div>
+        <InAppBrowserNotice place="test" />
         <Questionnaire items={items} storageKey={STORAGE_KEY} submitUrl="/api/results" submitLabel="Узнать результат" startGoal="test_start" finishGoal="test_finish" />
       </div>
     </main>

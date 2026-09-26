@@ -1,8 +1,9 @@
 import type { NextRequest } from "next/server";
 import { loginDeps } from "@/server/deps";
-import { expiredCookieOptions, VK_STATE_COOKIE, vkStateCookieOptions } from "@/server/http";
+import { expiredCookieOptions, PENDING_COOKIE, VK_STATE_COOKIE, vkStateCookieOptions } from "@/server/http";
 import { loginResponse, readLoginCookies } from "@/server/login-response";
 import { finishVkLogin } from "@/server/login-service";
+import { logVkStep } from "@/server/vk-login-log";
 
 export async function GET(request: NextRequest) {
   const deps = loginDeps();
@@ -14,6 +15,7 @@ export async function GET(request: NextRequest) {
     stateCookie: request.cookies.get(VK_STATE_COOKIE)?.value ?? null,
     cookies: readLoginCookies(request),
   });
+  logVkStep("callback", request, { ok: outcome.ok, ...(outcome.ok ? {} : { error: outcome.error }), hadResult: request.cookies.has(PENDING_COOKIE) });
   const response = loginResponse(deps.env, outcome);
   response.cookies.set(VK_STATE_COOKIE, "", expiredCookieOptions(vkStateCookieOptions(deps.env.APP_URL)));
   return response;
