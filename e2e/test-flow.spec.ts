@@ -9,6 +9,8 @@ async function answerCurrentPage(page: Page, label: string) {
 
 test("passes the test, logs in and sees the saved result with a story card", async ({ page }) => {
   await page.goto("/");
+  // Гость видит в шапке вход
+  await expect(page.getByRole("link", { name: "Войти" })).toBeVisible();
   await page.getByRole("link", { name: "Пройти тест" }).first().click();
   await expect(page).toHaveURL(/\/test$/);
 
@@ -33,12 +35,16 @@ test("passes the test, logs in and sees the saved result with a story card", asy
   expect(cardResponse.status()).toBe(200);
   expect(cardResponse.headers()["content-type"]).toBe("image/png");
 
-  await page.goto("/me");
+  // Вошедший видит «Мой профиль» — и на главной, и в общей шапке; ссылка ведёт к его результату
+  await page.goto("/");
+  await page.getByRole("link", { name: "Мой профиль" }).click();
   await expect(page).toHaveURL(/\/result\/[0-9a-f-]{36}$/);
+  await expect(page.getByRole("link", { name: "Мой профиль" })).toBeVisible();
 
   await page.getByRole("button", { name: "Выйти" }).click();
   await page.goto("/me");
   await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByRole("link", { name: "Войти" })).toBeVisible();
 });
 
 test("keeps answers after a reload in the middle of the test", async ({ page }) => {
