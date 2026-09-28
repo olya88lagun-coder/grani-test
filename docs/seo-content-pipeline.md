@@ -10,7 +10,7 @@
 
 ## Architecture
 
-The pipeline is intentionally semi-automatic:
+The pipeline is automatic with guardrails:
 
 1. Topic queue lives in `packages/content/src/content-plan.ts` as `CONTENT_PLAN`.
 2. Every queued topic has `draft | ready_for_review | published`, canonical URL, search intent, title/H1/description, FAQ draft, source keys and internal links.
@@ -31,31 +31,23 @@ The rules are codified in `QUALITY_RULES` and covered by tests:
 - no false equivalence between Grani types and MBTI or socionics;
 - no diagnosis, medical advice or clinical framing;
 - only natural internal links to existing public pages;
-- manual review is required before publication.
+- publication is automatic, gated by the checks below (owner's decision, 2026-09-28).
 
 ## How to use
 
-1. Pick a topic from `topicsByStatus("draft")` in `packages/content/src/content-plan.ts`.
-2. Write a Markdown draft in `packages/content/articles/<slug>.md` with `status: draft`.
-3. Add sources to `ARTICLE_SOURCES` only after verifying the publication details and DOI.
-4. Run the content checks locally:
+Since 2026-09-28 publication is automatic (owner's decision): a scheduled Claude agent writes one article on Tuesdays and Fridays and merges its own PR when every check is green. The full procedure the agent follows is `docs/seo-article-writer.md`.
 
-```bash
-pnpm --filter @grani/content build:library
-pnpm test
-pnpm typecheck
-```
+Automated gates that replace manual review:
 
-5. Move the article to `status: ready_for_review` when the draft is complete.
-6. After manual editorial approval, set:
+- every published article has at least two sources in `ARTICLE_SOURCES`, verified against Crossref by DOI;
+- front matter carries `tag` and `image`; the site test checks that the image file exists;
+- internal links in published articles resolve to public pages or `/test`;
+- stop topics, length, headings, unique canonicals, no future dates;
+- the content plan is marked `published` exactly when the article is.
 
-```yaml
-status: published
-reviewed: true
-canonical: /articles/<slug>
-```
+After merge the deploy workflow sends changed article URLs to Yandex via IndexNow (key in `apps/web/public/indexnow.txt`).
 
-7. Rebuild the generated content and rerun tests. Only then will the article appear in `/articles`, `sitemap.xml` and `llms.txt`.
+To write or fix an article by hand, follow the same steps from `docs/seo-article-writer.md`.
 
 ## First content-plan scope
 

@@ -5,7 +5,7 @@ export const CONTENT_STATUSES = ["draft", "ready_for_review", "published"] as co
 export type ContentStatus = (typeof CONTENT_STATUSES)[number];
 
 export const QUALITY_RULES = [
-  "Публикация только после ручного reviewed: true.",
+  "Публикация автоматическая (решение владелицы, 28.09.2026): статью выпускает конвейер, reviewed: true ставится только после самопроверки по этим правилам и зелёных тестов.",
   "Не выдумывать исследования, авторов, DOI и статистику.",
   "Научные утверждения привязывать к ARTICLE_SOURCES или помечать needs-research до редакторской проверки.",
   "Не выпускать массовые шаблонные страницы: каждая тема должна иметь отдельный интент и план пользы.",
@@ -103,20 +103,18 @@ function topic(input: TopicInput): ContentTopic {
   };
 }
 
+// Темы, которые повторяли уже опубликованные статьи (ambivert, big-five, mbti-i-socionika, temperament), убраны:
+// две страницы под один запрос отбирают друг у друга позиции. Новую тему сверять с опубликованными перед записью в план.
 export const CONTENT_PLAN: readonly ContentTopic[] = [
-  topic({ slug: "chto-takoe-big-five", primaryQuery: "что такое Big Five", title: "Что такое Big Five простыми словами", cluster: "big-five", links: ["/traits", "/types"], sourceKeys: ["big-five"] }),
   topic({ slug: "test-big-five-na-russkom", primaryQuery: "тест Big Five на русском", title: "Тест Big Five на русском: как проходить", cluster: "big-five", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["big-five", "test-lichnosti"] }),
   topic({ slug: "ipip-50", primaryQuery: "IPIP-50", title: "IPIP-50: что это за опросник", cluster: "big-five", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["big-five", "test-lichnosti"] }),
   topic({ slug: "ocean-test", primaryQuery: "OCEAN тест", title: "OCEAN тест и пять черт личности", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
-  topic({ slug: "pyat-chert-lichnosti", primaryQuery: "пять черт личности", title: "Пять черт личности: краткий гид", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
-  topic({ slug: "big-five-i-ocean", primaryQuery: "Big Five и OCEAN", title: "Big Five и OCEAN: в чем разница", cluster: "big-five", links: ["/articles/big-five", "/traits"], sourceKeys: ["big-five"] }),
   topic({ slug: "rezultaty-big-five", primaryQuery: "результаты Big Five", title: "Как читать результаты Big Five", cluster: "big-five", links: ["/traits", "/types"], sourceKeys: ["big-five"] }),
   topic({ slug: "shkaly-big-five", primaryQuery: "шкалы Big Five", title: "Шкалы Big Five: что означают баллы", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
   topic({ slug: "naskolko-tochen-big-five", primaryQuery: "насколько точен Big Five", title: "Насколько точен тест Big Five", cluster: "big-five", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["big-five", "test-lichnosti"] }),
   topic({ slug: "big-five-ili-mbti", primaryQuery: "Big Five или MBTI", title: "Big Five или MBTI: что выбрать", cluster: "comparison", links: ["/articles/mbti-i-socionika", "/types"], sourceKeys: ["mbti-i-socionika"] }),
   topic({ slug: "ekstraversiya", primaryQuery: "экстраверсия", title: "Экстраверсия: как она проявляется", cluster: "traits", links: ["/traits/extraversion-high", "/traits/extraversion-low"], sourceKeys: ["ekstravert-introvert"] }),
   topic({ slug: "introversiya", primaryQuery: "интроверсия", title: "Интроверсия: сила спокойного темпа", cluster: "traits", links: ["/traits/extraversion-low", "/articles/ekstravert-introvert"], sourceKeys: ["ekstravert-introvert"] }),
-  topic({ slug: "ambivert-kto-eto", primaryQuery: "амбиверт кто это", title: "Амбиверт: между интроверсией и экстраверсией", cluster: "traits", links: ["/articles/ambivert", "/traits/extraversion-high"], sourceKeys: ["ambivert"] }),
   topic({ slug: "otkrytost-opytu", primaryQuery: "открытость опыту", title: "Открытость опыту: любопытство и идеи", cluster: "traits", links: ["/traits/openness-high", "/traits/openness-low"], sourceKeys: ["big-five"] }),
   topic({ slug: "nizkaya-otkrytost", primaryQuery: "низкая открытость", title: "Низкая открытость: практичность без стыда", cluster: "traits", links: ["/traits/openness-low", "/types"], sourceKeys: ["big-five"] }),
   topic({ slug: "dobrosovestnost", primaryQuery: "добросовестность", title: "Добросовестность: порядок и доведение дел", cluster: "traits", links: ["/traits/conscientiousness-high", "/traits/conscientiousness-low"], sourceKeys: ["big-five"] }),
@@ -155,9 +153,6 @@ export const CONTENT_PLAN: readonly ContentTopic[] = [
   topic({ slug: "privychki-i-harakter", primaryQuery: "привычки и характер", title: "Привычки и характер: что легче менять", cluster: "wellbeing", links: ["/traits/conscientiousness-high", "/traits/conscientiousness-low"], sourceKeys: ["needs-research"] }),
   topic({ slug: "lichnost-menyaetsya-li", primaryQuery: "меняется ли личность", title: "Меняется ли личность со временем", cluster: "science", links: ["/articles/big-five", "/about"], sourceKeys: ["big-five"] }),
   topic({ slug: "cherty-ili-tipy", primaryQuery: "черты или типы личности", title: "Черты или типы личности: что точнее", cluster: "science", links: ["/articles/mbti-i-socionika", "/types"], sourceKeys: ["mbti-i-socionika"] }),
-  topic({ slug: "temperament-i-lichnost", primaryQuery: "темперамент и личность", title: "Темперамент и личность: как связаны", cluster: "science", links: ["/articles/temperament", "/articles/big-five"], sourceKeys: ["temperament"] }),
-  topic({ slug: "socionika-i-big-five", primaryQuery: "соционика и Big Five", title: "Соционика и Big Five: аккуратное сравнение", cluster: "comparison", links: ["/articles/mbti-i-socionika", "/articles/big-five"], sourceKeys: ["mbti-i-socionika"] }),
-  topic({ slug: "mbti-i-big-five", primaryQuery: "MBTI и Big Five", title: "MBTI и Big Five: что сравнивать", cluster: "comparison", links: ["/articles/mbti-i-socionika", "/types"], sourceKeys: ["mbti-i-socionika"] }),
   topic({ slug: "test-lichnosti-besplatno", primaryQuery: "тест личности бесплатно", title: "Бесплатный тест личности: на что смотреть", cluster: "test", links: ["/articles/test-lichnosti", "/big-five-test"], sourceKeys: ["test-lichnosti"] }),
   topic({ slug: "test-haraktera", primaryQuery: "тест характера", title: "Тест характера: чем он отличается от Big Five", cluster: "test", links: ["/articles/test-lichnosti", "/big-five-test"], sourceKeys: ["test-lichnosti"] }),
   topic({ slug: "test-na-introverta", primaryQuery: "тест на интроверта", title: "Тест на интроверта: что он показывает", cluster: "test", links: ["/traits/extraversion-low", "/articles/ekstravert-introvert"], sourceKeys: ["ekstravert-introvert"] }),
