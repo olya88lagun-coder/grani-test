@@ -8,10 +8,10 @@ import { SITE_NAME, SITE_URL } from "./site";
 
 export { SITE_NAME, SITE_URL } from "./site";
 
-// Обложка для превью ссылок во ВКонтакте и мессенджерах; относительный адрес дополняется metadataBase
+// Обложка для превью ссылок во ВКонтакте и мессенджерах; относительный адрес дополняется metadataBase.
 export const OG_IMAGE = { url: "/og/grani.jpg", width: 1200, height: 630, alt: "Грани — тест личности: узнай себя глубже" } as const;
 
-// Транслитерация названия типа: Яндекс учитывает слова в адресе, а ссылка читается в мессенджере
+// Транслитерация названия типа: Яндекс учитывает слова в адресе, а ссылка читается в мессенджере.
 export const TYPE_SLUGS: Readonly<Record<TypeCode, string>> = {
   "++++": "vdokhnovitel",
   "+++-": "reformator",
@@ -58,13 +58,14 @@ const DOCUMENT_PATHS = ["/contacts", "/offer", "/privacy", "/consent"] as const;
 export function PUBLIC_PATHS(): string[] {
   return [
     "/",
+    "/big-five-test",
     "/types",
     ...ALL_TYPE_CODES.map(typePath),
     "/traits",
     ...TRAIT_PAGES.map((page) => `/traits/${page.slug}`),
     "/compatibility",
     "/articles",
-    ...getArticles().map((article) => `/articles/${article.slug}`),
+    ...getArticles().map((article) => article.canonical),
     "/about",
     ...DOCUMENT_PATHS,
   ];
@@ -92,7 +93,7 @@ export function breadcrumbs(items: readonly { name: string; path: string }[]) {
 const LOGO_URL = `${SITE_URL}/icon.png`;
 const COVER_URL = `${SITE_URL}${OG_IMAGE.url}`;
 
-// Статья: Google требует картинку и издателя, чтобы показать её расширенным сниппетом
+// Статья: Google требует картинку и издателя, чтобы показать её расширенным сниппетом.
 export function articleJsonLd(p: {
   title: string;
   description: string;
@@ -119,7 +120,19 @@ export function articleJsonLd(p: {
   };
 }
 
-// Справочные страницы типов и черт без даты — это страницы сайта, а не статьи
+export function faqJsonLd(items: readonly { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+}
+
+// Справочные страницы типов и черт без даты — это страницы сайта, а не статьи.
 export function webPageJsonLd(p: { title: string; description: string; path: string; type?: "WebPage" | "AboutPage" }) {
   return {
     "@context": "https://schema.org",
@@ -133,7 +146,7 @@ export function webPageJsonLd(p: { title: string; description: string; path: str
   };
 }
 
-// Главная: сайт и его издатель одним графом — Яндекс и Google берут отсюда название и логотип
+// Главная: сайт и его издатель одним графом — Яндекс и Google берут отсюда название и логотип.
 export function siteJsonLd(description: string) {
   return {
     "@context": "https://schema.org",
@@ -150,11 +163,11 @@ export function siteJsonLd(description: string) {
   };
 }
 
-// Дата для lastmod в sitemap: у статей она есть, у остальных страниц честной даты правки нет — лучше не указывать
+// Дата для lastmod в sitemap: у статей она есть, у остальных страниц честной даты правки нет — лучше не указывать.
 export function lastModified(path: string): string | undefined {
   const articles = getArticles();
   if (path === "/articles") return articles[0]?.date;
-  return articles.find((article) => path === `/articles/${article.slug}`)?.date;
+  return articles.find((article) => path === article.canonical)?.date;
 }
 
 const LLMS_INTRO =
@@ -164,15 +177,15 @@ const LLMS_INTRO =
 
 const llmsLink = (name: string, path: string) => `- [${name}](${SITE_URL}${path})`;
 
-// Карта сайта для ИИ-ассистентов (llmstxt.org): что это за сайт и где лежат ключевые страницы
+// Карта сайта для ИИ-ассистентов (llmstxt.org): что это за сайт и где лежат ключевые страницы.
 export function llmsTxt(): string {
   return [
     `# ${SITE_NAME}`,
     `> ${LLMS_INTRO}`,
-    ["## Тест", llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility")].join("\n"),
+    ["## Тест", llmsLink("Big Five тест", "/big-five-test"), llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility")].join("\n"),
     ["## 16 типов личности", llmsLink("Все типы", "/types"), ...ALL_TYPE_CODES.map((code) => llmsLink(typeDisplayName(code), typePath(code)))].join("\n"),
     ["## Черты Большой пятёрки", ...TRAIT_PAGES.map((page) => llmsLink(traitPageTitle(page.trait, page.pole), traitPath(page.trait, page.pole)))].join("\n"),
-    ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, `/articles/${article.slug}`))].join("\n"),
+    ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, article.canonical))].join("\n"),
     ["## О проекте", llmsLink("О проекте и методике", "/about"), llmsLink("Контакты", "/contacts"), llmsLink("Оферта и цены", "/offer")].join("\n"),
   ].join("\n\n");
 }
@@ -187,7 +200,7 @@ function cutByWords(text: string, max: number): string {
   return `${cut.replace(/[,;:—-]+$/, "")}…`;
 }
 
-// Описание для поисковой выдачи: целые предложения, пока влезают; иначе первое предложение по словам
+// Описание для поисковой выдачи: целые предложения, пока влезают; иначе первое предложение по словам.
 export function firstSentences(text: string, max: number): string {
   const flat = text.replace(/\s+/g, " ").trim();
   const sentences = flat.match(/[^.!?…]+[.!?…]+/g);
