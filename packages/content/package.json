@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./check": "./src/check.ts",
+    "./content-plan": "./src/content-plan.ts",
     "./data": "./src/data.ts"
   },
   "scripts": {
