@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CookieSettingsButton } from "./CookieSettingsButton";
 
 const LINKS = [
+  { href: "/big-five-test", label: "Тест Big Five" },
   { href: "/types", label: "Типы личности" },
   { href: "/articles", label: "Статьи" },
   { href: "/about", label: "О проекте и методике" },
