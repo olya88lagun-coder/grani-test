@@ -11,7 +11,7 @@ import { RichText } from "@/components/RichText";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
-import { articleDate, articleJsonLd, publicMetadata, traitPath } from "@/lib/seo";
+import { articleDate, articleJsonLd, faqJsonLd, publicMetadata, traitPath } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -26,11 +26,11 @@ const findArticle = (slug: string) => getArticles().find((article) => article.sl
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = findArticle((await params).slug);
   if (!article) return {};
-  const meta = publicMetadata({ title: article.seoTitle ?? article.title, description: article.description, path: `/articles/${article.slug}` });
+  const meta = publicMetadata({ title: article.seoTitle ?? article.title, description: article.description, path: article.canonical });
   return { ...meta, openGraph: { ...meta.openGraph, type: "article", publishedTime: article.date } };
 }
 
-// Пять черт модели со ссылками на страницы обоих полюсов — общая опора для всех статей
+// Пять черт модели со ссылками на страницы обоих полюсов — общая опора для всех статей.
 function FiveTraits() {
   return (
     <section className="five-traits" aria-labelledby="five-traits">
@@ -57,7 +57,7 @@ function FiveTraits() {
 export default async function ArticlePage({ params }: Props) {
   const article = findArticle((await params).slug);
   if (!article) notFound();
-  const path = `/articles/${article.slug}`;
+  const path = article.canonical;
   const card = articleCard(article);
   const sources = ARTICLE_SOURCES[article.slug] ?? [];
   const others = getArticles()
@@ -82,6 +82,18 @@ export default async function ArticlePage({ params }: Props) {
         <div className="article-body">
           <RichText text={article.body} />
         </div>
+        {article.faq.length > 0 && (
+          <section className="stack" aria-labelledby="article-faq">
+            <h2 id="article-faq">Вопросы по теме</h2>
+            {article.faq.map((item) => (
+              <article className="card stack" key={item.question}>
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
+            <JsonLd data={faqJsonLd(article.faq)} />
+          </section>
+        )}
         <SourceList sources={sources} />
         <FiveTraits />
         <TestCta title="Узнай больше о себе" />
