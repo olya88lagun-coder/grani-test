@@ -6,6 +6,7 @@ import {
   articleJsonLd,
   siteJsonLd,
   breadcrumbs,
+  faqJsonLd,
   firstSentences,
   lastModified,
   llmsTxt,
@@ -49,15 +50,16 @@ describe("trait pages", () => {
 });
 
 describe("PUBLIC_PATHS", () => {
-  it("lists home, 16 types, 10 traits, compatibility and documents, but no private pages", () => {
+  it("lists only public canonical pages, including published articles and the Big Five landing", () => {
     const paths = PUBLIC_PATHS();
-    expect(paths).toEqual(expect.arrayContaining(["/", "/types", "/types/vdokhnovitel", "/traits", "/traits/stability-low", "/compatibility"]));
+    expect(paths).toEqual(expect.arrayContaining(["/", "/big-five-test", "/types", "/types/vdokhnovitel", "/traits", "/traits/stability-low", "/compatibility"]));
     expect(paths).toEqual(expect.arrayContaining(["/about", "/privacy", "/consent", "/offer", "/contacts"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(9);
-    expect(paths).toHaveLength(44);
+    expect(paths).toHaveLength(45);
     expect(new Set(paths).size).toBe(paths.length);
+    expect(paths).toEqual(expect.arrayContaining(getArticles().map((article) => article.canonical)));
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
   });
 });
@@ -107,6 +109,14 @@ describe("metadata", () => {
     expect(articleJsonLd({ title: "Т", description: "О", path: "/articles/x", datePublished: "2026-09-22" })).not.toHaveProperty("citation");
   });
 
+  it("builds FAQ structured data", () => {
+    expect(faqJsonLd([{ question: "Сколько времени занимает тест?", answer: "Обычно около десяти минут." }])).toEqual({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [{ "@type": "Question", name: "Сколько времени занимает тест?", acceptedAnswer: { "@type": "Answer", text: "Обычно около десяти минут." } }],
+    });
+  });
+
   it("marks the about page with its own schema type", () => {
     expect(webPageJsonLd({ title: "О проекте", description: "О", path: "/about", type: "AboutPage" })["@type"]).toBe("AboutPage");
   });
@@ -126,9 +136,9 @@ describe("metadata", () => {
 });
 
 describe("lastModified", () => {
-  it("dates an article by its own date and the article list by the newest one", () => {
+  it("dates an article by its own canonical date and the article list by the newest one", () => {
     const newest = getArticles()[0]!;
-    expect(lastModified(`/articles/${newest.slug}`)).toBe(newest.date);
+    expect(lastModified(newest.canonical)).toBe(newest.date);
     expect(lastModified("/articles")).toBe(newest.date);
     expect(lastModified("/types/iskra")).toBeUndefined();
   });
@@ -155,7 +165,7 @@ describe("llmsTxt", () => {
     const text = llmsTxt();
     expect(text.startsWith("# Грани\n\n> ")).toBe(true);
     const links = [...text.matchAll(/\]\((https:[^)]+)\)/g)].map((match) => match[1]!);
-    expect(links).toEqual(expect.arrayContaining([`${SITE_URL}/`, `${SITE_URL}/types/iskra`, `${SITE_URL}/traits/stability-low`, `${SITE_URL}/articles/big-five`]));
+    expect(links).toEqual(expect.arrayContaining([`${SITE_URL}/`, `${SITE_URL}/big-five-test`, `${SITE_URL}/types/iskra`, `${SITE_URL}/traits/stability-low`, `${SITE_URL}/articles/big-five`]));
     expect(links.filter((link) => link.includes("/types/"))).toHaveLength(16);
     expect(links.filter((link) => link.includes("/traits/"))).toHaveLength(10);
     expect(links.every((link) => link.startsWith(SITE_URL))).toBe(true);
