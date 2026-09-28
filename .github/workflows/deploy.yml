@@ -215,3 +215,41 @@ jobs:
             echo "SSH connection failed (exit 255); retrying in 5 seconds (attempt $((ssh_attempt + 1))/3)." >&2
             sleep 5
           done
+
+      # Новые и изменённые статьи сразу сообщаем Яндексу по IndexNow, не дожидаясь обхода.
+      # Ключ публичный и лежит на сайте (apps/web/public/indexnow.txt); сбой уведомления релиз не отменяет
+      - name: Checkout for IndexNow
+        if: steps.config.outputs.configured == 'true'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Notify Yandex about changed articles (IndexNow)
+        if: steps.config.outputs.configured == 'true'
+        shell: bash
+        run: |
+          set -uo pipefail
+          site="https://grani-test.ru"
+          key="$(cat apps/web/public/indexnow.txt)"
+          urls=()
+          while IFS= read -r file; do
+            [[ -f "$file" ]] || continue
+            head="$(awk 'NR==1 && /^---$/ {inside=1; next} inside && /^---$/ {exit} inside {print}' "$file")"
+            status="$(printf '%s\n' "$head" | sed -n 's/^status:[[:space:]]*//p')"
+            [[ -z "$status" || "$status" == "published" ]] || continue
+            canonical="$(printf '%s\n' "$head" | sed -n 's/^canonical:[[:space:]]*//p')"
+            [[ -n "$canonical" ]] || canonical="/articles/$(basename "$file" .md)"
+            urls+=("$site$canonical")
+          done < <(git diff --name-only --diff-filter=AM HEAD^1 HEAD -- 'packages/content/articles/*.md')
+          if [[ ${#urls[@]} -eq 0 ]]; then
+            echo "No changed articles — nothing to send to IndexNow."
+            exit 0
+          fi
+          urls+=("$site/articles" "$site/sitemap.xml")
+          payload="$(jq -n --arg host "grani-test.ru" --arg key "$key" --arg loc "$site/indexnow.txt" '{host: $host, key: $key, keyLocation: $loc, urlList: $ARGS.positional}' --args "${urls[@]}")"
+          printf 'IndexNow: %s\n' "${urls[@]}"
+          code="$(curl -s -o /tmp/indexnow.out -w '%{http_code}' -X POST https://yandex.com/indexnow -H 'Content-Type: application/json; charset=utf-8' --data "$payload" || echo 000)"
+          echo "IndexNow response: $code $(head -c 300 /tmp/indexnow.out 2>/dev/null)"
+          if [[ "$code" != "200" && "$code" != "202" ]]; then
+            echo "::warning::IndexNow returned $code; articles will still be found through sitemap.xml"
+          fi

@@ -1,13 +1,30 @@
 import { describe, expect, it } from "vitest";
+import { getAllArticles } from "./data";
 import { CONTENT_PLAN, QUALITY_RULES, internalLinksForTopic, publishedCanonicalUrls, seoMetadataForTopic, topicsByStatus, validateContentPlan } from "./content-plan";
 
 describe("CONTENT_PLAN", () => {
-  it("starts with a 50-70 URL queue without publishing planned pages", () => {
+  it("holds a 50-70 URL queue", () => {
     validateContentPlan();
     expect(CONTENT_PLAN.length).toBeGreaterThanOrEqual(50);
     expect(CONTENT_PLAN.length).toBeLessThanOrEqual(70);
-    expect(topicsByStatus("published")).toHaveLength(0);
-    expect(publishedCanonicalUrls()).toEqual([]);
+  });
+
+  // Конвейер отмечает тему опубликованной вместе со статьёй: план и статьи не должны расходиться
+  it("marks a topic published exactly when its article is published", () => {
+    const articles = new Map(getAllArticles().map((article) => [article.slug, article]));
+    for (const topic of CONTENT_PLAN) {
+      const article = articles.get(topic.slug);
+      expect(topic.status === "published", topic.slug).toBe(article?.status === "published");
+    }
+    expect(publishedCanonicalUrls()).toEqual(topicsByStatus("published").map((topic) => topic.canonical));
+  });
+
+  it("does not queue a topic that repeats an existing article", () => {
+    const existing = new Set(getAllArticles().map((article) => article.slug));
+    for (const slug of ["ambivert-kto-eto", "chto-takoe-big-five", "mbti-i-big-five", "socionika-i-big-five", "temperament-i-lichnost"]) {
+      expect(CONTENT_PLAN.some((topic) => topic.slug === slug), slug).toBe(false);
+    }
+    expect(existing.size).toBeGreaterThan(0);
   });
 
   it("keeps every planned URL canonical, unique and internal", () => {
@@ -28,7 +45,7 @@ describe("CONTENT_PLAN", () => {
     expect(internalLinksForTopic("ipip-50")).toEqual(expect.arrayContaining(["/big-five-test", "/test", "/about"]));
   });
 
-  it("records explicit quality rules for the semi-automatic pipeline", () => {
+  it("records explicit quality rules for the automatic pipeline", () => {
     expect(QUALITY_RULES.join("\n")).toContain("Не выдумывать исследования");
     expect(QUALITY_RULES.join("\n")).toContain("Не приравнивать типы Граней к MBTI");
     expect(QUALITY_RULES.join("\n")).toContain("reviewed: true");

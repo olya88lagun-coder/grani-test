@@ -6,6 +6,7 @@ import rawArticles from "./generated/articles.json";
 import { LibraryError } from "./library";
 import { inlineLinks } from "./markdown";
 import { findStopWords } from "./safety";
+import { ARTICLE_SOURCES } from "./sources";
 
 const ARTICLES_DIR = new URL("../articles", import.meta.url);
 const SHORT = { min: 10, max: 1000 };
@@ -93,15 +94,32 @@ describe("articles", () => {
     expect(rawArticles).toEqual(collectArticles(ARTICLES_DIR.pathname.replace(/^\/([A-Za-z]:)/, "$1")));
   });
 
-  it("has eight valid published articles with unique slugs and no stop topics", () => {
+  // Статьи добавляет конвейер, поэтому счёт не фиксирован — только нижняя граница и уникальность
+  it("has valid published articles with unique slugs and no stop topics", () => {
     const articles = getArticles();
-    expect(getAllArticles()).toHaveLength(8);
-    expect(articles).toHaveLength(8);
-    expect(new Set(articles.map((article) => article.slug)).size).toBe(8);
+    expect(articles.length).toBeGreaterThanOrEqual(8);
+    expect(new Set(getAllArticles().map((article) => article.slug)).size).toBe(getAllArticles().length);
+    expect(new Set(articles.map((article) => article.canonical)).size).toBe(articles.length);
     for (const article of articles) {
       const text = [article.title, article.description, article.body].join("\n");
       expect(article.status, article.slug).toBe("published");
       expect(findStopWords(text), article.slug).toEqual([]);
+    }
+  });
+
+  // Без ручной вычитки научность держится на источниках: у каждой опубликованной статьи — минимум две сверенные работы
+  it("backs every published article with at least two sources", () => {
+    for (const article of getArticles()) {
+      expect(ARTICLE_SOURCES[article.slug]?.length ?? 0, article.slug).toBeGreaterThanOrEqual(2);
+    }
+  });
+
+  it("gives every published article its own rubric and illustration and a date not in the future", () => {
+    const today = new Date().toISOString().slice(0, 10);
+    for (const article of getArticles()) {
+      expect(article.tag, article.slug).toBeTruthy();
+      expect(article.image, article.slug).toBeTruthy();
+      expect(article.date <= today, article.slug).toBe(true);
     }
   });
 
