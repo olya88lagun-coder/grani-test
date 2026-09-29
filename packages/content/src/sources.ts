@@ -200,6 +200,7 @@ export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "mbti-i-socionika": [MCCRAE_COSTA_1989, PITTENGER_2005, GOLDBERG_1992],
   temperament: [EYSENCK_1991, ROTHBART_2007],
   ambivert: [FLEESON_2001, FLEESON_2002, GRANT_2013],
+  "ipip-50": [IPIP_2006, GOLDBERG_1992],
 };
 
 export const METHOD_SOURCES: readonly Source[] = [GOLDBERG_1992, IPIP_2006, ROBERTS_DELVECCHIO_2000, VAZIRE_2010, DYRENFORTH_2010, MALOUFF_2010];

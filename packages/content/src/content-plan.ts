@@ -106,8 +106,8 @@ function topic(input: TopicInput): ContentTopic {
 // Темы, которые повторяли уже опубликованные статьи (ambivert, big-five, mbti-i-socionika, temperament), убраны:
 // две страницы под один запрос отбирают друг у друга позиции. Новую тему сверять с опубликованными перед записью в план.
 export const CONTENT_PLAN: readonly ContentTopic[] = [
-  topic({ slug: "test-big-five-na-russkom", primaryQuery: "тест Big Five на русском", title: "Тест Big Five на русском: как проходить", cluster: "big-five", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["big-five", "test-lichnosti"] }),
-  topic({ slug: "ipip-50", primaryQuery: "IPIP-50", title: "IPIP-50: что это за опросник", cluster: "big-five", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["big-five", "test-lichnosti"] }),
+  // test-big-five-na-russkom убрана: интент совпадает с уже существующей публичной страницей /big-five-test (тот же запрос — прохождение теста на русском, тот же FAQ).
+  topic({ slug: "ipip-50", primaryQuery: "IPIP-50", title: "IPIP-50: что это за опросник", cluster: "big-five", status: "published", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["ipip-50"] }),
   topic({ slug: "ocean-test", primaryQuery: "OCEAN тест", title: "OCEAN тест и пять черт личности", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
   topic({ slug: "rezultaty-big-five", primaryQuery: "результаты Big Five", title: "Как читать результаты Big Five", cluster: "big-five", links: ["/traits", "/types"], sourceKeys: ["big-five"] }),
   topic({ slug: "shkaly-big-five", primaryQuery: "шкалы Big Five", title: "Шкалы Big Five: что означают баллы", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
