@@ -6,5 +6,6 @@ export * from "./labels";
 export * from "./friends";
 export * from "./markdown";
 export * from "./articles";
+export * from "./trait-guides";
 export * from "./sources";
 export * from "./content-plan";
