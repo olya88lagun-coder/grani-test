@@ -203,6 +203,16 @@ export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "ipip-50": [IPIP_2006, GOLDBERG_1992],
 };
 
+// Источники гидов по чертам: из чего складывается черта (DeYoung), с чем связана в жизни (Soto),
+// как меняется с возрастом (Roberts) и что показывают исследования пар (Malouff) — всё уже сверено по DOI
+export const TRAIT_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  openness: [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
+  conscientiousness: [DEYOUNG_2007, SOTO_2019, ROBERTS_2006, MALOUFF_2010],
+  extraversion: [LUCAS_2000, DEYOUNG_2007, CHEEK_BUSS_1981, SOTO_2019],
+  agreeableness: [DEYOUNG_2007, MALOUFF_2010, ROBERTS_2006],
+  stability: [DEYOUNG_2007, MALOUFF_2010, ROBERTS_2006],
+};
+
 export const METHOD_SOURCES: readonly Source[] = [GOLDBERG_1992, IPIP_2006, ROBERTS_DELVECCHIO_2000, VAZIRE_2010, DYRENFORTH_2010, MALOUFF_2010];
 
 export function sourceLabel(source: Source): string {

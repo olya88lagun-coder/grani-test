@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { reachGoal } from "@/lib/analytics";
 
 // На телефоне кнопка первого экрана быстро уезжает вверх — плашка снизу держит путь к разбору на виду.
 // Прячется, пока видна кнопка первого экрана или сам блок покупки: две одинаковые кнопки рядом не нужны.
@@ -24,7 +25,13 @@ export function StickyReportCta({ label }: { label: string }) {
   }, []);
 
   return (
-    <a className={visible ? "sticky-cta sticky-cta--visible" : "sticky-cta"} href="#report" aria-hidden={!visible} tabIndex={visible ? 0 : -1}>
+    <a
+      className={visible ? "sticky-cta sticky-cta--visible" : "sticky-cta"}
+      href="#report"
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
+      onClick={() => reachGoal("report_click", { place: "sticky" })}
+    >
       {label} <span aria-hidden="true">→</span>
     </a>
   );

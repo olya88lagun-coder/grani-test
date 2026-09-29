@@ -25,7 +25,7 @@ export function collectLibrary(blocksDir) {
   return library;
 }
 
-// Статьи разбираются и проверяются в TypeScript (src/articles.ts), здесь только собираются
+// Статьи и гиды по чертам разбираются и проверяются в TypeScript (src/articles.ts, src/trait-guides.ts), здесь только собираются
 export function collectArticles(articlesDir) {
   const articles = {};
   for (const name of readdirSync(articlesDir).filter((file) => file.endsWith(".md")).sort()) {
@@ -44,4 +44,7 @@ if (import.meta.main) {
   const articlesOutput = join(root, "src", "generated", "articles.json");
   writeFileSync(articlesOutput, `${JSON.stringify(collectArticles(join(root, "articles")), null, 2)}\n`, "utf8");
   console.log(`articles.json written: ${articlesOutput}`);
+  const guidesOutput = join(root, "src", "generated", "trait-guides.json");
+  writeFileSync(guidesOutput, `${JSON.stringify(collectArticles(join(root, "trait-guides")), null, 2)}\n`, "utf8");
+  console.log(`trait-guides.json written: ${guidesOutput}`);
 }

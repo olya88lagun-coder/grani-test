@@ -56,8 +56,10 @@ describe("PUBLIC_PATHS", () => {
     expect(paths).toEqual(expect.arrayContaining(["/about", "/privacy", "/consent", "/offer", "/contacts"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
-    expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(9);
-    expect(paths).toHaveLength(45);
+    // Статьи публикует автопилот: их число выводится из данных, а не записано в тест
+    const articles = getArticles().length;
+    expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(articles + 1);
+    expect(paths).toHaveLength(37 + articles);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).toEqual(expect.arrayContaining(getArticles().map((article) => article.canonical)));
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
