@@ -5,6 +5,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RichText } from "@/components/RichText";
+import { GoalLink } from "@/components/GoalLink";
+import { GoalOnView } from "@/components/GoalOnView";
 import { ScaleMeter } from "@/components/ScaleMeter";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { buildResultView } from "@/lib/result-view";
@@ -46,6 +48,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
   return (
     <main className="inner-page inner-page--result">
+      <GoalOnView goal="result_view" />
       <div className="page page--result stack">
         <section className="result-hero" aria-labelledby="result-name">
           <div className="result-hero__copy">
@@ -66,9 +69,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
                   Читать полный разбор <span aria-hidden="true">→</span>
                 </Link>
               ) : (
-                <a className="button" href="#report">
+                <GoalLink className="button" href="#report" goal="report_click">
                   Получить полный разбор <span aria-hidden="true">→</span>
-                </a>
+                </GoalLink>
               )}
               {SECONDARY_ACTIONS.map((action) => (
                 <a key={action.href} className="button button--ghost" href={action.href}>

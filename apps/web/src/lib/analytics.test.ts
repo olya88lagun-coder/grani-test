@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CONSENT_KEY,
   GOALS,
+  progressGoalsCrossed,
   goalForProduct,
   METRIKA_ID,
   reachGoal,
@@ -96,7 +97,24 @@ describe("goals", () => {
       "purchase_full",
       "purchase_chapter",
       "purchase_pair",
+      "test_25",
+      "test_50",
+      "test_75",
+      "result_view",
+      "story_share",
+      "report_click",
+      "checkout_start",
     ]);
+  });
+
+  it("reports each progress milestone once, when an answer crosses it", () => {
+    expect(progressGoalsCrossed(12, 13, 50)).toEqual(["test_25"]);
+    expect(progressGoalsCrossed(13, 14, 50)).toEqual([]);
+    expect(progressGoalsCrossed(24, 25, 50)).toEqual(["test_50"]);
+    expect(progressGoalsCrossed(37, 38, 50)).toEqual(["test_75"]);
+    // Восстановленный после перезагрузки прогресс не повторяет цели: считаются только переходы
+    expect(progressGoalsCrossed(38, 38, 50)).toEqual([]);
+    expect(progressGoalsCrossed(0, 50, 50)).toEqual(["test_25", "test_50", "test_75"]);
   });
 
   it("maps products to purchase goals", () => {

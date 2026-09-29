@@ -2,6 +2,7 @@
 
 import type { Product } from "@grani/core";
 import { useState } from "react";
+import { reachGoal } from "@/lib/analytics";
 
 const ERRORS: Record<string, string> = {
   unauthorized: "Войдите, чтобы купить разбор.",
@@ -18,6 +19,7 @@ export function BuyButton({ product, targetId, label, ghost = false }: { product
 
   async function buy() {
     setSending(true);
+    reachGoal("checkout_start", { product });
     setError(null);
     try {
       const response = await fetch("/api/purchases", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ product, targetId }) });

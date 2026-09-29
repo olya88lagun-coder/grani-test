@@ -9,10 +9,11 @@ import { TypeGem } from "@/components/TypeGem";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
 
-// До 60 знаков вместе с брендом — длиннее поисковики обрежут
-const HOME_TITLE = "Бесплатный тест личности «Большая пятёрка»: 16 типов — Грани";
+// Главная — бренд и продукт «Граней». Запрос «тест Big Five / большая пятёрка» отдан /big-five-test:
+// две страницы под один запрос сменяли бы друг друга в выдаче
+const HOME_TITLE = "Грани — тест личности по модели Big Five";
 const HOME_DESCRIPTION =
-  "Бесплатный тест личности по Большой пятёрке: 50 утверждений, один из 16 типов, пять шкал и анкета для друзей «Как меня видят другие». 10 минут.";
+  "«Грани» — тест личности: твой тип из 16, пять черт характера, взгляд друзей со стороны и карточка для сторис. Бесплатно, 10 минут.";
 
 const HOME = publicMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" });
 
@@ -201,9 +202,9 @@ export default function HomePage() {
             <Suspense>
               <DeletedNotice />
             </Suspense>
-            {/* Поисковое название — в заголовке страницы, визуально это прежняя подпись над крупной фразой */}
+            {/* Подпись над крупной фразой — часть заголовка; поисковый запрос про Big Five ведёт на /big-five-test */}
             <h1 id="home-title">
-              <span className="home-kicker">Тест личности «Большая пятёрка»</span>
+              <span className="home-kicker">Тест личности «Грани»</span>
               <span className="home-title__main">Узнай себя глубже</span>
             </h1>
             <p className="home-lead">
@@ -214,7 +215,9 @@ export default function HomePage() {
               <Link className="button button--lg" href="/test">
                 Пройти тест <span aria-hidden="true">→</span>
               </Link>
-              <span className="home-time">Бесплатно · ≈ 10 минут</span>
+              <span className="home-time">
+                Бесплатно · ≈ 10 минут · <Link href="/big-five-test">о тесте Big Five</Link>
+              </span>
             </div>
           </div>
           <CrystalScene />

@@ -16,7 +16,7 @@ export default function TestPage() {
           <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
         </div>
         <InAppBrowserNotice place="test" />
-        <Questionnaire items={items} storageKey={STORAGE_KEY} submitUrl="/api/results" submitLabel="Узнать результат" startGoal="test_start" finishGoal="test_finish" />
+        <Questionnaire items={items} storageKey={STORAGE_KEY} submitUrl="/api/results" submitLabel="Узнать результат" startGoal="test_start" finishGoal="test_finish" trackProgress />
       </div>
     </main>
   );

@@ -14,8 +14,28 @@ export const GOALS = [
   "purchase_full",
   "purchase_chapter",
   "purchase_pair",
+  // Воронка по ТЗ: прогресс теста, просмотр результата, сторис, интерес к разбору и переход к оплате
+  "test_25",
+  "test_50",
+  "test_75",
+  "result_view",
+  "story_share",
+  "report_click",
+  "checkout_start",
 ] as const;
 export type Goal = (typeof GOALS)[number];
+
+const PROGRESS_GOALS = [
+  [25, "test_25"],
+  [50, "test_50"],
+  [75, "test_75"],
+] as const satisfies readonly (readonly [number, Goal])[];
+
+// Цели прогресса, чей порог ответ пересёк: before — ответов до, after — после, total — всего вопросов
+export function progressGoalsCrossed(before: number, after: number, total: number): Goal[] {
+  const percent = (count: number) => (count * 100) / total;
+  return PROGRESS_GOALS.filter(([threshold]) => percent(before) < threshold && percent(after) >= threshold).map(([, goal]) => goal);
+}
 
 export const CONSENT_KEY = "grani-cookie-consent";
 export const COOKIE_SETTINGS_EVENT = "grani:cookie-settings";

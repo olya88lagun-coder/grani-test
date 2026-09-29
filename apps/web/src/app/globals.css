@@ -2501,3 +2501,24 @@ body .page--report.stack > * + * { margin-top: 64px; }
 .in-app-notice p { margin: 0; line-height: 1.55; }
 .handoff-fallback { display: grid; gap: 6px; font-size: 14px; }
 .handoff-fallback .link-button { justify-self: start; color: var(--ink-soft); }
+
+/* Автор и дата статьи под заголовком */
+.article-hero__byline { margin: 0; color: var(--ink-soft); font-size: 14px; }
+
+/* Кнопка теста в середине статьи — спокойная карточка, не всплывающее окно */
+.article-inline-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 20px;
+  margin: 28px 0;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background:
+    radial-gradient(ellipse 50% 90% at 100% 50%, rgba(214, 226, 199, 0.6), transparent 70%),
+    var(--paper);
+  box-shadow: inset 0 0 0 1px var(--paper-line);
+}
+
+.article-inline-cta p { margin: 0; color: var(--inner-ink); font-family: var(--font-display); font-size: 22px; line-height: 1.25; }
