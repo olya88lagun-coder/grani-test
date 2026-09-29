@@ -101,6 +101,7 @@ export function articleJsonLd(p: {
   datePublished: string;
   dateModified?: string;
   sources?: readonly Source[];
+  image?: string;
 }) {
   return {
     "@context": "https://schema.org",
@@ -109,8 +110,9 @@ export function articleJsonLd(p: {
     description: p.description,
     inLanguage: "ru",
     mainEntityOfPage: `${SITE_URL}${p.path}`,
-    image: COVER_URL,
-    author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    // Иллюстрация статьи, если есть; иначе общая обложка сайта
+    image: p.image ? `${SITE_URL}${p.image}` : COVER_URL,
+    author: { "@type": "Organization", name: "Команда «Граней»", url: `${SITE_URL}/about` },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: LOGO_URL } },
     datePublished: p.datePublished,
     dateModified: p.dateModified ?? p.datePublished,

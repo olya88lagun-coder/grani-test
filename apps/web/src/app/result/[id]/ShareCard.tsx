@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { reachGoal } from "@/lib/analytics";
 
 type ShareCardProps = { cardUrl: string; fileName: string; typeName: string; eyebrow?: string; heading?: string; shareTitle?: string };
 
@@ -10,6 +11,7 @@ export function ShareCard({ cardUrl, fileName, typeName, eyebrow = "Для ст�
   // Сторис принимают файл, а не ссылку: сначала пробуем поделиться картинкой, иначе — скачиваем её
   async function share() {
     setStatus(null);
+    reachGoal("story_share", { action: "share" });
     try {
       const blob = await (await fetch(cardUrl)).blob();
       const file = new File([blob], fileName, { type: "image/png" });
@@ -42,7 +44,7 @@ export function ShareCard({ cardUrl, fileName, typeName, eyebrow = "Для ст�
           <button type="button" className="button" onClick={share}>
             Поделиться <span aria-hidden="true">→</span>
           </button>
-          <a className="button button--ghost" href={cardUrl} download={fileName}>
+          <a className="button button--ghost" href={cardUrl} download={fileName} onClick={() => reachGoal("story_share", { action: "download" })}>
             Скачать
           </a>
         </div>

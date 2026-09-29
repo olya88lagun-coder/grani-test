@@ -10,6 +10,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { RichText } from "@/components/RichText";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
+import { splitForInlineCta } from "@/lib/article-layout";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, articleJsonLd, faqJsonLd, publicMetadata, traitPath } from "@/lib/seo";
 
@@ -28,6 +29,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!article) return {};
   const meta = publicMetadata({ title: article.seoTitle ?? article.title, description: article.description, path: article.canonical });
   return { ...meta, openGraph: { ...meta.openGraph, type: "article", publishedTime: article.date } };
+}
+
+// Автор всех статей — редакция проекта: вымышленных экспертов не заводим
+const AUTHOR = "Команда «Граней»";
+
+function InlineCta() {
+  return (
+    <aside className="article-inline-cta" aria-label="Пройти тест">
+      <p>Хочешь узнать, как эти черты выражены у тебя?</p>
+      <Link className="button" href="/test">
+        Пройти тест Big Five <span aria-hidden="true">→</span>
+      </Link>
+    </aside>
+  );
 }
 
 // Пять черт модели со ссылками на страницы обоих полюсов — общая опора для всех статей.
@@ -60,6 +75,7 @@ export default async function ArticlePage({ params }: Props) {
   const path = article.canonical;
   const card = articleCard(article);
   const sources = ARTICLE_SOURCES[article.slug] ?? [];
+  const parts = splitForInlineCta(article.body);
   const others = getArticles()
     .filter((other) => other.slug !== article.slug)
     .map(articleCard);
@@ -74,13 +90,24 @@ export default async function ArticlePage({ params }: Props) {
             <span>{articleDate(article.date)}</span>
           </p>
           <h1 className="display display--article">{article.title}</h1>
+          <p className="article-hero__byline">
+            {AUTHOR} · обновлено {articleDate(article.date)} · <Link href="/about">подробнее о методике</Link>
+          </p>
         </header>
         <img className="article-hero__image" src={card.image} alt="" />
         <blockquote className="article-insight">
           <p>{article.description}</p>
         </blockquote>
         <div className="article-body">
-          <RichText text={article.body} />
+          {parts ? (
+            <>
+              <RichText text={parts[0]} />
+              <InlineCta />
+              <RichText text={parts[1]} />
+            </>
+          ) : (
+            <RichText text={article.body} />
+          )}
         </div>
         {article.faq.length > 0 && (
           <section className="stack" aria-labelledby="article-faq">
@@ -107,7 +134,7 @@ export default async function ArticlePage({ params }: Props) {
             ))}
           </ul>
         </section>
-        <JsonLd data={articleJsonLd({ title: article.title, description: article.description, path, datePublished: article.date, sources })} />
+        <JsonLd data={articleJsonLd({ title: article.title, description: article.description, path, datePublished: article.date, sources, image: card.image })} />
       </article>
     </main>
   );
