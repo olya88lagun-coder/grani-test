@@ -17,8 +17,9 @@ export function AccountLink({ className }: { className: string }) {
     return () => controller.abort();
   }, []);
 
+  // prefetch выключен: для гостя /me сразу уводит на вход, и предзагрузка падала с ошибкой
   return (
-    <Link className={className} href="/me">
+    <Link className={className} href="/me" prefetch={false}>
       {signedIn ? "Мой профиль" : "Войти"}
     </Link>
   );

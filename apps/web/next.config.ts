@@ -1,13 +1,15 @@
 import path from "node:path";
 import type { NextConfig } from "next";
 
-// Базовая защита браузера для всех ответов. CSP не ставим: Метрика и ЮKassa тянут сторонние скрипты,
-// строгую политику надо собирать отдельно, иначе сломается оплата
+// Базовая защита браузера для всех ответов. Полную CSP не ставим: Метрика и ЮKassa тянут сторонние скрипты,
+// строгую политику надо собирать отдельно, иначе сломается оплата. Поэтому только директивы, которые не задевают
+// скрипты и стили: запрет встраивания чужими сайтами, плагинов и подмены base
 const SECURITY_HEADERS = [
   { key: "Strict-Transport-Security", value: "max-age=31536000" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Content-Security-Policy", value: "frame-ancestors 'self'; object-src 'none'; base-uri 'self'" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
