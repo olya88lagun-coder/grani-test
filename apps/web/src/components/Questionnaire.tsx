@@ -121,7 +121,7 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
           Ответов: {done} из {items.length}
         </span>
         <div className="progress__bar" role="progressbar" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
-          <span style={{ width: `${(done / items.length) * 100}%` }} />
+          <span style={{ transform: `scaleX(${done / items.length})` }} />
         </div>
       </div>
 
@@ -130,7 +130,7 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
       </h1>
 
       {pageItems(items, page, pageSize).map((item) => (
-        <fieldset key={item.id} className="card">
+        <fieldset key={item.id} className="card question-card">
           <legend className="question">{item.text}</legend>
           <div className="choices">
             {ANSWER_VALUES.map((value) => (

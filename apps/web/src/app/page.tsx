@@ -171,7 +171,16 @@ function CrystalScene() {
         <circle cx="454" cy="284" r="4" />
         <circle cx="66" cy="284" r="4" />
       </svg>
-      <img className="home-crystal__image" src="/home/hero-crystal.webp" alt="" width={908} height={1062} fetchPriority="high" />
+      <img
+        className="home-crystal__image"
+        src="/home/hero-crystal.webp"
+        srcSet="/home/hero-crystal-480.webp 480w, /home/hero-crystal.webp 908w"
+        sizes="(max-width: 720px) 64vw, 330px"
+        alt=""
+        width={908}
+        height={1062}
+        fetchPriority="high"
+      />
     </div>
   );
 }

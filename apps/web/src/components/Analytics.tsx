@@ -103,7 +103,7 @@ export function Analytics() {
         Мы используем cookie, чтобы сайт работал. С вашего разрешения — ещё и Яндекс.Метрику для статистики посещений. Подробнее — в{" "}
         <Link href="/privacy">политике</Link>.
       </p>
-      <div className="row">
+      <div className="row cookie-banner__actions">
         <button type="button" className="button" onClick={() => decide("all")}>
           Принять
         </button>
