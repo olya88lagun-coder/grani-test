@@ -23,22 +23,34 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
       </section>
     );
   }
+  const price = formatRub(PRODUCT_PRICES.full);
   const preview = buildReportPreview(getLibrary(), result);
   return (
-    <section className="card stack result-block result-block--report result-block--offer" aria-labelledby="report">
-      <p className="eyebrow">Полный разбор · {formatRub(PRODUCT_PRICES.full)}</p>
-      <h2 id="report">Что откроется в полном разборе</h2>
-      {preview.map((section) => (
-        <div key={section.title} className="preview">
-          <h3>{section.title}</h3>
-          <p>{section.teaser}</p>
-          <p className="preview__blur" aria-hidden="true">{BLURRED}</p>
-        </div>
-      ))}
-      <div className="result-offer__buy">
-        <BuyButton product="full" targetId={result.id} label={`Открыть за ${formatRub(PRODUCT_PRICES.full)}`} />
+    <section className="card stack result-block result-block--report result-block--offer result-offer" aria-labelledby="report">
+      <div className="result-offer__hero">
+        <p className="eyebrow">Полный разбор · {price}</p>
+        <h2 id="report">Разверни свой результат в личный портрет</h2>
+        <p className="lead">
+          Тип и шкалы показывают основу. Полный разбор превращает их в понятную инструкцию: сильные стороны, слепые зоны и что с ними делать, как
+          с тобой работать, спорить и договариваться.
+        </p>
       </div>
-      <p className="muted">
+      <ul className="result-offer__preview" aria-label="Что внутри разбора">
+        {preview.map((section) => (
+          <li key={section.title} className="result-offer__item">
+            <h3>{section.title}</h3>
+            <p>{section.teaser}</p>
+            <p className="result-offer__locked" aria-hidden="true">
+              {BLURRED}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <div className="result-offer__buy">
+        <BuyButton product="full" targetId={result.id} label={`Открыть полный разбор за ${price}`} />
+        <p className="result-offer__note">Разбор появится на сайте через пару минут после оплаты. Чек придёт из «Мой налог».</p>
+      </div>
+      <p className="result-offer__legal">
         Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет.
       </p>
     </section>
