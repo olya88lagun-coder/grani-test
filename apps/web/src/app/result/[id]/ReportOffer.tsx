@@ -48,7 +48,7 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
       </ul>
       <div className="result-offer__buy">
         <BuyButton product="full" targetId={result.id} label={`Открыть полный разбор за ${price}`} />
-        <p className="result-offer__note">Разбор появится на сайте через пару минут после оплаты. Чек придёт из «Мой налог».</p>
+        <p className="result-offer__note">Разбор появится на сайте через пару минут после оплаты.</p>
       </div>
       <p className="result-offer__legal">
         Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет.

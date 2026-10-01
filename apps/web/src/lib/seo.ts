@@ -67,6 +67,7 @@ export function PUBLIC_PATHS(): string[] {
     "/articles",
     ...getArticles().map((article) => article.canonical),
     "/about",
+    "/pricing",
     ...DOCUMENT_PATHS,
   ];
 }
@@ -188,7 +189,7 @@ export function llmsTxt(): string {
     ["## 16 типов личности", llmsLink("Все типы", "/types"), ...ALL_TYPE_CODES.map((code) => llmsLink(typeDisplayName(code), typePath(code)))].join("\n"),
     ["## Черты Большой пятёрки", ...TRAIT_PAGES.map((page) => llmsLink(traitPageTitle(page.trait, page.pole), traitPath(page.trait, page.pole)))].join("\n"),
     ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, article.canonical))].join("\n"),
-    ["## О проекте", llmsLink("О проекте и методике", "/about"), llmsLink("Контакты", "/contacts"), llmsLink("Оферта и цены", "/offer")].join("\n"),
+    ["## О проекте", llmsLink("О проекте и методике", "/about"), llmsLink("Разборы и цены", "/pricing"), llmsLink("Контакты", "/contacts"), llmsLink("Оферта и цены", "/offer")].join("\n"),
   ].join("\n\n");
 }
 
