@@ -73,3 +73,13 @@ export async function getUser(db: Database, userId: string): Promise<UserRecord 
     .limit(1);
   return row ?? null;
 }
+
+export async function hasIdentity(db: Database, userId: string, identity: { provider: AuthProvider; externalId: string }): Promise<boolean> {
+  if (!isUuid(userId)) return false;
+  const [row] = await db
+    .select({ id: authIdentities.id })
+    .from(authIdentities)
+    .where(and(eq(authIdentities.userId, userId), eq(authIdentities.provider, identity.provider), eq(authIdentities.externalId, identity.externalId)))
+    .limit(1);
+  return row !== undefined;
+}

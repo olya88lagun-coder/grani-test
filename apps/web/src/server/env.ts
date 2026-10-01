@@ -16,15 +16,19 @@ const envSchema = z.object({
   YOOKASSA_SHOP_ID: z.string().regex(/^\d+$/).optional(),
   YOOKASSA_SECRET_KEY: z.string().min(1).optional(),
   PAYMENTS_FAKE: z.enum(["0", "1"]).optional(),
+  // Аккаунт владелицы для страницы чеков: «vk:<id ВКонтакте>»
+  OWNER_IDENTITY: z.string().regex(/^(vk|telegram):[^\s:]+$/).optional(),
   NODE_ENV: z.string().optional(),
 });
 
 export type TelegramConfig = { botToken: string; botUsername: string };
 export type VkCommunityConfig = { groupId: string; callbackSecret: string; confirmationCode: string };
 type ParsedEnv = z.infer<typeof envSchema>;
+export type OwnerIdentity = { provider: "vk" | "telegram"; externalId: string };
 export type PaymentsConfig = { kind: "yookassa"; shopId: string; secretKey: string } | { kind: "fake" } | null;
 const PAYMENT_KEYS = ["YOOKASSA_SHOP_ID", "YOOKASSA_SECRET_KEY", "PAYMENTS_FAKE", "NODE_ENV"] as const;
-export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeof TELEGRAM_KEYS)[number] | (typeof PAYMENT_KEYS)[number]> & {
+export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeof TELEGRAM_KEYS)[number] | (typeof PAYMENT_KEYS)[number] | "OWNER_IDENTITY"> & {
+  owner: OwnerIdentity | null;
   telegram: TelegramConfig | null;
   vkCommunity: VkCommunityConfig | null;
   payments: PaymentsConfig;
@@ -32,6 +36,12 @@ export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeo
 
 function fail(fields: readonly string[]): never {
   throw new Error(`Invalid environment variables: ${fields.join(", ")}`);
+}
+
+function readOwner(value: string | undefined): OwnerIdentity | null {
+  if (!value) return null;
+  const [provider, externalId] = value.split(":") as ["vk" | "telegram", string];
+  return { provider, externalId };
 }
 
 function readPayments(env: ParsedEnv): PaymentsConfig {
@@ -58,6 +68,7 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     YOOKASSA_SECRET_KEY: _key,
     PAYMENTS_FAKE: _fake,
     NODE_ENV: _nodeEnv,
+    OWNER_IDENTITY,
     ...rest
   } = parsed.data;
   // Вход через Telegram выключен в первой версии: иностранный сервис — это трансграничная передача данных.
@@ -72,7 +83,7 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     VK_GROUP_ID && VK_CALLBACK_SECRET && VK_CONFIRMATION_CODE
       ? { groupId: VK_GROUP_ID, callbackSecret: VK_CALLBACK_SECRET, confirmationCode: VK_CONFIRMATION_CODE }
       : null;
-  return { ...rest, telegram, vkCommunity, payments: readPayments(parsed.data) };
+  return { ...rest, telegram, vkCommunity, payments: readPayments(parsed.data), owner: readOwner(OWNER_IDENTITY) };
 }
 
 let cached: AppEnv | null = null;

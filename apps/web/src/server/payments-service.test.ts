@@ -17,6 +17,7 @@ import { getPurchaseView, startPurchase, syncPayment, type PaymentsDeps } from "
 
 const APP_URL = "http://localhost:3000";
 const NOW = new Date("2026-09-22T10:00:00Z");
+const EMAIL = "anna@example.ru";
 
 let db: Database;
 let store: Map<string, GatewayPayment>;
@@ -37,7 +38,7 @@ beforeEach(async () => {
 const paymentOf = (url: string) => url.split("/dev/pay/")[1]!;
 
 async function buyAndPay(product: string, targetId = anna.resultId, userId = anna.userId) {
-  const outcome = await startPurchase(deps, { userId, product, targetId });
+  const outcome = await startPurchase(deps, { userId, product, targetId, email: EMAIL });
   if (!outcome.ok) throw new Error(outcome.error);
   gateway.complete(paymentOf(outcome.url), "succeeded");
   return syncPayment(deps, paymentOf(outcome.url));
@@ -45,7 +46,7 @@ async function buyAndPay(product: string, targetId = anna.resultId, userId = ann
 
 describe("startPurchase", () => {
   test("creates a payment for the server price and returns the payment page", async () => {
-    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
 
     expect(outcome.ok).toBe(true);
     const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
@@ -54,8 +55,8 @@ describe("startPurchase", () => {
   });
 
   test("reuses the payment page of a recent unfinished purchase", async () => {
-    const first = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
-    const second = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
+    const first = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
+    const second = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
 
     expect(second).toEqual(first);
     expect(store.size).toBe(1);
@@ -64,24 +65,41 @@ describe("startPurchase", () => {
   test("refuses unknown products, foreign targets and what the rules do not allow", async () => {
     const boris = await seedUserWithResult(db, { externalId: "boris" });
 
-    expect(await startPurchase(deps, { userId: anna.userId, product: "gold", targetId: anna.resultId })).toEqual({ ok: false, error: "not_found" });
-    expect(await startPurchase(deps, { userId: boris.userId, product: "full", targetId: anna.resultId })).toEqual({ ok: false, error: "not_found" });
-    expect(await startPurchase(deps, { userId: anna.userId, product: "pair", targetId: anna.resultId })).toEqual({ ok: false, error: "not_found" });
-    expect(await startPurchase(deps, { userId: anna.userId, product: "chapter_money", targetId: anna.resultId })).toEqual({ ok: false, error: "not_available" });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "gold", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
+    expect(await startPurchase(deps, { userId: boris.userId, product: "full", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "pair", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "chapter_money", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "not_available" });
     await buyAndPay("full");
-    expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId })).toEqual({ ok: false, error: "not_available" });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "not_available" });
+  });
+
+  test("keeps the receipt email, normalised, and refuses a missing or broken one", async () => {
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: "  Anna@Example.RU " });
+    const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ receiptEmail: "anna@example.ru" });
+
+    for (const email of [undefined, "", "anna", "anna@ru", "a b@example.ru", `${"a".repeat(250)}@example.ru`, 42]) {
+      expect(await startPurchase(deps, { userId: anna.userId, product: "chapter_money", targetId: anna.resultId, email })).toEqual({ ok: false, error: "invalid_email" });
+    }
+  });
+
+  test("a reused unfinished purchase takes the new receipt email", async () => {
+    const first = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
+    await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: "other@example.ru" });
+    const payment = store.get(paymentOf(first.ok ? first.url : ""))!;
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ receiptEmail: "other@example.ru" });
   });
 
   test("a failed payment request cancels the purchase", async () => {
     deps.gateway = { ...gateway, createPayment: vi.fn().mockRejectedValue(new Error("503")) };
 
-    expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId })).toEqual({ ok: false, error: "payment_failed" });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "payment_failed" });
   });
 });
 
 describe("syncPayment", () => {
   test("a pending payment changes nothing, a paid one succeeds once and enqueues generation once", async () => {
-    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
     const paymentId = paymentOf(outcome.ok ? outcome.url : "");
 
     expect((await syncPayment(deps, paymentId))?.status).toBe("pending");
@@ -94,7 +112,7 @@ describe("syncPayment", () => {
   });
 
   test("ignores a payment whose amount or purchase does not match", async () => {
-    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
     const paymentId = paymentOf(outcome.ok ? outcome.url : "");
     store.set(paymentId, { ...store.get(paymentId)!, status: "succeeded", paid: true, amountKopecks: 100 });
 
@@ -104,7 +122,7 @@ describe("syncPayment", () => {
   });
 
   test("a canceled payment cancels the purchase", async () => {
-    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
     const paymentId = paymentOf(outcome.ok ? outcome.url : "");
     gateway.complete(paymentId, "canceled");
 
@@ -140,7 +158,7 @@ describe("syncPayment", () => {
 
 describe("getPurchaseView", () => {
   test("syncs a pending purchase, reports readiness and hides other people's purchases", async () => {
-    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId });
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
     const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
     gateway.complete(payment.id, "succeeded");
     const purchaseId = payment.purchaseId!;

@@ -1,9 +1,9 @@
 // Оператор персональных данных — самозанятая, указана так же, как в «Мой налог»
 export const OPERATOR = { name: "Лагутенкова Ольга Валентиновна", inn: "744923234850", email: "lagutenkova.olga@yandex.ru" } as const;
 
-export const LEGAL_VERSIONS = { consent: "2026-09-v2", privacy: "2026-09-v1", offer: "2026-09-v2" } as const;
+export const LEGAL_VERSIONS = { consent: "2026-10-v1", privacy: "2026-10-v1", offer: "2026-10-v1" } as const;
 export const OFFER_VERSION = LEGAL_VERSIONS.offer;
-export const LEGAL_DATE = "22 сентября 2026 года";
+export const LEGAL_DATE = "1 октября 2026 года";
 
 export const DATA_STORAGE = "на сервере в Москве (Timeweb Cloud)";
 
@@ -15,7 +15,7 @@ export const DATA_RECIPIENTS: readonly DataRecipient[] = [
   {
     name: "ЮKassa",
     what: "сумма и назначение платежа; данные карты вводятся на стороне ЮKassa и сайту не передаются",
-    why: "приём оплаты и отправка чека",
+    why: "приём оплаты",
   },
   {
     name: "YandexGPT или GigaChat",

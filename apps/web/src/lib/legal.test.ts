@@ -20,7 +20,7 @@ describe("legal", () => {
   });
 
   it("uses the new document versions", () => {
-    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-09-v2", privacy: "2026-09-v1", offer: "2026-09-v2" });
-    expect(OFFER_VERSION).toBe("2026-09-v2");
+    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-10-v1", privacy: "2026-10-v1", offer: "2026-10-v1" });
+    expect(OFFER_VERSION).toBe("2026-10-v1");
   });
 });

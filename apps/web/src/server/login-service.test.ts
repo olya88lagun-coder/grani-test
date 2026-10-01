@@ -25,6 +25,7 @@ const ENV: AppEnv = {
   telegram: { botToken: "123456:TEST-TOKEN", botUsername: "test_grani_bot" },
   vkCommunity: null,
   payments: null,
+  owner: null,
 };
 const NO_COOKIES: LoginCookies = { session: null, pending: null, consent: null };
 const ANNA = { provider: "telegram", externalId: "42", displayName: "Аня", gender: null } as const;

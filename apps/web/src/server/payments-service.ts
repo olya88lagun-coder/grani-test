@@ -13,6 +13,7 @@ import {
   listReports,
   markPurchaseCanceled,
   markPurchaseSucceeded,
+  setReceiptEmail,
   type Database,
   type PurchaseRecord,
   type PurchaseStatus,
@@ -21,10 +22,19 @@ import {
 import type { PaymentGateway } from "./payments/gateway";
 
 export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateJob) => Promise<void> };
-export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "not_found" | "not_available" | "payment_failed" };
+export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "invalid_email" | "not_found" | "not_available" | "payment_failed" };
 export type PurchaseView = { id: string; product: Product; status: PurchaseStatus; ready: boolean; reportUrl: string };
 
 const REUSE_WINDOW_MS = 30 * 60_000;
+const MAX_EMAIL_LENGTH = 254;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Почта для чека «Мой налог»: чек самозанятая выписывает вручную и отправляет на этот адрес
+export function normalizeReceiptEmail(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const email = value.trim().toLowerCase();
+  return email.length <= MAX_EMAIL_LENGTH && EMAIL_PATTERN.test(email) ? email : null;
+}
 
 // Попадает в чек «Мой налог» — название услуги, до 128 знаков
 export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
@@ -65,7 +75,12 @@ async function enqueuePaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
   for (const job of jobs) await deps.enqueueGenerate(job);
 }
 
-export async function startPurchase(deps: PaymentsDeps, p: { userId: string; product: unknown; targetId: unknown }): Promise<StartPurchaseOutcome> {
+export async function startPurchase(
+  deps: PaymentsDeps,
+  p: { userId: string; product: unknown; targetId: unknown; email: unknown },
+): Promise<StartPurchaseOutcome> {
+  const email = normalizeReceiptEmail(p.email);
+  if (!email) return { ok: false, error: "invalid_email" };
   if (!isProduct(p.product) || typeof p.targetId !== "string") return { ok: false, error: "not_found" };
   const product = p.product;
   const target = await resolveTarget(deps.db, p.userId, product, p.targetId);
@@ -74,9 +89,12 @@ export async function startPurchase(deps: PaymentsDeps, p: { userId: string; pro
 
   const since = new Date(deps.now().getTime() - REUSE_WINDOW_MS);
   const open = await findOpenPurchase(deps.db, { userId: p.userId, product, target, since });
-  if (open?.confirmationUrl) return { ok: true, url: open.confirmationUrl };
+  if (open?.confirmationUrl) {
+    if (open.receiptEmail !== email) await setReceiptEmail(deps.db, open.id, email);
+    return { ok: true, url: open.confirmationUrl };
+  }
 
-  const purchase = await createPurchase(deps.db, { userId: p.userId, product, target, amountKopecks: PRODUCT_PRICES[product] });
+  const purchase = await createPurchase(deps.db, { userId: p.userId, product, target, amountKopecks: PRODUCT_PRICES[product], receiptEmail: email });
   try {
     const payment = await deps.gateway.createPayment({
       purchaseId: purchase.id,

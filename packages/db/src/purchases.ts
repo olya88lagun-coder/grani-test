@@ -1,5 +1,5 @@
 import type { Product } from "@grani/core";
-import { and, desc, eq, gte, isNotNull } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNotNull, isNull } from "drizzle-orm";
 import { targetColumns, targetId, type ReportTarget } from "./reports";
 import { purchases, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
@@ -18,6 +18,8 @@ export type PurchaseRecord = {
   confirmationUrl: string | null;
   createdAt: Date;
   paidAt: Date | null;
+  receiptEmail: string | null;
+  receiptSentAt: Date | null;
 };
 
 type PurchaseRow = typeof purchases.$inferSelect;
@@ -30,11 +32,11 @@ function targetWhere(target: ReportTarget) {
 
 export async function createPurchase(
   db: Database,
-  p: { userId: string; product: Product; target: ReportTarget; amountKopecks: number },
+  p: { userId: string; product: Product; target: ReportTarget; amountKopecks: number; receiptEmail?: string | null },
 ): Promise<PurchaseRecord> {
   const [row] = await db
     .insert(purchases)
-    .values({ userId: p.userId, product: p.product, ...targetColumns(p.target), amountKopecks: p.amountKopecks })
+    .values({ userId: p.userId, product: p.product, ...targetColumns(p.target), amountKopecks: p.amountKopecks, receiptEmail: p.receiptEmail ?? null })
     .returning();
   return toRecord(row!);
 }
@@ -103,4 +105,38 @@ export async function listOwnedProducts(db: Database, target: ReportTarget): Pro
     .from(purchases)
     .where(and(targetWhere(target), eq(purchases.status, "succeeded")));
   return rows.map((row) => row.product as Product);
+}
+
+export async function setReceiptEmail(db: Database, purchaseId: string, email: string): Promise<void> {
+  await db.update(purchases).set({ receiptEmail: email }).where(eq(purchases.id, purchaseId));
+}
+
+export type ReceiptToSend = { id: string; product: Product; amountKopecks: number; paidAt: Date | null; paymentId: string | null; email: string | null };
+
+// Оплаченные покупки, по которым чек «Мой налог» ещё не отправлен — для страницы чеков владелицы
+export async function listReceiptsToSend(db: Database): Promise<ReceiptToSend[]> {
+  const rows = await db
+    .select({
+      id: purchases.id,
+      product: purchases.product,
+      amountKopecks: purchases.amountKopecks,
+      paidAt: purchases.paidAt,
+      paymentId: purchases.yookassaPaymentId,
+      email: purchases.receiptEmail,
+    })
+    .from(purchases)
+    .where(and(eq(purchases.status, "succeeded"), isNull(purchases.receiptSentAt)))
+    .orderBy(asc(purchases.paidAt));
+  return rows.map((row) => ({ ...row, product: row.product as Product }));
+}
+
+// Чек отправлен — почта больше не нужна и стирается
+export async function markReceiptSent(db: Database, purchaseId: string, sentAt: Date): Promise<boolean> {
+  if (!isUuid(purchaseId)) return false;
+  const updated = await db
+    .update(purchases)
+    .set({ receiptSentAt: sentAt, receiptEmail: null })
+    .where(and(eq(purchases.id, purchaseId), eq(purchases.status, "succeeded"), isNull(purchases.receiptSentAt)))
+    .returning({ id: purchases.id });
+  return updated.length > 0;
 }
