@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { authIdentities, createTestDb, getUser, upsertUserFromIdentity, type Database, type IdentityInput } from "./testing";
+import { authIdentities, createTestDb, getUser, hasIdentity, upsertUserFromIdentity, type Database, type IdentityInput } from "./testing";
 
 const CONSENT = { version: "2026-09-v1", at: new Date("2026-09-17T10:00:00Z") };
 
@@ -70,5 +70,17 @@ describe("getUser", () => {
   test("returns null for an unknown or malformed id", async () => {
     expect(await getUser(db, "00000000-0000-0000-0000-000000000000")).toBeNull();
     expect(await getUser(db, "not-a-uuid")).toBeNull();
+  });
+});
+
+describe("hasIdentity", () => {
+  test("is true only for the user's own provider and id", async () => {
+    const outcome = await upsertUserFromIdentity(db, identity({ provider: "vk", externalId: "42" }), CONSENT);
+    const userId = outcome.ok ? outcome.user.id : "";
+
+    expect(await hasIdentity(db, userId, { provider: "vk", externalId: "42" })).toBe(true);
+    expect(await hasIdentity(db, userId, { provider: "vk", externalId: "43" })).toBe(false);
+    expect(await hasIdentity(db, userId, { provider: "telegram", externalId: "42" })).toBe(false);
+    expect(await hasIdentity(db, "not-a-uuid", { provider: "vk", externalId: "42" })).toBe(false);
   });
 });

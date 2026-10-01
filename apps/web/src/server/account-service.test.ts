@@ -12,6 +12,7 @@ const ENV: AppEnv = {
   telegram: { botToken: "123456:TEST-TOKEN", botUsername: "test_grani_bot" },
   vkCommunity: null,
   payments: null,
+  owner: null,
 };
 
 let db: Database;

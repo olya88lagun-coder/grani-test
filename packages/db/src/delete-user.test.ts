@@ -35,12 +35,12 @@ describe("deleteUserData", () => {
 
   it("keeps purchases for tax records but detaches them from the result", async () => {
     const { userId, resultId } = await seedUserWithResult(db, { externalId: "tg-2" });
-    await db.insert(purchases).values({ userId, product: "full", resultId, amountKopecks: 29900, status: "succeeded" });
+    await db.insert(purchases).values({ userId, product: "full", resultId, amountKopecks: 29900, status: "succeeded", receiptEmail: "anna@example.ru" });
 
     await deleteUserData(db, userId);
 
     const [purchase] = await db.select().from(purchases);
-    expect(purchase).toMatchObject({ userId, product: "full", amountKopecks: 29900, status: "succeeded", resultId: null });
+    expect(purchase).toMatchObject({ userId, product: "full", amountKopecks: 29900, status: "succeeded", resultId: null, receiptEmail: null });
   });
 
   it("removes the pair and the pair report for both partners but keeps the partner", async () => {

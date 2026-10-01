@@ -7,7 +7,10 @@ import {
   getPurchase,
   getPurchaseByPaymentId,
   listOwnedProducts,
+  listReceiptsToSend,
   markPurchaseCanceled,
+  markReceiptSent,
+  setReceiptEmail,
   markPurchaseSucceeded,
   seedPair,
   seedUserWithResult,
@@ -24,7 +27,8 @@ beforeEach(async () => {
   anna = await seedUserWithResult(db, { externalId: "anna" });
 });
 
-const buyFull = () => createPurchase(db, { userId: anna.userId, product: "full", target: { resultId: anna.resultId }, amountKopecks: 29900 });
+const buyFull = (receiptEmail: string | null = null) =>
+  createPurchase(db, { userId: anna.userId, product: "full", target: { resultId: anna.resultId }, amountKopecks: 29900, receiptEmail });
 
 describe("purchases", () => {
   test("a new purchase is pending and learns its payment", async () => {
@@ -65,5 +69,42 @@ describe("purchases", () => {
     expect((await findOpenPurchase(db, { userId: anna.userId, product: "full", target, since: new Date(0) }))?.id).toBe(purchase.id);
     expect(await findOpenPurchase(db, { userId: anna.userId, product: "full", target, since: new Date(Date.now() + 60_000) })).toBeNull();
     expect(await findOpenPurchase(db, { userId: anna.userId, product: "chapter_money", target, since: new Date(0) })).toBeNull();
+  });
+
+  test("lists paid purchases waiting for a receipt, oldest first, with the buyer's email", async () => {
+    const first = await buyFull("anna@example.ru");
+    const later = await createPurchase(db, { userId: anna.userId, product: "chapter_money", target: { resultId: anna.resultId }, amountKopecks: 9900, receiptEmail: null });
+    const unpaid = await createPurchase(db, { userId: anna.userId, product: "chapter_stress", target: { resultId: anna.resultId }, amountKopecks: 9900, receiptEmail: "x@example.ru" });
+    await attachPayment(db, first.id, { paymentId: "pay-a", confirmationUrl: "https://yoomoney.ru/a" });
+    await markPurchaseSucceeded(db, later.id, new Date("2026-09-23T10:00:00Z"));
+    await markPurchaseSucceeded(db, first.id, PAID_AT);
+
+    const receipts = await listReceiptsToSend(db);
+
+    expect(receipts.map((r) => r.id)).toEqual([first.id, later.id]);
+    expect(receipts[0]).toEqual({ id: first.id, product: "full", amountKopecks: 29900, paidAt: PAID_AT, paymentId: "pay-a", email: "anna@example.ru" });
+    expect(receipts.some((r) => r.id === unpaid.id)).toBe(false);
+  });
+
+  test("a sent receipt leaves the list and the email is forgotten", async () => {
+    const purchase = await buyFull("anna@example.ru");
+    await markPurchaseSucceeded(db, purchase.id, PAID_AT);
+
+    expect(await markReceiptSent(db, purchase.id, new Date())).toBe(true);
+    expect(await markReceiptSent(db, purchase.id, new Date())).toBe(false);
+    expect(await listReceiptsToSend(db)).toEqual([]);
+    expect(await getPurchase(db, purchase.id)).toMatchObject({ receiptEmail: null, receiptSentAt: expect.any(Date) });
+  });
+
+  test("a receipt is not marked sent for an unpaid purchase", async () => {
+    const purchase = await buyFull("anna@example.ru");
+    expect(await markReceiptSent(db, purchase.id, new Date())).toBe(false);
+    expect(await markReceiptSent(db, "not-a-uuid", new Date())).toBe(false);
+  });
+
+  test("the email of a reused open purchase can be changed", async () => {
+    const purchase = await buyFull("old@example.ru");
+    await setReceiptEmail(db, purchase.id, "new@example.ru");
+    expect(await getPurchase(db, purchase.id)).toMatchObject({ receiptEmail: "new@example.ru" });
   });
 });

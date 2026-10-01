@@ -10,7 +10,7 @@ const VALID = {
 
 describe("readEnv", () => {
   test("accepts a complete environment", () => {
-    expect(readEnv(VALID)).toEqual({ ...VALID, telegram: null, vkCommunity: null, payments: null });
+    expect(readEnv(VALID)).toEqual({ ...VALID, telegram: null, vkCommunity: null, payments: null, owner: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -63,5 +63,20 @@ describe("payment settings", () => {
   test("fake payments work only outside production", () => {
     expect(readEnv({ ...VALID, PAYMENTS_FAKE: "1", NODE_ENV: "development" }).payments).toEqual({ kind: "fake" });
     expect(() => readEnv({ ...VALID, PAYMENTS_FAKE: "1", NODE_ENV: "production" })).toThrow(/PAYMENTS_FAKE/);
+  });
+});
+
+describe("owner account", () => {
+  test("is off when not configured", () => {
+    expect(readEnv(VALID).owner).toBeNull();
+  });
+
+  test("is read as provider and id", () => {
+    expect(readEnv({ ...VALID, OWNER_IDENTITY: "vk:466855893" }).owner).toEqual({ provider: "vk", externalId: "466855893" });
+  });
+
+  test("rejects an unknown provider or a bare id", () => {
+    expect(() => readEnv({ ...VALID, OWNER_IDENTITY: "466855893" })).toThrow(/OWNER_IDENTITY/);
+    expect(() => readEnv({ ...VALID, OWNER_IDENTITY: "ok:1" })).toThrow(/OWNER_IDENTITY/);
   });
 });

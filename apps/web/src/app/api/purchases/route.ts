@@ -7,6 +7,7 @@ import { startPurchase, type StartPurchaseOutcome } from "@/server/payments-serv
 import { clientKeyFromHeaders, purchasesLimiter } from "@/server/rate-limit";
 
 const STATUS: Record<Extract<StartPurchaseOutcome, { ok: false }>["error"], number> = {
+  invalid_email: 400,
   not_found: 404,
   not_available: 409,
   payment_failed: 502,
@@ -22,8 +23,8 @@ export async function POST(request: NextRequest) {
   if (!deps) return NextResponse.json({ ok: false, error: "payments_unavailable" }, { status: 503 });
 
   const body: unknown = await request.json().catch(() => null);
-  const { product, targetId } = typeof body === "object" && body !== null ? (body as { product?: unknown; targetId?: unknown }) : {};
-  const outcome = await startPurchase(deps, { userId: user.id, product, targetId });
+  const { product, targetId, email } = typeof body === "object" && body !== null ? (body as { product?: unknown; targetId?: unknown; email?: unknown }) : {};
+  const outcome = await startPurchase(deps, { userId: user.id, product, targetId, email });
   if (!outcome.ok) return NextResponse.json({ ok: false, error: outcome.error }, { status: STATUS[outcome.error] });
   return NextResponse.json(outcome);
 }

@@ -160,6 +160,9 @@ export const purchases = pgTable(
     confirmationUrl: text("confirmation_url"),
     createdAt: createdAt(),
     paidAt: timestamp("paid_at", { withTimezone: true }),
+    // Почта только для чека «Мой налог»: стирается, когда чек отправлен или пользователь удалил данные
+    receiptEmail: text("receipt_email"),
+    receiptSentAt: timestamp("receipt_sent_at", { withTimezone: true }),
   },
   (t) => [
     index("purchases_result_idx").on(t.resultId),

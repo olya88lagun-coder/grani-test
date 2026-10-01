@@ -2270,6 +2270,33 @@ body .page--report.stack > * + * { margin-top: 64px; }
 .result-offer__note { margin: 0; font-size: 14px; color: var(--ink); }
 .result-offer__legal { margin: 0; font-size: 12px; line-height: 1.5; color: var(--ink-soft); }
 
+/* Почта для чека перед оплатой */
+.buy-form { gap: 10px; }
+.buy-form__label { font-weight: 600; }
+.buy-form__input {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1px solid var(--paper-line, var(--line));
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+}
+.buy-form__input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.buy-form__hint { margin: 0; font-size: 13px; color: var(--ink-soft); }
+
+/* Чеки к отправке — служебная страница владелицы */
+.receipts { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.receipt { gap: 10px; }
+.receipt p { margin: 0; }
+.receipt__service { font-weight: 600; }
+.receipt__amount { font-family: var(--font-display); font-size: 32px; line-height: 1; color: var(--accent); }
+.receipt__details { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+.receipt__details dt { color: var(--ink-soft); }
+.receipt__details dd { margin: 0; overflow-wrap: anywhere; user-select: all; }
+
 /* Совместимость: что даст приглашение */
 .pair-gains { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .pair-gains li { padding: 6px 14px; border-radius: 999px; background: rgba(246, 222, 215, 0.6); font-size: 14px; }

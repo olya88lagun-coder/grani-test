@@ -3,6 +3,14 @@ import { BASE_URL, signedInWithResult, uniqueName } from "./helpers";
 
 const GENERATION_TIMEOUT = 60_000;
 
+const EMAIL = "anna@example.ru";
+
+// Первая покупка спрашивает почту для чека, следующие берут запомненную
+async function giveReceiptEmail(page: Page, email = EMAIL) {
+  await page.getByLabel("Почта для чека").fill(email);
+  await page.getByRole("button", { name: "Перейти к оплате" }).click();
+}
+
 async function payOnFakePage(page: Page) {
   await expect(page).toHaveURL(/\/dev\/pay\/fake-/);
   await page.getByRole("button", { name: "Оплатить" }).click();
@@ -15,6 +23,7 @@ test("buys the full report and all chapters, sees them generated", async ({ brow
 
   await expect(page.getByRole("heading", { name: "Разверни свой результат в личный портрет" })).toBeVisible();
   await page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
+  await giveReceiptEmail(page);
   await payOnFakePage(page);
   await expect(page).toHaveURL(/\/report\/[0-9a-f-]{36}$/, { timeout: GENERATION_TIMEOUT });
   await expect(page.getByRole("heading", { name: "Портрет" })).toBeVisible({ timeout: GENERATION_TIMEOUT });
@@ -22,6 +31,7 @@ test("buys the full report and all chapters, sees them generated", async ({ brow
   await expect(page.getByText("Ответили 0 из 3")).toBeVisible();
   await expect(page.getByText("Материалы для самопознания, не психологическая и не медицинская диагностика.")).toBeVisible();
 
+  await expect(page.getByText(`Чек — на ${EMAIL}.`).first()).toBeVisible();
   await page.getByRole("button", { name: /^Все четыре главы/ }).click();
   await payOnFakePage(page);
   await expect(page).toHaveURL(/\/report\//, { timeout: GENERATION_TIMEOUT });
@@ -45,6 +55,7 @@ test("a canceled payment opens nothing", async ({ browser }) => {
   const resultId = page.url().split("/").at(-1)!;
 
   await page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
+  await giveReceiptEmail(page);
   await expect(page).toHaveURL(/\/dev\/pay\/fake-/);
   await page.getByRole("button", { name: "Отменить" }).click();
 
@@ -66,7 +77,7 @@ test("one payment opens the pair report to both, the price comes from the server
 
   // Клиент не может задать сумму: лишние поля тела игнорируются, цена — из прайса
   const tampered = await boris.page.request.post("/api/purchases", {
-    data: { product: "pair", targetId: pairUrl.split("/").at(-1), amountKopecks: 100 },
+    data: { product: "pair", targetId: pairUrl.split("/").at(-1), amountKopecks: 100, email: "boris@example.ru" },
     headers: { origin: BASE_URL },
   });
   const payUrl = ((await tampered.json()) as { url: string }).url;
@@ -84,4 +95,28 @@ test("one payment opens the pair report to both, the price comes from the server
 
   await anna.context.close();
   await boris.context.close();
+});
+
+test("the owner sees paid purchases with the receipt email and marks the receipt sent", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const buyer = await signedInWithResult(browser, uniqueName("Гоша"));
+  const email = `gosha${Date.now()}@example.ru`;
+  await buyer.page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
+  await giveReceiptEmail(buyer.page, email);
+  await payOnFakePage(buyer.page);
+  await expect(buyer.page).toHaveURL(/\/report\//, { timeout: GENERATION_TIMEOUT });
+
+  // Чужим страница не видна
+  expect((await buyer.page.goto("/admin/receipts"))?.status()).toBe(404);
+
+  const owner = await signedInWithResult(browser, "Владелица");
+  await owner.page.goto("/admin/receipts");
+  const receipt = owner.page.getByRole("listitem").filter({ hasText: email });
+  await expect(receipt).toContainText("Полный разбор личности «Грани»");
+  await expect(receipt).toContainText("299 ₽");
+  await receipt.getByRole("button", { name: "Чек отправлен" }).click();
+  await expect(owner.page.getByText(email)).toHaveCount(0);
+
+  await buyer.context.close();
+  await owner.context.close();
 });
