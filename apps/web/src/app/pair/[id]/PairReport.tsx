@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
 import { Paragraphs } from "@/components/Paragraphs";
-import { buildPairReportView } from "@/lib/pair-view";
+import { buildPairReportView, PAIR_SECTION_TITLES } from "@/lib/pair-view";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { getDb } from "@/server/db";
 
@@ -22,16 +22,31 @@ export async function PairReport({ pairId, viewerResultId }: { pairId: string; v
 
   return (
     <>
-      <section className="card stack report" aria-labelledby="pair-report">
-        <p className="eyebrow">Разбор пары</p>
-        <h2 id="pair-report">Как вам быть вместе</h2>
-        {view.state === "available" && (
+      <section className={view.state === "available" ? "card stack report pair-offer" : "card stack report"} aria-labelledby="pair-report">
+        {view.state === "available" ? (
           <>
-            <p className="lead">Пять разделов: где вы похожи, где разные, откуда будут конфликты, быт и деньги, как поддерживать друг друга. Одна оплата открывает разбор обоим.</p>
-            <BuyButton product="pair" targetId={pairId} label={`Открыть разбор пары за ${view.price}`} />
-            <p className="muted">
+            <p className="eyebrow">Разбор пары · {view.price}</p>
+            <h2 id="pair-report">Разговор, к которому у вас уже есть карта</h2>
+            <p className="lead">
+              Пять разделов помогут увидеть, где вам легко и где вы по-разному смотрите на быт, деньги и споры. Одна оплата открывает разбор обоим.
+            </p>
+            <ol className="pair-offer__sections" aria-label="Что внутри разбора пары">
+              {Object.values(PAIR_SECTION_TITLES).map((title) => (
+                <li key={title}>{title}</li>
+              ))}
+            </ol>
+            <div className="pair-offer__buy">
+              <BuyButton product="pair" targetId={pairId} label={`Открыть разбор пары за ${view.price}`} />
+              <p className="result-offer__note">Откроется обоим участникам пары. Платит один.</p>
+            </div>
+            <p className="result-offer__legal">
               Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих, деньги не возвращаются.
             </p>
+          </>
+        ) : (
+          <>
+            <p className="eyebrow">Разбор пары</p>
+            <h2 id="pair-report">Как вам быть вместе</h2>
           </>
         )}
         {view.state === "preparing" && (

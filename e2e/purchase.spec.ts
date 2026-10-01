@@ -13,8 +13,8 @@ test("buys the full report and all chapters, sees them generated", async ({ brow
   const { context, page } = await signedInWithResult(browser, uniqueName("Аня"));
   const resultUrl = page.url();
 
-  await expect(page.getByRole("heading", { name: "Что откроется в полном разборе" })).toBeVisible();
-  await page.getByRole("button", { name: /^Открыть за 299/ }).click();
+  await expect(page.getByRole("heading", { name: "Разверни свой результат в личный портрет" })).toBeVisible();
+  await page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
   await payOnFakePage(page);
   await expect(page).toHaveURL(/\/report\/[0-9a-f-]{36}$/, { timeout: GENERATION_TIMEOUT });
   await expect(page.getByRole("heading", { name: "Портрет" })).toBeVisible({ timeout: GENERATION_TIMEOUT });
@@ -44,7 +44,7 @@ test("a canceled payment opens nothing", async ({ browser }) => {
   const { context, page } = await signedInWithResult(browser, uniqueName("Вера"));
   const resultId = page.url().split("/").at(-1)!;
 
-  await page.getByRole("button", { name: /^Открыть за 299/ }).click();
+  await page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
   await expect(page).toHaveURL(/\/dev\/pay\/fake-/);
   await page.getByRole("button", { name: "Отменить" }).click();
 

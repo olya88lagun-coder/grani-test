@@ -143,7 +143,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           </Link>
         </p>
       </div>
-      {!reportOpen && <StickyReportCta label={`Полный разбор — ${formatRub(PRODUCT_PRICES.full)}`} />}
+      {!reportOpen && <StickyReportCta label={`Открыть полный разбор — ${formatRub(PRODUCT_PRICES.full)}`} />}
     </main>
   );
 }
