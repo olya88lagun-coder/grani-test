@@ -39,6 +39,9 @@ export default function ContactsPage() {
           ))}
         </ul>
         <p>
+          Что входит в каждый разбор — на странице <Link href="/pricing">«Разборы и цены»</Link>.
+        </p>
+        <p>
           Оплата картой через ЮKassa, чек приходит из «Мой налог». Условия, возвраты и порядок оказания — в <Link href="/offer">оферте</Link>,
           обработка данных — в <Link href="/privacy">политике</Link>.
         </p>

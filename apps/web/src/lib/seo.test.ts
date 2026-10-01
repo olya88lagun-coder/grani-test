@@ -59,7 +59,7 @@ describe("PUBLIC_PATHS", () => {
     // Статьи публикует автопилот: их число выводится из данных, а не записано в тест
     const articles = getArticles().length;
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(articles + 1);
-    expect(paths).toHaveLength(37 + articles);
+    expect(paths).toHaveLength(38 + articles);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).toEqual(expect.arrayContaining(getArticles().map((article) => article.canonical)));
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);

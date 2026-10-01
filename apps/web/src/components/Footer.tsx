@@ -6,6 +6,7 @@ const LINKS = [
   { href: "/types", label: "Типы личности" },
   { href: "/articles", label: "Статьи" },
   { href: "/about", label: "О проекте и методике" },
+  { href: "/pricing", label: "Разборы и цены" },
   { href: "/contacts", label: "Контакты и услуги" },
   { href: "/offer", label: "Оферта" },
   { href: "/privacy", label: "Политика обработки данных" },
