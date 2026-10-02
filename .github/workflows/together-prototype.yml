@@ -21,3 +21,4 @@ jobs:
           node-version: 24
       - run: node docs/together/verify.mjs
       - run: node docs/together/verify-materials.mjs
+      - run: node docs/together/verify-quarter.mjs
