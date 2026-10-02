@@ -108,8 +108,8 @@ function topic(input: TopicInput): ContentTopic {
 export const CONTENT_PLAN: readonly ContentTopic[] = [
   // test-big-five-na-russkom убрана: интент совпадает с уже существующей публичной страницей /big-five-test (тот же запрос — прохождение теста на русском, тот же FAQ).
   topic({ slug: "ipip-50", primaryQuery: "IPIP-50", title: "IPIP-50: что это за опросник", cluster: "big-five", status: "published", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["ipip-50"] }),
-  topic({ slug: "ocean-test", primaryQuery: "OCEAN тест", title: "OCEAN тест и пять черт личности", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
-  topic({ slug: "rezultaty-big-five", primaryQuery: "результаты Big Five", title: "Как читать результаты Big Five", cluster: "big-five", links: ["/traits", "/types"], sourceKeys: ["big-five"] }),
+  // ocean-test убрана: тот же интент, что у /big-five-test (там тест уже назван и как Big Five, и как OCEAN) — две страницы под один запрос отбирают друг у друга позиции.
+  topic({ slug: "rezultaty-big-five", primaryQuery: "результаты Big Five", title: "Как читать результаты Big Five", cluster: "big-five", status: "published", links: ["/traits", "/types"], sourceKeys: ["rezultaty-big-five"] }),
   topic({ slug: "shkaly-big-five", primaryQuery: "шкалы Big Five", title: "Шкалы Big Five: что означают баллы", cluster: "big-five", links: ["/traits", "/articles/big-five"], sourceKeys: ["big-five"] }),
   topic({ slug: "naskolko-tochen-big-five", primaryQuery: "насколько точен Big Five", title: "Насколько точен тест Big Five", cluster: "big-five", links: ["/about", "/articles/test-lichnosti"], sourceKeys: ["big-five", "test-lichnosti"] }),
   topic({ slug: "big-five-ili-mbti", primaryQuery: "Big Five или MBTI", title: "Big Five или MBTI: что выбрать", cluster: "comparison", links: ["/articles/mbti-i-socionika", "/types"], sourceKeys: ["mbti-i-socionika"] }),
