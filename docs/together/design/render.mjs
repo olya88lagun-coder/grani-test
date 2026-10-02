@@ -53,12 +53,31 @@ await check('keyboard focus visible and reduced motion enabled',async()=>{await 
 await page.setViewportSize({width:1440,height:1000});await navigate({screen:'book',state:'ready'});
 await check('actual fictional A5 PDF generated',async()=>{const pdf=await page.pdf({path:resolve(out,'fictional-book.pdf'),preferCSSPageSize:true,printBackground:true});assert.equal(pdf.subarray(0,4).toString(),'%PDF');const pages=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.ok(pages>=4&&pages<=8,'Unexpected print pagination '+pages);checks.push({name:'PDF page count',value:pages,status:'pass'});});
 await page.emulateMedia({media:'print'});await page.screenshot({path:resolve(out,'book-print.jpg'),type:'jpeg',quality:80,fullPage:true});await page.emulateMedia({media:'screen'});
+
+await check('portable HTML opens offline with embedded brand fonts',async()=>{
+ let css=await readFile(resolve(root,'docs/together/design/together.css'),'utf8');
+ const fontUrls=[...css.matchAll(/url\('([^']+\.woff)'\)/g)].map(m=>m[1]);
+ for(const fontUrl of fontUrls){const bytes=await readFile(resolve(root,'docs/together/design',fontUrl));css=css.replaceAll("url('"+fontUrl+"')","url('data:font/woff;base64,"+bytes.toString('base64')+"')");}
+ const js=await readFile(resolve(root,'docs/together/design/together.js'),'utf8');
+ let html=await readFile(resolve(root,'docs/together/design/index.html'),'utf8');
+ html=html.replace('<link rel="stylesheet" href="./together.css">','<style>'+css+'</style>').replace('<script src="./together.js" defer></script>','').replace('</body>','<script>'+js+'</script></body>');
+ const path=resolve(out,'grani-together-review.html');await writeFile(path,html);
+ const offline=await context.newPage();const offlineErrors=[];offline.on('pageerror',e=>offlineErrors.push(String(e)));
+ await offline.goto(pathToFileURL(path).href);await offline.locator('main h1').waitFor();await offline.evaluate(()=>document.fonts.ready);
+ await offline.getByRole('button',{name:'Попробовать 3 встречи →',exact:true}).click();await offline.locator('#inviteLink').waitFor();
+ assert.deepEqual(offlineErrors,[]);
+ await offline.close();
+ console.log('PORTABLE_BEGIN');
+ const encoded=Buffer.from(html).toString('base64');for(let i=0;i<encoded.length;i+=12000)console.log('PORTABLE_DATA:'+encoded.slice(i,i+12000));
+ console.log('PORTABLE_END');
+});
+
 assert.deepEqual(errors,[]);assert.deepEqual(badRequests,[]);
 await writeFile(resolve(out,'evidence.json'),JSON.stringify({status:'pass',head:process.env.GITHUB_SHA,widths,cases,checks,errors,badRequests,images},null,2));
 console.log('VISUAL_QA_PASS '+JSON.stringify({checks:checks.length,layouts:widths.length*cases.length,images:images.length,pages:checks.find(c=>c.name==='PDF page count')?.value}));
-for(const name of ['landing-default-1440','dashboard-default-1440','meeting-default-1440','book-default-1440','invite-default-1440','landing-default-390','book-default-390']){
+for(const name of ['landing-default-1440','dashboard-default-1440','meeting-default-1440','book-default-1440','invite-default-1440','landing-default-390','book-default-390','meeting-revealed-1440','book-ready-1440']){
  const c=cases.find(c=>name.startsWith(c.screen+'-'+(c.state??'default')+'-'));
  await page.setViewportSize({width:name.endsWith('390')?390:1440,height:name.endsWith('390')?844:1000});await navigate(c);
- const data=await page.screenshot({type:'jpeg',quality:76,fullPage:false,animations:'disabled'});console.log('IMG_BEGIN:'+name);const base64=data.toString('base64');for(let i=0;i<base64.length;i+=12000)console.log('IMG_DATA:'+base64.slice(i,i+12000));console.log('IMG_END:'+name);
+ const data=await page.screenshot({type:'jpeg',quality:76,fullPage:name==='landing-default-390'||name==='meeting-revealed-1440'||name==='book-ready-1440',animations:'disabled'});console.log('IMG_BEGIN:'+name);const base64=data.toString('base64');for(let i=0;i<base64.length;i+=12000)console.log('IMG_DATA:'+base64.slice(i,i+12000));console.log('IMG_END:'+name);
 }
 }catch(error){await writeFile(resolve(out,'evidence.json'),JSON.stringify({status:'fail',head:process.env.GITHUB_SHA,checks,errors,badRequests,error:String(error)},null,2));await page.screenshot({path:resolve(out,'failure.jpg'),type:'jpeg',quality:80,fullPage:true});console.log('VISUAL_QA_FAIL '+JSON.stringify({checks:checks.length,last:checks.at(-1),errors,badRequests,error:String(error)}));console.error(error);process.exitCode=1;}finally{await browser.close();server.close();}

@@ -35,3 +35,5 @@ dialog{width:min(640px,calc(100% - 36px));padding:32px;border:0;border-radius:14
 .own-answer blockquote,.revealed-answer blockquote,.print-page blockquote,dialog p{overflow-wrap:anywhere}.book-showcase>*,.dashboard-grid>*,.meeting-layout>*,.book-layout>*{min-width:0}
 
 .waiting h1{font-size:42px;margin:0}@media(max-width:767px){.waiting h1{font-size:36px}}
+
+@media(min-width:768px){.hero-art .book-cover{transform:translateX(-48px) rotate(-7deg)}}.invite-art .book-mark{color:var(--accent);width:200px;height:auto}@media(max-width:767px){.invite-art .book-mark{width:155px}.hero-art{display:flex;flex-direction:column;align-items:center;min-height:0;padding:66px 26px 57px;gap:26px}.hero-art .book-cover{transform:rotate(-5deg)}.hero-art .floating-note{position:static;width:100%;padding:20px;transform:none}.hero-art .floating-note .quote{font-size:25px}.hero-art .art-caption{left:22px;right:22px;font-size:10px}}
