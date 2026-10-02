@@ -3,13 +3,11 @@ on:
   push:
     branches: [feat/together-prototype]
     paths:
-      - docs/together/prototype.html
-      - docs/together/verify.mjs
+      - docs/together/**
       - .github/workflows/together-prototype.yml
   pull_request:
     paths:
-      - docs/together/prototype.html
-      - docs/together/verify.mjs
+      - docs/together/**
       - .github/workflows/together-prototype.yml
 permissions:
   contents: read
@@ -22,3 +20,4 @@ jobs:
         with:
           node-version: 24
       - run: node docs/together/verify.mjs
+      - run: node docs/together/verify-materials.mjs

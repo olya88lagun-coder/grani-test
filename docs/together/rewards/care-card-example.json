@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "isFictional": true,
+  "members": [
+    {
+      "id": "a",
+      "name": "Анна"
+    },
+    {
+      "id": "b",
+      "name": "Алексей"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "a-attention",
+      "ownerId": "a",
+      "category": "attention",
+      "action": "Прогуляться вместе после работы",
+      "context": "Когда у обоих есть силы и время",
+      "allowReward": true,
+      "sourceId": "m01-d01"
+    },
+    {
+      "id": "b-attention",
+      "ownerId": "b",
+      "category": "attention",
+      "action": "Сначала выслушать, а потом спросить, нужны ли идеи",
+      "context": "Когда я рассказываю о задачах дня",
+      "allowReward": true,
+      "sourceId": "m01-d02"
+    },
+    {
+      "id": "a-ease",
+      "ownerId": "a",
+      "category": "ease",
+      "action": "Предложить помощь с ужином",
+      "context": "В загруженный будний вечер",
+      "allowReward": true,
+      "sourceId": "m01-d10"
+    },
+    {
+      "id": "b-ease",
+      "ownerId": "b",
+      "category": "ease",
+      "action": "Дать немного времени переключиться",
+      "context": "После возвращения домой",
+      "allowReward": true,
+      "sourceId": "m01-d18"
+    }
+  ],
+  "selections": {
+    "a": {
+      "attention": "a-attention",
+      "ease": "a-ease"
+    },
+    "b": {
+      "attention": "b-attention",
+      "ease": "b-ease"
+    }
+  },
+  "ritual": {
+    "name": "Чай по воскресеньям",
+    "schedule": "По воскресеньям, если удобно обоим",
+    "duration": "Около 20 минут",
+    "confirmedBy": [
+      "a",
+      "b"
+    ],
+    "sourceId": "m01-d28"
+  }
+}
