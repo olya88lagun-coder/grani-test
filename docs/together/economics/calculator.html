@@ -1,0 +1,83 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Вдвоём · экономика пары</title><style>
+:root{color-scheme:light;--ink:#2a2224;--soft:#6e6164;--bg:#fffcfa;--accent:#4a2230;--line:#e4d9d3}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,sans-serif}main{max-width:1200px;margin:0 auto;padding:40px 24px 80px}h1,h2{font-family:Georgia,serif;font-weight:400;line-height:1.12}h1{font-size:clamp(36px,5vw,68px);max-width:750px}h2{font-size:30px}p{max-width:840px}.eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase}.lead,.note{color:var(--soft)}.layout{display:grid;grid-template-columns:minmax(280px,380px) minmax(0,1fr);gap:48px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}label{display:block;font-size:12px;color:var(--soft)}input{width:100%;margin-top:5px;padding:10px;border:1px solid var(--line);border-radius:7px;background:white;color:var(--ink);font:inherit}input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.metrics{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line)}.metric{padding:22px 12px 22px 0;border-bottom:1px solid var(--line)}.metric span{display:block;font-size:12px;color:var(--soft)}.metric strong{display:block;font-family:Georgia,serif;font-size:clamp(24px,3vw,36px);font-weight:400}.presets{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}button{border:1px solid var(--line);background:#f6e8e1;color:var(--ink);border-radius:999px;padding:9px 14px;font:inherit;cursor:pointer}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--soft);font-weight:400}a{color:var(--accent)}#error{color:#8d243d;min-height:24px}@media(max-width:760px){main{padding:24px 18px 48px}.layout{grid-template-columns:1fr;gap:28px}h1{margin-top:18px}.metrics{gap:0}.metric strong{font-size:26px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style></head><body><main><div class="eyebrow">Грани · Вдвоём · рабочая модель</div><h1>Что остаётся с одной пары</h1><p class="lead">Измените предположения и посмотрите, как цена и продления влияют на окупаемость. Это расчёт, а не измеренная прибыль. Один оплачиваемый период — 30 дней.</p><div class="presets"><button data-scenario="cautious">Осторожный</button><button data-scenario="base">Базовый</button><button data-scenario="strong">Сильный</button></div><div class="layout"><section aria-label="Вводные"><h2>Ваши вводные</h2><div class="fields"><label for="price">Цена за пару, ₽<input id="price" type="number" value="599" min="1" max="10000" step="1"></label><label for="cac">Привлечение платящей пары, ₽<input id="cac" type="number" value="900" min="0" max="100000" step="1"></label><label for="churnPct">Отток при продлении, %<input id="churnPct" type="number" value="20" min="0" max="100" step="1"></label><label for="feePct">Комиссия, %<input id="feePct" type="number" value="3.5" min="0" max="100" step="0.1"></label><label for="vatOnFeePct">НДС на комиссию, %<input id="vatOnFeePct" type="number" value="22" min="0" max="100" step="1"></label><label for="taxReservePct">Условный налоговый резерв, %<input id="taxReservePct" type="number" value="6" min="0" max="100" step="1"></label><label for="refundReservePct">Возвраты: резерв, %<input id="refundReservePct" type="number" value="3" min="0" max="100" step="1"></label><label for="infrastructure">Инфраструктура на пару, ₽<input id="infrastructure" type="number" value="20" min="0" max="10000" step="1"></label><label for="support">Поддержка на пару, ₽<input id="support" type="number" value="30" min="0" max="10000" step="1"></label><label for="bookCost">Стоимость одной книги, ₽<input id="bookCost" type="number" value="20" min="0" max="10000" step="1"></label><label for="bookEvery">Периодов между книгами<input id="bookEvery" type="number" value="3" min="1" max="12" step="1"></label><label for="fixed">Постоянные расходы, ₽<input id="fixed" type="number" value="40000" min="0" max="10000000" step="1000"></label></div><p class="note">Налоговый резерв 6% — условный параметр. Подставьте свой режим. НДС 22% применяется к комиссии карты, не ко всей выручке.</p><p id="error" role="alert"></p></section><section aria-label="Расчёт" aria-live="polite"><h2>Результат</h2><div class="metrics"><div class="metric"><span>Вклад пары за период</span><strong id="contribution"></strong></div><div class="metric"><span>Маржинальный LTV, максимум 12 периодов</span><strong id="ltv"></strong></div><div class="metric"><span>После привлечения, до постоянных затрат</span><strong id="net"></strong></div><div class="metric"><span>Окупаемость привлечения когорты</span><strong id="payback"></strong></div></div><p id="details"></p><p id="status"></p><p><b>Условная стационарная безубыточность:</b> <span id="breakEven"></span>. Предполагает постоянные новые когорты, тот же отток и уход после 12 периодов; не описывает первые месяцы запуска.</p><h2>Ожидаемая когорта</h2><div class="scroll"><table><thead><tr><th>Период</th><th>Остались платить</th><th>Накопленный вклад*</th><th>После привлечения*</th></tr></thead><tbody id="cohort"></tbody></table></div><p class="note">*На одну первоначально привлечённую платящую пару, с учётом вероятности продлений. Без постоянных расходов. Бесплатные паузы и второй год не моделируются.</p></section></div><p class="note">Стоимость книги распределена резервом между периодами. Нет AI, печати и доставки. Разработка и стоимость ручной работы сверх указанной поддержки учитываются отдельно. Сценарии меняют только CAC и отток, остальные ваши вводные сохраняются.</p><p><a href="../PRICING.md">Описание модели</a> · <a href="https://yookassa.ru/docs/support/payments/fees">Справочные тарифы ЮKassa</a>. Модель подготовлена 02.10.2026.</p></main><script>const DEFAULTS = Object.freeze({
+  price: 599, feePct: 3.5, vatOnFeePct: 22, taxReservePct: 6,
+  refundReservePct: 3, infrastructure: 20, support: 30, bookCost: 20,
+  bookEvery: 3, cac: 900, churnPct: 20, fixed: 40000, horizon: 12
+});
+function calculate(raw = {}) {
+  const p = { ...DEFAULTS, ...raw };
+  for (const [key, value] of Object.entries(p)) {
+    if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) throw new Error('INVALID_' + key);
+  }
+  for (const key of ['feePct', 'vatOnFeePct', 'taxReservePct', 'refundReservePct', 'churnPct'])
+    if (p[key] > 100) throw new Error('INVALID_' + key);
+  if (p.bookEvery <= 0 || !Number.isInteger(p.horizon) || p.horizon < 1 || p.horizon > 12)
+    throw new Error('INVALID_HORIZON_OR_BOOK_FREQUENCY');
+  const processing = p.price * p.feePct / 100 * (1 + p.vatOnFeePct / 100);
+  const taxReserve = p.price * p.taxReservePct / 100;
+  const refundReserve = p.price * p.refundReservePct / 100;
+  const bookReserve = p.bookCost / p.bookEvery;
+  const contribution = p.price - processing - taxReserve - refundReserve -
+    p.infrastructure - p.support - bookReserve;
+  let expectedPaidPeriods = 0, survival = 1, cumulativeMargin = 0;
+  let paybackPeriod = p.cac === 0 ? 0 : null;
+  const cohort = [];
+  for (let period = 1; period <= p.horizon; period++) {
+    expectedPaidPeriods += survival;
+    cumulativeMargin += survival * contribution;
+    cohort.push({ period, survival, cumulativeMargin, netAfterAcquisition: cumulativeMargin - p.cac });
+    if (paybackPeriod === null && contribution > 0 && cumulativeMargin >= p.cac) paybackPeriod = period;
+    survival *= 1 - p.churnPct / 100;
+  }
+  const marginLTV = contribution * expectedPaidPeriods;
+  const contributionAfterReplacement = contribution - p.cac / expectedPaidPeriods;
+  return {
+    inputs: p, processing, taxReserve, refundReserve, bookReserve, contribution,
+    expectedPaidPeriods, marginLTV, netCohort: marginLTV - p.cac,
+    ltvToCac: p.cac > 0 ? marginLTV / p.cac : null, paybackPeriod,
+    contributionAfterReplacement,
+    breakEvenActivePairs: contributionAfterReplacement > 0 ? Math.ceil(p.fixed / contributionAfterReplacement) : null,
+    cohort
+  };
+}
+
+
+const fieldIds = ['price','cac','churnPct','feePct','vatOnFeePct','taxReservePct','refundReservePct','infrastructure','support','bookCost','bookEvery','fixed'];
+const rub = n => new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(n) + ' ₽';
+const dec = n => new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(n);
+function render() {
+  try {
+    const p = Object.fromEntries(fieldIds.map(id=>[id,Number(document.getElementById(id).value)]));
+    if (fieldIds.some(id=>document.getElementById(id).value.trim()==='')) throw new Error('EMPTY');
+    const r = calculate(p);
+    document.getElementById('error').textContent='';
+    document.getElementById('contribution').textContent=rub(r.contribution);
+    document.getElementById('ltv').textContent=rub(r.marginLTV);
+    document.getElementById('net').textContent=rub(r.netCohort);
+    document.getElementById('payback').textContent=r.paybackPeriod===null?'Не окупается за 12 периодов':r.paybackPeriod===0?'Нет затрат на привлечение':r.paybackPeriod+'-й период';
+    document.getElementById('breakEven').textContent=r.breakEvenActivePairs===null?'При этих вводных недостижима':r.breakEvenActivePairs+' активных пар';
+    document.getElementById('details').textContent='Комиссия с НДС: '+rub(r.processing)+'. Резервы: налог '+rub(r.taxReserve)+', возвраты '+rub(r.refundReserve)+', книга '+dec(r.bookReserve)+' ₽. Ожидаемые оплаченные периоды: '+dec(r.expectedPaidPeriods)+'.';
+    const tbody=document.getElementById('cohort');tbody.replaceChildren();
+    for(const row of r.cohort){
+      const tr=document.createElement('tr');
+      for(const value of [row.period,dec(row.survival*100)+'%',rub(row.cumulativeMargin),rub(row.netAfterAcquisition)]){
+        const td=document.createElement('td');td.textContent=value;tr.append(td);
+      }tbody.append(tr);
+    }
+    document.getElementById('status').textContent=r.netCohort<0?'Когорта убыточна уже до постоянных расходов.':'Положительный вклад когорты; из него ещё оплачиваются постоянные расходы и разработка.';
+  } catch {
+    document.getElementById('error').textContent='Проверьте значения: расходы ≥ 0, проценты от 0 до 100, частота книг > 0.';
+    for(const id of ['contribution','ltv','net','payback','breakEven','details','status']) document.getElementById(id).textContent='—';
+    document.getElementById('cohort').replaceChildren();
+  }
+}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',render));
+document.querySelectorAll('[data-scenario]').forEach(el=>el.addEventListener('click',()=>{
+  const presets={base:{cac:900,churnPct:20},cautious:{cac:1800,churnPct:35},strong:{cac:500,churnPct:12}};
+  const preset=presets[el.dataset.scenario];
+  for(const [id,value] of Object.entries(preset))document.getElementById(id).value=value;
+  render();
+}));
+render();
+</script></body></html>
