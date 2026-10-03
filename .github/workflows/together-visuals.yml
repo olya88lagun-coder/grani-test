@@ -6,14 +6,14 @@ on:
       - docs/together/design/*.html
       - docs/together/design/*.css
       - docs/together/design/*.js
-      - docs/together/design/render.mjs
+      - docs/together/design/*render.mjs
       - .github/workflows/together-visuals.yml
   pull_request:
     paths:
       - docs/together/design/*.html
       - docs/together/design/*.css
       - docs/together/design/*.js
-      - docs/together/design/render.mjs
+      - docs/together/design/*render.mjs
       - .github/workflows/together-visuals.yml
 permissions:
   contents: read
@@ -37,6 +37,10 @@ jobs:
         env:
           PW_MODULE: ${{ runner.temp }}/together-visual-runtime/node_modules/playwright/index.mjs
         run: node docs/together/design/render.mjs
+      - name: New feature screens
+        env:
+          PW_MODULE: ${{ runner.temp }}/together-visual-runtime/node_modules/playwright/index.mjs
+        run: node docs/together/design/features-render.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
