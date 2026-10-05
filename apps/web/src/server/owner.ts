@@ -4,10 +4,14 @@ import { getDb } from "./db";
 import { getEnv } from "./env";
 import { currentUser } from "./viewer";
 
+export async function isOwnerUser(user: UserRecord): Promise<boolean> {
+  const owner = getEnv().owner;
+  return owner !== null && (await hasIdentity(getDb(), user.id, owner));
+}
+
 // Служебные страницы видит только владелица (OWNER_IDENTITY); остальным — обычная 404, без намёка, что страница есть
 export async function requireOwner(): Promise<UserRecord> {
-  const owner = getEnv().owner;
   const user = await currentUser();
-  if (!owner || !user || !(await hasIdentity(getDb(), user.id, owner))) notFound();
+  if (!user || !(await isOwnerUser(user))) notFound();
   return user;
 }
