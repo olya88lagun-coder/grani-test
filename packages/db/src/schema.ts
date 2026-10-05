@@ -127,6 +127,81 @@ export const pairs = pgTable(
   ],
 );
 
+export const togetherSpaceStatusEnum = pgEnum("together_space_status", ["pending", "active", "closed"]);
+export const togetherClosedReasonEnum = pgEnum("together_closed_reason", ["left", "account_deleted"]);
+export const togetherRoleEnum = pgEnum("together_role", ["initiator", "partner"]);
+export const togetherInviteStatusEnum = pgEnum("together_invite_status", ["open", "requested", "accepted", "revoked"]);
+
+export type TogetherSpaceStatus = (typeof togetherSpaceStatusEnum.enumValues)[number];
+export type TogetherClosedReason = (typeof togetherClosedReasonEnum.enumValues)[number];
+export type TogetherRole = (typeof togetherRoleEnum.enumValues)[number];
+
+// Пространство пары «Вдвоём» не связано с results и pairs: тест для него не нужен
+export const togetherSpaces = pgTable(
+  "together_spaces",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    status: togetherSpaceStatusEnum("status").notNull().default("pending"),
+    createdAt: createdAt(),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+    closedBy: uuid("closed_by").references(() => users.id, { onDelete: "set null" }),
+    closedReason: togetherClosedReasonEnum("closed_reason"),
+  },
+  (t) => [check("together_spaces_closed_consistent", sql`(${t.status} = 'closed') = (${t.closedAt} is not null)`)],
+);
+
+export const togetherMembers = pgTable(
+  "together_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    spaceId: uuid("space_id")
+      .notNull()
+      .references(() => togetherSpaces.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id),
+    role: togetherRoleEnum("role").notNull(),
+    joinedAt: timestamp("joined_at", { withTimezone: true }).notNull(),
+    leftAt: timestamp("left_at", { withTimezone: true }),
+  },
+  (t) => [
+    // Не больше двух участников: по одному на роль
+    uniqueIndex("together_members_space_role_uq").on(t.spaceId, t.role),
+    uniqueIndex("together_members_space_user_uq").on(t.spaceId, t.userId),
+    // Один активный кабинет на человека
+    uniqueIndex("together_members_active_user_uq")
+      .on(t.userId)
+      .where(sql`${t.leftAt} is null`),
+  ],
+);
+
+export const togetherInvites = pgTable(
+  "together_invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    spaceId: uuid("space_id")
+      .notNull()
+      .references(() => togetherSpaces.id, { onDelete: "cascade" }),
+    // Сам токен не хранится: по хешу ссылку найти можно, из базы её не восстановить
+    tokenHash: text("token_hash").notNull().unique(),
+    inviterId: uuid("inviter_id")
+      .notNull()
+      .references(() => users.id),
+    status: togetherInviteStatusEnum("status").notNull().default("open"),
+    requesterUserId: uuid("requester_user_id").references(() => users.id),
+    requestedAt: timestamp("requested_at", { withTimezone: true }),
+    confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    // Одна живая ссылка на пространство; завершённых может быть сколько угодно
+    uniqueIndex("together_invites_live_uq")
+      .on(t.spaceId)
+      .where(sql`${t.status} in ('open', 'requested')`),
+  ],
+);
+
 export const productEnum = pgEnum("product", [
   "full",
   "chapter_money",
@@ -135,6 +210,7 @@ export const productEnum = pgEnum("product", [
   "chapter_relationships",
   "chapters_all",
   "pair",
+  "together_30d",
 ]);
 export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled", "refunded"]);
 export const reportKindEnum = pgEnum("report_kind", REPORT_KINDS);
@@ -154,6 +230,7 @@ export const purchases = pgTable(
     // Записи об оплатах переживают удаление данных (налоговый учёт), поэтому ссылка обнуляется, а не удаляет покупку
     resultId: uuid("result_id").references(() => results.id, { onDelete: "set null" }),
     pairId: uuid("pair_id").references(() => pairs.id, { onDelete: "set null" }),
+    spaceId: uuid("space_id").references(() => togetherSpaces.id, { onDelete: "set null" }),
     amountKopecks: integer("amount_kopecks").notNull(),
     status: purchaseStatusEnum("status").notNull().default("pending"),
     yookassaPaymentId: text("yookassa_payment_id").unique(),
@@ -167,9 +244,29 @@ export const purchases = pgTable(
   (t) => [
     index("purchases_result_idx").on(t.resultId),
     index("purchases_pair_idx").on(t.pairId),
+    index("purchases_space_idx").on(t.spaceId),
     index("purchases_user_idx").on(t.userId, t.createdAt),
-    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}) <= 1`),
+    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}, ${t.spaceId}) <= 1`),
   ],
+);
+
+// Журнал оплаченных интервалов: уникальный purchase_id делает выдачу доступа идемпотентной
+export const togetherAccessPeriods = pgTable(
+  "together_access_periods",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    spaceId: uuid("space_id")
+      .notNull()
+      .references(() => togetherSpaces.id, { onDelete: "cascade" }),
+    purchaseId: uuid("purchase_id")
+      .notNull()
+      .unique()
+      .references(() => purchases.id),
+    startsAt: timestamp("starts_at", { withTimezone: true }).notNull(),
+    endsAt: timestamp("ends_at", { withTimezone: true }).notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("together_access_periods_space_idx").on(t.spaceId, t.startsAt), check("together_access_periods_positive", sql`${t.endsAt} > ${t.startsAt}`)],
 );
 
 export const reports = pgTable(
