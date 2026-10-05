@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { deleteUserData } from "./delete-user";
-import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, users } from "./schema";
-import { createTestDb, seedPair, seedUserWithResult } from "./testing";
+import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherSpaces, users } from "./schema";
+import { createTestDb, seedPair, seedTogetherSpace, seedUserWithResult } from "./testing";
+import { createSpace } from "./together";
 import type { Database } from "./types";
 import { getUser } from "./users";
 
@@ -84,5 +85,15 @@ describe("deleteUserData", () => {
     expect(await deleteUserData(db, userId)).toEqual({ deleted: false });
     expect(await deleteUserData(db, "not-a-uuid")).toEqual({ deleted: false });
     expect(await deleteUserData(db, "0b6f1f0e-5a7e-4c1e-9d2a-3f1b2c3d4e5f")).toEqual({ deleted: false });
+  });
+
+  it("closes the together space of the deleted user and frees the partner", async () => {
+    const { spaceId, initiatorId, partnerId } = await seedTogetherSpace(db);
+
+    expect(await deleteUserData(db, initiatorId)).toEqual({ deleted: true });
+
+    const [space] = await db.select().from(togetherSpaces).where(eq(togetherSpaces.id, spaceId));
+    expect(space).toMatchObject({ status: "closed", closedReason: "account_deleted" });
+    expect((await createSpace(db, { userId: partnerId, now: new Date("2026-10-06T10:00:00Z") })).ok).toBe(true);
   });
 });

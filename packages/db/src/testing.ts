@@ -6,6 +6,7 @@ import { stabilityOf, typeCodeOf, type TraitScores } from "@grani/core";
 import { acceptPairInvite, getOrCreatePairInvite } from "./pairs";
 import { createResult } from "./results";
 import type { AuthProvider } from "./schema";
+import { createSpace, requestJoin, respondToRequest } from "./together";
 import { upsertUserFromIdentity, type KnownGender } from "./users";
 import * as schema from "./schema";
 import type { Database } from "./types";
@@ -65,6 +66,24 @@ export async function seedPair(
   const outcome = await acceptPairInvite(db, { token, partnerUserId: b.userId, partnerResultId: b.resultId, consentAt: new Date("2026-09-17T12:00:00Z") });
   if (!outcome.ok) throw new Error(`seed pair was not created: ${outcome.reason}`);
   return { pairId: outcome.pairId, a, b };
+}
+
+// Активное пространство «Вдвоём» из двух новых пользователей — для тестов оплаты и сервисов
+export async function seedTogetherSpace(
+  db: Database,
+  p: { now?: Date } = {},
+): Promise<{ spaceId: string; initiatorId: string; partnerId: string }> {
+  const now = p.now ?? new Date("2026-10-05T10:00:00Z");
+  const suffix = Math.random().toString(36).slice(2, 10);
+  const initiatorId = await seedUser(db, { externalId: `tg-a-${suffix}`, displayName: "Аня" });
+  const partnerId = await seedUser(db, { externalId: `tg-b-${suffix}`, displayName: "Борис" });
+  const created = await createSpace(db, { userId: initiatorId, now });
+  if (!created.ok) throw new Error(`seed space was not created: ${created.reason}`);
+  const requested = await requestJoin(db, { token: created.token, userId: partnerId, now });
+  if (!requested.ok) throw new Error(`seed request failed: ${requested.reason}`);
+  const responded = await respondToRequest(db, { userId: initiatorId, accept: true, now });
+  if (!responded.ok) throw new Error(`seed confirmation failed: ${responded.reason}`);
+  return { spaceId: created.spaceId, initiatorId, partnerId };
 }
 
 export * from "./index";

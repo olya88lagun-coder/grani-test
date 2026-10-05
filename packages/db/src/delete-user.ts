@@ -1,5 +1,6 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { authIdentities, purchases, results, users } from "./schema";
+import { closeSpaceForUser } from "./together";
 import type { Database } from "./types";
 import { isUuid } from "./uuid";
 
@@ -15,6 +16,8 @@ export async function deleteUserData(db: Database, userId: string): Promise<{ de
       .returning({ id: users.id });
     if (!marked) return { deleted: false };
     await tx.delete(results).where(eq(results.userId, userId));
+    // Совместное пространство закрывается: партнёр освобождается, записи об оплатах остаются
+    await closeSpaceForUser(tx, { userId, now: new Date(), reason: "account_deleted" });
     await tx.delete(authIdentities).where(eq(authIdentities.userId, userId));
     // Записи об оплатах остаются для налогового учёта, но без почты покупателя
     await tx.update(purchases).set({ receiptEmail: null }).where(eq(purchases.userId, userId));
