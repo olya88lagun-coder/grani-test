@@ -57,12 +57,12 @@
 
 ### Чистая логика доступа (`packages/core/src/together-access.ts`, без БД)
 - `TOGETHER_PERIOD_DAYS = 30`, `TOGETHER_PRICE_KOPECKS = 59900` — единственное место цены и срока.
-- `nextPeriodStart(existing, paidAt)` = `max(paidAt, конец последнего периода)`, период длится 30 суток; пересечений нет, пропуск остаётся пропуском.
+- `nextPeriod(existing, paidAt)` = `max(paidAt, конец последнего периода)`, период длится 30 суток; пересечений нет, пропуск остаётся пропуском.
 - `effectiveEnd(period, closedAt)` = `min(ends_at, closedAt)`: закрытие обрезает периоды.
 - `providedPaidSeconds(periods, now, closedAt)` — сумма уже прошедших частей периодов без двойного счёта.
 - `stage(seconds)` = `floor(seconds / (30·86400))`, не больше 12.
 - `accessState(periods, now, closedAt)` → `{ active, accessUntil, remainingSeconds }`.
-- `canRenew(periods, now)`: купить можно, только если оставшегося доступа меньше 30 суток (не более одного оплаченного периода вперёд; годовой предоплаты нет).
+- `canRenew(periods, now)`: купить можно, пока оставшегося оплаченного доступа не больше 30 суток. Потолок — два периода (60 суток) вперёд: сразу после первой оплаты второй платёж допустим, третий нет; годовой предоплаты нет.
 Все времена UTC.
 
 ## Поведение пространства (`apps/web/src/server/together-service.ts`)
