@@ -1,11 +1,13 @@
 import { FRIEND_ITEMS } from "@grani/content";
 import {
   addFriendResponse,
+  createPurchase,
   createTestDb,
   getOrCreateInvite,
   getPurchase,
   saveReport,
   seedPair,
+  seedTogetherSpace,
   seedUserWithResult,
   type Database,
 } from "@grani/db/testing";
@@ -183,5 +185,19 @@ describe("getPurchaseView", () => {
     await getPurchaseView(deps, { purchaseId, userId: anna.userId });
 
     expect(enqueue).toHaveBeenCalledWith({ kind: "full", resultId: anna.resultId });
+  });
+});
+
+describe("together purchases are invisible to report views", () => {
+  test("getPurchaseView returns nothing for a together purchase", async () => {
+    const space = await seedTogetherSpace(db);
+    const purchase = await createPurchase(db, {
+      userId: space.initiatorId,
+      product: "together_30d",
+      target: { spaceId: space.spaceId },
+      amountKopecks: 59_900,
+    });
+
+    expect(await getPurchaseView(deps, { purchaseId: purchase.id, userId: space.initiatorId })).toBeNull();
   });
 });

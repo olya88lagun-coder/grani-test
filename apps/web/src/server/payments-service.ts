@@ -1,4 +1,4 @@
-import { canBuy, friendsReportDue, isProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
+import { canBuy, friendsReportDue, isProduct, isTogetherProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
 import {
   attachPayment,
   countFriendResponses,
@@ -20,6 +20,7 @@ import {
   type ReportTarget,
 } from "@grani/db";
 import type { PaymentGateway } from "./payments/gateway";
+import { healTogetherAccess } from "./together-payments";
 
 export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateJob) => Promise<void> };
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "invalid_email" | "not_found" | "not_available" | "payment_failed" };
@@ -77,6 +78,13 @@ async function enqueuePaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
   for (const job of jobs) await deps.enqueueGenerate(job);
 }
 
+async function fulfillPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
+  if (!isTogetherProduct(purchase.product)) return enqueuePaid(deps, purchase);
+  const outcome = await healTogetherAccess(deps, purchase.id);
+  // Деньги приняты, а доступ выдать нельзя (пространство закрыто): покупка попадёт в список владельца
+  if (outcome && !outcome.ok) console.warn("paid together access was not granted", { purchaseId: purchase.id, reason: outcome.reason });
+}
+
 export async function startPurchase(
   deps: PaymentsDeps,
   p: { userId: string; product: unknown; targetId: unknown; email: unknown },
@@ -118,7 +126,11 @@ export async function startPurchase(
 export async function syncPayment(deps: PaymentsDeps, paymentId: string): Promise<PurchaseRecord | null> {
   const purchase = await getPurchaseByPaymentId(deps.db, paymentId);
   if (!purchase) return null;
-  if (purchase.status !== "pending") return purchase;
+  if (purchase.status !== "pending") {
+    // Выдача периода могла оборваться между статусом и записью: догоняем при повторном уведомлении
+    if (purchase.status === "succeeded" && isTogetherProduct(purchase.product)) await healTogetherAccess(deps, purchase.id);
+    return purchase;
+  }
   const payment = await deps.gateway.getPayment(paymentId);
   if (!payment) return purchase;
   if (payment.purchaseId !== purchase.id || payment.amountKopecks !== purchase.amountKopecks) {
@@ -126,7 +138,7 @@ export async function syncPayment(deps: PaymentsDeps, paymentId: string): Promis
     return purchase;
   }
   if (payment.status === "succeeded" && payment.paid) {
-    if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await enqueuePaid(deps, purchase);
+    if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await fulfillPaid(deps, purchase);
   } else if (payment.status === "canceled") {
     await markPurchaseCanceled(deps.db, purchase.id);
   }
