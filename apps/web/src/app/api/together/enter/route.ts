@@ -3,7 +3,7 @@ import { getEnv } from "@/server/env";
 import { TOGETHER_COOKIE, togetherCookieOptions } from "@/server/http";
 import { togetherEntryValue } from "@/server/together-return";
 
-// Ссылка «Войти» на страницах «Вдвоём»: запоминает, куда вернуть человека после VK/Telegram, и ведёт на обычный вход.
+// Ссылка «Войти» на страницах «Вдвоём»: запоминает, куда вернуть человека после входа через VK ID, и ведёт на обычный вход.
 // В cookie попадает только перечисление («space» или «invite:<токен>»), не адрес
 export async function GET(request: NextRequest) {
   const env = getEnv();
