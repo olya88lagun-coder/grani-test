@@ -8,7 +8,7 @@ vi.mock("./deps", () => ({
 }));
 
 import { createRateLimiter } from "./rate-limit";
-import { authorizeTogether, failure, readJsonObject } from "./together-route";
+import { authorizeTogether, cardErrorStatus, failure, readJsonObject } from "./together-route";
 
 const request = (init: { method?: string; origin?: string; cookie?: string; body?: string } = {}) =>
   new NextRequest("http://localhost:3000/api/together/x", {
@@ -77,5 +77,15 @@ describe("failure and readJsonObject", () => {
     expect(await readJsonObject(request({ body: "not json" }))).toEqual({});
     expect(await readJsonObject(request({ body: "[1,2]" }))).toEqual({});
     expect(await readJsonObject(request({ body: "null" }))).toEqual({});
+  });
+});
+
+describe("cardErrorStatus", () => {
+  test("maps card errors to stable HTTP statuses", () => {
+    expect(cardErrorStatus("not_found")).toBe(404);
+    for (const error of ["invalid", "invalid_field", "field_not_available"]) expect(cardErrorStatus(error)).toBe(400);
+    for (const error of ["already_closed", "already_revealed", "reveal_pending", "access_required", "skip_not_allowed", "not_closed"]) {
+      expect(cardErrorStatus(error)).toBe(409);
+    }
   });
 });

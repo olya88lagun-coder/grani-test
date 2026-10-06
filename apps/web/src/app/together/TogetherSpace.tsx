@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   formatAccessUntil,
@@ -13,6 +12,8 @@ import {
   type SpaceView,
 } from "@/lib/together-view";
 import { callApi, LOGIN_AGAIN_URL, readSpace } from "./client";
+import { PaymentForm } from "./PaymentForm";
+import { TogetherCards } from "./TogetherCards";
 
 const BUSY_RETRY_MS = 1000;
 const BUSY_RETRY_LIMIT = 3;
@@ -21,6 +22,7 @@ const PRICE = "599 ₽";
 type Props = { initial: SpaceView | null; firstName: string; purchaseId: string | null };
 
 const names = (space: SpaceView) => space.members.map((member) => member.displayName).join(" и ");
+const partnerName = (space: SpaceView) => space.members.find((member) => member.role !== space.myRole)?.displayName ?? "Партнёр";
 
 export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
   const [space, setSpace] = useState<SpaceView | null>(initial);
@@ -164,6 +166,8 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
       await refresh();
     });
 
+  const refreshSpace = useCallback(() => void refresh(), [refresh]);
+
   const screen = spaceScreen(space);
   const outcome = purchase ? purchaseOutcome(purchase, space) : null;
 
@@ -227,28 +231,21 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
       {screen === "ready" && space && (
         <section className="card stack">
           <h1 className="display">Вы теперь вдвоём</h1>
-          <p className="lead">{names(space)} подтвердили участие.</p>
-          {space.access.canRenew && (
-            <form
-              className="stack"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void startPayment();
-              }}
-            >
-              <h2 className="display">30 дней для вашей пары</h2>
-              <p className="lead">{PRICE} за двоих. Одна оплата открывает программу обоим участникам, автоматических списаний нет.</p>
-              <div className="stack buy-form">
-                <label className="buy-form__label" htmlFor="together-email">Электронная почта для чека</label>
-                <input id="together-email" className="buy-form__input" type="email" autoComplete="email" maxLength={254} required value={email} onChange={(event) => setEmail(event.target.value)} />
-              </div>
-              <p className="muted">Данные оплаты относятся к плательщику. Нажимая кнопку, вы соглашаетесь с <Link href="/offer">офертой</Link> и <Link href="/privacy">политикой</Link>.</p>
-              <button type="submit" className="button button--block" disabled={working}>
-                {working ? "Готовим оплату…" : `Перейти к оплате ${PRICE}`}
-              </button>
-            </form>
-          )}
+          <p className="lead">{names(space)} подтвердили участие. Три вводные карточки доступны бесплатно, а доступ на 30 дней откроется, когда дойдёте до основного маршрута.</p>
         </section>
+      )}
+
+      {space?.status === "active" && (
+        <TogetherCards
+          partnerName={partnerName(space)}
+          price={PRICE}
+          accessActive={space.access.active}
+          onGone={refreshSpace}
+          onAccessCheck={refreshSpace}
+          renderPayment={() => (
+            <PaymentForm idPrefix="together" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={`Перейти к оплате ${PRICE.replace(" ", "\u00a0")}`} workingLabel="Готовим оплату…" legal />
+          )}
+        />
       )}
 
       {(screen === "paid" || screen === "limit") && space && (
@@ -257,20 +254,10 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
           <p className="eyebrow">Доступ активен</p>
           {space.access.accessUntil && <p className="lead">Доступ действует до {formatAccessUntil(space.access.accessUntil)}. Для обоих участников, ручное продление.</p>}
           {screen === "paid" ? (
-            <form
-              className="stack"
-              onSubmit={(event) => {
-                event.preventDefault();
-                void startPayment();
-              }}
-            >
-              <div className="stack buy-form">
-                <label className="buy-form__label" htmlFor="together-email-renew">Электронная почта для чека</label>
-                <input id="together-email-renew" className="buy-form__input" type="email" autoComplete="email" maxLength={254} required value={email} onChange={(event) => setEmail(event.target.value)} />
-              </div>
-              <button type="submit" className="button button--ghost button--block" disabled={working}>Добавить ещё 30 дней</button>
+            <div className="stack">
+              <PaymentForm idPrefix="together-renew" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label="Добавить ещё 30 дней" ghost />
               <p className="muted">Продление добавляет период после текущего. История сохраняется.</p>
-            </form>
+            </div>
           ) : (
             <p className="muted">Следующий период уже оплачен. Новую оплату предложим, когда останется не больше 30 суток доступа.</p>
           )}

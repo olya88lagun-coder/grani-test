@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, jsonb, pgEnum, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
-import { REPORT_KINDS } from "@grani/core";
+import { boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable, text, timestamp, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { REPORT_KINDS, type AnswerFields, type CardSnapshot } from "@grani/core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["telegram", "vk"]);
 export const genderEnum = pgEnum("gender", ["female", "male"]);
@@ -267,6 +267,79 @@ export const togetherAccessPeriods = pgTable(
     createdAt: createdAt(),
   },
   (t) => [index("together_access_periods_space_idx").on(t.spaceId, t.startsAt), check("together_access_periods_positive", sql`${t.endsAt} > ${t.startsAt}`)],
+);
+
+export const togetherAnswerStatusEnum = pgEnum("together_answer_status", ["submitted", "skipped"]);
+export type TogetherAnswerStatus = (typeof togetherAnswerStatusEnum.enumValues)[number];
+
+// Карточка пары: снимок хранится в строке, поэтому правка каталога не меняет уже выданное
+export const togetherCards = pgTable(
+  "together_cards",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    spaceId: uuid("space_id")
+      .notNull()
+      .references(() => togetherSpaces.id, { onDelete: "cascade" }),
+    cardId: text("card_id").notNull(),
+    position: integer("position").notNull(),
+    snapshot: jsonb("snapshot").$type<CardSnapshot>().notNull(),
+    createdAt: createdAt(),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+  },
+  (t) => [
+    uniqueIndex("together_cards_space_position_uq").on(t.spaceId, t.position),
+    uniqueIndex("together_cards_space_card_uq").on(t.spaceId, t.cardId),
+    // Опора составных ключей: ответ и отметка не могут указать на карточку чужого пространства.
+    // Ограничение, а не индекс: оно создаётся вместе с таблицей, до внешних ключей
+    unique("together_cards_id_space_uq").on(t.id, t.spaceId),
+    // У пары не больше одной открытой карточки
+    uniqueIndex("together_cards_open_uq")
+      .on(t.spaceId)
+      .where(sql`${t.closedAt} is null`),
+    check("together_cards_position_positive", sql`${t.position} >= 1`),
+  ],
+);
+
+export const togetherAnswers = pgTable(
+  "together_answers",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    cardId: uuid("card_id").notNull(),
+    spaceId: uuid("space_id").notNull(),
+    userId: uuid("user_id").notNull(),
+    status: togetherAnswerStatusEnum("status").notNull(),
+    fields: jsonb("fields").$type<AnswerFields>().notNull().default({}),
+    revision: integer("revision").notNull().default(1),
+    createdAt: createdAt(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    foreignKey({ columns: [t.cardId, t.spaceId], foreignColumns: [togetherCards.id, togetherCards.spaceId] }).onDelete("cascade"),
+    // Автор — участник именно этого пространства
+    foreignKey({ columns: [t.spaceId, t.userId], foreignColumns: [togetherMembers.spaceId, togetherMembers.userId] }),
+    uniqueIndex("together_answers_card_user_uq").on(t.cardId, t.userId),
+    check("together_answers_revision_positive", sql`${t.revision} >= 1`),
+    check("together_answers_skipped_empty", sql`${t.status} <> 'skipped' or ${t.fields} = '{}'::jsonb`),
+  ],
+);
+
+// Личные отметки: «я посмотрел итог» (строка есть ⇔ посмотрел) и «мы это сделали вместе».
+// Нужны отдельно от ответов: у того, кто не отвечал, строки ответа нет, а итог пропуска партнёра показать нужно
+export const togetherCardMarks = pgTable(
+  "together_card_marks",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    cardId: uuid("card_id").notNull(),
+    spaceId: uuid("space_id").notNull(),
+    userId: uuid("user_id").notNull(),
+    seenAt: timestamp("seen_at", { withTimezone: true }).notNull(),
+    doneAt: timestamp("done_at", { withTimezone: true }),
+  },
+  (t) => [
+    foreignKey({ columns: [t.cardId, t.spaceId], foreignColumns: [togetherCards.id, togetherCards.spaceId] }).onDelete("cascade"),
+    foreignKey({ columns: [t.spaceId, t.userId], foreignColumns: [togetherMembers.spaceId, togetherMembers.userId] }),
+    uniqueIndex("together_card_marks_card_user_uq").on(t.cardId, t.userId),
+  ],
 );
 
 export const reports = pgTable(

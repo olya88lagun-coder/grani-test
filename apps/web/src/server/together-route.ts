@@ -10,6 +10,9 @@ export type TogetherContext = { user: UserRecord; deps: TogetherDeps };
 
 export const failure = (error: string, status: number) => NextResponse.json({ ok: false, error }, { status });
 
+// Один набор кодов ошибок карточек для всех маршрутов: нет доступа к карточке — 404, неверный ввод — 400, конфликт состояния — 409
+export const cardErrorStatus = (error: string): number => (error === "not_found" ? 404 : error === "invalid" || error === "invalid_field" || error === "field_not_available" ? 400 : 409);
+
 // Общая проверка маршрутов «Вдвоём»: источник запроса для изменяющих, лимит, сессия. Права на данные проверяет сервис по userId
 export async function authorizeTogether(request: NextRequest, options: { mutating: boolean; limiter?: RateLimiter }): Promise<TogetherContext | NextResponse> {
   const login = loginDeps();
