@@ -7,6 +7,7 @@ import { startPurchase, type StartPurchaseOutcome } from "@/server/payments-serv
 import { clientKeyFromHeaders, purchasesLimiter } from "@/server/rate-limit";
 
 const STATUS: Record<Extract<StartPurchaseOutcome, { ok: false }>["error"], number> = {
+  email_required: 400,
   invalid_email: 400,
   not_found: 404,
   not_available: 409,

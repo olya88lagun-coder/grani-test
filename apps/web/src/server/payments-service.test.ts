@@ -31,7 +31,7 @@ beforeEach(async () => {
   store = new Map();
   gateway = createFakeGateway({ appUrl: APP_URL, store });
   enqueue = vi.fn<(job: GenerateJob) => Promise<void>>().mockResolvedValue(undefined);
-  deps = { db, gateway, appUrl: APP_URL, now: () => NOW, enqueueGenerate: enqueue };
+  deps = { db, gateway, appUrl: APP_URL, now: () => NOW, enqueueGenerate: enqueue, isOwner: async () => false };
   anna = await seedUserWithResult(db, { externalId: "anna" });
 });
 
@@ -78,8 +78,11 @@ describe("startPurchase", () => {
     const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
     expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ receiptEmail: "anna@example.ru" });
 
-    for (const email of [undefined, "", "anna", "anna@ru", "a b@example.ru", `${"a".repeat(250)}@example.ru`, 42]) {
-      expect(await startPurchase(deps, { userId: anna.userId, product: "chapter_money", targetId: anna.resultId, email })).toEqual({ ok: false, error: "invalid_email" });
+    for (const email of [undefined, "", "  ", 42]) {
+      expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email })).toEqual({ ok: false, error: "email_required" });
+    }
+    for (const email of ["anna", "anna@ru", "a b@example.ru", `${"a".repeat(250)}@example.ru`]) {
+      expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email })).toEqual({ ok: false, error: "invalid_email" });
     }
   });
 
@@ -88,6 +91,27 @@ describe("startPurchase", () => {
     await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: "other@example.ru" });
     const payment = store.get(paymentOf(first.ok ? first.url : ""))!;
     expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ receiptEmail: "other@example.ru" });
+  });
+
+  test("the owner gets the report for free: no payment, no email, generation starts at once", async () => {
+    deps = { ...deps, isOwner: async (userId) => userId === anna.userId };
+
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: undefined });
+
+    expect(outcome.ok).toBe(true);
+    const purchaseId = (outcome.ok ? outcome.url : "").split("/purchases/")[1]!;
+    expect(store.size).toBe(0);
+    expect(await getPurchase(db, purchaseId)).toMatchObject({ status: "succeeded", amountKopecks: 0, yookassaPaymentId: null, receiptEmail: null });
+    expect(enqueue).toHaveBeenCalledWith({ kind: "full", resultId: anna.resultId });
+    expect(await getPurchaseView(deps, { purchaseId, userId: anna.userId })).toMatchObject({ free: true });
+    // Купленное второй раз не выдаётся
+    expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: undefined })).toEqual({ ok: false, error: "not_available" });
+  });
+
+  test("the owner cannot open someone else's result for free", async () => {
+    const boris = await seedUserWithResult(db, { externalId: "boris" });
+    deps = { ...deps, isOwner: async (userId) => userId === boris.userId };
+    expect(await startPurchase(deps, { userId: boris.userId, product: "full", targetId: anna.resultId, email: undefined })).toEqual({ ok: false, error: "not_found" });
   });
 
   test("a failed payment request cancels the purchase", async () => {
@@ -169,6 +193,7 @@ describe("getPurchaseView", () => {
       status: "succeeded",
       ready: false,
       reportUrl: `/report/${anna.resultId}`,
+      free: false,
     });
     await saveReport(db, { target: { resultId: anna.resultId }, kind: "full", sections: {}, source: "fallback" });
     expect((await getPurchaseView(deps, { purchaseId, userId: anna.userId }))?.ready).toBe(true);

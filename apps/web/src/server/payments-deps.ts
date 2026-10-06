@@ -1,3 +1,4 @@
+import { hasIdentity } from "@grani/db";
 import { getDb } from "./db";
 import { getEnv, type PaymentsConfig } from "./env";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
@@ -16,7 +17,10 @@ export function paymentsDeps(): PaymentsDeps | null {
   const env = getEnv();
   const gateway = createGateway(env.payments, { appUrl: env.APP_URL, fetchFn: (input, init) => fetch(input, init) });
   if (!gateway) return null;
-  return { db: getDb(), gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate };
+  const db = getDb();
+  const owner = env.owner;
+  const isOwner = async (userId: string) => owner !== null && (await hasIdentity(db, userId, owner));
+  return { db, gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate, isOwner };
 }
 
 export function fakeGateway(): FakeGateway | null {

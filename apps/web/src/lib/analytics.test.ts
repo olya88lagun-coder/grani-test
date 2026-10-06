@@ -4,6 +4,8 @@ import {
   GOALS,
   progressGoalsCrossed,
   goalForProduct,
+  isOwnerDevice,
+  markOwnerDevice,
   METRIKA_ID,
   reachGoal,
   readChoice,
@@ -40,6 +42,21 @@ describe("cookie choice", () => {
     };
     expect(readChoice(broken)).toBeNull();
     expect(() => saveChoice(broken, "necessary")).not.toThrow();
+  });
+});
+
+describe("owner device", () => {
+  it("is unmarked by default and remembered once marked", () => {
+    const storage = memoryStorage();
+    expect(isOwnerDevice(storage)).toBe(false);
+    markOwnerDevice(storage);
+    expect(isOwnerDevice(storage)).toBe(true);
+  });
+
+  it("survives a storage that throws", () => {
+    const broken = { getItem: () => { throw new Error("denied"); }, setItem: () => { throw new Error("denied"); } };
+    expect(() => markOwnerDevice(broken)).not.toThrow();
+    expect(isOwnerDevice(broken)).toBe(false);
   });
 });
 

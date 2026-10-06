@@ -107,4 +107,10 @@ describe("purchases", () => {
     await setReceiptEmail(db, purchase.id, "new@example.ru");
     expect(await getPurchase(db, purchase.id)).toMatchObject({ receiptEmail: "new@example.ru" });
   });
+
+  test("free owner purchases need no receipt", async () => {
+    const free = await createPurchase(db, { userId: anna.userId, product: "full", target: { resultId: anna.resultId }, amountKopecks: 0 });
+    await markPurchaseSucceeded(db, free.id, PAID_AT);
+    expect(await listReceiptsToSend(db)).toEqual([]);
+  });
 });
