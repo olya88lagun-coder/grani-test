@@ -40,8 +40,8 @@ export async function reissueTogetherInvite(
   return outcome.ok ? { ok: true, inviteUrl: inviteUrl(deps, outcome.token) } : { ok: false, error: outcome.reason };
 }
 
-export async function peekTogetherInvite(deps: TogetherDeps, token: string): Promise<{ valid: boolean }> {
-  return { valid: await peekInvite(deps.db, token, deps.now()) };
+export async function peekTogetherInvite(deps: TogetherDeps, token: string, viewerId?: string): Promise<{ valid: boolean }> {
+  return { valid: await peekInvite(deps.db, token, deps.now(), viewerId) };
 }
 
 export async function requestTogetherJoin(

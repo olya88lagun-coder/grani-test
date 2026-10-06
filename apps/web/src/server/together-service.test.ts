@@ -65,6 +65,15 @@ describe("invite flow", () => {
     expect(await peekTogetherInvite(deps, token)).toEqual({ valid: false });
   });
 
+  test("the person who asked to join still sees the link as usable after a page refresh", async () => {
+    const { token } = await create();
+    await requestTogetherJoin(deps, { token, userId: boris });
+
+    expect(await peekTogetherInvite(deps, token)).toEqual({ valid: false });
+    expect(await peekTogetherInvite(deps, token, boris)).toEqual({ valid: true });
+    expect(await peekTogetherInvite(deps, token, vera)).toEqual({ valid: false });
+  });
+
   test("the inviter sees who asked, confirms, and both then see an active space", async () => {
     const { token } = await create();
     expect(await requestTogetherJoin(deps, { token, userId: boris })).toEqual({ ok: true, status: "requested" });
