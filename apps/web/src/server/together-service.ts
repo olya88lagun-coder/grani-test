@@ -8,12 +8,15 @@ import {
   getActiveSpaceForUser,
   getPendingRequest,
   peekInvite,
+  peekInviteDetails,
   reissueInvite,
   requestJoin,
   respondToRequest,
+  setInviteNote,
   type Database,
   type TogetherRole,
 } from "@grani/db";
+import { firstName } from "./friends-service";
 
 export type TogetherDeps = { db: Database; now: () => Date; appUrl: string };
 export type TogetherSpaceView = {
@@ -45,6 +48,26 @@ export async function reissueTogetherInvite(
 
 export async function peekTogetherInvite(deps: TogetherDeps, token: string, viewerId?: string): Promise<{ valid: boolean }> {
   return { valid: await peekInvite(deps.db, token, deps.now(), viewerId) };
+}
+
+export type InvitePreview = { valid: false } | { valid: true; inviterName: string; note: string | null; firstQuestion: { title: string; prompt: string } };
+
+// Что видит держатель годной ссылки до входа: имя пригласившего (только первое слово), записка и первый вопрос маршрута.
+// Остальное о паре по ссылке не раскрывается
+export async function getTogetherInvitePreview(deps: TogetherDeps, token: string, viewerId?: string): Promise<InvitePreview> {
+  const details = await peekInviteDetails(deps.db, token, deps.now(), viewerId);
+  const first = TOGETHER_TRACK[0];
+  if (!details || !first) return { valid: false };
+  return { valid: true, inviterName: firstName(details.inviterName), note: details.note, firstQuestion: { title: first.title, prompt: first.prompt } };
+}
+
+export async function setTogetherInviteNote(
+  deps: TogetherDeps,
+  p: { userId: string; note: unknown },
+): Promise<{ ok: true; note: string | null } | { ok: false; error: "invalid" | "too_long" | "not_found" | "not_pending" }> {
+  if (typeof p.note !== "string") return { ok: false, error: "invalid" };
+  const outcome = await setInviteNote(deps.db, { userId: p.userId, note: p.note });
+  return outcome.ok ? outcome : { ok: false, error: outcome.reason };
 }
 
 export async function requestTogetherJoin(

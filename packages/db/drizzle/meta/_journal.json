@@ -57,6 +57,13 @@
       "when": 1791308001100,
       "tag": "0007_together_pilot",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791312688217,
+      "tag": "0008_together_invite_note",
+      "breakpoints": true
     }
   ]
 }

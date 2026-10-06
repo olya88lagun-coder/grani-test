@@ -192,9 +192,12 @@ export const togetherInvites = pgTable(
     requestedAt: timestamp("requested_at", { withTimezone: true }),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    // Необязательная записка пригласившего: видна тому, у кого есть ссылка
+    note: text("note"),
     createdAt: createdAt(),
   },
   (t) => [
+    check("together_invites_note_length", sql`${t.note} is null or char_length(${t.note}) <= 200`),
     // Одна живая ссылка на пространство; завершённых может быть сколько угодно
     uniqueIndex("together_invites_live_uq")
       .on(t.spaceId)

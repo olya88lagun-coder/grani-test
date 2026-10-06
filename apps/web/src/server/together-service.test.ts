@@ -3,12 +3,14 @@ import { createTestDb, seedUser, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
   createTogetherSpace,
+  getTogetherInvitePreview,
   getTogetherSpaceView,
   leaveTogether,
   peekTogetherInvite,
   reissueTogetherInvite,
   requestTogetherJoin,
   respondTogetherRequest,
+  setTogetherInviteNote,
   type TogetherDeps,
 } from "./together-service";
 
@@ -153,5 +155,33 @@ describe("leaveTogether", () => {
     expect(await getTogetherSpaceView(deps, anna)).toBeNull();
     expect(await getTogetherSpaceView(deps, boris)).toBeNull();
     expect(await leaveTogether(deps, { userId: boris, acknowledged: true })).toEqual({ ok: false, error: "not_found" });
+  });
+});
+
+describe("invite preview and note", () => {
+  test("a usable link shows the inviter's first name, the note and the first question; a wrong link shows nothing", async () => {
+    const { token } = await create();
+    expect(await setTogetherInviteNote(deps, { userId: anna, note: "  Давай попробуем  " })).toEqual({ ok: true, note: "Давай попробуем" });
+
+    const preview = await getTogetherInvitePreview(deps, token);
+
+    expect(preview).toEqual({ valid: true, inviterName: "Аня", note: "Давай попробуем", firstQuestion: { title: "Замечать хорошее", prompt: expect.any(String) } });
+    expect(preview.valid && preview.firstQuestion.prompt.length).toBeGreaterThan(10);
+    expect(await getTogetherInvitePreview(deps, "nope")).toEqual({ valid: false });
+  });
+
+  test("only the first word of a long display name is shown", async () => {
+    const gleb = await seedUser(db, { externalId: "gleb", displayName: "Глеб Петров" });
+    const { token } = await create(gleb);
+
+    expect(await getTogetherInvitePreview(deps, token)).toMatchObject({ valid: true, inviterName: "Глеб", note: null });
+  });
+
+  test("the note is validated before it is stored", async () => {
+    await create();
+
+    expect(await setTogetherInviteNote(deps, { userId: anna, note: 5 })).toEqual({ ok: false, error: "invalid" });
+    expect(await setTogetherInviteNote(deps, { userId: anna, note: "я".repeat(201) })).toEqual({ ok: false, error: "too_long" });
+    expect(await setTogetherInviteNote(deps, { userId: vera, note: "чужая" })).toEqual({ ok: false, error: "not_found" });
   });
 });

@@ -104,3 +104,25 @@ test("an unusable invite link shows a neutral page and the private pages are not
   await expect(page).toHaveURL(/\/together$/);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });
+
+test("the invite page shows the inviter's first name, the note and the first question before any sign-in", async ({ browser }) => {
+  const anna = await newPage(browser);
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await anna.goto("/together");
+  await anna.getByRole("button", { name: "Создать и получить приглашение" }).click();
+  await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
+  const invitePath = new URL(await anna.getByLabel("Личная ссылка").inputValue()).pathname;
+
+  await anna.getByLabel("Записка партнёру (необязательно)").fill("Давай попробуем вместе");
+  await anna.getByRole("button", { name: "Сохранить записку" }).click();
+  await expect(anna.getByText("Записка сохранена.")).toBeVisible();
+
+  const guest = await newPage(browser);
+  await guest.goto(invitePath);
+  await expect(guest.getByText("Аня приглашает вас")).toBeVisible();
+  await expect(guest.getByText("Давай попробуем вместе")).toBeVisible();
+  await expect(guest.getByRole("heading", { name: "Первый вопрос" })).toBeVisible();
+  await expect(guest.getByRole("link", { name: "Войти и продолжить" })).toBeVisible();
+  // Фамилия и остальное имя не раскрываются
+  await expect(guest.getByText(/Аня \d/)).toHaveCount(0);
+});

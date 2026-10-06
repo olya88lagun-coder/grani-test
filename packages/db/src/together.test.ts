@@ -1,4 +1,4 @@
-import { TOGETHER_INVITE_TTL_MS } from "@grani/core";
+import { TOGETHER_INVITE_NOTE_MAX, TOGETHER_INVITE_TTL_MS } from "@grani/core";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
 import {
@@ -8,9 +8,11 @@ import {
   getPendingRequest,
   hashInviteToken,
   peekInvite,
+  peekInviteDetails,
   reissueInvite,
   requestJoin,
   respondToRequest,
+  setInviteNote,
 } from "./together";
 import { togetherInvites, togetherSpaces, users } from "./schema";
 import { createTestDb, seedUser } from "./testing";
@@ -259,5 +261,58 @@ describe("getActiveSpaceForUser", () => {
     expect(await getActiveSpaceForUser(db, anna)).not.toBeNull();
     expect(await getActiveSpaceForUser(db, vera)).toBeNull();
     expect(await getActiveSpaceForUser(db, "not-a-uuid")).toBeNull();
+  });
+});
+
+describe("invite note and preview", () => {
+  test("the inviter can leave a note, trimmed; a blank note clears it", async () => {
+    await create();
+
+    expect(await setInviteNote(db, { userId: anna, note: "  Давай попробуем вместе  " })).toEqual({ ok: true, note: "Давай попробуем вместе" });
+    expect(await setInviteNote(db, { userId: anna, note: "   " })).toEqual({ ok: true, note: null });
+  });
+
+  test("a note longer than the limit is refused and the old one stays", async () => {
+    await create();
+    await setInviteNote(db, { userId: anna, note: "Привет" });
+
+    expect(await setInviteNote(db, { userId: anna, note: "я".repeat(TOGETHER_INVITE_NOTE_MAX + 1) })).toEqual({ ok: false, reason: "too_long" });
+    expect(await setInviteNote(db, { userId: anna, note: "я".repeat(TOGETHER_INVITE_NOTE_MAX) })).toMatchObject({ ok: true });
+  });
+
+  test("only the initiator of a pending space can leave a note", async () => {
+    expect(await setInviteNote(db, { userId: vera, note: "я никто" })).toEqual({ ok: false, reason: "not_found" });
+    await makeActive();
+
+    expect(await setInviteNote(db, { userId: anna, note: "уже поздно" })).toEqual({ ok: false, reason: "not_pending" });
+    expect(await setInviteNote(db, { userId: boris, note: "я партнёр" })).toEqual({ ok: false, reason: "not_found" });
+  });
+
+  test("the preview shows the inviter's name and note for a usable link only", async () => {
+    const { token } = await create();
+    await setInviteNote(db, { userId: anna, note: "Для нас" });
+
+    expect(await peekInviteDetails(db, token, NOW)).toEqual({ inviterName: "Аня", note: "Для нас" });
+    expect(await peekInviteDetails(db, "x".repeat(24), NOW)).toBeNull();
+    expect(await peekInviteDetails(db, "bad", NOW)).toBeNull();
+    expect(await peekInviteDetails(db, token, AFTER_TTL)).toBeNull();
+  });
+
+  test("a link with a request stays visible only to the person who made the request", async () => {
+    const { token } = await create();
+    await requestJoin(db, { token, userId: boris, now: NOW });
+
+    expect(await peekInviteDetails(db, token, NOW)).toBeNull();
+    expect(await peekInviteDetails(db, token, NOW, vera)).toBeNull();
+    expect(await peekInviteDetails(db, token, NOW, boris)).toMatchObject({ inviterName: "Аня" });
+  });
+
+  test("a new link keeps the note", async () => {
+    await create();
+    await setInviteNote(db, { userId: anna, note: "Останется" });
+    const reissued = await reissueInvite(db, { userId: anna, now: NOW });
+    if (!reissued.ok) throw new Error(reissued.reason);
+
+    expect(await peekInviteDetails(db, reissued.token, NOW)).toEqual({ inviterName: "Аня", note: "Останется" });
   });
 });

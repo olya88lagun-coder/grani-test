@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { TOGETHER_INVITE_TTL_MS } from "@grani/core";
+import { TOGETHER_INVITE_NOTE_MAX, TOGETHER_INVITE_TTL_MS } from "@grani/core";
 import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import {
   togetherInvites,
@@ -23,6 +23,8 @@ export type CreateSpaceOutcome = { ok: true; spaceId: string; token: string } | 
 export type ReissueOutcome = { ok: true; token: string } | { ok: false; reason: "not_found" | "not_pending" };
 export type RequestOutcome = { ok: true; status: "requested" } | { ok: false; reason: "invalid" | "own_invite" | "already_in_space" };
 export type RespondOutcome = { ok: true; status: "accepted" | "declined" } | { ok: false; reason: "not_found" | "no_request" | "requester_unavailable" };
+export type NoteOutcome = { ok: true; note: string | null } | { ok: false; reason: "not_found" | "not_pending" | "too_long" };
+export type InvitePreview = { inviterName: string; note: string | null };
 export type CloseOutcome = { ok: true; spaceId: string } | { ok: false; reason: "not_found" };
 
 const LIVE_INVITE_STATUSES = ["open", "requested"] as const;
@@ -56,13 +58,14 @@ export async function findActiveMembership(tx: Database, userId: string, role?: 
   return row ?? null;
 }
 
-async function insertOpenInvite(tx: Database, p: { spaceId: string; inviterId: string; now: Date }): Promise<string> {
+async function insertOpenInvite(tx: Database, p: { spaceId: string; inviterId: string; now: Date; note?: string | null }): Promise<string> {
   const token = createInviteToken();
   await tx.insert(togetherInvites).values({
     spaceId: p.spaceId,
     tokenHash: hashInviteToken(token),
     inviterId: p.inviterId,
     expiresAt: new Date(p.now.getTime() + TOGETHER_INVITE_TTL_MS),
+    note: p.note ?? null,
   });
   return token;
 }
@@ -96,19 +99,55 @@ export async function reissueInvite(db: Database, p: { userId: string; now: Date
     if (!membership) return { ok: false, reason: "not_found" };
     const space = await lockSpace(tx, membership.spaceId);
     if (!space || space.status !== "pending") return { ok: false, reason: "not_pending" };
+    const [live] = await tx
+      .select({ note: togetherInvites.note })
+      .from(togetherInvites)
+      .where(and(eq(togetherInvites.spaceId, space.id), inArray(togetherInvites.status, LIVE_INVITE_STATUSES)))
+      .limit(1);
     await revokeLiveInvites(tx, space.id);
-    return { ok: true, token: await insertOpenInvite(tx, { spaceId: space.id, inviterId: p.userId, now: p.now }) };
+    return { ok: true, token: await insertOpenInvite(tx, { spaceId: space.id, inviterId: p.userId, now: p.now, note: live?.note }) };
   });
+}
+
+async function findUsableInvite(db: Database, token: string, now: Date, viewerId?: string) {
+  if (!isInviteToken(token)) return null;
+  const [invite] = await db.select().from(togetherInvites).where(eq(togetherInvites.tokenHash, hashInviteToken(token))).limit(1);
+  if (!invite || invite.expiresAt <= now) return null;
+  if (invite.status === "open") return invite;
+  return invite.status === "requested" && viewerId !== undefined && invite.requesterUserId === viewerId ? invite : null;
 }
 
 // Проверка ссылки: годна открытая и непросроченная; причину отказа не раскрываем.
 // Для вошедшего человека, уже отправившего запрос по этой ссылке, она остаётся годной: после обновления страницы он видит своё ожидание
 export async function peekInvite(db: Database, token: string, now: Date, viewerId?: string): Promise<boolean> {
-  if (!isInviteToken(token)) return false;
-  const [invite] = await db.select().from(togetherInvites).where(eq(togetherInvites.tokenHash, hashInviteToken(token))).limit(1);
-  if (!invite || invite.expiresAt <= now) return false;
-  if (invite.status === "open") return true;
-  return invite.status === "requested" && viewerId !== undefined && invite.requesterUserId === viewerId;
+  return (await findUsableInvite(db, token, now, viewerId)) !== null;
+}
+
+// Что видит держатель годной ссылки: имя пригласившего и записка. Для негодной ссылки — null, как и в peekInvite
+export async function peekInviteDetails(db: Database, token: string, now: Date, viewerId?: string): Promise<InvitePreview | null> {
+  const invite = await findUsableInvite(db, token, now, viewerId);
+  if (!invite) return null;
+  const inviter = await getUser(db, invite.inviterId);
+  return inviter ? { inviterName: inviter.displayName, note: invite.note } : null;
+}
+
+// Записку можно менять, пока пространство ждёт партнёра. Пустая записка стирает прежнюю
+export async function setInviteNote(db: Database, p: { userId: string; note: string }): Promise<NoteOutcome> {
+  const note = p.note.trim();
+  if ([...note].length > TOGETHER_INVITE_NOTE_MAX) return { ok: false, reason: "too_long" };
+  return db.transaction(async (tx): Promise<NoteOutcome> => {
+    await lockUser(tx, p.userId);
+    const membership = await findActiveMembership(tx, p.userId, "initiator");
+    if (!membership) return { ok: false, reason: "not_found" };
+    const space = await lockSpace(tx, membership.spaceId);
+    if (!space || space.status !== "pending") return { ok: false, reason: "not_pending" };
+    const value = note === "" ? null : note;
+    await tx
+      .update(togetherInvites)
+      .set({ note: value })
+      .where(and(eq(togetherInvites.spaceId, space.id), inArray(togetherInvites.status, LIVE_INVITE_STATUSES)));
+    return { ok: true, note: value };
+  });
 }
 
 export async function requestJoin(db: Database, p: { token: string; userId: string; now: Date }): Promise<RequestOutcome> {

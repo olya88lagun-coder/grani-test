@@ -9,6 +9,8 @@ export const TOGETHER_PERIOD_DAYS = 30;
 export const TOGETHER_PRICE_KOPECKS = 59_900;
 export const TOGETHER_MAX_STAGE = 12;
 export const TOGETHER_INVITE_TTL_DAYS = 7;
+// Записка пригласившего, которую партнёр видит на странице приглашения
+export const TOGETHER_INVITE_NOTE_MAX = 200;
 
 const DAY_MS = 86_400_000;
 const SECOND_MS = 1000;

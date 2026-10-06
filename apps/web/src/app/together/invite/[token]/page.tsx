@@ -3,9 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
-import { peekTogetherInvite } from "@/server/together-service";
+import { getTogetherInvitePreview } from "@/server/together-service";
 import { currentUser } from "@/server/viewer";
 import { InviteJoin } from "../../InviteJoin";
+import "../../together-cards.css";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,8 @@ export default async function TogetherInvitePage({ params }: { params: Promise<{
   const { token } = await params;
   if (getEnv().together.mode === "off") notFound();
   const user = await currentUser();
-  const { valid } = await peekTogetherInvite({ db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL }, token, user?.id);
+  const preview = await getTogetherInvitePreview({ db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL }, token, user?.id);
+  const valid = preview.valid;
 
   return (
     <main className="page stack" data-palette="pair">
@@ -26,6 +28,15 @@ export default async function TogetherInvitePage({ params }: { params: Promise<{
           <h1 className="display">Эта ссылка сейчас недоступна</h1>
           <p className="lead">Она могла истечь, быть заменена или уже использована. Попросите партнёра отправить новое приглашение.</p>
           <Link className="button button--block" href="/together">Вернуться во Вдвоём</Link>
+        </section>
+      )}
+      {preview.valid && (
+        <section className="card stack">
+          <p className="eyebrow">{preview.inviterName} приглашает вас</p>
+          {preview.note && <blockquote className="tc-flow">{preview.note}</blockquote>}
+          <h2 className="display">Первый вопрос</h2>
+          <p className="lead">{preview.firstQuestion.prompt}</p>
+          <p className="muted">Отвечать будете каждый сам: ответ партнёра откроется, когда ответите вы оба.</p>
         </section>
       )}
       {valid && !user && (

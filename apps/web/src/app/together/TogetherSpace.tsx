@@ -1,5 +1,6 @@
 "use client";
 
+import { TOGETHER_INVITE_NOTE_MAX } from "@grani/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   formatAccessUntil,
@@ -35,6 +36,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
   const [pollExhausted, setPollExhausted] = useState(false);
   const [email, setEmail] = useState("");
   const [reissuing, setReissuing] = useState(false);
+  const [note, setNote] = useState("");
   const [leaving, setLeaving] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
   const linkRef = useRef<HTMLInputElement>(null);
@@ -114,6 +116,20 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
       setInviteUrl(result.body.inviteUrl);
       setReissuing(false);
       setMessage("Новая ссылка готова. Прежняя больше не работает.");
+    });
+
+  const saveNote = () =>
+    run(async () => {
+      const result = await callApi<{ note: string | null }>("/api/together/invite/note", { method: "PUT", body: { note } });
+      if (result.status === 401) return void (window.location.href = LOGIN_AGAIN_URL);
+      if (!result.ok) {
+        const failure = startErrorMessage(result.body.error ?? "");
+        setError(failure.text);
+        if (failure.reload) await refresh();
+        return;
+      }
+      setNote(result.body.note ?? "");
+      setMessage(result.body.note ? "Записка сохранена. Партнёр увидит её на странице приглашения." : "Записка убрана.");
     });
 
   const respond = (accept: boolean) =>
@@ -212,6 +228,20 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
               {inviteUrl ? "Выпустить новую ссылку" : "Создать новую ссылку"}
             </button>
           )}
+          <form
+            className="stack"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void saveNote();
+            }}
+          >
+            <div className="stack buy-form">
+              <label className="buy-form__label" htmlFor="together-note">Записка партнёру (необязательно)</label>
+              <textarea id="together-note" className="buy-form__input" rows={3} maxLength={TOGETHER_INVITE_NOTE_MAX} value={note} onChange={(event) => setNote(event.target.value)} />
+            </div>
+            <button type="submit" className="button button--ghost button--block" disabled={working}>Сохранить записку</button>
+            <p className="muted">Партнёр увидит записку и ваше имя на странице приглашения. Ранее сохранённая записка остаётся, пока вы не замените её. Пустое поле стирает её.</p>
+          </form>
           <button type="button" className="button button--ghost button--block" disabled={working} onClick={() => run(refresh)}>Обновить статус</button>
         </section>
       )}

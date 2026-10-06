@@ -14,6 +14,9 @@ export const failure = (error: string, status: number) => NextResponse.json({ ok
 // Один набор кодов ошибок карточек для всех маршрутов: нет доступа к карточке — 404, неверный ввод — 400, конфликт состояния — 409
 export const cardErrorStatus = (error: string): number => (error === "not_found" ? 404 : error === "invalid" || error === "invalid_field" || error === "field_not_available" ? 400 : 409);
 
+export const noteErrorStatus = (error: "invalid" | "too_long" | "not_found" | "not_pending"): number =>
+  error === "not_found" ? 404 : error === "not_pending" ? 409 : 400;
+
 export const pilotErrorStatus = (error: "invalid_code" | "limit_reached" | "unavailable"): number => (error === "invalid_code" ? 403 : error === "limit_reached" ? 409 : 404);
 
 // Общая проверка маршрутов «Вдвоём»: источник запроса для изменяющих, лимит, сессия, допуск к закрытому пилоту.

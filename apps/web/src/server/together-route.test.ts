@@ -14,7 +14,7 @@ vi.mock("./deps", () => ({
 }));
 
 import { createRateLimiter } from "./rate-limit";
-import { authorizeTogether, cardErrorStatus, failure, pilotErrorStatus, readJsonObject } from "./together-route";
+import { authorizeTogether, cardErrorStatus, failure, noteErrorStatus, pilotErrorStatus, readJsonObject } from "./together-route";
 
 const request = (init: { method?: string; origin?: string; cookie?: string; body?: string } = {}) =>
   new NextRequest("http://localhost:3000/api/together/x", {
@@ -147,5 +147,14 @@ describe("pilotErrorStatus", () => {
     expect(pilotErrorStatus("invalid_code")).toBe(403);
     expect(pilotErrorStatus("limit_reached")).toBe(409);
     expect(pilotErrorStatus("unavailable")).toBe(404);
+  });
+});
+
+describe("noteErrorStatus", () => {
+  test("a bad note is 400, a missing space is 404, a space that is no longer waiting is a conflict", () => {
+    expect(noteErrorStatus("invalid")).toBe(400);
+    expect(noteErrorStatus("too_long")).toBe(400);
+    expect(noteErrorStatus("not_found")).toBe(404);
+    expect(noteErrorStatus("not_pending")).toBe(409);
   });
 });

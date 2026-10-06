@@ -75,8 +75,13 @@ describe("startErrorMessage", () => {
     expect(startErrorMessage("unauthorized")).toMatchObject({ login: true });
   });
 
+  test("a note that is too long names the limit; a changed space asks for a reload", () => {
+    expect(startErrorMessage("too_long").text).toContain("200");
+    expect(startErrorMessage("not_pending")).toMatchObject({ reload: true });
+  });
+
   test("known and unknown errors always carry a readable text without the raw code", () => {
-    for (const code of ["busy", "not_available", "payments_unavailable", "payment_failed", "invalid_email", "rate_limited", "something_else"]) {
+    for (const code of ["busy", "not_available", "payments_unavailable", "payment_failed", "invalid_email", "rate_limited", "too_long", "not_pending", "something_else"]) {
       const { text } = startErrorMessage(code);
       expect(text.length).toBeGreaterThan(10);
       expect(text).not.toContain(code);

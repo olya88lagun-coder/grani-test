@@ -1,6 +1,8 @@
 // Чистая логика экранов «Вдвоём»: какой экран показать по ответам сервера. Права и состояние всегда подтверждает сервер,
 // здесь только выбор представления; клиентским флагам доступ не доверяется
 
+import { TOGETHER_INVITE_NOTE_MAX } from "@grani/core";
+
 export type TogetherRole = "initiator" | "partner";
 export type SpaceView = {
   status: "pending" | "active";
@@ -43,6 +45,8 @@ const ACTION_ERRORS: Readonly<Record<string, ActionError>> = {
   payment_failed: { text: "Не удалось подготовить оплату. Деньги не списаны, попробуйте ещё раз." },
   invalid_email: { text: "Проверьте адрес электронной почты для чека." },
   rate_limited: { text: "Слишком много попыток. Подождите минуту и повторите." },
+  too_long: { text: `Записка длиннее ${TOGETHER_INVITE_NOTE_MAX} символов. Сократите её.` },
+  not_pending: { text: "Пространство уже изменилось. Обновляем данные.", reload: true },
 };
 const FALLBACK_ERROR: ActionError = { text: "Не получилось выполнить действие. Проверьте соединение и попробуйте снова." };
 
