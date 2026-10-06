@@ -5,7 +5,9 @@ import { getEnv } from "@/server/env";
 import { firstName } from "@/server/friends-service";
 import { getTogetherSpaceView } from "@/server/together-service";
 import { currentUser } from "@/server/viewer";
+import { SeasonRoadmap } from "./SeasonRoadmap";
 import { TogetherSpace } from "./TogetherSpace";
+import "./together-cards.css";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +33,7 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
       <main className="page stack" data-palette="pair">
         <p className="eyebrow">Грани · Вдвоём</p>
         <h1 className="display">Начнём с вас двоих</h1>
-        <p className="lead">Небольшие разговоры, игры и совместные занятия. Без обязательного личностного теста.</p>
+        <p className="lead">Небольшие разговоры и совместные занятия на каждый день. Без обязательного личностного теста.</p>
         <section className="card stack">
           <h2 className="display">Два аккаунта. Одна история.</h2>
           <ul className="stack">
@@ -43,6 +45,11 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
             Создать пространство для двоих
           </a>
           <p className="muted">Вход только через VK ID. Платёж не списывается автоматически.</p>
+        </section>
+        <section className="card stack">
+          <h2 className="display">Маршрут на полгода</h2>
+          <p className="lead">Каждый месяц у пары своя тема, свои вопросы и четыре свидания. Сейчас открыт первый месяц, следующие открываются по порядку.</p>
+          <SeasonRoadmap />
         </section>
       </main>
     );

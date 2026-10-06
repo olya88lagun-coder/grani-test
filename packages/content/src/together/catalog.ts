@@ -2,6 +2,7 @@ import { z } from "zod";
 import type { CardField, CardKind, CardSnapshot } from "@grani/core";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
+import month02 from "./month-02.json";
 
 const fieldSchema = z.discriminatedUnion("type", [
   z.object({ id: z.string().min(1), type: z.literal("short_text"), label: z.string().min(1), required: z.boolean(), maxLength: z.number().int().positive().max(1200) }),
@@ -49,7 +50,8 @@ export function toSnapshot(raw: unknown, kind: CardKind): CardSnapshot {
 
 const INTRO_IDS = ["intro-01", "intro-02", "intro-03"];
 // m01-d27 и m01-d28 выбирают кандидатов для карточки заботы (этап 4): в маршрут этапа 2 не входят и схемой не разбираются
-const MAIN_IDS = Array.from({ length: 26 }, (_, index) => `m01-d${String(index + 1).padStart(2, "0")}`);
+const monthIds = (month: number) => Array.from({ length: 26 }, (_, index) => `m0${month}-d${String(index + 1).padStart(2, "0")}`);
+const MAIN_IDS = monthIds(1);
 
 const find = (cards: readonly unknown[], id: string): unknown => {
   const raw = cards.find((card) => typeof card === "object" && card !== null && (card as { id?: unknown }).id === id);
@@ -62,3 +64,10 @@ export function buildTrack(introCards: readonly unknown[], monthCards: readonly 
 }
 
 export const TOGETHER_TRACK: readonly CardSnapshot[] = buildTrack(intro.cards, month01.cards);
+
+export function buildMonth(monthCards: readonly unknown[], month: number): CardSnapshot[] {
+  return monthIds(month).map((id) => toSnapshot(find(monthCards, id), "main"));
+}
+
+// Месяц 2 написан и проверяется схемой, но в маршрут пока не входит: его открытие по прохождению первого месяца решается отдельно
+export const TOGETHER_MONTH_2: readonly CardSnapshot[] = buildMonth(month02.cards, 2);

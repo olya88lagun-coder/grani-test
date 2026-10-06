@@ -40,3 +40,13 @@
 
 /* Шаги свидания приходят списком в подсказке: переносы строк сохраняются */
 .tc-flow { white-space: pre-line; overflow-wrap: anywhere; }
+
+/* Маршрут на полгода */
+.tc-season { display: grid; gap: 21px; margin: 0; padding: 0; list-style: none; }
+.tc-season__item { display: grid; gap: 6px; padding-top: 18px; border-top: 1px solid var(--line); }
+.tc-season__item:first-child { padding-top: 0; border-top: 0; }
+.tc-season__item p { margin: 0; }
+.tc-season__title { font-family: var(--font-display, inherit); font-size: 26px; line-height: 1.15; overflow-wrap: anywhere; }
+.tc-season__teasers { display: grid; gap: 6px; margin: 4px 0 0; padding-left: 18px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+.tc-details > summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.tc-details[open] > summary { margin-bottom: 14px; }

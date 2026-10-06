@@ -1,7 +1,8 @@
 import { describe, expect, test } from "vitest";
-import { buildTrack, toSnapshot, TOGETHER_TRACK } from "./catalog";
+import { buildTrack, toSnapshot, TOGETHER_MONTH_2, TOGETHER_TRACK } from "./catalog";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
+import month02 from "./month-02.json";
 
 const validCard = {
   id: "x-01",
@@ -99,5 +100,30 @@ describe("month 1 editorial invariants", () => {
   test("lists every card of the track in exactly one week, in order", () => {
     const days = month01.weeks.flatMap((week) => week.days);
     expect(days).toEqual(Array.from({ length: 26 }, (_, index) => index + 1));
+  });
+});
+
+describe("month 2 draft (written, not yet in the track)", () => {
+  test("passes the card schema with 26 unique main cards and the four dates in the same slots as month 1", () => {
+    expect(TOGETHER_MONTH_2).toHaveLength(26);
+    expect(new Set(TOGETHER_MONTH_2.map((card) => card.id)).size).toBe(26);
+    expect(TOGETHER_MONTH_2.every((card) => card.kind === "main" && card.skipAllowed)).toBe(true);
+    const dates = TOGETHER_MONTH_2.filter((card) => card.title.startsWith("Свидание"));
+    expect(dates.map((card) => card.id)).toEqual(["m02-d07", "m02-d13", "m02-d20", "m02-d25"]);
+    for (const card of dates) expect(card.hint, card.id).toContain("\n1. ");
+    for (const card of TOGETHER_MONTH_2) {
+      expect(card.prompt.length, card.id).toBeLessThanOrEqual(220);
+      expect(card.hint.length, card.id).toBeLessThanOrEqual(700);
+    }
+  });
+
+  test("is not part of the playable track yet and keeps its week map complete", () => {
+    expect(TOGETHER_TRACK.some((card) => card.id.startsWith("m02-"))).toBe(false);
+    expect(month02.weeks.flatMap((week) => week.days)).toEqual(Array.from({ length: 26 }, (_, index) => index + 1));
+  });
+
+  test("keeps the structured acquaintance fields that the first chapter is built from", () => {
+    const first = TOGETHER_MONTH_2[0]!;
+    expect(first.fields.map((field) => field.id)).toEqual(["answer", "approx_date", "setting", "remembered_detail", "share_in_book"]);
   });
 });

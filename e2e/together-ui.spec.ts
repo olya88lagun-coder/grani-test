@@ -24,6 +24,10 @@ test("two people go from the sign-in to a paid space through the screens", async
   // Публичная страница ведёт во вход и возвращает на себя после входа
   await anna.goto("/together");
   await expect(anna.getByRole("heading", { name: "Начнём с вас двоих" })).toBeVisible();
+  // Витрина: маршрут на полгода с вопросами из месяцев
+  await expect(anna.getByRole("heading", { name: "Маршрут на полгода" })).toBeVisible();
+  await expect(anna.getByText("Наша история")).toBeVisible();
+  await expect(anna.getByText("Свидание за 0 ₽ и 30 минут: какое?")).toBeVisible();
   await anna.getByRole("link", { name: "Создать пространство для двоих" }).click();
   await expect(anna).toHaveURL(/\/login/);
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(annaName)}`);

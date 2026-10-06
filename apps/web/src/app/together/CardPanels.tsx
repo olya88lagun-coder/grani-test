@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { partnerStatusText, type AnswerValues, type CardView } from "@/lib/together-cards-view";
+import { SeasonRoadmap } from "./SeasonRoadmap";
 
 export function CardHeader({ card }: { card: CardView }) {
   return (
@@ -185,6 +186,10 @@ export function LockedPanel({ price, children }: { price: string; children: Reac
       <h3 className="display tc-sub">Продолжите вдвоём</h3>
       <p>Три вводные карточки доступны бесплатно. Чтобы отвечать на основной маршрут, откройте доступ для пары: 30 дней, {price} за двоих, без автоматических списаний.</p>
       {children}
+      <details className="tc-details">
+        <summary>Что вас ждёт дальше</summary>
+        <SeasonRoadmap compact />
+      </details>
     </section>
   );
 }
@@ -194,7 +199,8 @@ export function EndPanel({ total }: { total: number }) {
     <section className="tc-paper stack">
       <p className="eyebrow">{total} карточек позади</p>
       <h3 className="display tc-sub" tabIndex={-1} data-card-heading>Вы прошли этот маршрут</h3>
-      <p>В истории остались ваши ответы и пропуски. Новые карточки появятся позже.</p>
+      <p>В истории остались ваши ответы и пропуски. Следующие месяцы откроются по порядку, вот что дальше:</p>
+      <SeasonRoadmap from={2} compact />
     </section>
   );
 }
