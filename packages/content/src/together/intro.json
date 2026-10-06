@@ -1,0 +1,52 @@
+{
+  "cards": [
+    {
+      "id": "intro-01",
+      "semanticKey": "intro.notice_good.1",
+      "version": 1,
+      "title": "Замечать хорошее",
+      "estimatedMinutes": 5,
+      "prompt": "Какой небольшой поступок партнёра недавно сделал ваш день приятнее?",
+      "hint": "Вспомните конкретный момент. Одного-двух предложений достаточно.",
+      "fields": [
+        { "id": "answer", "type": "short_text", "label": "Какой небольшой поступок партнёра недавно сделал ваш день приятнее?", "required": true, "maxLength": 1200 },
+        { "id": "share_in_book", "type": "boolean", "label": "Хочу выбрать свой ответ для будущей книги", "required": false, "availableAt": "after_reveal" }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Прочитайте ответы и поблагодарите друг друга за эти моменты.",
+      "skipAllowed": true
+    },
+    {
+      "id": "intro-02",
+      "semanticKey": "intro.care_language.2",
+      "version": 1,
+      "title": "Забота на вашем языке",
+      "estimatedMinutes": 7,
+      "prompt": "Какое маленькое действие поможет вам почувствовать заботу на этой неделе?",
+      "hint": "Выберите что-то простое и посильное: прогулку, сообщение, помощь или время вместе.",
+      "fields": [
+        { "id": "answer", "type": "short_text", "label": "Какое маленькое действие поможет вам почувствовать заботу на этой неделе?", "required": true, "maxLength": 1200 },
+        { "id": "share_in_book", "type": "boolean", "label": "Хочу выбрать свой ответ для будущей книги", "required": false, "availableAt": "after_reveal" }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите по одному действию из ответов и договоритесь, когда попробуете их.",
+      "skipAllowed": true
+    },
+    {
+      "id": "intro-03",
+      "semanticKey": "intro.our_story.3",
+      "version": 1,
+      "title": "Момент из нашей истории",
+      "estimatedMinutes": 10,
+      "prompt": "Какой момент из начала ваших отношений хочется сохранить?",
+      "hint": "Можно вспомнить встречу, разговор или небольшой смешной эпизод. Любой вопрос можно пропустить.",
+      "fields": [
+        { "id": "answer", "type": "short_text", "label": "Какой момент из начала ваших отношений хочется сохранить?", "required": true, "maxLength": 1200 },
+        { "id": "share_in_book", "type": "boolean", "label": "Хочу выбрать свой ответ для будущей книги", "required": false, "availableAt": "after_reveal" }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Поделитесь воспоминаниями. Каждый может выбрать свой ответ для черновика книги.",
+      "skipAllowed": true
+    }
+  ]
+}
