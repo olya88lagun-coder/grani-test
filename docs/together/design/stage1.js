@@ -29,9 +29,9 @@ function login(){
 const next=q.get("target")==="public"?"public":provider||actor==="partner"?"public":"create";
 let body='<h2>Ваш собственный аккаунт</h2><p>Для каждого участника — свой вход. Это нужно, чтобы личные ответы и материалы оставались под вашим контролем.</p>';
 if(!authReady)body+='<label class="s1-check"><input id="consentInput" type="checkbox" '+(agreed?'checked':'')+'><span>Я соглашаюсь на <a href="/consent" data-legal>обработку персональных данных</a> в соответствии с <a href="/privacy" data-legal>политикой</a>.</span></label>'+btn(busy?'Сохраняем согласие…':'Продолжить','consent',false,!agreed||busy);
-else body+='<div class="stack">'+btn('Войти через VK ID','login-vk')+btn('Войти через Telegram','login-telegram',true)+'</div><p class="s1-mini">После входа вернём вас к '+(next==="public"?'приглашению.':'созданию пары.')+'</p>';
+else body+='<div class="stack">'+btn('Войти через VK ID','login-vk')+'</div><p class="s1-mini">После входа вернём вас к '+(next==="public"?'приглашению.':'созданию пары.')+'</p>';
 if(error)body+='<p class="s1-error" role="alert">'+escape(error)+'</p>';
-return layout(copyIntro('Вход во Вдвоём','Один шаг до начала','Можно использовать ВКонтакте или Telegram. Проходить тест «Грани» не нужно.'),panel(body));
+return layout(copyIntro('Вход во Вдвоём','Один шаг до начала','Вход только через VK ID. Проходить тест «Грани» не нужно.'),panel(body));
 }
 function create(){return layout(copyIntro('Создание пространства','Анна, начнём с двоих','Вы создадите пространство, а затем отправите партнёру личную ссылку.','<div class="row">'+btn(busy?'Создаём пространство…':'Создать и получить приглашение','create',false,busy)+'</div><p class="s1-info">Сначала подтвердите участие обоих. До этого оплату не предлагаем.</p>'),panel(mark()+'<h2>Место для вашей истории</h2><ul class="s1-list"><li>У каждого свой аккаунт.</li><li>В общее пространство входят двое.</li><li>Оплата после знакомства — одна за пару.</li></ul>'));}
 function invite(lost=false){return layout(copyIntro('Приглашение партнёра','Теперь пригласите своего человека','Отправьте ссылку лично. Когда партнёр войдёт и отправит запрос, вы подтвердите его имя.'),panel('<div class="s1-tag"><span class="s1-dot"></span>Ожидаем запрос партнёра</div>'+mark()+'<h2>'+(lost?'Получить новую ссылку':'Ваше приглашение готово')+'</h2>'+(lost?'<p>Мы не можем восстановить прежнюю ссылку. Можно выпустить новую — старая перестанет работать.</p>'+btn('Создать новую ссылку','reissue'):'<label><span class="s1-label">Личная ссылка · вымышленный пример</span><input id="inviteLink" class="s1-input" readonly value="'+inviteURL+'"></label><div class="row">'+btn('Скопировать ссылку','copy')+btn('Обновить статус','refresh-invite',true)+'</div><p id="copyStatus" class="s1-mini" role="status"></p><p class="s1-mini">Приглашение действует 7 суток. Сохраните ссылку сейчас: при следующем входе она не будет показана повторно.</p>'+link('Выпустить новую ссылку','reissue-warning'))));}
@@ -83,7 +83,7 @@ switch(b.dataset.action){
 case 'start':provider="";actor='initiator';go('login');break;
 case 'home':go('start');break;case 'reset':location.href='?view=start';break;
 case 'consent':if(!agreed)return;log('consent');authReady=true;render();break;
-case 'login-vk':case 'login-telegram':logged=true;log(b.dataset.action);go(actor==='partner'?'public':'create');break;
+case 'login-vk':logged=true;log(b.dataset.action);go(actor==='partner'?'public':'create');break;
 case 'create':hadLink=true;mutate('create-space','invite');break;
 case 'copy':copy();break;case 'refresh-invite':announce('В макете пока нет нового запроса.');document.querySelector('#copyStatus').textContent='Пока ждём запрос партнёра.';break;
 case 'reissue-warning':modal('Выпустить новое приглашение?','Прежняя ссылка перестанет работать. Новую нужно отправить партнёру.','reissue','Да, выпустить новую');break;
