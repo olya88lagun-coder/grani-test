@@ -50,6 +50,12 @@ describe("checkAnswerFields", () => {
     }
   });
 
+  test("rejects characters the database cannot store: NUL and lone surrogates", () => {
+    expect(checkAnswerFields(card, { answer: "секрет\u0000" }, false)).toEqual({ ok: false, reason: "invalid_field", field: "answer" });
+    expect(checkAnswerFields(card, { answer: "обрыв\ud83d" }, false)).toEqual({ ok: false, reason: "invalid_field", field: "answer" });
+    expect(checkAnswerFields(card, { answer: "пара 😀 цела" }, false).ok).toBe(true);
+  });
+
   test("allows an after-reveal field only once the answers are revealed, even when it is false", () => {
     expect(checkAnswerFields(card, { answer: "a", share_in_book: false }, false)).toEqual({ ok: false, reason: "field_not_available", field: "share_in_book" });
     expect(checkAnswerFields(card, { answer: "a", share_in_book: true }, true)).toEqual({ ok: true, fields: { answer: "a", share_in_book: true } });

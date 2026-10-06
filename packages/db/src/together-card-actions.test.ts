@@ -106,6 +106,19 @@ describe("submitAnswer", () => {
     expect((await viewOf(boris)).card?.partner).toMatchObject({ edited: true, fields: { answer: "исправленный" } });
   });
 
+  test("ticking a boolean after the reveal does not mark the text as edited, a text change does", async () => {
+    const id = await currentId();
+    await reveal(id);
+
+    expect(await put(anna, id, { answer: "ответ Ани", share_in_book: true })).toEqual({ ok: true, state: "edited", revealed: null });
+    expect(await answerRow(id, anna)).toMatchObject([{ revision: 1, fields: { answer: "ответ Ани", share_in_book: true } }]);
+    expect((await viewOf(boris)).card?.partner).toMatchObject({ edited: false });
+
+    await put(anna, id, { answer: "новый текст", share_in_book: true });
+    expect(await answerRow(id, anna)).toMatchObject([{ revision: 2 }]);
+    expect((await viewOf(boris)).card?.partner).toMatchObject({ edited: true });
+  });
+
   test("a repeated submit after the reveal never creates a second next card", async () => {
     const id = await currentId();
     await reveal(id);
@@ -219,6 +232,30 @@ describe("skipCard", () => {
     expect(await answerRow(id, boris)).toMatchObject([{ status: "submitted", fields: { answer: SECRET } }]);
     expect(JSON.stringify(await viewOf(anna))).not.toContain(SECRET);
     expect((await viewOf(boris)).card).toMatchObject({ position: 1, state: "skipped", mine: { fields: { answer: SECRET } }, partner: { status: "skipped" } });
+  });
+
+  test("a paid card cannot be skipped without access, so locked content is not lost", async () => {
+    for (let i = 0; i < 2; i++) {
+      const introId = await currentId();
+      await reveal(introId);
+      await proceed(anna, introId);
+      await proceed(boris, introId);
+    }
+    const mainId = await currentId();
+
+    expect(await skip(anna, mainId)).toEqual({ ok: false, reason: "access_required" });
+    expect((await viewOf(anna)).card).toMatchObject({ position: 3, state: "answer" });
+
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: NOW });
+    expect(await skip(anna, mainId)).toEqual({ ok: true });
+  });
+
+  test("a skip is refused while the previous result is still unseen", async () => {
+    const first = await currentId();
+    await reveal(first);
+    const second = (await cardRows()).find((card) => card.position === 2)!.id;
+
+    expect(await skip(anna, second)).toEqual({ ok: false, reason: "reveal_pending" });
   });
 
   test("a card that forbids skipping refuses it", async () => {

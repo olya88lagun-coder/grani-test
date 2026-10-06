@@ -80,7 +80,7 @@ export async function deleteTogetherDraft(
 export async function skipTogetherCard(
   deps: TogetherDeps,
   p: { userId: string; cardId: string },
-): Promise<{ ok: true } | { ok: false; error: "not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" }> {
+): Promise<{ ok: true } | { ok: false; error: "not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required" }> {
   const outcome = await skipCard(deps.db, { userId: p.userId, cardId: p.cardId, track: TOGETHER_TRACK, now: deps.now() });
   return outcome.ok ? outcome : { ok: false, error: outcome.reason };
 }

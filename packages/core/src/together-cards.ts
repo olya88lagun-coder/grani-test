@@ -50,6 +50,8 @@ export function checkAnswerFields(card: CardSnapshot, input: unknown, revealed: 
       continue;
     }
     if (typeof value !== "string") return invalid(field.id);
+    // NUL и одиночные суррогаты база (jsonb) не принимает, а её ошибка цитирует начало текста: отсекаем до записи
+    if (value.includes("\u0000") || /\p{Cs}/u.test(value)) return invalid(field.id);
     const text = value.trim();
     if (text === "") {
       if (field.required) return invalid(field.id);

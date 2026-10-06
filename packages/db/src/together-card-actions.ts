@@ -59,9 +59,12 @@ export async function submitAnswer(
       const existing = await readAnswer(tx, card.id, p.userId);
       // Ревизия растёт только при настоящем изменении: иначе у партнёра появится ложная отметка «изменено»
       if (existing && !isDeepStrictEqual(existing.fields, check.fields)) {
+        // Отметка «изменено» и устаревание выбора для книги — про текст; галочка «в книгу» ревизию не меняет
+        const textIds = card.snapshot.fields.filter((field) => field.type === "short_text").map((field) => field.id);
+        const textChanged = textIds.some((id) => existing.fields[id] !== check.fields[id]);
         await tx
           .update(togetherAnswers)
-          .set({ fields: check.fields, revision: sql`${togetherAnswers.revision} + 1`, updatedAt: p.now })
+          .set({ fields: check.fields, updatedAt: p.now, ...(textChanged ? { revision: sql`${togetherAnswers.revision} + 1` } : {}) })
           .where(and(eq(togetherAnswers.cardId, card.id), eq(togetherAnswers.userId, p.userId)));
       }
       return { ok: true, state: "edited", revealed: null };
@@ -106,11 +109,15 @@ export async function deleteDraft(
 export async function skipCard(
   db: Database,
   p: { userId: string; cardId: string; track: readonly CardSnapshot[]; now: Date },
-): Promise<{ ok: true } | Failure<"not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed">> {
-  return inCard<{ ok: true } | Failure<"already_closed" | "reveal_pending" | "skip_not_allowed">>(db, p, async (tx, context, card) => {
+): Promise<{ ok: true } | Failure<"not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required">> {
+  return inCard<{ ok: true } | Failure<"already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required">>(db, p, async (tx, context, card) => {
     if (card.closedAt !== null) return { ok: false, reason: "already_closed" };
     if (await pendingCardFor(tx, context.spaceId, p.userId)) return { ok: false, reason: "reveal_pending" };
     if (!card.snapshot.skipAllowed) return { ok: false, reason: "skip_not_allowed" };
+    // Платную карточку без доступа пропустить нельзя: пропущенное не возвращается, и пара потеряла бы контент до оплаты
+    if (card.snapshot.kind === "main" && !(await answerStatuses(tx, card.id)).has(p.userId) && !(await hasAccess(tx, context.spaceId, p.now))) {
+      return { ok: false, reason: "access_required" };
+    }
     // Свой прежний ответ затирается: пропуск не оставляет текста; ответ партнёра не трогаем и не раскрываем
     await tx
       .insert(togetherAnswers)
