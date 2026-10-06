@@ -48,7 +48,11 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(anna.getByText("Борис ответил")).toBeVisible();
 
   // Выбор для книги сохраняется и не ставит партнёру отметку «изменено»
-  await anna.getByLabel("Хочу выбрать свой ответ для будущей книги").check();
+  // Галочка меняется только после ответа сервера, поэтому click и ожидание, а не check()
+  await anna.getByLabel("Хочу выбрать свой ответ для будущей книги").click();
+  await expect(anna.getByLabel("Хочу выбрать свой ответ для будущей книги")).toBeChecked();
+  // Галочка подтверждена сервером: после перезагрузки она на месте
+  await anna.reload();
   await expect(anna.getByLabel("Хочу выбрать свой ответ для будущей книги")).toBeChecked();
   await boris.reload();
   await expect(boris.getByText(secret)).toBeVisible();
@@ -115,4 +119,32 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(boris.getByRole("button", { name: "Создать и получить приглашение" })).toBeVisible();
   await anna.reload();
   await expect(anna.getByRole("button", { name: "Создать и получить приглашение" })).toBeVisible();
+});
+
+test("an edit that started before the reveal is not silently turned into an edit after it", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const anna = await signedIn(browser, uniqueName("Аня"));
+  const boris = await signedIn(browser, uniqueName("Борис"));
+  await pair(anna, boris);
+
+  await anna.goto("/together");
+  await anna.getByLabel(/Какой небольшой поступок/).fill("Первый вариант Ани");
+  await anna.getByRole("button", { name: "Отправить ответ" }).click();
+  await expect(anna.getByRole("heading", { name: "Ваш ответ на месте" })).toBeVisible();
+
+  // Аня начинает править, а Борис за это время отвечает: ответы открываются
+  await anna.getByRole("button", { name: "Изменить ответ" }).click();
+  await anna.getByLabel(/Какой небольшой поступок/).fill("Исправленный вариант Ани");
+  const current = (await (await boris.request.get("/api/together/cards/current")).json()) as { card: { id: string } };
+  expect((await boris.request.put(`/api/together/cards/${current.card.id}/answer`, { data: { fields: { answer: "Борис ответил" } }, headers: origin })).ok()).toBe(true);
+
+  // Аня возвращается на вкладку: набранный текст сохранён, о раскрытии сказано явно
+  await anna.evaluate(() => document.dispatchEvent(new Event("visibilitychange")));
+  await expect(anna.getByText(/Пока вы правили, ответы открылись\. Партнёр уже мог прочитать/)).toBeVisible();
+  await expect(anna.getByLabel(/Какой небольшой поступок/)).toHaveValue("Исправленный вариант Ани");
+
+  // Сохранение осознанное, и результат назван правдиво
+  await anna.getByRole("button", { name: "Сохранить изменения" }).click();
+  await expect(anna.getByText(/партнёр увидел прежний текст, а ваша правка отмечена как изменение/)).toBeVisible();
+  await expect(anna.getByText("Исправленный вариант Ани")).toBeVisible();
 });

@@ -238,6 +238,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
       {space?.status === "active" && (
         <TogetherCards
           partnerName={partnerName(space)}
+          price={PRICE}
           accessActive={space.access.active}
           onGone={refreshSpace}
           onAccessCheck={refreshSpace}

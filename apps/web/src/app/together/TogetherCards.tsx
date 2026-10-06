@@ -21,6 +21,7 @@ import "./together-cards.css";
 
 type Props = {
   partnerName: string;
+  price: string;
   accessActive: boolean;
   renderPayment: () => ReactNode;
   onGone: () => void;
@@ -29,11 +30,14 @@ type Props = {
 
 type Load = "loading" | "ready" | "gone" | "error";
 
+const EDITED_AFTER_REVEAL = "Пока вы правили, ответы открылись: партнёр увидел прежний текст, а ваша правка отмечена как изменение.";
+const REVEALED_DURING_EDIT = "Пока вы правили, ответы открылись. Партнёр уже мог прочитать прежний текст. Ваш набранный текст сохранён: если сохранить его, ответ будет отмечен как изменённый.";
+
 const without = <T,>(record: Record<string, T>, key: string): Record<string, T> => Object.fromEntries(Object.entries(record).filter(([name]) => name !== key));
 
 // Карточки пары. Состояние, права и ответ партнёра приходят только от сервера; здесь хранятся лишь несохранённый
 // текст формы (чтобы не потерять его при обновлении) и намерение отметить «Сделали вместе» до нажатия «Продолжить»
-export function TogetherCards({ partnerName, accessActive, renderPayment, onGone, onAccessCheck }: Props) {
+export function TogetherCards({ partnerName, price, accessActive, renderPayment, onGone, onAccessCheck }: Props) {
   const [load, setLoad] = useState<Load>("loading");
   const [card, setCard] = useState<CardView | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
@@ -43,6 +47,8 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
+  const [editStart, setEditStart] = useState<CardView["state"] | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [dialog, setDialog] = useState<"skip" | "delete" | null>(null);
   const [pollRound, setPollRound] = useState(0);
   const [pollExhausted, setPollExhausted] = useState(false);
@@ -57,14 +63,17 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
     onGone();
   }, [onGone]);
 
-  const reload = useCallback(async () => {
+  // clearError: фоновое чтение убирает устаревшее сообщение о сети, а чтение после ошибки действия его сохраняет
+  const reload = useCallback(async (clearError = false) => {
     const result = await readCurrentCard();
     if (result.ok) {
       setCard(result.body.card);
       setProgress(result.body.progress);
       setLoad("ready");
+      if (clearError) setError(null);
       return;
     }
+    focusAfterLoad.current = false;
     const failure = cardFailure(result.status, result.body.error ?? "");
     if (failure.kind === "login") window.location.href = LOGIN_AGAIN_URL;
     else if (failure.kind === "gone") gone();
@@ -82,7 +91,7 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
   // Возврат на вкладку обновляет карточку (безопасное чтение); итог партнёра не исчезает, пока не нажато «Продолжить»
   useEffect(() => {
     const onVisible = () => {
-      if (!document.hidden) void reload();
+      if (!document.hidden) void reload(true);
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
@@ -104,7 +113,7 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
         return;
       }
       attempts += 1;
-      await reload();
+      await reload(true);
       if (cancelled) return;
       if (attempts >= CARD_POLL_MAX_ATTEMPTS) {
         setPollExhausted(true);
@@ -118,6 +127,12 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
       if (timer) clearTimeout(timer);
     };
   }, [waiting, cardId, pollRound, reload]);
+
+  // Карточка сменила состояние (например, партнёр ответил): открытый диалог уже говорит неправду
+  const cardState = card?.state;
+  useEffect(() => {
+    setDialog(null);
+  }, [cardState, cardId]);
 
   // После успешного «Продолжить» фокус переходит на заголовок следующего вопроса
   useEffect(() => {
@@ -156,8 +171,10 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
     act(async () => {
       const problem = validateDraft(card, values);
       if (problem) return setFieldError(problem.message);
-      const result = await callApi(url("answer"), { method: "PUT", body: { fields: serializeAnswer(card, values, card.state === "revealed") } });
+      const result = await callApi<{ state?: string }>(url("answer"), { method: "PUT", body: { fields: serializeAnswer(card, values, card.state === "revealed") } });
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      // Правка началась до раскрытия, а сохранилась после него: партнёр уже мог прочитать прежний текст
+      if (editStart === "waiting" && result.body.state === "edited") setNotice(EDITED_AFTER_REVEAL);
       setEditing(false);
       setDrafts((current) => without(current, card.id));
       await reload();
@@ -167,14 +184,10 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
   const toggleChoice = (fieldId: string, value: boolean) =>
     card?.mine &&
     act(async () => {
-      const previous = card;
+      // Галочка меняется только после ответа сервера: успех до подтверждения не показываем
       const fields = { ...card.mine!.fields, [fieldId]: value };
-      setCard({ ...card, mine: { ...card.mine!, fields } });
       const result = await callApi(url("answer"), { method: "PUT", body: { fields: serializeAnswer(card, fields, true) } });
-      if (!result.ok) {
-        setCard(previous);
-        return fail(cardFailure(result.status, result.body.error ?? ""));
-      }
+      if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
       await reload();
     });
 
@@ -183,6 +196,8 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
       const result = await callApi(url("answer"), { method: "DELETE" });
       setDialog(null);
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      setEditing(false);
+      setDrafts((current) => without(current, card!.id));
       await reload();
     });
 
@@ -210,6 +225,8 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
   const startEdit = () => {
     if (!card?.mine) return;
     setDrafts((current) => ({ ...current, [card.id]: { ...card.mine!.fields } }));
+    setEditStart(card.state);
+    setNotice(null);
     setEditing(true);
   };
 
@@ -244,15 +261,15 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
     <div className="stack">
       <section ref={sectionRef} className="card stack">
         {progress && (
-          <div className="tc-progress" aria-label="Прогресс">
+          <div className="tc-progress">
             <span className="eyebrow">Пройдено: {progressText(progress)}</span>
-            <progress value={progress.done} max={progress.total} />
+            <progress aria-label="Пройдено карточек" value={progress.done} max={progress.total} />
           </div>
         )}
         {card ? (
           <>
             <CardHeader card={card} />
-            {card.locked && <LockedPanel>{renderPayment()}</LockedPanel>}
+            {card.locked && <LockedPanel price={price}>{renderPayment()}</LockedPanel>}
             {!card.locked && card.state === "answer" && (
               <>
                 <PartnerStatus card={card} partnerName={partnerName} />
@@ -272,7 +289,10 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
               ))}
             {card.state === "revealed" &&
               (editing ? (
-                <AnswerForm card={card} values={values} onChange={setValues} onSubmit={() => submit(values)} working={working} fieldError={fieldError} submitLabel="Сохранить изменения" onCancel={() => setEditing(false)} />
+                <>
+                  {editStart === "waiting" && <p className="tc-banner" role="status">{REVEALED_DURING_EDIT}</p>}
+                  <AnswerForm card={card} values={values} onChange={setValues} onSubmit={() => submit(values)} working={working} fieldError={fieldError} submitLabel="Сохранить изменения" onCancel={() => setEditing(false)} />
+                </>
               ) : (
                 <RevealPanel
                   card={card}
@@ -290,6 +310,7 @@ export function TogetherCards({ partnerName, accessActive, renderPayment, onGone
         ) : (
           progress && <EndPanel total={progress.total} />
         )}
+        {notice && <p role="status">{notice}</p>}
         {error && <p className="error" role="alert">{error}</p>}
       </section>
 

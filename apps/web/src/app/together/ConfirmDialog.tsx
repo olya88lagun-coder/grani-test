@@ -12,9 +12,12 @@ export function ConfirmDialog({ title, confirmLabel, cancelLabel = "Отмена
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
+    // React убирает узел раньше, чем срабатывает очистка, и браузер сам фокус не возвращает: запоминаем кнопку сами
+    const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (!dialog.open) dialog.showModal();
     return () => {
       if (dialog.open) dialog.close();
+      if (opener?.isConnected) opener.focus();
     };
   }, []);
 

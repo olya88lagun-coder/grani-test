@@ -34,7 +34,8 @@ export function CardHistory({ partnerName, onFailure }: Props) {
   const toggle = () => {
     const willOpen = !open;
     setOpen(willOpen);
-    if (willOpen && items === null) void load();
+    // Каждое открытие читает первую страницу заново: пройденная только что карточка не должна «пропасть» из списка
+    if (willOpen) void load();
   };
 
   return (

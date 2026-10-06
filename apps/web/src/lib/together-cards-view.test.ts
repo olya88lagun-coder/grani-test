@@ -74,6 +74,8 @@ describe("cardFailure", () => {
     expect(cardFailure(0, "network").text).toMatch(/Ничего не потеряно/);
     expect(cardFailure(500, "").text).toMatch(/Ничего не потеряно/);
     expect(cardFailure(409, "skip_not_allowed").text).toMatch(/нельзя пропустить/);
+    expect(cardFailure(403, "bad_origin").text).toMatch(/Сессия устарела/);
+    expect(cardFailure(400, "something_new")).toMatchObject({ kind: "none", text: expect.stringMatching(/Не получилось выполнить действие/) });
   });
 });
 

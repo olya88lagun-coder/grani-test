@@ -63,9 +63,9 @@ export function AnswerForm({ card, values, onChange, onSubmit, working, fieldErr
               {!field.required && " (необязательно)"}
             </label>
             {long ? (
-              <textarea id={id} className="buy-form__input tc-textarea" rows={5} required={field.required} maxLength={field.maxLength} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
+              <textarea id={id} className="buy-form__input tc-textarea" rows={5} required={field.required} aria-invalid={fieldError ? true : undefined} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
             ) : (
-              <input id={id} className="buy-form__input" required={field.required} maxLength={field.maxLength} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
+              <input id={id} className="buy-form__input" required={field.required} aria-invalid={fieldError ? true : undefined} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
             )}
             {field.maxLength && <p className="buy-form__hint">{[...value].length} из {field.maxLength}</p>}
           </div>
@@ -179,11 +179,11 @@ export function SkippedPanel({ card, working, onContinue }: { card: CardView; wo
   );
 }
 
-export function LockedPanel({ children }: { children: ReactNode }) {
+export function LockedPanel({ price, children }: { price: string; children: ReactNode }) {
   return (
     <section className="tc-paper stack">
       <h3 className="display tc-sub">Продолжите вдвоём</h3>
-      <p>Три вводные карточки доступны бесплатно. Чтобы отвечать на основной маршрут, откройте доступ для пары: 30 дней, 599 ₽ за двоих, без автоматических списаний.</p>
+      <p>Три вводные карточки доступны бесплатно. Чтобы отвечать на основной маршрут, откройте доступ для пары: 30 дней, {price} за двоих, без автоматических списаний.</p>
       {children}
     </section>
   );
@@ -193,7 +193,7 @@ export function EndPanel({ total }: { total: number }) {
   return (
     <section className="tc-paper stack">
       <p className="eyebrow">{total} карточек позади</p>
-      <h3 className="display tc-sub">Вы прошли этот маршрут</h3>
+      <h3 className="display tc-sub" tabIndex={-1} data-card-heading>Вы прошли этот маршрут</h3>
       <p>В истории остались ваши ответы и пропуски. Новые карточки появятся позже.</p>
     </section>
   );
