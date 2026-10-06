@@ -2,16 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { TelegramLoginButton } from "./TelegramLoginButton";
 
-type TelegramLogin = { botUsername: string; authUrl: string };
-
-export function LoginPanel({ telegram, hasPendingResult }: { telegram: TelegramLogin | null; hasPendingResult: boolean }) {
+export function LoginPanel({ hasPendingResult }: { hasPendingResult: boolean }) {
   const [agreed, setAgreed] = useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Согласие фиксируется на сервере до входа: виджет Telegram не передаёт дополнительные параметры
+  // Согласие фиксируется на сервере до входа: VK ID не передаёт дополнительные параметры
   async function confirm() {
     setError(null);
     try {
@@ -47,12 +44,9 @@ export function LoginPanel({ telegram, hasPendingResult }: { telegram: TelegramL
       )}
 
       {ready && (
-        <>
-          {telegram && <TelegramLoginButton botUsername={telegram.botUsername} authUrl={telegram.authUrl} />}
-          <a className={telegram ? "button button--ghost button--block" : "button button--block"} href="/api/auth/vk/start">
-            Войти через VK ID
-          </a>
-        </>
+        <a className="button button--block" href="/api/auth/vk/start">
+          Войти через VK ID
+        </a>
       )}
 
       {error && (

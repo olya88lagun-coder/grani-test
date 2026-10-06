@@ -22,9 +22,17 @@ import {
 import type { PaymentGateway } from "./payments/gateway";
 import { healTogetherAccess } from "./together-payments";
 
-export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateJob) => Promise<void> };
-export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "invalid_email" | "not_found" | "not_available" | "payment_failed" };
-export type PurchaseView = { id: string; product: Product; status: PurchaseStatus; ready: boolean; reportUrl: string };
+export type PaymentsDeps = {
+  db: Database;
+  gateway: PaymentGateway;
+  appUrl: string;
+  now: () => Date;
+  enqueueGenerate: (job: GenerateJob) => Promise<void>;
+  // Владелица сайта получает разборы бесплатно — без ЮKassa и без чека
+  isOwner: (userId: string) => Promise<boolean>;
+};
+export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "email_required" | "invalid_email" | "not_found" | "not_available" | "payment_failed" };
+export type PurchaseView = { id: string; product: Product; status: PurchaseStatus; ready: boolean; reportUrl: string; free: boolean };
 
 const REUSE_WINDOW_MS = 30 * 60_000;
 const MAX_EMAIL_LENGTH = 254;
@@ -85,17 +93,28 @@ async function fulfillPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
   if (outcome && !outcome.ok) console.warn("paid together access was not granted", { purchaseId: purchase.id, reason: outcome.reason });
 }
 
+// Покупка за 0 ₽ сразу оплачена: генерация ставится так же, как после настоящей оплаты
+async function grantFree(deps: PaymentsDeps, p: { userId: string; product: Product; target: ReportTarget }): Promise<string> {
+  const purchase = await createPurchase(deps.db, { userId: p.userId, product: p.product, target: p.target, amountKopecks: 0 });
+  if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await enqueuePaid(deps, purchase);
+  return new URL(`/purchases/${purchase.id}`, deps.appUrl).toString();
+}
+
 export async function startPurchase(
   deps: PaymentsDeps,
   p: { userId: string; product: unknown; targetId: unknown; email: unknown },
 ): Promise<StartPurchaseOutcome> {
-  const email = normalizeReceiptEmail(p.email);
-  if (!email) return { ok: false, error: "invalid_email" };
   if (!isProduct(p.product) || typeof p.targetId !== "string") return { ok: false, error: "not_found" };
   const product = p.product;
   const target = await resolveTarget(deps.db, p.userId, product, p.targetId);
   if (!target) return { ok: false, error: "not_found" };
   if (!canBuy(product, await listOwnedProducts(deps.db, target))) return { ok: false, error: "not_available" };
+  if (await deps.isOwner(p.userId)) return { ok: true, url: await grantFree(deps, { userId: p.userId, product, target }) };
+
+  // Почту спрашиваем только тогда, когда покупка действительно пойдёт в ЮKassa
+  if (typeof p.email !== "string" || p.email.trim() === "") return { ok: false, error: "email_required" };
+  const email = normalizeReceiptEmail(p.email);
+  if (!email) return { ok: false, error: "invalid_email" };
 
   const since = new Date(deps.now().getTime() - REUSE_WINDOW_MS);
   const open = await findOpenPurchase(deps.db, { userId: p.userId, product, target, since });
@@ -154,7 +173,8 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
 
   const target = purchaseTarget(purchase);
   const reportUrl = !target ? "/me" : "pairId" in target ? `/pair/${target.pairId}` : `/report/${target.resultId}`;
-  if (!target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: false, reportUrl };
+  const free = purchase.amountKopecks === 0;
+  if (!target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: false, reportUrl, free };
 
   const kinds = new Set((await listReports(deps.db, target)).map((report) => report.kind));
   const ready = jobsFor(purchase.product, target).every((job) => kinds.has(job.kind));
@@ -162,5 +182,5 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   if (purchase.status === "succeeded" && !ready) {
     for (const job of jobsFor(purchase.product, target)) if (!kinds.has(job.kind)) await deps.enqueueGenerate(job);
   }
-  return { id: purchase.id, product: purchase.product, status: purchase.status, ready, reportUrl };
+  return { id: purchase.id, product: purchase.product, status: purchase.status, ready, reportUrl, free };
 }

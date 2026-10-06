@@ -52,6 +52,25 @@ export function readChoice(storage: StorageLike): CookieChoice | null {
   }
 }
 
+// Устройство владелицы: отмечается на странице чеков, и Метрика на нём не загружается — свои визиты статистику не портят
+export const OWNER_DEVICE_KEY = "grani-owner-device";
+
+export function isOwnerDevice(storage: StorageLike): boolean {
+  try {
+    return storage.getItem(OWNER_DEVICE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function markOwnerDevice(storage: StorageLike): void {
+  try {
+    storage.setItem(OWNER_DEVICE_KEY, "1");
+  } catch {
+    // Хранилище недоступно — отметка не сохранится, визиты с этого устройства будут считаться
+  }
+}
+
 export function saveChoice(storage: StorageLike, choice: CookieChoice): void {
   try {
     storage.setItem(CONSENT_KEY, choice);

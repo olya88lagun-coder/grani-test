@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getDb } from "@/server/db";
 import { requireOwner } from "@/server/owner";
 import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
+import { OwnerDeviceMark } from "./OwnerDeviceMark";
 
 export const metadata: Metadata = { title: "Чеки к отправке", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -32,6 +33,7 @@ export default async function ReceiptsPage() {
             Оплаченные покупки без отправленного чека. Название услуги и сумма — как для чека в «Мой налог». После отправки нажми «Чек отправлен»:
             покупка уйдёт из списка, а почта покупателя сотрётся.
           </p>
+          <OwnerDeviceMark />
         </header>
         {receipts.length === 0 ? (
           <p className="muted">Все чеки отправлены.</p>

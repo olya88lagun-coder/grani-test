@@ -51,7 +51,6 @@ export function BuyButton({ product, targetId, label, ghost = false }: { product
 
   async function pay() {
     setSending(true);
-    reachGoal("checkout_start", { product });
     setError(null);
     try {
       const response = await fetch("/api/purchases", {
@@ -61,8 +60,17 @@ export function BuyButton({ product, targetId, label, ghost = false }: { product
       });
       const body = (await response.json()) as { ok: boolean; url?: string; error?: string };
       if (body.ok && body.url) {
-        rememberEmail(email.trim());
+        // Цель — один раз, когда человек действительно уходит к оплате, а не на каждый запрос почты
+        reachGoal("checkout_start", { product });
+        if (email.trim()) rememberEmail(email.trim());
         window.location.assign(body.url);
+        return;
+      }
+      // Почта нужна только для оплаты через ЮKassa: сервер сам говорит, когда её спросить
+      if (body.error === "email_required") {
+        setRemembered(false);
+        setAsking(true);
+        setSending(false);
         return;
       }
       if (body.error === "invalid_email") {
@@ -117,7 +125,7 @@ export function BuyButton({ product, targetId, label, ghost = false }: { product
 
   return (
     <div className="stack">
-      <button type="button" className={buttonClass} disabled={sending} onClick={() => (remembered ? void pay() : setAsking(true))}>
+      <button type="button" className={buttonClass} disabled={sending} onClick={() => void pay()}>
         {sending ? "Переходим к оплате…" : label}
       </button>
       {remembered && (

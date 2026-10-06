@@ -120,3 +120,21 @@ test("the owner sees paid purchases with the receipt email and marks the receipt
   await buyer.context.close();
   await owner.context.close();
 });
+
+test("the owner opens a report for free: no email, no payment page, nothing to send a receipt for", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const owner = await signedInWithResult(browser, "Владелица");
+  await owner.page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
+  await expect(owner.page.getByLabel("Почта для чека")).toHaveCount(0);
+  await expect(owner.page).toHaveURL(/\/report\/[0-9a-f-]{36}$/, { timeout: GENERATION_TIMEOUT });
+  await expect(owner.page.getByRole("heading", { name: "Портрет" })).toBeVisible({ timeout: GENERATION_TIMEOUT });
+
+  await owner.page.goto("/admin/receipts");
+  await expect(owner.page.getByText("На этом устройстве твои визиты не попадают в Метрику", { exact: false })).toBeVisible();
+  // Покупка за 0 ₽ не ждёт чека: в списке только настоящие оплаты
+  await expect(owner.page.getByText(/^0\s₽$/)).toHaveCount(0);
+  expect(await owner.page.evaluate(() => localStorage.getItem("grani-owner-device"))).toBe("1");
+
+  await owner.context.close();
+});
+

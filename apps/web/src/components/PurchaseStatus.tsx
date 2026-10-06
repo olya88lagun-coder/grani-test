@@ -11,6 +11,7 @@ const POLL_MS = 3000;
 
 // Страницу ожидания можно открыть повторно — цель покупки отправляется один раз на покупку
 function markPurchase(view: PurchaseView): void {
+  if (view.free) return;
   const key = `grani-goal-${view.id}`;
   try {
     if (window.sessionStorage.getItem(key)) return;

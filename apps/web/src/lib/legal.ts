@@ -10,7 +10,7 @@ export const DATA_STORAGE = "на сервере в Москве (Timeweb Cloud)
 export type DataRecipient = { name: string; what: string; why: string };
 
 // Кому и что уходит. Политика и согласие читают один список, чтобы они не расходились.
-// Все получатели — российские сервисы: вход через Telegram в первой версии выключен, чтобы не было трансграничной передачи
+// Все получатели — российские сервисы: входа через Telegram нет, чтобы не было трансграничной передачи
 export const DATA_RECIPIENTS: readonly DataRecipient[] = [
   {
     name: "ЮKassa",

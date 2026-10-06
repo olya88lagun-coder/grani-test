@@ -11,6 +11,6 @@ export async function GET(request: NextRequest) {
   const deps = loginDeps();
   const name = request.nextUrl.searchParams.get("name") ?? "Разработчик";
   const cookies = { ...readLoginCookies(request), consent: await giveConsent(deps) };
-  const outcome = await completeLogin(deps, { provider: "telegram", externalId: `dev-${name}`, displayName: name, gender: null }, cookies);
+  const outcome = await completeLogin(deps, { provider: "vk", externalId: `dev-${name}`, displayName: name, gender: null }, cookies);
   return loginResponse(deps.env, outcome);
 }
