@@ -23,12 +23,12 @@ const BUSY_RETRY_MS = 1000;
 const BUSY_RETRY_LIMIT = 3;
 const PRICE = formatRub(TOGETHER_PRICE_KOPECKS);
 
-type Props = { initial: SpaceView | null; firstName: string; purchaseId: string | null };
+type Props = { initial: SpaceView | null; firstName: string; purchaseId: string | null; referral?: string };
 
 const names = (space: SpaceView) => space.members.map((member) => member.displayName).join(" и ");
 const partnerName = (space: SpaceView) => space.members.find((member) => member.role !== space.myRole)?.displayName ?? "Партнёр";
 
-export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
+export function TogetherSpace({ initial, firstName, purchaseId, referral }: Props) {
   const [space, setSpace] = useState<SpaceView | null>(initial);
   const [inviteUrl, setInviteUrl] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
@@ -106,7 +106,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
 
   const createSpace = () =>
     run(async () => {
-      const result = await callApi<{ inviteUrl: string }>("/api/together/spaces", { body: { consent } });
+      const result = await callApi<{ inviteUrl: string }>("/api/together/spaces", { body: { consent, from: referral } });
       if (result.status === 401) return void (window.location.href = LOGIN_AGAIN_URL);
       if (!result.ok && result.body.error !== "already_in_space") return setError(startErrorMessage(result.body.error ?? "").text);
       if (result.ok) setInviteUrl(result.body.inviteUrl);
@@ -309,7 +309,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
           {leaving && (
             <div className="card stack" role="dialog" aria-labelledby="leave-title">
               <h2 id="leave-title" className="display">Выйти из пространства?</h2>
-              <p>Совместная программа и доступ прекратятся для обоих участников. Остаток оплаченного срока не возвращается и не переносится автоматически.</p>
+              <p>Совместная программа и доступ прекратятся для обоих участников. Остаток оплаченного срока автоматически не переносится, но плательщик может запросить возврат за неиспользованные сутки: условия в <a href="/offer" target="_blank" rel="noopener">оферте</a>.</p>
               <label className="choice">
                 <input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} />
                 <span>Я понимаю последствия</span>

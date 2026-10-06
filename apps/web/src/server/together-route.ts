@@ -1,4 +1,4 @@
-import type { UserRecord } from "@grani/db";
+import { isShareCode, type UserRecord } from "@grani/db";
 import { NextResponse, type NextRequest } from "next/server";
 import { loginDeps } from "./deps";
 import { isSameOrigin, SESSION_COOKIE } from "./http";
@@ -16,6 +16,12 @@ export const cardErrorStatus = (error: string): number => (error === "not_found"
 
 export const noteErrorStatus = (error: "invalid" | "too_long" | "not_found" | "not_pending"): number =>
   error === "not_found" ? 404 : error === "not_pending" ? 409 : 400;
+
+// Код пары, чья ссылка привела человека: из тела запроса (вошедший открыл ссылку сам) или из cookie (вошёл после ссылки). Только правильного формата
+export function pickReferralCode(fromRequest: unknown, fromCookie: unknown): string | undefined {
+  for (const value of [fromRequest, fromCookie]) if (typeof value === "string" && isShareCode(value)) return value;
+  return undefined;
+}
 
 export const pilotErrorStatus = (error: "invalid_code" | "limit_reached" | "unavailable"): number => (error === "invalid_code" ? 403 : error === "limit_reached" ? 409 : 404);
 

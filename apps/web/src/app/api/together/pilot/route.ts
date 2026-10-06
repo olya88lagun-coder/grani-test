@@ -7,6 +7,8 @@ import { authorizeTogether, failure, pilotErrorStatus, readJsonObject } from "@/
 export async function POST(request: NextRequest) {
   const context = await authorizeTogether(request, { mutating: true, limiter: pilotCodeLimiter, entry: true });
   if (context instanceof NextResponse) return context;
+  // Кроме лимита по адресу, подбор ограничен и по человеку: с разных адресов под одним аккаунтом код не перебрать
+  if (!pilotCodeLimiter.allow(`user:${context.user.id}`)) return failure("rate_limited", 429);
   const { code } = await readJsonObject(request);
   const outcome = await redeemPilotCode(context.gate, { userId: context.user.id, code: typeof code === "string" ? code : "" });
   if (outcome.ok) return NextResponse.json({ ok: true }, { headers: { "cache-control": "no-store" } });

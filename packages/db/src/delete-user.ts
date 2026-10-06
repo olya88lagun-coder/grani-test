@@ -1,5 +1,5 @@
 import { and, eq, isNull } from "drizzle-orm";
-import { authIdentities, purchases, results, togetherInvites, users } from "./schema";
+import { authIdentities, purchases, results, togetherInvites, togetherPilotPasses, users } from "./schema";
 import { closeSpaceForUser } from "./together";
 import { deleteUserAnswers } from "./together-cards";
 import type { Database } from "./types";
@@ -12,7 +12,7 @@ export async function deleteUserData(db: Database, userId: string): Promise<{ de
   return db.transaction(async (tx) => {
     const [marked] = await tx
       .update(users)
-      .set({ deletedAt: new Date(), gender: null })
+      .set({ deletedAt: new Date(), gender: null, togetherConsentVersion: null, togetherConsentedAt: null })
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
       .returning({ id: users.id });
     if (!marked) return { deleted: false };
@@ -23,6 +23,8 @@ export async function deleteUserData(db: Database, userId: string): Promise<{ de
     await deleteUserAnswers(tx, userId);
     // Записка в приглашении — тоже текст человека: приглашения остаются в журнале, записки стираются
     await tx.update(togetherInvites).set({ note: null }).where(eq(togetherInvites.inviterId, userId));
+    // Пользователь только помечается удалённым, каскад пропуска не сработает сам
+    await tx.delete(togetherPilotPasses).where(eq(togetherPilotPasses.userId, userId));
     await tx.delete(authIdentities).where(eq(authIdentities.userId, userId));
     // Записи об оплатах остаются для налогового учёта, но без почты покупателя
     await tx.update(purchases).set({ receiptEmail: null }).where(eq(purchases.userId, userId));

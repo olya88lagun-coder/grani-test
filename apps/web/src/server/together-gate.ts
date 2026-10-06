@@ -31,13 +31,14 @@ export async function redeemPilotCode(deps: GateDeps, p: { userId: string; code:
   return outcome === "limit_reached" ? { ok: false, error: "limit_reached" } : { ok: true };
 }
 
-// Партнёр, пришедший по живой ссылке пары, входит без кода: ссылка секретная, живёт 7 дней, а пар в пилоте ограничено лимитом
+// Партнёр, пришедший по живой ссылке пары, входит без кода: ссылка секретная и живёт 7 дней. Такие пропуска в лимит кода не входят
 export async function admitInvitedPartner(deps: GateDeps, userId: string): Promise<void> {
   if (deps.together.mode !== "pilot") return;
   await grantPilotPass(deps.db, { userId, source: "invite", limit: deps.together.pilotLimit, now: deps.now() });
 }
 
-// Запрос на участие по ссылке: пропуск выдаётся только после принятого запроса, то есть по живой ссылке чужой пары
+// Запрос на участие по ссылке: пропуск выдаётся, когда запрос по живой ссылке принят к рассмотрению (отправлен), а не когда инициатор его подтвердил:
+// партнёру нужен доступ к ожиданию. Отклонённый запрос пропуск не отзывает; значимо только в режиме pilot
 export async function requestJoinAdmitting(gate: GateDeps, deps: TogetherDeps, p: { token: string; userId: string; consent?: unknown }): ReturnType<typeof requestTogetherJoin> {
   const outcome = await requestTogetherJoin(deps, p);
   if (outcome.ok) await admitInvitedPartner(gate, p.userId);

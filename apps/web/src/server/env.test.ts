@@ -90,9 +90,10 @@ describe("Together access mode", () => {
     expect(readEnv({ ...VALID, NODE_ENV: "production" }).together).toEqual({ mode: "off", pilotCode: null, pilotLimit: 40 });
   });
 
-  test("the pilot needs a code of at least eight characters", () => {
+  test("the pilot needs a code of at least twelve characters", () => {
     expect(() => readEnv({ ...VALID, TOGETHER_MODE: "pilot" })).toThrow(/TOGETHER_PILOT_CODE/);
     expect(() => readEnv({ ...VALID, TOGETHER_MODE: "pilot", TOGETHER_PILOT_CODE: "short" })).toThrow(/TOGETHER_PILOT_CODE/);
+    expect(() => readEnv({ ...VALID, TOGETHER_MODE: "pilot", TOGETHER_PILOT_CODE: "granitsa-26" })).toThrow(/TOGETHER_PILOT_CODE/);
     expect(readEnv({ ...VALID, TOGETHER_MODE: "pilot", TOGETHER_PILOT_CODE: "granitsa-2026", TOGETHER_PILOT_LIMIT: "20" }).together).toEqual({
       mode: "pilot",
       pilotCode: "granitsa-2026",

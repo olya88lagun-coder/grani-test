@@ -17,7 +17,7 @@ const envSchema = z.object({
   OWNER_IDENTITY: z.string().regex(/^vk:[^\s:]+$/).optional(),
   // Доступ к «Вдвоём»: off — закрыто, pilot — по общему коду и приглашениям, open — всем. В продакшене без настройки — off
   TOGETHER_MODE: z.enum(["off", "pilot", "open"]).optional(),
-  TOGETHER_PILOT_CODE: z.string().min(8).optional(),
+  TOGETHER_PILOT_CODE: z.string().min(12).optional(),
   TOGETHER_PILOT_LIMIT: z.coerce.number().int().min(1).max(1000).optional(),
   NODE_ENV: z.string().optional(),
 });

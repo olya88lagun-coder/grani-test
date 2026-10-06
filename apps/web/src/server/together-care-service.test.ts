@@ -52,6 +52,11 @@ describe("getTogetherCareCard", () => {
     await answer(d15, anna, { answer: "ещё", care_action: "Дать время", allow_care_reward: true });
     await answer(d17, boris, { answer: "и ещё", care_action: "Позвать погулять", allow_care_reward: true });
     await answer(d24, boris, { answer: "ритуал", care_action: "Чай по воскресеньям", care_context: "Вечером", allow_care_reward: true });
+    // Карточка раскрыта, когда ответили оба: ответы второго участника без пунктов для итога
+    await answer(d14, boris, { answer: "б" });
+    await answer(d15, boris, { answer: "б" });
+    await answer(d17, anna, { answer: "а" });
+    await answer(d24, anna, { answer: "а" });
 
     const result = await getTogetherCareCard(deps, { userId: boris });
 
@@ -61,6 +66,18 @@ describe("getTogetherCareCard", () => {
     expect(byName["Аня"]).toMatchObject({ attention: [{ text: "Спросить, что нужно", context: "Когда я устала" }], ease: [{ text: "Дать время", context: null }] });
     expect(byName["Борис"]).toMatchObject({ attention: [{ text: "Позвать погулять" }], ease: [] });
     expect(card!.rituals).toEqual([{ ownerId: boris, ownerName: "Борис", text: "Чай по воскресеньям", context: "Вечером" }]);
+  });
+
+  test("an item of a card that the partner skipped is not shown even with the author's mark", async () => {
+    const d14 = await closedCard("m01-d14");
+    await closedCard("m01-d26");
+    await answer(d14, anna, { answer: "а", care_action: "СКРЫТО ПОТОМУ ЧТО ПРОПУЩЕНО", allow_care_reward: true });
+    await db.insert(togetherAnswers).values({ cardId: d14, spaceId, userId: boris, status: "skipped", fields: {} });
+
+    const result = await getTogetherCareCard(deps, { userId: boris });
+
+    expect(result).toMatchObject({ ok: true, ready: true, card: { empty: true } });
+    expect(JSON.stringify(result)).not.toContain("СКРЫТО");
   });
 
   test("an item without the author's mark is left out, and free text of the answer never gets into the card", async () => {
@@ -80,6 +97,7 @@ describe("getTogetherCareCard", () => {
     const d14 = await closedCard("m01-d14");
     await closedCard("m01-d26");
     await answer(d14, anna, { answer: "а", care_action: "Спросить", allow_care_reward: true });
+    await answer(d14, boris, { answer: "б" });
 
     expect(await getTogetherCareCard(deps, { userId: anna })).toEqual(await getTogetherCareCard(deps, { userId: boris }));
   });

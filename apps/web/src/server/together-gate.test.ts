@@ -111,7 +111,7 @@ describe("requestJoinAdmitting", () => {
     return outcome.inviteUrl.split("/").at(-1)!;
   }
 
-  test("an accepted request by a live link gives the partner a pass", async () => {
+  test("a request sent by a live link gives the partner a pass", async () => {
     const token = await inviteOf(anna);
 
     expect(await requestJoinAdmitting(deps(), togetherDeps(), { token, userId: boris })).toEqual({ ok: true, status: "requested" });

@@ -14,7 +14,7 @@ vi.mock("./deps", () => ({
 }));
 
 import { createRateLimiter } from "./rate-limit";
-import { authorizeTogether, cardErrorStatus, failure, noteErrorStatus, pilotErrorStatus, readJsonObject } from "./together-route";
+import { authorizeTogether, cardErrorStatus, failure, noteErrorStatus, pickReferralCode, pilotErrorStatus, readJsonObject } from "./together-route";
 
 const request = (init: { method?: string; origin?: string; cookie?: string; body?: string } = {}) =>
   new NextRequest("http://localhost:3000/api/together/x", {
@@ -156,5 +156,15 @@ describe("noteErrorStatus", () => {
     expect(noteErrorStatus("too_long")).toBe(400);
     expect(noteErrorStatus("not_found")).toBe(404);
     expect(noteErrorStatus("not_pending")).toBe(409);
+  });
+});
+
+describe("pickReferralCode", () => {
+  test("takes a well-formed code from the request first, then from the cookie, and ignores anything else", () => {
+    expect(pickReferralCode("abcdefghij", "kmnpqrstuv")).toBe("abcdefghij");
+    expect(pickReferralCode(undefined, "kmnpqrstuv")).toBe("kmnpqrstuv");
+    expect(pickReferralCode("bad", "kmnpqrstuv")).toBe("kmnpqrstuv");
+    expect(pickReferralCode(5, undefined)).toBeUndefined();
+    expect(pickReferralCode("ABCDEFGHIJ", "../../etc")).toBeUndefined();
   });
 });

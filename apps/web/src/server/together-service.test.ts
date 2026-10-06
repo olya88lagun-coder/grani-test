@@ -189,6 +189,8 @@ describe("invite preview and note", () => {
     await create();
 
     expect(await setTogetherInviteNote(deps, { userId: anna, note: 5 })).toEqual({ ok: false, error: "invalid" });
+    expect(await setTogetherInviteNote(deps, { userId: anna, note: "a\u0000b" })).toEqual({ ok: false, error: "invalid" });
+    expect(await setTogetherInviteNote(deps, { userId: anna, note: "a" + String.fromCharCode(0xd800) + "b" })).toEqual({ ok: false, error: "invalid" });
     expect(await setTogetherInviteNote(deps, { userId: anna, note: "я".repeat(201) })).toEqual({ ok: false, error: "too_long" });
     expect(await setTogetherInviteNote(deps, { userId: vera, note: "чужая" })).toEqual({ ok: false, error: "not_found" });
   });

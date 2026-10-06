@@ -52,13 +52,16 @@ describe("loadCareSources", () => {
     const open = await card("m01-d15", null);
     await card("m01-d26", CLOSED);
     await answer(closed, anna, { answer: "а", care_action: "Спросить", allow_care_reward: true });
-    await answer(closed, boris, {}, "skipped");
+    await answer(closed, boris, { answer: "б" });
     await answer(open, anna, { answer: "ещё не раскрыто", care_action: "Рано" });
 
     const result = await loadCareSources(db, { userId: boris, sourceIds: SOURCES, readyCardId: "m01-d26" });
 
     expect(result!.ready).toBe(true);
-    expect(result!.answers).toEqual([{ cardId: "m01-d14", userId: anna, fields: { answer: "а", care_action: "Спросить", allow_care_reward: true } }]);
+    expect(result!.answers).toEqual([
+      { cardId: "m01-d14", userId: anna, fields: { answer: "а", care_action: "Спросить", allow_care_reward: true } },
+      { cardId: "m01-d14", userId: boris, fields: { answer: "б" } },
+    ]);
   });
 
   test("ignores cards that are not sources", async () => {
@@ -68,5 +71,20 @@ describe("loadCareSources", () => {
     const result = await loadCareSources(db, { userId: anna, sourceIds: SOURCES, readyCardId: "m01-d26" });
 
     expect(result!.answers).toEqual([]);
+  });
+
+  test("never reads an answer of a card that was closed by a skip, even if the author's text is there", async () => {
+    const skipped = await card("m01-d14", CLOSED);
+    const revealed = await card("m01-d15", CLOSED);
+    await card("m01-d26", CLOSED);
+    await answer(skipped, anna, { answer: "не раскрыто", care_action: "Не должно попасть", allow_care_reward: true });
+    await answer(skipped, boris, {}, "skipped");
+    await answer(revealed, anna, { answer: "а", care_action: "Раскрыто" });
+    await answer(revealed, boris, { answer: "б" });
+
+    const result = await loadCareSources(db, { userId: boris, sourceIds: SOURCES, readyCardId: "m01-d26" });
+
+    expect(result!.answers.map((entry) => entry.cardId)).toEqual(["m01-d15", "m01-d15"]);
+    expect(JSON.stringify(result)).not.toContain("Не должно попасть");
   });
 });

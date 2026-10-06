@@ -34,7 +34,8 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TogetherPage({ searchParams }: { searchParams: Promise<{ purchase?: string; from?: string }> }) {
   const [{ purchase, from }, user] = await Promise.all([searchParams, currentUser()]);
   // Код пары, чья ссылка привела сюда: правильный формат уходит во вход, остальное отбрасывается
-  const enterQuery = from !== undefined && isShareCode(from) ? `&from=${from}` : "";
+  const referral = from !== undefined && isShareCode(from) ? from : undefined;
+  const enterQuery = referral ? `&from=${referral}` : "";
   const admission = await togetherAdmission(pageGateDeps(), user?.id ?? null);
   if (admission === "unavailable") notFound();
   if (admission === "needs_pass") return <PilotClosed signedIn={user !== null} enterQuery={enterQuery} />;
@@ -70,7 +71,7 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
   return (
     <main className="page stack" data-palette="pair">
       <p className="eyebrow">Грани · Вдвоём</p>
-      <TogetherSpace initial={space} firstName={firstName(user.displayName)} purchaseId={purchase && PURCHASE_ID.test(purchase) ? purchase : null} />
+      <TogetherSpace initial={space} referral={referral} firstName={firstName(user.displayName)} purchaseId={purchase && PURCHASE_ID.test(purchase) ? purchase : null} />
     </main>
   );
 }

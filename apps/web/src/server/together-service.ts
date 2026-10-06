@@ -22,6 +22,9 @@ import {
 import { LEGAL_VERSIONS } from "../lib/legal";
 import { firstName } from "./friends-service";
 
+// Символ NUL и одиночные суррогаты Postgres не принимает: без проверки такой запрос закончился бы ошибкой сервера
+const UNSAFE_TEXT = /\u0000|\p{Cs}/u;
+
 export type TogetherDeps = { db: Database; now: () => Date; appUrl: string };
 export type TogetherSpaceView = {
   status: "pending" | "active";
@@ -85,7 +88,7 @@ export async function setTogetherInviteNote(
   deps: TogetherDeps,
   p: { userId: string; note: unknown },
 ): Promise<{ ok: true; note: string | null } | { ok: false; error: "invalid" | "too_long" | "not_found" | "not_pending" }> {
-  if (typeof p.note !== "string") return { ok: false, error: "invalid" };
+  if (typeof p.note !== "string" || UNSAFE_TEXT.test(p.note)) return { ok: false, error: "invalid" };
   const outcome = await setInviteNote(deps.db, { userId: p.userId, note: p.note });
   return outcome.ok ? outcome : { ok: false, error: outcome.reason };
 }

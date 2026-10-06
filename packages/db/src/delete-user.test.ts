@@ -4,6 +4,8 @@ import { deleteUserData } from "./delete-user";
 import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherAnswers, togetherCards, togetherInvites, togetherSpaces, users } from "./schema";
 import { createTestDb, seedPair, seedTogetherSpace, seedUserWithResult } from "./testing";
 import { createSpace, setInviteNote } from "./together";
+import { grantPilotPass, hasPilotPass } from "./together-pilot";
+import { hasTogetherConsent, recordTogetherConsent } from "./together-consent";
 import type { Database } from "./types";
 import { getUser } from "./users";
 
@@ -123,5 +125,17 @@ describe("deleteUserData", () => {
 
     const notes = await db.select({ note: togetherInvites.note }).from(togetherInvites).where(eq(togetherInvites.inviterId, userId));
     expect(notes.every((row) => row.note === null)).toBe(true);
+  });
+
+  it("erases the together consent record and the pilot pass of the deleted user", async () => {
+    const { userId } = await seedUserWithResult(db, { externalId: "tg-consent" });
+    const at = new Date("2026-10-07T10:00:00Z");
+    await recordTogetherConsent(db, { userId, version: "2026-10-v2", at });
+    await grantPilotPass(db, { userId, source: "code", limit: 5, now: at });
+
+    await deleteUserData(db, userId);
+
+    expect(await hasTogetherConsent(db, userId, "2026-10-v2")).toBe(false);
+    expect(await hasPilotPass(db, userId)).toBe(false);
   });
 });
