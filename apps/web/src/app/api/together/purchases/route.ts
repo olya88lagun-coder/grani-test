@@ -8,6 +8,7 @@ const STATUS: Record<Extract<StartTogetherOutcome, { ok: false }>["error"], numb
   invalid_email: 400,
   not_found: 404,
   not_available: 409,
+  busy: 409,
   payment_failed: 502,
 };
 

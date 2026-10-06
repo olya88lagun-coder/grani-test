@@ -128,6 +128,20 @@ describe("reserveSpacePurchase", () => {
     if (second.kind === "reused") expect(second.purchase.id).toBe(first.purchase.id);
   });
 
+  test("a second request while the first payment page is still being created is told to wait", async () => {
+    expect((await reserve(NOW)).kind).toBe("created");
+
+    expect(await reserve(new Date(NOW.getTime() + 1_000), space.partnerId)).toEqual({ kind: "busy" });
+  });
+
+  test("an abandoned reservation without a payment page stops blocking after the reuse window", async () => {
+    await reserve(NOW);
+
+    const later = await reserve(new Date(NOW.getTime() + 31 * 60_000), space.partnerId);
+
+    expect(later.kind).toBe("created");
+  });
+
   test("is not available when more than 30 days are already paid ahead", async () => {
     await grantAccessPeriod(db, { spaceId: space.spaceId, purchaseId: await paidPurchase(NOW), paidAt: NOW });
     expect((await reserve(NOW)).kind).toBe("created");

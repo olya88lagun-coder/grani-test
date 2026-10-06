@@ -77,6 +77,25 @@ describe("startTogetherPurchase", () => {
     expect(store.size).toBe(1);
   });
 
+  test("a second request while the payment page is still being created is told to wait", async () => {
+    let release: (() => void) | undefined;
+    const create = gateway.createPayment.bind(gateway);
+    vi.spyOn(gateway, "createPayment").mockImplementationOnce(async (input) => {
+      await new Promise<void>((resolve) => {
+        release = resolve;
+      });
+      return create(input);
+    });
+    const first = startTogetherPurchase(deps, { userId: space.initiatorId, email: EMAIL });
+    await vi.waitFor(() => expect(release).toBeDefined());
+
+    expect(await startTogetherPurchase(deps, { userId: space.partnerId, email: EMAIL })).toEqual({ ok: false, error: "busy" });
+
+    release?.();
+    expect((await first).ok).toBe(true);
+    expect(store.size).toBe(1);
+  });
+
   test("needs a valid receipt email and a space of the user", async () => {
     const outsider = await seedUser(db, { externalId: "outsider" });
 

@@ -1,5 +1,5 @@
 import { canRenew, nextPeriod, TOGETHER_PRODUCT, unusedPaidMs, type AccessPeriod } from "@grani/core";
-import { and, asc, desc, eq, gte, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull } from "drizzle-orm";
 import { toPurchaseRecord, type PurchaseRecord } from "./purchases";
 import { purchases, togetherAccessPeriods, togetherSpaces, type TogetherClosedReason } from "./schema";
 import type { Database } from "./types";
@@ -7,7 +7,7 @@ import type { Database } from "./types";
 const DAY_MS = 86_400_000;
 
 export type GrantOutcome = { ok: true; created: boolean; period: AccessPeriod } | { ok: false; reason: "space_not_found" | "space_closed" };
-export type ReserveOutcome = { kind: "reused" | "created"; purchase: PurchaseRecord } | { kind: "not_available" };
+export type ReserveOutcome = { kind: "reused" | "created"; purchase: PurchaseRecord } | { kind: "not_available" } | { kind: "busy" };
 export type PaidWithoutAccess = { purchaseId: string; spaceId: string | null; userId: string; paidAt: Date | null; amountKopecks: number };
 export type ClosedWithRemaining = { spaceId: string; closedAt: Date; closedReason: TogetherClosedReason | null; remainingDays: number };
 
@@ -45,8 +45,9 @@ export async function grantAccessPeriod(db: Database, p: { spaceId: string; purc
   });
 }
 
-// Проверка «можно ли платить», повторное использование открытой оплаты и создание покупки — под одной блокировкой пространства:
-// два участника, нажавшие одновременно, получают одну покупку, а не две
+// Проверка «можно ли платить», повторное использование открытой оплаты и создание покупки — под одной блокировкой пространства.
+// Свежая покупка без страницы оплаты значит «платёж создаётся прямо сейчас»: второй запрос получает busy и повторяет,
+// поэтому два участника (или двойной клик) не получают две живые страницы оплаты
 export async function reserveSpacePurchase(
   db: Database,
   p: { spaceId: string; userId: string; amountKopecks: number; receiptEmail: string; now: Date; reuseSince: Date },
@@ -63,16 +64,15 @@ export async function reserveSpacePurchase(
           eq(purchases.spaceId, p.spaceId),
           eq(purchases.product, TOGETHER_PRODUCT),
           eq(purchases.status, "pending"),
-          isNotNull(purchases.confirmationUrl),
           gte(purchases.createdAt, p.reuseSince),
         ),
       )
       .orderBy(desc(purchases.createdAt))
       .limit(1);
-    if (open) return { kind: "reused", purchase: toPurchaseRecord(open) };
+    if (open) return open.confirmationUrl ? { kind: "reused", purchase: toPurchaseRecord(open) } : { kind: "busy" };
     const [created] = await tx
       .insert(purchases)
-      .values({ userId: p.userId, product: TOGETHER_PRODUCT, spaceId: p.spaceId, amountKopecks: p.amountKopecks, receiptEmail: p.receiptEmail })
+      .values({ userId: p.userId, product: TOGETHER_PRODUCT, spaceId: p.spaceId, amountKopecks: p.amountKopecks, receiptEmail: p.receiptEmail, createdAt: p.now })
       .returning();
     return { kind: "created", purchase: toPurchaseRecord(created!) };
   });

@@ -20,7 +20,7 @@ const REUSE_WINDOW_MS = 30 * 60_000;
 
 export type StartTogetherOutcome =
   | { ok: true; url: string; purchaseId: string }
-  | { ok: false; error: "invalid_email" | "not_found" | "not_available" | "payment_failed" };
+  | { ok: false; error: "invalid_email" | "not_found" | "not_available" | "busy" | "payment_failed" };
 
 export async function startTogetherPurchase(deps: PaymentsDeps, p: { userId: string; email: unknown }): Promise<StartTogetherOutcome> {
   const email = normalizeReceiptEmail(p.email);
@@ -38,6 +38,7 @@ export async function startTogetherPurchase(deps: PaymentsDeps, p: { userId: str
     reuseSince: new Date(now.getTime() - REUSE_WINDOW_MS),
   });
   if (reserved.kind === "not_available") return { ok: false, error: "not_available" };
+  if (reserved.kind === "busy") return { ok: false, error: "busy" };
   const { purchase } = reserved;
   if (reserved.kind === "reused" && purchase.confirmationUrl) {
     if (purchase.receiptEmail !== email) await setReceiptEmail(deps.db, purchase.id, email);

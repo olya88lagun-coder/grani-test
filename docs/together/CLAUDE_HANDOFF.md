@@ -139,9 +139,9 @@ Desktop-nav заменяется мобильным меню. В книге им
 `POST /api/together/spaces` → `{ ok, spaceId, inviteUrl }` (ссылка `/together/invite/<token>`, токен показывается один раз);
 `POST /api/together/invite` (перевыпуск) → `{ ok, inviteUrl }`; `GET /api/together/invite/[token]` → `{ ok, valid }` (без входа);
 `POST /api/together/invite/request` `{ token }`; `POST /api/together/invite/confirm` `{ accept: boolean }`;
-`POST /api/together/leave` `{ acknowledged: true }`; `GET /api/together/space` → `{ ok, space | null }`
+`POST /api/together/leave` `{ acknowledged: true }` → `{ ok: true }`; `GET /api/together/space` → `{ ok, space | null }`
 (`status`, `myRole`, `members[]`, `pendingRequest`, `access: { active, accessUntil, stage, canRenew }`);
-`POST /api/together/purchases` `{ email }` → `{ ok, url, purchaseId }`; `GET /api/together/purchases/[id]` → `{ ok, id, status, granted }`.
+`POST /api/together/purchases` `{ email }` → `{ ok, url, purchaseId }` (409 `not_available`: пространство не готово или уже оплачено больше 30 суток вперёд; 409 `busy`: платёж ещё создаётся, повторить через секунду); `GET /api/together/purchases/[id]` → `{ ok, id, status, granted }`.
 Владелице: `GET /api/admin/together` → `{ paidWithoutAccess[], closedWithRemaining[] }`.
 Коды ошибок: 400 неверный ввод или нет подтверждения, 401 нет входа, 403 чужой origin, 404 не найдено или нейтральный отказ, 409 конфликт состояния, 429 лимит, 502 шлюз, 503 оплата не настроена.
 Возврат с оплаты ведёт на `/together?purchase=<id>`; страницы `/together` и `/together/invite/[token]` делает этап 1.
