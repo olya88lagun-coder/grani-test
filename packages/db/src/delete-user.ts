@@ -1,5 +1,5 @@
 import { and, eq, isNull } from "drizzle-orm";
-import { authIdentities, purchases, results, users } from "./schema";
+import { authIdentities, purchases, results, togetherInvites, users } from "./schema";
 import { closeSpaceForUser } from "./together";
 import { deleteUserAnswers } from "./together-cards";
 import type { Database } from "./types";
@@ -21,6 +21,8 @@ export async function deleteUserData(db: Database, userId: string): Promise<{ de
     await closeSpaceForUser(tx, { userId, now: new Date(), reason: "account_deleted" });
     // Пользователь помечается удалённым, а не удаляется, поэтому каскад ответов не сработает сам
     await deleteUserAnswers(tx, userId);
+    // Записка в приглашении — тоже текст человека: приглашения остаются в журнале, записки стираются
+    await tx.update(togetherInvites).set({ note: null }).where(eq(togetherInvites.inviterId, userId));
     await tx.delete(authIdentities).where(eq(authIdentities.userId, userId));
     // Записи об оплатах остаются для налогового учёта, но без почты покупателя
     await tx.update(purchases).set({ receiptEmail: null }).where(eq(purchases.userId, userId));

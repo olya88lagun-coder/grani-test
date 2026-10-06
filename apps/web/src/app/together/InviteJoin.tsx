@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { startErrorMessage } from "@/lib/together-view";
 import { callApi, readSpace } from "./client";
+import { ConsentCheckbox } from "./ConsentCheckbox";
 
 type Phase = "idle" | "sending" | "requested";
 
@@ -17,11 +18,12 @@ export function InviteJoin({ token }: { token: string }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [consent, setConsent] = useState(false);
 
   async function sendRequest() {
     setPhase("sending");
     setError(null);
-    const result = await callApi("/api/together/invite/request", { body: { token } });
+    const result = await callApi("/api/together/invite/request", { body: { token, consent } });
     if (result.status === 401) {
       window.location.href = `/api/together/enter?next=invite&token=${encodeURIComponent(token)}`;
       return;
@@ -60,7 +62,8 @@ export function InviteJoin({ token }: { token: string }) {
     <section className="card stack">
       <h1 className="display">Время для вас двоих</h1>
       <p className="lead">Вас пригласили создать общее пространство. После запроса инициатор проверит ваше имя и подтвердит участие.</p>
-      <button type="button" className="button button--block" disabled={phase === "sending"} onClick={sendRequest}>
+      <ConsentCheckbox id="invite-consent" checked={consent} onChange={setConsent} />
+      <button type="button" className="button button--block" disabled={phase === "sending" || !consent} onClick={sendRequest}>
         {phase === "sending" ? "Отправляем запрос…" : "Отправить запрос на участие"}
       </button>
       <p className="muted">До подтверждения вы не получаете доступа к общим материалам. Личные данные пары по ссылке не раскрываются.</p>

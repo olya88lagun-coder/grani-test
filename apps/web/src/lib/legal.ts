@@ -1,9 +1,13 @@
 // Оператор персональных данных — самозанятая, указана так же, как в «Мой налог»
 export const OPERATOR = { name: "Лагутенкова Ольга Валентиновна", inn: "744923234850", email: "lagutenkova.olga@yandex.ru" } as const;
 
-export const LEGAL_VERSIONS = { consent: "2026-10-v1", privacy: "2026-10-v1", offer: "2026-10-v1" } as const;
+export const LEGAL_VERSIONS = { consent: "2026-10-v2", privacy: "2026-10-v2", offer: "2026-10-v2" } as const;
 export const OFFER_VERSION = LEGAL_VERSIONS.offer;
-export const LEGAL_DATE = "1 октября 2026 года";
+export const LEGAL_DATE = "7 октября 2026 года";
+
+// «Вдвоём»: срок отказа без объяснения причин и срок ответа на заявление о возврате (оферта)
+export const TOGETHER_REFUND_DAYS = 7;
+export const TOGETHER_REFUND_WORKING_DAYS = 10;
 
 export const DATA_STORAGE = "на сервере в Москве (Timeweb Cloud)";
 

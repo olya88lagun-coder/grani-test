@@ -220,7 +220,7 @@ describe("together purchases are invisible to report views", () => {
       userId: space.initiatorId,
       product: "together_30d",
       target: { spaceId: space.spaceId },
-      amountKopecks: 59_900,
+      amountKopecks: 39_900,
     });
 
     expect(await getPurchaseView(deps, { purchaseId: purchase.id, userId: space.initiatorId })).toBeNull();

@@ -38,7 +38,7 @@ export async function admitInvitedPartner(deps: GateDeps, userId: string): Promi
 }
 
 // Запрос на участие по ссылке: пропуск выдаётся только после принятого запроса, то есть по живой ссылке чужой пары
-export async function requestJoinAdmitting(gate: GateDeps, deps: TogetherDeps, p: { token: string; userId: string }): ReturnType<typeof requestTogetherJoin> {
+export async function requestJoinAdmitting(gate: GateDeps, deps: TogetherDeps, p: { token: string; userId: string; consent?: unknown }): ReturnType<typeof requestTogetherJoin> {
   const outcome = await requestTogetherJoin(deps, p);
   if (outcome.ok) await admitInvitedPartner(gate, p.userId);
   return outcome;

@@ -19,11 +19,11 @@ test("two accounts without tests build a space, pay once, and leave", async ({ b
   const boris = await signedIn(browser, uniqueName("Борис"));
   const vera = await signedIn(browser, uniqueName("Вера"));
 
-  const created = await post(anna, "/api/together/spaces");
+  const created = await post(anna, "/api/together/spaces", { consent: true });
   expect(created.status()).toBe(200);
   const { inviteUrl, spaceId } = (await created.json()) as { inviteUrl: string; spaceId: string };
   const token = inviteUrl.split("/").at(-1)!;
-  expect((await post(anna, "/api/together/spaces")).status()).toBe(409);
+  expect((await post(anna, "/api/together/spaces", { consent: true })).status()).toBe(409);
 
   // Ссылку можно проверить без входа, но она ничего не раскрывает
   const peek = await anna.request.get(`/api/together/invite/${token}`);
@@ -31,11 +31,11 @@ test("two accounts without tests build a space, pay once, and leave", async ({ b
   expect(((await (await anna.request.get("/api/together/invite/not-a-real-token")).json()) as { valid: boolean }).valid).toBe(false);
 
   // Инициатор не может принять собственную ссылку, а запрос Бориса не открывает ему пространство
-  expect((await post(anna, "/api/together/invite/request", { token })).status()).toBe(409);
-  expect((await post(boris, "/api/together/invite/request", { token })).status()).toBe(200);
+  expect((await post(anna, "/api/together/invite/request", { token, consent: true })).status()).toBe(409);
+  expect((await post(boris, "/api/together/invite/request", { token, consent: true })).status()).toBe(200);
   expect(((await (await boris.request.get("/api/together/space")).json()) as { space: unknown }).space).toBeNull();
   // Третий человек получает нейтральный отказ, пока запрос Бориса ждёт
-  expect((await post(vera, "/api/together/invite/request", { token })).status()).toBe(404);
+  expect((await post(vera, "/api/together/invite/request", { token, consent: true })).status()).toBe(404);
 
   const waiting = (await (await anna.request.get("/api/together/space")).json()) as { space: { status: string; pendingRequest: { displayName: string } } };
   expect(waiting.space.status).toBe("pending");
@@ -50,7 +50,7 @@ test("two accounts without tests build a space, pay once, and leave", async ({ b
     expect(view.space.members).toHaveLength(2);
     expect(view.space.access).toMatchObject({ active: false, canRenew: true });
   }
-  expect((await post(vera, "/api/together/invite/request", { token })).status()).toBe(404);
+  expect((await post(vera, "/api/together/invite/request", { token, consent: true })).status()).toBe(404);
 
   // Оплата: сумма и срок задаются сервером; через старый маршрут отчётов этот продукт купить нельзя
   expect((await post(boris, "/api/purchases", { product: "together_30d", targetId: spaceId, email: EMAIL })).status()).toBe(404);
@@ -81,7 +81,7 @@ test("two accounts without tests build a space, pay once, and leave", async ({ b
   for (const page of [anna, boris]) {
     expect(((await (await page.request.get("/api/together/space")).json()) as { space: unknown }).space).toBeNull();
   }
-  expect((await post(anna, "/api/together/spaces")).status()).toBe(200);
+  expect((await post(anna, "/api/together/spaces", { consent: true })).status()).toBe(200);
 });
 
 test("the owner sees what needs a manual decision", async ({ browser }) => {

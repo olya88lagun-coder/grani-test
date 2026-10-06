@@ -6,7 +6,7 @@ export type TogetherProduct = typeof TOGETHER_PRODUCT;
 export type PurchaseProduct = Product | TogetherProduct;
 
 export const TOGETHER_PERIOD_DAYS = 30;
-export const TOGETHER_PRICE_KOPECKS = 59_900;
+export const TOGETHER_PRICE_KOPECKS = 39_900;
 export const TOGETHER_MAX_STAGE = 12;
 export const TOGETHER_INVITE_TTL_DAYS = 7;
 // Записка пригласившего, которую партнёр видит на странице приглашения

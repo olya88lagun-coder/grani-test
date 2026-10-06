@@ -10,9 +10,9 @@ async function signedIn(browser: Browser, name: string): Promise<Page> {
 }
 
 async function pair(anna: Page, boris: Page) {
-  const created = (await (await anna.request.post("/api/together/spaces", { headers: origin })).json()) as { inviteUrl: string };
+  const created = (await (await anna.request.post("/api/together/spaces", { data: { consent: true }, headers: origin })).json()) as { inviteUrl: string };
   const token = created.inviteUrl.split("/").at(-1)!;
-  expect((await boris.request.post("/api/together/invite/request", { data: { token }, headers: origin })).ok()).toBe(true);
+  expect((await boris.request.post("/api/together/invite/request", { data: { token, consent: true }, headers: origin })).ok()).toBe(true);
   expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers: origin })).ok()).toBe(true);
 }
 
@@ -105,7 +105,7 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(boris.getByRole("button", { name: "Пропустить карточку" })).toHaveCount(0);
   const lockedTitle = await boris.locator("[data-card-heading]").innerText();
   await boris.getByLabel("Электронная почта для чека").fill("anna@example.ru");
-  await boris.getByRole("button", { name: "Перейти к оплате 599 ₽" }).click();
+  await boris.getByRole("button", { name: "Перейти к оплате 399 ₽" }).click();
   await expect(boris).toHaveURL(/\/dev\/pay\/fake-/);
   await boris.getByRole("button", { name: "Оплатить" }).click();
   await expect(boris.getByRole("heading", { name: "Доступ открыт для двоих" })).toBeVisible({ timeout: 60_000 });

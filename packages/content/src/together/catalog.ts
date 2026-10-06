@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { CardField, CardKind, CardSnapshot } from "@grani/core";
+import type { CardField, CardKind, CardSnapshot, CareCategory } from "@grani/core";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
@@ -84,3 +84,22 @@ export const TOGETHER_MONTHS: Readonly<Record<number, readonly CardSnapshot[]>> 
 
 // Маршрут первого полугода: три вводные, затем шесть месяцев по 26 карточек
 export const TOGETHER_TRACK: readonly CardSnapshot[] = [...buildTrack(intro.cards, month01.cards), ...[2, 3, 4, 5, 6].flatMap((month) => TOGETHER_MONTHS[month]!)];
+
+// Карточки, ответы на которые собираются в «Наши способы заботы». Вид пункта берётся из rewardBinding редакционной карточки;
+// поля care_action, care_context и allow_care_reward читает сервер, и пункт попадает в карточку только с отметкой автора
+const careBindingSchema = z.object({
+  type: z.enum(["attention", "ease", "ritual"]),
+  actionField: z.literal("care_action"),
+  contextField: z.literal("care_context"),
+  consentField: z.literal("allow_care_reward"),
+});
+
+export const CARE_SOURCES: Readonly<Record<string, CareCategory>> = Object.fromEntries(
+  month01.cards.flatMap((card) => {
+    const binding = careBindingSchema.safeParse((card as { rewardBinding?: unknown }).rewardBinding);
+    return binding.success ? [[card.id, binding.data.type]] : [];
+  }),
+);
+
+// Итог месяца 1 показывается, когда пара прошла итоговую карточку месяца
+export const CARE_READY_CARD_ID = "m01-d26";

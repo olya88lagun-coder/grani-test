@@ -71,6 +71,13 @@
       "when": 1791313399041,
       "tag": "0009_together_share",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791314510261,
+      "tag": "0010_together_consent",
+      "breakpoints": true
     }
   ]
 }

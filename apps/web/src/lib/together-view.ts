@@ -46,6 +46,7 @@ const ACTION_ERRORS: Readonly<Record<string, ActionError>> = {
   invalid_email: { text: "Проверьте адрес электронной почты для чека." },
   rate_limited: { text: "Слишком много попыток. Подождите минуту и повторите." },
   too_long: { text: `Записка длиннее ${TOGETHER_INVITE_NOTE_MAX} символов. Сократите её.` },
+  consent_required: { text: "Отметьте согласие, чтобы продолжить." },
   not_pending: { text: "Пространство уже изменилось. Обновляем данные.", reload: true },
 };
 const FALLBACK_ERROR: ActionError = { text: "Не получилось выполнить действие. Проверьте соединение и попробуйте снова." };

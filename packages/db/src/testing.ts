@@ -92,7 +92,7 @@ export async function seedTogetherAccess(db: Database, p: { spaceId: string; use
   const paidAt = p.paidAt ?? new Date("2026-10-05T10:00:00Z");
   const [purchase] = await db
     .insert(schema.purchases)
-    .values({ userId: p.userId, product: "together_30d", spaceId: p.spaceId, amountKopecks: 59_900, status: "succeeded", paidAt })
+    .values({ userId: p.userId, product: "together_30d", spaceId: p.spaceId, amountKopecks: 39_900, status: "succeeded", paidAt })
     .returning({ id: schema.purchases.id });
   const granted = await grantAccessPeriod(db, { spaceId: p.spaceId, purchaseId: purchase!.id, paidAt });
   if (!granted.ok) throw new Error(`seed access failed: ${granted.reason}`);

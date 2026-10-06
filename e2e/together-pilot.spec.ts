@@ -37,6 +37,7 @@ test("the pilot lets in people with the code or an invite and shows outsiders no
   // Верный код с экрана открывает обычное пространство
   await anna.getByLabel("Код доступа").fill(CODE);
   await anna.getByRole("button", { name: "Войти по коду" }).click();
+  await anna.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await anna.getByRole("button", { name: "Создать и получить приглашение" }).click();
   await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
   const invitePath = new URL(await anna.getByLabel("Личная ссылка").inputValue()).pathname;
@@ -45,6 +46,7 @@ test("the pilot lets in people with the code or an invite and shows outsiders no
   const boris = await signedIn(browser, uniqueName("Борис"));
   expect((await boris.request.get("/api/together/space")).status()).toBe(403);
   await boris.goto(invitePath);
+  await boris.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await boris.getByRole("button", { name: "Отправить запрос на участие" }).click();
   await expect(boris.getByRole("heading", { name: "Осталось подтверждение" })).toBeVisible();
   expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers: origin })).status()).toBe(200);
@@ -53,7 +55,7 @@ test("the pilot lets in people with the code or an invite and shows outsiders no
 
   // Человек с неверной ссылкой пропуска не получает
   const vera = await signedIn(browser, uniqueName("Вера"));
-  const refused = await vera.request.post("/api/together/invite/request", { data: { token: "x".repeat(24) }, headers: origin });
+  const refused = await vera.request.post("/api/together/invite/request", { data: { token: "x".repeat(24), consent: true }, headers: origin });
   expect(refused.status()).toBe(404);
   expect((await vera.request.get("/api/together/space")).status()).toBe(403);
 });

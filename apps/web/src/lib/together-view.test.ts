@@ -81,7 +81,7 @@ describe("startErrorMessage", () => {
   });
 
   test("known and unknown errors always carry a readable text without the raw code", () => {
-    for (const code of ["busy", "not_available", "payments_unavailable", "payment_failed", "invalid_email", "rate_limited", "too_long", "not_pending", "something_else"]) {
+    for (const code of ["busy", "not_available", "payments_unavailable", "payment_failed", "invalid_email", "rate_limited", "too_long", "not_pending", "consent_required", "something_else"]) {
       const { text } = startErrorMessage(code);
       expect(text.length).toBeGreaterThan(10);
       expect(text).not.toContain(code);

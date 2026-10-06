@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { deleteUserData } from "./delete-user";
-import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherAnswers, togetherCards, togetherSpaces, users } from "./schema";
+import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherAnswers, togetherCards, togetherInvites, togetherSpaces, users } from "./schema";
 import { createTestDb, seedPair, seedTogetherSpace, seedUserWithResult } from "./testing";
-import { createSpace } from "./together";
+import { createSpace, setInviteNote } from "./together";
 import type { Database } from "./types";
 import { getUser } from "./users";
 
@@ -112,5 +112,16 @@ describe("deleteUserData", () => {
     const rows = await db.select().from(togetherAnswers);
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({ userId: partnerId, fields: { answer: "оставшегося" } });
+  });
+
+  it("erases the invite note the deleted user wrote", async () => {
+    const { userId } = await seedUserWithResult(db, { externalId: "tg-note" });
+    await createSpace(db, { userId, now: new Date("2026-10-06T10:00:00Z") });
+    await setInviteNote(db, { userId, note: "Личная записка" });
+
+    await deleteUserData(db, userId);
+
+    const notes = await db.select({ note: togetherInvites.note }).from(togetherInvites).where(eq(togetherInvites.inviterId, userId));
+    expect(notes.every((row) => row.note === null)).toBe(true);
   });
 });

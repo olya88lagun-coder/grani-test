@@ -14,6 +14,9 @@ export const users = pgTable("users", {
   gender: genderEnum("gender"),
   consentVersion: text("consent_version").notNull(),
   consentedAt: timestamp("consented_at", { withTimezone: true }).notNull(),
+  // Отдельное согласие на обработку ответов в «Вдвоём»: даётся при создании пространства или запросе по приглашению
+  togetherConsentVersion: text("together_consent_version"),
+  togetherConsentedAt: timestamp("together_consented_at", { withTimezone: true }),
   createdAt: createdAt(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });

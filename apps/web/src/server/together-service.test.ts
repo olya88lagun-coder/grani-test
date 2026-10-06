@@ -1,6 +1,8 @@
 import { TOGETHER_INVITE_TTL_MS } from "@grani/core";
+import { hasTogetherConsent, recordTogetherConsent } from "@grani/db";
 import { createTestDb, seedUser, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test } from "vitest";
+import { LEGAL_VERSIONS } from "../lib/legal";
 import {
   createTogetherSpace,
   getTogetherInvitePreview,
@@ -25,6 +27,9 @@ let anna: string;
 let boris: string;
 let vera: string;
 
+// Явное согласие на обработку ответов в «Вдвоём»: большинству проверок оно нужно уже данным
+const agree = (userId: string) => recordTogetherConsent(db, { userId, version: LEGAL_VERSIONS.consent, at: START });
+
 const tokenOf = (inviteUrl: string) => inviteUrl.split("/").at(-1)!;
 
 async function create(userId = anna) {
@@ -47,6 +52,7 @@ beforeEach(async () => {
   anna = await seedUser(db, { externalId: "anna", displayName: "Аня" });
   boris = await seedUser(db, { externalId: "boris", displayName: "Борис" });
   vera = await seedUser(db, { externalId: "vera", displayName: "Вера" });
+  for (const userId of [anna, boris, vera]) await agree(userId);
 });
 
 describe("createTogetherSpace", () => {
@@ -173,6 +179,7 @@ describe("invite preview and note", () => {
 
   test("only the first word of a long display name is shown", async () => {
     const gleb = await seedUser(db, { externalId: "gleb", displayName: "Глеб Петров" });
+    await agree(gleb);
     const { token } = await create(gleb);
 
     expect(await getTogetherInvitePreview(deps, token)).toMatchObject({ valid: true, inviterName: "Глеб", note: null });
@@ -205,6 +212,44 @@ describe("share link for friends", () => {
 
     expect((await createTogetherSpace(deps, { userId: vera, referredByCode: code })).ok).toBe(true);
     const gleb = await seedUser(db, { externalId: "gleb2", displayName: "Глеб" });
+    await agree(gleb);
     expect((await createTogetherSpace(deps, { userId: gleb, referredByCode: "not-a-code" })).ok).toBe(true);
+  });
+});
+
+describe("consent to process the answers", () => {
+  test("a space is not created without the agreement, and nothing is stored", async () => {
+    const gleb = await seedUser(db, { externalId: "gleb3", displayName: "Глеб" });
+
+    expect(await createTogetherSpace(deps, { userId: gleb })).toEqual({ ok: false, error: "consent_required" });
+    expect(await createTogetherSpace(deps, { userId: gleb, consent: "yes" })).toEqual({ ok: false, error: "consent_required" });
+    expect(await createTogetherSpace(deps, { userId: gleb, consent: false })).toEqual({ ok: false, error: "consent_required" });
+    expect(await hasTogetherConsent(db, gleb, LEGAL_VERSIONS.consent)).toBe(false);
+    expect(await getTogetherSpaceView(deps, gleb)).toBeNull();
+  });
+
+  test("the agreement given with the request is recorded for the current version and is not asked again", async () => {
+    const gleb = await seedUser(db, { externalId: "gleb4", displayName: "Глеб" });
+
+    expect((await createTogetherSpace(deps, { userId: gleb, consent: true })).ok).toBe(true);
+
+    expect(await hasTogetherConsent(db, gleb, LEGAL_VERSIONS.consent)).toBe(true);
+    await leaveTogether(deps, { userId: gleb, acknowledged: true });
+    expect((await createTogetherSpace(deps, { userId: gleb })).ok).toBe(true);
+  });
+
+  test("a partner has to agree before the request by the link is accepted", async () => {
+    const { token } = await create();
+    const gleb = await seedUser(db, { externalId: "gleb5", displayName: "Глеб" });
+
+    expect(await requestTogetherJoin(deps, { token, userId: gleb })).toEqual({ ok: false, error: "consent_required" });
+    expect(await requestTogetherJoin(deps, { token, userId: gleb, consent: true })).toEqual({ ok: true, status: "requested" });
+  });
+
+  test("an agreement for an older version of the text is asked for again", async () => {
+    const gleb = await seedUser(db, { externalId: "gleb6", displayName: "Глеб" });
+    await recordTogetherConsent(db, { userId: gleb, version: "2025-01-v1", at: START });
+
+    expect(await createTogetherSpace(deps, { userId: gleb })).toEqual({ ok: false, error: "consent_required" });
   });
 });

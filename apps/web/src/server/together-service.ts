@@ -8,8 +8,10 @@ import {
   getAccessSnapshot,
   getActiveSpaceForUser,
   getPendingRequest,
+  hasTogetherConsent,
   peekInvite,
   peekInviteDetails,
+  recordTogetherConsent,
   reissueInvite,
   requestJoin,
   respondToRequest,
@@ -17,6 +19,7 @@ import {
   type Database,
   type TogetherRole,
 } from "@grani/db";
+import { LEGAL_VERSIONS } from "../lib/legal";
 import { firstName } from "./friends-service";
 
 export type TogetherDeps = { db: Database; now: () => Date; appUrl: string };
@@ -31,10 +34,20 @@ export type TogetherSpaceView = {
 
 const inviteUrl = (deps: TogetherDeps, token: string) => new URL(`/together/invite/${token}`, deps.appUrl).toString();
 
+// Согласие на обработку ответов в «Вдвоём» (текущая редакция) нужно до создания пространства и до запроса по ссылке.
+// Уже давший его не отвечает снова; согласие, данное вместе с запросом, записывается с версией и временем
+async function ensureTogetherConsent(deps: TogetherDeps, userId: string, consent: unknown): Promise<boolean> {
+  if (await hasTogetherConsent(deps.db, userId, LEGAL_VERSIONS.consent)) return true;
+  if (consent !== true) return false;
+  await recordTogetherConsent(deps.db, { userId, version: LEGAL_VERSIONS.consent, at: deps.now() });
+  return true;
+}
+
 export async function createTogetherSpace(
   deps: TogetherDeps,
-  p: { userId: string; referredByCode?: string },
-): Promise<{ ok: true; spaceId: string; inviteUrl: string } | { ok: false; error: "already_in_space" }> {
+  p: { userId: string; referredByCode?: string; consent?: unknown },
+): Promise<{ ok: true; spaceId: string; inviteUrl: string } | { ok: false; error: "already_in_space" | "consent_required" }> {
+  if (!(await ensureTogetherConsent(deps, p.userId, p.consent))) return { ok: false, error: "consent_required" };
   const outcome = await createSpace(deps.db, { userId: p.userId, now: deps.now(), referredByCode: p.referredByCode });
   return outcome.ok ? { ok: true, spaceId: outcome.spaceId, inviteUrl: inviteUrl(deps, outcome.token) } : { ok: false, error: outcome.reason };
 }
@@ -79,8 +92,9 @@ export async function setTogetherInviteNote(
 
 export async function requestTogetherJoin(
   deps: TogetherDeps,
-  p: { token: string; userId: string },
-): Promise<{ ok: true; status: "requested" } | { ok: false; error: "invalid" | "own_invite" | "already_in_space" }> {
+  p: { token: string; userId: string; consent?: unknown },
+): Promise<{ ok: true; status: "requested" } | { ok: false; error: "invalid" | "own_invite" | "already_in_space" | "consent_required" }> {
+  if (!(await ensureTogetherConsent(deps, p.userId, p.consent))) return { ok: false, error: "consent_required" };
   const outcome = await requestJoin(deps.db, { token: p.token, userId: p.userId, now: deps.now() });
   return outcome.ok ? outcome : { ok: false, error: outcome.reason };
 }

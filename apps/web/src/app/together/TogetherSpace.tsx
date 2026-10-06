@@ -1,6 +1,6 @@
 "use client";
 
-import { TOGETHER_INVITE_NOTE_MAX } from "@grani/core";
+import { formatRub, TOGETHER_INVITE_NOTE_MAX, TOGETHER_PRICE_KOPECKS } from "@grani/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   formatAccessUntil,
@@ -13,13 +13,15 @@ import {
   type SpaceView,
 } from "@/lib/together-view";
 import { callApi, LOGIN_AGAIN_URL, readSpace } from "./client";
+import { CareCard } from "./CareCard";
+import { ConsentCheckbox } from "./ConsentCheckbox";
 import { PaymentForm } from "./PaymentForm";
 import { ShareFriends } from "./ShareFriends";
 import { TogetherCards } from "./TogetherCards";
 
 const BUSY_RETRY_MS = 1000;
 const BUSY_RETRY_LIMIT = 3;
-const PRICE = "599 ₽";
+const PRICE = formatRub(TOGETHER_PRICE_KOPECKS);
 
 type Props = { initial: SpaceView | null; firstName: string; purchaseId: string | null };
 
@@ -38,6 +40,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
   const [email, setEmail] = useState("");
   const [reissuing, setReissuing] = useState(false);
   const [note, setNote] = useState("");
+  const [consent, setConsent] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
   const linkRef = useRef<HTMLInputElement>(null);
@@ -103,7 +106,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
 
   const createSpace = () =>
     run(async () => {
-      const result = await callApi<{ inviteUrl: string }>("/api/together/spaces", { body: {} });
+      const result = await callApi<{ inviteUrl: string }>("/api/together/spaces", { body: { consent } });
       if (result.status === 401) return void (window.location.href = LOGIN_AGAIN_URL);
       if (!result.ok && result.body.error !== "already_in_space") return setError(startErrorMessage(result.body.error ?? "").text);
       if (result.ok) setInviteUrl(result.body.inviteUrl);
@@ -196,7 +199,8 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
         <section className="card stack">
           <h1 className="display">{firstName}, начнём с двоих</h1>
           <p className="lead">Вы создадите пространство, а затем отправите партнёру личную ссылку. Оплату мы не предлагаем, пока оба не подтверждены.</p>
-          <button type="button" className="button button--block" disabled={working} onClick={createSpace}>
+          <ConsentCheckbox id="together-consent" checked={consent} onChange={setConsent} />
+          <button type="button" className="button button--block" disabled={working || !consent} onClick={createSpace}>
             {working ? "Создаём пространство…" : "Создать и получить приглашение"}
           </button>
         </section>
@@ -274,7 +278,7 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
           onGone={refreshSpace}
           onAccessCheck={refreshSpace}
           renderPayment={() => (
-            <PaymentForm idPrefix="together" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={`Перейти к оплате ${PRICE.replace(" ", "\u00a0")}`} workingLabel="Готовим оплату…" legal />
+            <PaymentForm idPrefix="together" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={`Перейти к оплате ${PRICE}`} workingLabel="Готовим оплату…" legal />
           )}
         />
       )}
@@ -294,6 +298,8 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
           )}
         </section>
       )}
+
+      {space?.status === "active" && <CareCard />}
 
       {space?.status === "active" && <ShareFriends />}
 

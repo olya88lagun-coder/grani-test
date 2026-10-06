@@ -81,7 +81,7 @@ describe("purchases and access periods", () => {
   async function spacePurchase(spaceId: string) {
     const [row] = await db
       .insert(purchases)
-      .values({ userId: anna, product: "together_30d", spaceId, amountKopecks: 59_900 })
+      .values({ userId: anna, product: "together_30d", spaceId, amountKopecks: 39_900 })
       .returning({ id: purchases.id });
     return row!.id;
   }

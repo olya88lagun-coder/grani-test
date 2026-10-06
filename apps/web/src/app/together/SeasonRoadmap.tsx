@@ -14,7 +14,9 @@ export function SeasonRoadmap({ from = 1, compact = false }: Props) {
           <p>{month.promise}</p>
           {!compact && (
             <>
-              <p className="muted">Вы соберёте: {month.result.charAt(0).toLowerCase() + month.result.slice(1)}.</p>
+              <p className="muted">
+                {month.resultReady ? "Вы соберёте" : "Мы готовим для этого месяца"}: {month.result.charAt(0).toLowerCase() + month.result.slice(1)}.
+              </p>
               <ul className="tc-season__teasers">
                 {month.teasers.map((teaser) => (
                   <li key={teaser}>«{teaser}»</li>

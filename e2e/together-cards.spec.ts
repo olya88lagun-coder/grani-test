@@ -26,9 +26,9 @@ test("two accounts play the first free cards: hidden until both answer, reveal, 
   const vera = await signedIn(browser, uniqueName("Вера"));
 
   // Пространство из двух человек
-  const created = await json<{ inviteUrl: string }>(await post(anna, "/api/together/spaces"));
+  const created = await json<{ inviteUrl: string }>(await post(anna, "/api/together/spaces", { consent: true }));
   const token = created.inviteUrl.split("/").at(-1)!;
-  expect((await post(boris, "/api/together/invite/request", { token })).status()).toBe(200);
+  expect((await post(boris, "/api/together/invite/request", { token, consent: true })).status()).toBe(200);
   expect((await post(anna, "/api/together/invite/confirm", { accept: true })).status()).toBe(200);
 
   // Вне пространства карточек нет

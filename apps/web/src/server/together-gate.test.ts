@@ -1,6 +1,7 @@
-import { hasPilotPass } from "@grani/db";
+import { hasPilotPass, recordTogetherConsent } from "@grani/db";
 import { createTestDb, seedUser, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test } from "vitest";
+import { LEGAL_VERSIONS } from "../lib/legal";
 import type { TogetherConfig } from "./env";
 import { admitInvitedPartner, redeemPilotCode, requestJoinAdmitting, togetherAdmission, type GateDeps } from "./together-gate";
 import { createTogetherSpace, type TogetherDeps } from "./together-service";
@@ -22,6 +23,7 @@ beforeEach(async () => {
   boris = await seedUser(db, { externalId: "boris", provider: "vk" });
   vera = await seedUser(db, { externalId: "vera", provider: "vk" });
   owner = await seedUser(db, { externalId: "owner-1", provider: "vk" });
+  for (const userId of [anna, boris, vera, owner]) await recordTogetherConsent(db, { userId, version: LEGAL_VERSIONS.consent, at: new Date("2026-10-07T09:00:00Z") });
 });
 
 describe("togetherAdmission", () => {

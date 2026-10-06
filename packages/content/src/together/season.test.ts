@@ -32,6 +32,16 @@ describe("together season map", () => {
   });
 });
 
+describe("season results", () => {
+  test("only the month 1 result is delivered by the product; the others are marked as in preparation so ads do not promise them", () => {
+    expect(TOGETHER_SEASON.filter((month) => month.resultReady).map((month) => month.month)).toEqual([1]);
+  });
+
+  test("the month 1 result is described as what the card really is: each person's own items", () => {
+    expect(TOGETHER_SEASON[0]!.result).toBe("Карточка «Наши способы заботы»: что важно каждому из вас");
+  });
+});
+
 describe("season teasers are real questions", () => {
   test("every teaser of the six months is the opening of a prompt of that month, so the spoiler is not a different question", () => {
     const prompts: Record<number, string[]> = {

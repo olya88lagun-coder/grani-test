@@ -33,6 +33,8 @@ test("two people go from the sign-in to a paid space through the screens", async
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(annaName)}`);
   await expect(anna).toHaveURL(/\/together$/);
 
+  await anna.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
+
   await anna.getByRole("button", { name: "Создать и получить приглашение" }).click();
   await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
   const inviteUrl = await anna.getByLabel("Личная ссылка").inputValue();
@@ -46,10 +48,12 @@ test("two people go from the sign-in to a paid space through the screens", async
   await expect(boris).toHaveURL(/\/login/);
   await boris.goto(`/api/dev/login?name=${encodeURIComponent(borisName)}`);
   await expect(boris).toHaveURL(new RegExp(`${invitePath}$`));
+  await boris.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await boris.getByRole("button", { name: "Отправить запрос на участие" }).click();
   await expect(boris.getByRole("heading", { name: "Осталось подтверждение" })).toBeVisible();
   await boris.reload();
   await expect(boris.getByRole("button", { name: "Отправить запрос на участие" })).toBeVisible();
+  await boris.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await boris.getByRole("button", { name: "Отправить запрос на участие" }).click();
   await expect(boris.getByRole("heading", { name: "Осталось подтверждение" })).toBeVisible();
 
@@ -69,7 +73,7 @@ test("two people go from the sign-in to a paid space through the screens", async
   await boris.reload();
   await expect(boris.getByRole("heading", { name: "Продолжите вдвоём" })).toBeVisible();
   await boris.getByLabel("Электронная почта для чека").fill(EMAIL);
-  await boris.getByRole("button", { name: "Перейти к оплате 599 ₽" }).click();
+  await boris.getByRole("button", { name: "Перейти к оплате 399 ₽" }).click();
   await expect(boris).toHaveURL(/\/dev\/pay\/fake-/);
   await boris.getByRole("button", { name: "Оплатить" }).click();
   await expect(boris).toHaveURL(/\/together\?purchase=/);
@@ -109,6 +113,7 @@ test("the invite page shows the inviter's first name, the note and the first que
   const anna = await newPage(browser);
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
   await anna.goto("/together");
+  await anna.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await anna.getByRole("button", { name: "Создать и получить приглашение" }).click();
   await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
   const invitePath = new URL(await anna.getByLabel("Личная ссылка").inputValue()).pathname;
@@ -134,8 +139,8 @@ test("an active pair gets a link for friends; a friend who comes by it keeps the
   const boris = await newPage(browser);
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
   await boris.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Борис"))}`);
-  const created = (await (await anna.request.post("/api/together/spaces", { headers })).json()) as { inviteUrl: string };
-  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1) }, headers })).status()).toBe(200);
+  const created = (await (await anna.request.post("/api/together/spaces", { data: { consent: true }, headers })).json()) as { inviteUrl: string };
+  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1), consent: true }, headers })).status()).toBe(200);
   expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers })).status()).toBe(200);
 
   // Ссылка для друзей: на экране активного пространства
@@ -155,7 +160,63 @@ test("an active pair gets a link for friends; a friend who comes by it keeps the
   await expect(vera).toHaveURL(/\/together$/);
   const cookieNames = async () => (await vera.context().cookies()).map((cookie) => cookie.name);
   expect(await cookieNames()).toContain("grani_together_from");
+  await vera.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await vera.getByRole("button", { name: "Создать и получить приглашение" }).click();
   await expect(vera.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
   expect(await cookieNames()).not.toContain("grani_together_from");
+});
+
+test("the offer, the policy and the consent describe the Together service, and the space is not created without the agreement", async ({ browser }) => {
+  const page = await newPage(browser);
+  await page.goto("/offer");
+  await expect(page.getByRole("heading", { name: "«Вдвоём»: общее пространство для двоих" })).toBeVisible();
+  await expect(page.getByText(/399\s*₽ за 30 суток/)).toBeVisible();
+  await expect(page.getByText(/В течение 7 дней со дня платежа/)).toBeVisible();
+  await page.goto("/privacy");
+  await expect(page.getByRole("heading", { name: "Особые сведения" })).toBeVisible();
+  await page.goto("/consent");
+  await expect(page.getByRole("heading", { name: "Отдельное согласие для «Вдвоём»" })).toBeVisible();
+
+  await page.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await page.goto("/together");
+  const create = page.getByRole("button", { name: "Создать и получить приглашение" });
+  await expect(create).toBeDisabled();
+  await page.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
+  await expect(create).toBeEnabled();
+});
+
+test("the care card of month 1 shows each person's items under their name and stays hidden while the month is not finished", async ({ browser }) => {
+  const headers = { origin: BASE_URL };
+  const anna = await newPage(browser);
+  const boris = await newPage(browser);
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await boris.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Борис"))}`);
+  const created = (await (await anna.request.post("/api/together/spaces", { data: { consent: true }, headers })).json()) as { inviteUrl: string };
+  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1), consent: true }, headers })).status()).toBe(200);
+  expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers })).status()).toBe(200);
+
+  // Месяц не пройден: сервер отвечает ready: false, блока нет
+  await anna.goto("/together");
+  await expect(anna.getByRole("button", { name: "Выйти из пространства" })).toBeVisible();
+  await expect(anna.getByRole("heading", { name: "Наши способы заботы" })).toHaveCount(0);
+
+  // Месяц пройден: блок показывает пункты под именами, ритуалы с авторами
+  const card = {
+    title: "Наши способы заботы",
+    members: [
+      { id: "a", name: "Аня", attention: [{ text: "Спросить, что нужно", context: "Когда я устала" }], ease: [{ text: "Дать время переключиться", context: null }] },
+      { id: "b", name: "Борис", attention: [{ text: "Позвать погулять", context: null }], ease: [] },
+    ],
+    rituals: [{ ownerId: "b", ownerName: "Борис", text: "Чай по воскресеньям", context: "Вечером" }],
+    complete: false,
+    empty: false,
+  };
+  await anna.route("**/api/together/care", (route) => route.fulfill({ json: { ok: true, ready: true, card } }));
+  await anna.reload();
+  await expect(anna.getByRole("heading", { name: "Наши способы заботы" })).toBeVisible();
+  await expect(anna.getByText("Спросить, что нужно")).toBeVisible();
+  await expect(anna.getByText("Когда я устала")).toBeVisible();
+  await expect(anna.getByText("Позвать погулять")).toBeVisible();
+  await expect(anna.getByText("Чай по воскресеньям")).toBeVisible();
+  await expect(anna.getByText(/Карточка пополнится/)).toBeVisible();
 });

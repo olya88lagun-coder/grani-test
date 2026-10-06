@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildTrack, toSnapshot, TOGETHER_MONTHS, TOGETHER_TRACK } from "./catalog";
+import { buildTrack, CARE_READY_CARD_ID, CARE_SOURCES, toSnapshot, TOGETHER_MONTHS, TOGETHER_TRACK } from "./catalog";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
@@ -156,5 +156,33 @@ describe("months 3 to 6", () => {
   test("all months are part of the playable track, in order", () => {
     const fromMonths = [2, 3, 4, 5, 6].flatMap((month) => TOGETHER_MONTHS[month]!.map((card) => card.id));
     expect(TOGETHER_TRACK.slice(29).map((card) => card.id)).toEqual(fromMonths);
+  });
+});
+
+describe("care card sources", () => {
+  test("the cards that feed «Наши способы заботы» are the week 3 and 4 cards with a care binding, by kind", () => {
+    expect(CARE_SOURCES).toEqual({
+      "m01-d14": "attention",
+      "m01-d15": "ease",
+      "m01-d17": "attention",
+      "m01-d18": "attention",
+      "m01-d19": "ease",
+      "m01-d24": "ritual",
+    });
+  });
+
+  test("every source card is in the track and has the action, context and consent fields the card reads", () => {
+    for (const id of Object.keys(CARE_SOURCES)) {
+      const card = TOGETHER_TRACK.find((entry) => entry.id === id);
+      expect(card, id).toBeDefined();
+      const types = Object.fromEntries(card!.fields.map((field) => [field.id, field.type]));
+      expect(types, id).toMatchObject({ care_action: "short_text", care_context: "short_text", allow_care_reward: "boolean" });
+      expect(card!.fields.find((field) => field.id === "allow_care_reward"), id).toMatchObject({ availableAt: "after_reveal" });
+    }
+  });
+
+  test("the card is ready once the month reflection card is closed, and that card is in the track", () => {
+    expect(CARE_READY_CARD_ID).toBe("m01-d26");
+    expect(TOGETHER_TRACK.some((card) => card.id === CARE_READY_CARD_ID)).toBe(true);
   });
 });
