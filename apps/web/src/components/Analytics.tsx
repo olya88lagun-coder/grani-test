@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   COOKIE_SETTINGS_EVENT,
+  isOwnerDevice,
   LOGIN_MARK,
   METRIKA_ID,
   reachGoal,
@@ -69,7 +70,7 @@ export function Analytics() {
   }, []);
 
   useEffect(() => {
-    if (choice !== "all" || !isProductionHost()) return;
+    if (choice !== "all" || !isProductionHost() || isOwnerDevice(window.localStorage)) return;
     loadMetrika();
     loaded.current = true;
   }, [choice]);

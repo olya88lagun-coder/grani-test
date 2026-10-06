@@ -1,5 +1,5 @@
 import type { Product } from "@grani/core";
-import { and, asc, desc, eq, gte, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, isNotNull, isNull } from "drizzle-orm";
 import { targetColumns, targetId, type ReportTarget } from "./reports";
 import { purchases, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
@@ -125,7 +125,8 @@ export async function listReceiptsToSend(db: Database): Promise<ReceiptToSend[]>
       email: purchases.receiptEmail,
     })
     .from(purchases)
-    .where(and(eq(purchases.status, "succeeded"), isNull(purchases.receiptSentAt)))
+    // Бесплатные покупки владелицы — не доход, чек по ним не нужен
+    .where(and(eq(purchases.status, "succeeded"), isNull(purchases.receiptSentAt), gt(purchases.amountKopecks, 0)))
     .orderBy(asc(purchases.paidAt));
   return rows.map((row) => ({ ...row, product: row.product as Product }));
 }
