@@ -1,3 +1,4 @@
+import { isShareCode } from "@grani/db";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { publicMetadata } from "@/lib/seo";
@@ -30,11 +31,13 @@ export async function generateMetadata(): Promise<Metadata> {
       });
 }
 
-export default async function TogetherPage({ searchParams }: { searchParams: Promise<{ purchase?: string }> }) {
-  const [{ purchase }, user] = await Promise.all([searchParams, currentUser()]);
+export default async function TogetherPage({ searchParams }: { searchParams: Promise<{ purchase?: string; from?: string }> }) {
+  const [{ purchase, from }, user] = await Promise.all([searchParams, currentUser()]);
+  // Код пары, чья ссылка привела сюда: правильный формат уходит во вход, остальное отбрасывается
+  const enterQuery = from !== undefined && isShareCode(from) ? `&from=${from}` : "";
   const admission = await togetherAdmission(pageGateDeps(), user?.id ?? null);
   if (admission === "unavailable") notFound();
-  if (admission === "needs_pass") return <PilotClosed signedIn={user !== null} />;
+  if (admission === "needs_pass") return <PilotClosed signedIn={user !== null} enterQuery={enterQuery} />;
 
   if (!user) {
     return (
@@ -49,7 +52,7 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
             <li>Один приглашает, второй отправляет запрос, и первый подтверждает имя.</li>
             <li>Оплата предлагается только после того, как вы оба в пространстве.</li>
           </ul>
-          <a className="button button--block" href="/api/together/enter?next=space">
+          <a className="button button--block" href={`/api/together/enter?next=space${enterQuery}`}>
             Создать пространство для двоих
           </a>
           <p className="muted">Вход только через VK ID. Платёж не списывается автоматически.</p>

@@ -10,7 +10,7 @@ import {
   type TogetherRole,
   type TogetherSpaceStatus,
 } from "./schema";
-import { createInviteToken, isInviteToken } from "./tokens";
+import { createInviteToken, isInviteToken, isShareCode } from "./tokens";
 import type { Database } from "./types";
 import { getUser } from "./users";
 import { isUuid } from "./uuid";
@@ -81,11 +81,25 @@ async function reopenInvite(tx: Database, inviteId: string): Promise<void> {
   await tx.update(togetherInvites).set({ status: "open", requesterUserId: null, requestedAt: null }).where(eq(togetherInvites.id, inviteId));
 }
 
-export async function createSpace(db: Database, p: { userId: string; now: Date }): Promise<CreateSpaceOutcome> {
+// Пространство, по коду которого пришли. Неизвестный код и бывший участник той же пары (ссылка на себя) пропускаются без ошибки
+async function resolveReferral(tx: Database, code: string | undefined, userId: string): Promise<string | null> {
+  if (code === undefined || !isShareCode(code)) return null;
+  const [source] = await tx.select({ id: togetherSpaces.id }).from(togetherSpaces).where(eq(togetherSpaces.shareCode, code)).limit(1);
+  if (!source) return null;
+  const [member] = await tx
+    .select({ id: togetherMembers.id })
+    .from(togetherMembers)
+    .where(and(eq(togetherMembers.spaceId, source.id), eq(togetherMembers.userId, userId)))
+    .limit(1);
+  return member ? null : source.id;
+}
+
+export async function createSpace(db: Database, p: { userId: string; now: Date; referredByCode?: string }): Promise<CreateSpaceOutcome> {
   return db.transaction(async (tx): Promise<CreateSpaceOutcome> => {
     await lockUser(tx, p.userId);
     if (await hasActiveMembership(tx, p.userId)) return { ok: false, reason: "already_in_space" };
-    const [space] = await tx.insert(togetherSpaces).values({ status: "pending" }).returning({ id: togetherSpaces.id });
+    const referredBySpaceId = await resolveReferral(tx, p.referredByCode, p.userId);
+    const [space] = await tx.insert(togetherSpaces).values({ status: "pending", referredBySpaceId }).returning({ id: togetherSpaces.id });
     await tx.insert(togetherMembers).values({ spaceId: space!.id, userId: p.userId, role: "initiator", joinedAt: p.now });
     const token = await insertOpenInvite(tx, { spaceId: space!.id, inviterId: p.userId, now: p.now });
     return { ok: true, spaceId: space!.id, token };

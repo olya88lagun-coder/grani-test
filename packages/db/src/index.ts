@@ -15,6 +15,7 @@ export * from "./handoffs";
 export * from "./together";
 export * from "./together-billing";
 export * from "./together-pilot";
+export * from "./together-share";
 export * from "./together-card-context";
 export * from "./together-cards";
 export * from "./together-card-actions";

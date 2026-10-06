@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import {
   createTogetherSpace,
   getTogetherInvitePreview,
+  getTogetherShareUrl,
   getTogetherSpaceView,
   leaveTogether,
   peekTogetherInvite,
@@ -183,5 +184,27 @@ describe("invite preview and note", () => {
     expect(await setTogetherInviteNote(deps, { userId: anna, note: 5 })).toEqual({ ok: false, error: "invalid" });
     expect(await setTogetherInviteNote(deps, { userId: anna, note: "я".repeat(201) })).toEqual({ ok: false, error: "too_long" });
     expect(await setTogetherInviteNote(deps, { userId: vera, note: "чужая" })).toEqual({ ok: false, error: "not_found" });
+  });
+});
+
+describe("share link for friends", () => {
+  test("an active pair gets one stable link on the site; a person without an active pair gets not_found", async () => {
+    await makeActive();
+
+    const first = await getTogetherShareUrl(deps, { userId: anna });
+
+    expect(first).toEqual({ ok: true, url: expect.stringMatching(/^http:\/\/localhost:3000\/together\?from=[a-z2-9]{10}$/) });
+    expect(await getTogetherShareUrl(deps, { userId: boris })).toEqual(first);
+    expect(await getTogetherShareUrl(deps, { userId: vera })).toEqual({ ok: false, error: "not_found" });
+  });
+
+  test("a space created with the code of another pair can be traced, a bad code does not stop the creation", async () => {
+    await makeActive();
+    const link = await getTogetherShareUrl(deps, { userId: anna });
+    const code = link.ok ? new URL(link.url).searchParams.get("from")! : "";
+
+    expect((await createTogetherSpace(deps, { userId: vera, referredByCode: code })).ok).toBe(true);
+    const gleb = await seedUser(db, { externalId: "gleb2", displayName: "Глеб" });
+    expect((await createTogetherSpace(deps, { userId: gleb, referredByCode: "not-a-code" })).ok).toBe(true);
   });
 });

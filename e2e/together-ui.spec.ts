@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { playCardsViaApi, uniqueName } from "./helpers";
+import { BASE_URL, playCardsViaApi, uniqueName } from "./helpers";
 
 const EMAIL = "anna@example.ru";
 
@@ -125,4 +125,37 @@ test("the invite page shows the inviter's first name, the note and the first que
   await expect(guest.getByRole("link", { name: "Войти и продолжить" })).toBeVisible();
   // Фамилия и остальное имя не раскрываются
   await expect(guest.getByText(/Аня \d/)).toHaveCount(0);
+});
+
+test("an active pair gets a link for friends; a friend who comes by it keeps the code until the space is created", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const headers = { origin: BASE_URL };
+  const anna = await newPage(browser);
+  const boris = await newPage(browser);
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await boris.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Борис"))}`);
+  const created = (await (await anna.request.post("/api/together/spaces", { headers })).json()) as { inviteUrl: string };
+  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1) }, headers })).status()).toBe(200);
+  expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers })).status()).toBe(200);
+
+  // Ссылка для друзей: на экране активного пространства
+  await anna.goto("/together");
+  await anna.getByText("Поделиться с парой друзей").click();
+  await anna.getByRole("button", { name: "Получить ссылку" }).click();
+  const link = await anna.getByLabel("Ссылка для друзей").inputValue();
+  expect(link).toMatch(/\/together\?from=[a-z2-9]{10}$/);
+
+  // Друг приходит по ссылке: код запоминается при входе и стирается после создания пространства
+  const vera = await newPage(browser);
+  await vera.goto(new URL(link).pathname + new URL(link).search);
+  await expect(vera.getByRole("heading", { name: "Начнём с вас двоих" })).toBeVisible();
+  await vera.getByRole("link", { name: "Создать пространство для двоих" }).click();
+  await expect(vera).toHaveURL(/\/login/);
+  await vera.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Вера"))}`);
+  await expect(vera).toHaveURL(/\/together$/);
+  const cookieNames = async () => (await vera.context().cookies()).map((cookie) => cookie.name);
+  expect(await cookieNames()).toContain("grani_together_from");
+  await vera.getByRole("button", { name: "Создать и получить приглашение" }).click();
+  await expect(vera.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
+  expect(await cookieNames()).not.toContain("grani_together_from");
 });

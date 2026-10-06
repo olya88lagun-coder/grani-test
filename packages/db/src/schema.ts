@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable, text, timestamp, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable, text, timestamp, unique, uniqueIndex, uuid, type AnyPgColumn } from "drizzle-orm/pg-core";
 import { REPORT_KINDS, type AnswerFields, type CardSnapshot } from "@grani/core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["telegram", "vk"]);
@@ -146,6 +146,10 @@ export const togetherSpaces = pgTable(
     closedAt: timestamp("closed_at", { withTimezone: true }),
     closedBy: uuid("closed_by").references(() => users.id, { onDelete: "set null" }),
     closedReason: togetherClosedReasonEnum("closed_reason"),
+    // Код ссылки для друзей: появляется, когда пара становится активной и просит ссылку
+    shareCode: text("share_code").unique(),
+    // Пространство, по ссылке которого пришла эта пара; хранятся только идентификаторы, без данных людей
+    referredBySpaceId: uuid("referred_by_space_id").references((): AnyPgColumn => togetherSpaces.id, { onDelete: "set null" }),
   },
   (t) => [check("together_spaces_closed_consistent", sql`(${t.status} = 'closed') = (${t.closedAt} is not null)`)],
 );

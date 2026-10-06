@@ -14,6 +14,7 @@ import {
 } from "@/lib/together-view";
 import { callApi, LOGIN_AGAIN_URL, readSpace } from "./client";
 import { PaymentForm } from "./PaymentForm";
+import { ShareFriends } from "./ShareFriends";
 import { TogetherCards } from "./TogetherCards";
 
 const BUSY_RETRY_MS = 1000;
@@ -293,6 +294,8 @@ export function TogetherSpace({ initial, firstName, purchaseId }: Props) {
           )}
         </section>
       )}
+
+      {space?.status === "active" && <ShareFriends />}
 
       {space && (
         <section className="stack">

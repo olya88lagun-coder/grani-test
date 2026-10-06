@@ -4,6 +4,7 @@ import {
   closeSpaceForUser,
   countClosedCards,
   createSpace,
+  ensureShareCode,
   getAccessSnapshot,
   getActiveSpaceForUser,
   getPendingRequest,
@@ -32,10 +33,16 @@ const inviteUrl = (deps: TogetherDeps, token: string) => new URL(`/together/invi
 
 export async function createTogetherSpace(
   deps: TogetherDeps,
-  p: { userId: string },
+  p: { userId: string; referredByCode?: string },
 ): Promise<{ ok: true; spaceId: string; inviteUrl: string } | { ok: false; error: "already_in_space" }> {
-  const outcome = await createSpace(deps.db, { userId: p.userId, now: deps.now() });
+  const outcome = await createSpace(deps.db, { userId: p.userId, now: deps.now(), referredByCode: p.referredByCode });
   return outcome.ok ? { ok: true, spaceId: outcome.spaceId, inviteUrl: inviteUrl(deps, outcome.token) } : { ok: false, error: outcome.reason };
+}
+
+// Ссылка для друзей: публичная страница «Вдвоём» с кодом пары. Код ничего не раскрывает о паре
+export async function getTogetherShareUrl(deps: TogetherDeps, p: { userId: string }): Promise<{ ok: true; url: string } | { ok: false; error: "not_found" }> {
+  const code = await ensureShareCode(deps.db, { userId: p.userId });
+  return code ? { ok: true, url: new URL(`/together?from=${code}`, deps.appUrl).toString() } : { ok: false, error: "not_found" };
 }
 
 export async function reissueTogetherInvite(
