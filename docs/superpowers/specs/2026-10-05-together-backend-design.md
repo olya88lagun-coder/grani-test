@@ -43,7 +43,7 @@
 **`together_invites`**: `id`, `space_id` fk cascade, `token_hash text unique` (SHA-256 токена; сам токен не хранится), `inviter_id`, `status` enum (`open` | `requested` | `accepted` | `revoked`), `requester_user_id null`, `requested_at null`, `confirmed_at null`, `expires_at`, `created_at`.
 - частичный unique `(space_id)` where `status in ('open','requested')`: один живой инвайт на пространство;
 - «истёк» вычисляется по `expires_at`, отдельный статус не нужен.
-- TTL приглашения: **7 суток** (конфигурация `TOGETHER_INVITE_TTL_DAYS`). `ARCHITECTURE.md` называет 48 часов, `EDGE_CASES.md` (поздний документ) 7 суток. Выбрано правило последнего, фиксируется в ADR-001.
+- TTL приглашения: **7 суток** (константа `TOGETHER_INVITE_TTL_DAYS = 7` в `packages/core`). `ARCHITECTURE.md` называет 48 часов, `EDGE_CASES.md` (поздний документ) 7 суток. Выбрано правило последнего, фиксируется в ADR-001.
 
 **`together_access_periods`**: `id`, `space_id` fk cascade, `purchase_id uuid not null unique` fk purchases, `starts_at`, `ends_at`, `created_at`; check `ends_at > starts_at`.
 Журнал оплаченных интервалов. Уникальный `purchase_id` делает выдачу идемпотентной.
@@ -91,7 +91,7 @@
 - Если к моменту выдачи пространство `closed`, период не создаётся, покупка помечается условием «оплачено без доступа» и попадает в список владельца. Платёж не теряется молча.
 - Диспетчеризация по продукту: отчёты — как сейчас, `together_30d` — выдача периода. Поведение старых продуктов не меняется.
 
-**Владелец (`/api/owner/together`, читает `owner.ts`-проверку):** список (а) оплачено без доступа; (б) закрытые пространства с остатком оплаченного срока. Чеки подхватываются существующей страницей.
+**Владелец (`GET /api/admin/together`, проверка владелицы как у `/admin/receipts`, чужим пустая 404):** список (а) оплачено без доступа; (б) закрытые пространства с остатком оплаченного срока. Чеки подхватываются существующей страницей.
 
 ## API (контракт для Codex)
 Все маршруты проверяют сессию на сервере, форма ошибок как в существующих `/api/*`.
@@ -103,7 +103,7 @@
 - `POST /api/together/leave` `{ acknowledged: true }` → `{ status }`
 - `GET /api/together/space` → `{ status, members[{ role, displayName }], access: { active, accessUntil, stage, canRenew } }` (чужие данные не отдаются)
 - `POST /api/together/purchases` `{ email }` → `{ url }`
-- Уведомление ЮKassa и `GET /api/purchases/[id]` используют существующие маршруты; для `together_30d` `reportUrl` ведёт на `/together`.
+- Уведомление ЮKassa использует существующий маршрут. Возврат с оплаты ведёт на `/together?purchase=<id>`; статус покупки читается из `GET /api/together/purchases/[id]` → `{ ok, id, status, granted }`. Старый `GET /api/purchases/[id]` для `together_30d` отвечает 404 (отчётные представления продукт не видят).
 Перед написанием маршрутов читается документация установленного Next (`apps/web/AGENTS.md`).
 
 ## Безопасность
