@@ -1,0 +1,482 @@
+{
+  "date": "2026-10-06",
+  "scope": "static prototype only, file://, fictional accounts, no API/security validation",
+  "checks": 118,
+  "passed": 118,
+  "failed": [],
+  "screenshots": 36,
+  "results": [
+    {
+      "name": "Cyrillic display and body fonts are loaded",
+      "pass": true
+    },
+    {
+      "name": "layout answer at 320",
+      "pass": true
+    },
+    {
+      "name": "layout partner-ready at 320",
+      "pass": true
+    },
+    {
+      "name": "layout waiting at 320",
+      "pass": true
+    },
+    {
+      "name": "layout revealed at 320",
+      "pass": true
+    },
+    {
+      "name": "layout edited at 320",
+      "pass": true
+    },
+    {
+      "name": "layout skipped at 320",
+      "pass": true
+    },
+    {
+      "name": "layout skipped-own at 320",
+      "pass": true
+    },
+    {
+      "name": "layout locked at 320",
+      "pass": true
+    },
+    {
+      "name": "layout payment-check at 320",
+      "pass": true
+    },
+    {
+      "name": "layout after-payment at 320",
+      "pass": true
+    },
+    {
+      "name": "layout history at 320",
+      "pass": true
+    },
+    {
+      "name": "layout history-empty at 320",
+      "pass": true
+    },
+    {
+      "name": "layout history-more at 320",
+      "pass": true
+    },
+    {
+      "name": "layout complete at 320",
+      "pass": true
+    },
+    {
+      "name": "layout loading at 320",
+      "pass": true
+    },
+    {
+      "name": "layout unavailable at 320",
+      "pass": true
+    },
+    {
+      "name": "layout network-error at 320",
+      "pass": true
+    },
+    {
+      "name": "layout rate-limit at 320",
+      "pass": true
+    },
+    {
+      "name": "layout answer at 390",
+      "pass": true
+    },
+    {
+      "name": "layout partner-ready at 390",
+      "pass": true
+    },
+    {
+      "name": "layout waiting at 390",
+      "pass": true
+    },
+    {
+      "name": "layout revealed at 390",
+      "pass": true
+    },
+    {
+      "name": "layout edited at 390",
+      "pass": true
+    },
+    {
+      "name": "layout skipped at 390",
+      "pass": true
+    },
+    {
+      "name": "layout skipped-own at 390",
+      "pass": true
+    },
+    {
+      "name": "layout locked at 390",
+      "pass": true
+    },
+    {
+      "name": "layout payment-check at 390",
+      "pass": true
+    },
+    {
+      "name": "layout after-payment at 390",
+      "pass": true
+    },
+    {
+      "name": "layout history at 390",
+      "pass": true
+    },
+    {
+      "name": "layout history-empty at 390",
+      "pass": true
+    },
+    {
+      "name": "layout history-more at 390",
+      "pass": true
+    },
+    {
+      "name": "layout complete at 390",
+      "pass": true
+    },
+    {
+      "name": "layout loading at 390",
+      "pass": true
+    },
+    {
+      "name": "layout unavailable at 390",
+      "pass": true
+    },
+    {
+      "name": "layout network-error at 390",
+      "pass": true
+    },
+    {
+      "name": "layout rate-limit at 390",
+      "pass": true
+    },
+    {
+      "name": "layout answer at 768",
+      "pass": true
+    },
+    {
+      "name": "layout partner-ready at 768",
+      "pass": true
+    },
+    {
+      "name": "layout waiting at 768",
+      "pass": true
+    },
+    {
+      "name": "layout revealed at 768",
+      "pass": true
+    },
+    {
+      "name": "layout edited at 768",
+      "pass": true
+    },
+    {
+      "name": "layout skipped at 768",
+      "pass": true
+    },
+    {
+      "name": "layout skipped-own at 768",
+      "pass": true
+    },
+    {
+      "name": "layout locked at 768",
+      "pass": true
+    },
+    {
+      "name": "layout payment-check at 768",
+      "pass": true
+    },
+    {
+      "name": "layout after-payment at 768",
+      "pass": true
+    },
+    {
+      "name": "layout history at 768",
+      "pass": true
+    },
+    {
+      "name": "layout history-empty at 768",
+      "pass": true
+    },
+    {
+      "name": "layout history-more at 768",
+      "pass": true
+    },
+    {
+      "name": "layout complete at 768",
+      "pass": true
+    },
+    {
+      "name": "layout loading at 768",
+      "pass": true
+    },
+    {
+      "name": "layout unavailable at 768",
+      "pass": true
+    },
+    {
+      "name": "layout network-error at 768",
+      "pass": true
+    },
+    {
+      "name": "layout rate-limit at 768",
+      "pass": true
+    },
+    {
+      "name": "layout answer at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout partner-ready at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout waiting at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout revealed at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout edited at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout skipped at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout skipped-own at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout locked at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout payment-check at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout after-payment at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout history at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout history-empty at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout history-more at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout complete at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout loading at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout unavailable at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout network-error at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout rate-limit at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout answer at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout partner-ready at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout waiting at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout revealed at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout edited at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout skipped at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout skipped-own at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout locked at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout payment-check at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout after-payment at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout history at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout history-empty at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout history-more at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout complete at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout loading at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout unavailable at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout network-error at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout rate-limit at 1440",
+      "pass": true
+    },
+    {
+      "name": "answer payload omits every after_reveal field; double submit once",
+      "pass": true
+    },
+    {
+      "name": "waiting exposes own reply and no partner text or book checkbox",
+      "pass": true
+    },
+    {
+      "name": "optional fields use snapshot limits; before reveal all booleans omitted",
+      "pass": true
+    },
+    {
+      "name": "partner response reveals; refreshed result waits for Continue",
+      "pass": true
+    },
+    {
+      "name": "book selection submits only after reveal and does not mark text edited",
+      "pass": true
+    },
+    {
+      "name": "done selection is local until Continue; sends done true",
+      "pass": true
+    },
+    {
+      "name": "other person retains same terminal result after initiator continues",
+      "pass": true
+    },
+    {
+      "name": "second respondent stays on reveal returned by submission",
+      "pass": true
+    },
+    {
+      "name": "text edit changes revision and partner sees edited marker",
+      "pass": true
+    },
+    {
+      "name": "failed edit retains typed draft and no false server changes",
+      "pass": true
+    },
+    {
+      "name": "failed book selection rolls back checkbox",
+      "pass": true
+    },
+    {
+      "name": "delete draft only before reveal; dialog Escape returns focus",
+      "pass": true
+    },
+    {
+      "name": "own skip needs confirmation and preserves receipt until Continue",
+      "pass": true
+    },
+    {
+      "name": "partner skip keeps own answer private and progress includes skip",
+      "pass": true
+    },
+    {
+      "name": "locked card has no answer, skip, or book controls",
+      "pass": true
+    },
+    {
+      "name": "return from payment remains locked until confirmed; same card after payment",
+      "pass": true
+    },
+    {
+      "name": "history is newest first and shows no partner text for skipped item",
+      "pass": true
+    },
+    {
+      "name": "reading history does not Continue current result",
+      "pass": true
+    },
+    {
+      "name": "history pagination sends before position, appends without reorder",
+      "pass": true
+    },
+    {
+      "name": "empty history and null current route have distinct screens",
+      "pass": true
+    },
+    {
+      "name": "error 409 refresh retains same pending reveal",
+      "pass": true
+    },
+    {
+      "name": "429 prevents advance and retains draft",
+      "pass": true
+    },
+    {
+      "name": "404 clears joint screen without disclosure",
+      "pass": true
+    },
+    {
+      "name": "long Cyrillic names and 1200 character unbroken reply wrap; literal XSS",
+      "pass": true
+    },
+    {
+      "name": "keyboard focus and reduced motion",
+      "pass": true
+    },
+    {
+      "name": "no page errors or external requests in source prototype",
+      "pass": true
+    },
+    {
+      "name": "standalone file opens offline and all fonts loaded",
+      "pass": true
+    }
+  ]
+}
