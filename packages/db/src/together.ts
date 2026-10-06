@@ -101,11 +101,14 @@ export async function reissueInvite(db: Database, p: { userId: string; now: Date
   });
 }
 
-// Публичная проверка ссылки: годна только открытая и непросроченная; причину отказа не раскрываем
-export async function peekInvite(db: Database, token: string, now: Date): Promise<boolean> {
+// Проверка ссылки: годна открытая и непросроченная; причину отказа не раскрываем.
+// Для вошедшего человека, уже отправившего запрос по этой ссылке, она остаётся годной: после обновления страницы он видит своё ожидание
+export async function peekInvite(db: Database, token: string, now: Date, viewerId?: string): Promise<boolean> {
   if (!isInviteToken(token)) return false;
   const [invite] = await db.select().from(togetherInvites).where(eq(togetherInvites.tokenHash, hashInviteToken(token))).limit(1);
-  return invite !== undefined && invite.status === "open" && invite.expiresAt > now;
+  if (!invite || invite.expiresAt <= now) return false;
+  if (invite.status === "open") return true;
+  return invite.status === "requested" && viewerId !== undefined && invite.requesterUserId === viewerId;
 }
 
 export async function requestJoin(db: Database, p: { token: string; userId: string; now: Date }): Promise<RequestOutcome> {

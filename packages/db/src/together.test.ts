@@ -82,6 +82,16 @@ describe("peekInvite", () => {
     expect(await peekInvite(db, token, AFTER_TTL)).toBe(false);
   });
 
+  test("stays valid for the person who asked to join, and for nobody else", async () => {
+    const { token } = await create();
+    await requestJoin(db, { token, userId: boris, now: NOW });
+
+    expect(await peekInvite(db, token, NOW, boris)).toBe(true);
+    expect(await peekInvite(db, token, NOW, vera)).toBe(false);
+    expect(await peekInvite(db, token, NOW, anna)).toBe(false);
+    expect(await peekInvite(db, token, AFTER_TTL, boris)).toBe(false);
+  });
+
   test("is not valid once someone has asked to join", async () => {
     const { token } = await create();
     await requestJoin(db, { token, userId: boris, now: NOW });
