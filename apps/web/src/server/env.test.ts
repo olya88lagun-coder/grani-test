@@ -10,7 +10,7 @@ const VALID = {
 
 describe("readEnv", () => {
   test("accepts a complete environment", () => {
-    expect(readEnv(VALID)).toEqual({ ...VALID, telegram: null, vkCommunity: null, payments: null, owner: null });
+    expect(readEnv(VALID)).toEqual({ ...VALID, vkCommunity: null, payments: null, owner: null });
   });
 
   test("names the invalid variables without printing their values", () => {
@@ -22,19 +22,19 @@ describe("readEnv", () => {
   });
 });
 
-describe("Telegram login", () => {
-  const TG = { TELEGRAM_BOT_TOKEN: "123456:ABC-def_1", TELEGRAM_BOT_USERNAME: "test_grani_bot" };
-
-  test("is off when the bot is not configured", () => {
-    expect(readEnv(VALID).telegram).toBeNull();
+describe("Telegram settings", () => {
+  test("are ignored: there is no Telegram login", () => {
+    expect(readEnv({ ...VALID, TELEGRAM_BOT_TOKEN: "123456:ABC-def_1", TELEGRAM_BOT_USERNAME: "test_grani_bot" })).toEqual({
+      ...VALID,
+      vkCommunity: null,
+      payments: null,
+      owner: null,
+    });
   });
 
-  test("is read from both variables together", () => {
-    expect(readEnv({ ...VALID, ...TG }).telegram).toEqual({ botToken: "123456:ABC-def_1", botUsername: "test_grani_bot" });
-  });
-
-  test("fails when only one of them is set", () => {
-    expect(() => readEnv({ ...VALID, TELEGRAM_BOT_TOKEN: "123456:ABC-def_1" })).toThrow(/TELEGRAM_BOT_USERNAME/);
+  test("a Telegram owner identity is refused", () => {
+    expect(() => readEnv({ ...VALID, OWNER_IDENTITY: "telegram:42" })).toThrow(/OWNER_IDENTITY/);
+    expect(readEnv({ ...VALID, OWNER_IDENTITY: "vk:42" }).owner).toEqual({ provider: "vk", externalId: "42" });
   });
 });
 

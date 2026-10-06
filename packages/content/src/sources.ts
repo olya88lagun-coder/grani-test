@@ -202,6 +202,7 @@ export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   temperament: [EYSENCK_1991, ROTHBART_2007],
   ambivert: [FLEESON_2001, FLEESON_2002, GRANT_2013],
   "ipip-50": [IPIP_2006, GOLDBERG_1992],
+  "naskolko-tochen-big-five": [ROBERTS_DELVECCHIO_2000, GOLDBERG_1992, MCCRAE_COSTA_1997, SOTO_2019],
 };
 
 // Источники гидов по чертам: из чего складывается черта (DeYoung), с чем связана в жизни (Soto),

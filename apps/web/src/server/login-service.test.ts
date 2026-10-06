@@ -1,4 +1,3 @@
-import { createHash, createHmac } from "node:crypto";
 import { SELF_ITEMS } from "@grani/content";
 import { createTestDb, getLatestResultId, getResultForOwner, getUser, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
@@ -9,7 +8,6 @@ import {
   finishVkLogin,
   getCurrentUser,
   giveConsent,
-  loginWithTelegram,
   startVkLogin,
   type LoginCookies,
   type LoginDeps,
@@ -22,27 +20,17 @@ const ENV: AppEnv = {
   DATABASE_URL: "postgres://unused",
   SESSION_SECRET: "s".repeat(40),
   VK_CLIENT_ID: "555",
-  telegram: { botToken: "123456:TEST-TOKEN", botUsername: "test_grani_bot" },
   vkCommunity: null,
   payments: null,
   owner: null,
 };
 const NO_COOKIES: LoginCookies = { session: null, pending: null, consent: null };
-const ANNA = { provider: "telegram", externalId: "42", displayName: "Аня", gender: null } as const;
+const ANNA = { provider: "vk", externalId: "42", displayName: "Аня", gender: null } as const;
 
 let db: Database;
 let deps: LoginDeps;
 
 const jsonResponse = (body: unknown) => new Response(JSON.stringify(body), { headers: { "content-type": "application/json" } });
-
-function signedWidgetParams(fields: Record<string, string>): URLSearchParams {
-  const dataCheckString = Object.keys(fields)
-    .sort()
-    .map((key) => `${key}=${fields[key]}`)
-    .join("\n");
-  const secret = createHash("sha256").update(ENV.telegram!.botToken).digest();
-  return new URLSearchParams({ ...fields, hash: createHmac("sha256", secret).update(dataCheckString).digest("hex") });
-}
 
 async function pendingToken(): Promise<string> {
   return signPending(parseAnswers(Object.fromEntries(SELF_ITEMS.map((item) => [item.id, 5])))!, ENV.SESSION_SECRET);
@@ -114,31 +102,6 @@ describe("completeLogin", () => {
     const second = await completeLogin(deps, ANNA, NO_COOKIES);
 
     expect(second.ok && second.redirectTo).toBe(first.ok && first.redirectTo);
-  });
-});
-
-describe("loginWithTelegram", () => {
-  test("logs in with valid widget params", async () => {
-    const params = signedWidgetParams({ id: "42", first_name: "Аня", last_name: "Петрова", auth_date: String(NOW.getTime() / 1000) });
-
-    const outcome = await loginWithTelegram(deps, params, { ...NO_COOKIES, consent: await giveConsent(deps) });
-
-    const userId = outcome.ok ? await verifySession(outcome.sessionToken, ENV.SESSION_SECRET) : null;
-    expect(userId && (await getUser(db, userId))?.displayName).toBe("Аня Петрова");
-  });
-
-  test("reports a bad signature", async () => {
-    const params = new URLSearchParams({ id: "42", first_name: "Аня", auth_date: "1", hash: "00" });
-
-    expect(await loginWithTelegram(deps, params, NO_COOKIES)).toEqual({ ok: false, error: "telegram_BAD_HASH" });
-  });
-
-  test("refuses when the Telegram bot is not configured", async () => {
-    const params = signedWidgetParams({ id: "42", first_name: "Аня", auth_date: String(Math.floor(Date.now() / 1000)) });
-
-    const outcome = await loginWithTelegram({ ...deps, env: { ...ENV, telegram: null } }, params, NO_COOKIES);
-
-    expect(outcome).toEqual({ ok: false, error: "telegram_disabled" });
   });
 });
 
