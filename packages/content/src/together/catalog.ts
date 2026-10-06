@@ -36,7 +36,7 @@ const toField = (field: ParsedField): CardField =>
     : { id: field.id, type: field.type, label: field.label, required: field.required, ...(field.availableAt ? { availableAt: field.availableAt } : {}) };
 
 // Из редакционной карточки берётся только то, что нужно серверу; награды и книга подключаются на своих этапах
-export function toSnapshot(raw: unknown, kind: CardKind): CardSnapshot {
+export function toSnapshot(raw: unknown, kind: CardKind, unlockStage = 0): CardSnapshot {
   const card = cardSchema.parse(raw);
   return {
     id: card.id,
@@ -48,6 +48,7 @@ export function toSnapshot(raw: unknown, kind: CardKind): CardSnapshot {
     hint: card.hint,
     jointAction: card.jointAction,
     skipAllowed: card.skipAllowed,
+    ...(unlockStage > 0 ? { unlockStage } : {}),
     fields: card.fields.map(toField),
   };
 }
@@ -67,20 +68,19 @@ export function buildTrack(introCards: readonly unknown[], monthCards: readonly 
   return [...INTRO_IDS.map((id) => toSnapshot(find(introCards, id), "intro")), ...MAIN_IDS.map((id) => toSnapshot(find(monthCards, id), "main"))];
 }
 
-export const TOGETHER_TRACK: readonly CardSnapshot[] = buildTrack(intro.cards, month01.cards);
-
 export function buildMonth(monthCards: readonly unknown[], month: number): CardSnapshot[] {
-  return monthIds(month).map((id) => toSnapshot(find(monthCards, id), "main"));
+  // Месяц N открывается, когда у пары накопилось N-1 этапов оплаченного времени (месяц 1 открыт сразу)
+  return monthIds(month).map((id) => toSnapshot(find(monthCards, id), "main", month - 1));
 }
 
-// Месяц 2 написан и проверяется схемой, но в маршрут пока не входит: его открытие по прохождению первого месяца решается отдельно
-export const TOGETHER_MONTH_2: readonly CardSnapshot[] = buildMonth(month02.cards, 2);
-
-// Месяцы 3–6 написаны и проверяются схемой, но в маршрут не входят: открываются по мере готовности механики этапов
-export const TOGETHER_DRAFT_MONTHS: Readonly<Record<number, readonly CardSnapshot[]>> = {
-  2: TOGETHER_MONTH_2,
+// Месяцы 2–6 (месяц 1 собирается вместе с вводными в buildTrack)
+export const TOGETHER_MONTHS: Readonly<Record<number, readonly CardSnapshot[]>> = {
+  2: buildMonth(month02.cards, 2),
   3: buildMonth(month03.cards, 3),
   4: buildMonth(month04.cards, 4),
   5: buildMonth(month05.cards, 5),
   6: buildMonth(month06.cards, 6),
 };
+
+// Маршрут первого полугода: три вводные, затем шесть месяцев по 26 карточек
+export const TOGETHER_TRACK: readonly CardSnapshot[] = [...buildTrack(intro.cards, month01.cards), ...[2, 3, 4, 5, 6].flatMap((month) => TOGETHER_MONTHS[month]!)];

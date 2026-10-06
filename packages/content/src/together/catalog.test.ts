@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildTrack, toSnapshot, TOGETHER_DRAFT_MONTHS, TOGETHER_MONTH_2, TOGETHER_TRACK } from "./catalog";
+import { buildTrack, toSnapshot, TOGETHER_MONTHS, TOGETHER_TRACK } from "./catalog";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
@@ -18,16 +18,25 @@ const validCard = {
 };
 
 describe("together track", () => {
-  test("has 29 unique cards: three intro cards then m01-d01 … m01-d26", () => {
+  test("has 159 unique cards: three intro cards, then months 1 to 6 of 26 cards each, in order", () => {
     const ids = TOGETHER_TRACK.map((card) => card.id);
-    expect(ids).toHaveLength(29);
-    expect(new Set(ids).size).toBe(29);
+    expect(ids).toHaveLength(159);
+    expect(new Set(ids).size).toBe(159);
     expect(ids.slice(0, 3)).toEqual(["intro-01", "intro-02", "intro-03"]);
     expect(ids[3]).toBe("m01-d01");
-    expect(ids.at(-1)).toBe("m01-d26");
-    expect(ids).not.toContain("m01-d27");
+    expect(ids[28]).toBe("m01-d26");
+    expect(ids[29]).toBe("m02-d01");
+    expect(ids.at(-1)).toBe("m06-d26");
+    for (const month of [1, 2, 3, 4, 5, 6]) expect(ids).not.toContain(`m0${month}-d27`);
     expect(TOGETHER_TRACK.slice(0, 3).every((card) => card.kind === "intro")).toBe(true);
     expect(TOGETHER_TRACK.slice(3).every((card) => card.kind === "main")).toBe(true);
+  });
+
+  test("month N opens after N-1 stages of paid time: intro and month 1 are open from the start", () => {
+    for (const card of TOGETHER_TRACK) {
+      const month = card.id.startsWith("m0") ? Number(card.id.slice(2, 3)) : 0;
+      expect(card.unlockStage ?? 0, card.id).toBe(month >= 2 ? month - 1 : 0);
+    }
   });
 
   test("every card has a required answer field and only supported field types", () => {
@@ -92,7 +101,7 @@ describe("month 1 editorial invariants", () => {
       expect(card.prompt.length, card.id).toBeLessThanOrEqual(220);
       expect(card.hint.length, card.id).toBeLessThanOrEqual(700);
     }
-    const dates = TOGETHER_TRACK.filter((card) => card.title.startsWith("Свидание"));
+    const dates = TOGETHER_TRACK.filter((card) => card.id.startsWith("m01-") && card.title.startsWith("Свидание"));
     expect(dates.map((card) => card.id)).toEqual(["m01-d07", "m01-d13", "m01-d20", "m01-d25"]);
     for (const card of dates) expect(card.hint, card.id).toContain("\n1. ");
   });
@@ -103,35 +112,32 @@ describe("month 1 editorial invariants", () => {
   });
 });
 
-describe("month 2 draft (written, not yet in the track)", () => {
+describe("month 2", () => {
+  const month2 = TOGETHER_MONTHS[2]!;
+
   test("passes the card schema with 26 unique main cards and the four dates in the same slots as month 1", () => {
-    expect(TOGETHER_MONTH_2).toHaveLength(26);
-    expect(new Set(TOGETHER_MONTH_2.map((card) => card.id)).size).toBe(26);
-    expect(TOGETHER_MONTH_2.every((card) => card.kind === "main" && card.skipAllowed)).toBe(true);
-    const dates = TOGETHER_MONTH_2.filter((card) => card.title.startsWith("Свидание"));
+    expect(month2).toHaveLength(26);
+    expect(new Set(month2.map((card) => card.id)).size).toBe(26);
+    expect(month2.every((card) => card.kind === "main" && card.skipAllowed)).toBe(true);
+    const dates = month2.filter((card) => card.title.startsWith("Свидание"));
     expect(dates.map((card) => card.id)).toEqual(["m02-d07", "m02-d13", "m02-d20", "m02-d25"]);
     for (const card of dates) expect(card.hint, card.id).toContain("\n1. ");
-    for (const card of TOGETHER_MONTH_2) {
+    for (const card of month2) {
       expect(card.prompt.length, card.id).toBeLessThanOrEqual(220);
       expect(card.hint.length, card.id).toBeLessThanOrEqual(700);
     }
   });
 
-  test("is not part of the playable track yet and keeps its week map complete", () => {
-    expect(TOGETHER_TRACK.some((card) => card.id.startsWith("m02-"))).toBe(false);
+  test("keeps its week map complete and the structured acquaintance fields that the first chapter is built from", () => {
     expect(month02.weeks.flatMap((week) => week.days)).toEqual(Array.from({ length: 26 }, (_, index) => index + 1));
-  });
-
-  test("keeps the structured acquaintance fields that the first chapter is built from", () => {
-    const first = TOGETHER_MONTH_2[0]!;
-    expect(first.fields.map((field) => field.id)).toEqual(["answer", "approx_date", "setting", "remembered_detail", "share_in_book"]);
+    expect(month2[0]!.fields.map((field) => field.id)).toEqual(["answer", "approx_date", "setting", "remembered_detail", "share_in_book"]);
   });
 });
 
-describe("months 3 to 6 drafts", () => {
+describe("months 3 to 6", () => {
   for (const month of [3, 4, 5, 6]) {
     test(`month ${month} has 26 unique main cards, four dates in the usual slots and short prompts`, () => {
-      const cards = TOGETHER_DRAFT_MONTHS[month]!;
+      const cards = TOGETHER_MONTHS[month]!;
       expect(cards).toHaveLength(26);
       expect(new Set(cards.map((card) => card.id)).size).toBe(26);
       expect(cards.every((card) => card.kind === "main" && card.skipAllowed)).toBe(true);
@@ -147,7 +153,8 @@ describe("months 3 to 6 drafts", () => {
     });
   }
 
-  test("none of the drafts is part of the playable track", () => {
-    for (const month of [2, 3, 4, 5, 6]) expect(TOGETHER_TRACK.some((card) => card.id.startsWith(`m0${month}-`))).toBe(false);
+  test("all months are part of the playable track, in order", () => {
+    const fromMonths = [2, 3, 4, 5, 6].flatMap((month) => TOGETHER_MONTHS[month]!.map((card) => card.id));
+    expect(TOGETHER_TRACK.slice(29).map((card) => card.id)).toEqual(fromMonths);
   });
 });

@@ -8,6 +8,7 @@ import {
   stageOf,
   TOGETHER_PERIOD_MS,
   unusedPaidMs,
+  whenProvidedReaches,
   type AccessPeriod,
 } from "./together-access";
 
@@ -121,5 +122,29 @@ describe("isTogetherProduct", () => {
     expect(isTogetherProduct("together_30d")).toBe(true);
     expect(isTogetherProduct("full")).toBe(false);
     expect(isTogetherProduct(undefined)).toBe(false);
+  });
+});
+
+describe("whenProvidedReaches", () => {
+  const NOVEMBER = period("2026-10-31", "2026-11-30");
+
+  test("one period reaches its own length exactly at its end", () => {
+    expect(whenProvidedReaches([OCTOBER], 30 * DAY_SECONDS)).toEqual(at("2026-10-31"));
+    expect(whenProvidedReaches([OCTOBER], 10 * DAY_SECONDS)).toEqual(at("2026-10-11"));
+  });
+
+  test("a contiguous second period carries on from the end of the first", () => {
+    expect(whenProvidedReaches([OCTOBER, NOVEMBER], 45 * DAY_SECONDS)).toEqual(at("2026-11-15"));
+  });
+
+  test("skips an unpaid gap: only paid time counts", () => {
+    const gap = [period("2026-10-01", "2026-10-11"), period("2026-10-21", "2026-11-10")];
+    expect(whenProvidedReaches(gap, 15 * DAY_SECONDS)).toEqual(at("2026-10-26"));
+  });
+
+  test("is null when the paid periods are not enough, including after the space is closed", () => {
+    expect(whenProvidedReaches([OCTOBER], 31 * DAY_SECONDS)).toBeNull();
+    expect(whenProvidedReaches([OCTOBER, NOVEMBER], 30 * DAY_SECONDS, at("2026-10-16"))).toBeNull();
+    expect(whenProvidedReaches([], DAY_SECONDS)).toBeNull();
   });
 });

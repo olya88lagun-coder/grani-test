@@ -56,6 +56,21 @@ export function providedPaidSeconds(periods: readonly AccessPeriod[], now: Date,
   return Math.floor(totalMs(elapsed.filter(([start, end]) => end > start)) / SECOND_MS);
 }
 
+// Момент, когда накопится targetSeconds оплаченного времени (пропуски без оплаты не считаются); null, если оплаченных периодов не хватит.
+// Нужен, чтобы сказать паре, когда откроется следующий месяц
+export function whenProvidedReaches(periods: readonly AccessPeriod[], targetSeconds: number, closedAt: Date | null = null): Date | null {
+  let remainingMs = targetSeconds * SECOND_MS;
+  for (const [start, end] of effectiveIntervals(periods, closedAt)) {
+    const length = end - start;
+    if (remainingMs <= length) return new Date(start + remainingMs);
+    remainingMs -= length;
+  }
+  return null;
+}
+
+// Секунд оплаченного времени, после которых открывается этап (месяц) с таким номером
+export const secondsForStage = (stage: number): number => (stage * TOGETHER_PERIOD_DAYS * DAY_MS) / SECOND_MS;
+
 export function stageOf(seconds: number): number {
   return Math.min(TOGETHER_MAX_STAGE, Math.floor(seconds / ((TOGETHER_PERIOD_DAYS * DAY_MS) / SECOND_MS)));
 }

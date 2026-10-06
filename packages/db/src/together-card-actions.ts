@@ -1,5 +1,5 @@
 import { isDeepStrictEqual } from "node:util";
-import { accessState, checkAnswerFields, type CardSnapshot } from "@grani/core";
+import { accessState, checkAnswerFields, providedPaidSeconds, stageOf, type CardSnapshot } from "@grani/core";
 import { and, eq, sql } from "drizzle-orm";
 import { togetherAnswers, togetherCardMarks } from "./schema";
 import {
@@ -20,7 +20,7 @@ import type { Database } from "./types";
 
 export type SubmitOutcome =
   | { ok: true; state: "waiting" | "revealed" | "edited"; revealed: CardView | null }
-  | { ok: false; reason: "not_found" | "already_closed" | "reveal_pending" | "access_required" | "invalid_field" | "field_not_available"; field?: string };
+  | { ok: false; reason: "not_found" | "already_closed" | "reveal_pending" | "access_required" | "not_yet_open" | "invalid_field" | "field_not_available"; field?: string };
 type Failure<R extends string> = { ok: false; reason: R };
 
 // Общая обвязка: пространство под блокировкой, затем карточка этого пространства; чужой или битый id — not_found
@@ -37,9 +37,12 @@ async function inCard<T extends { ok: boolean }>(
   });
 }
 
-async function hasAccess(tx: Database, spaceId: string, now: Date): Promise<boolean> {
+// Платная карточка: нужен действующий доступ, а карточка более позднего месяца ещё и достаточно накопленного оплаченного времени.
+// Сначала проверяется оплата: без неё человеку надо платить, а не ждать
+async function openCheck(tx: Database, spaceId: string, snapshot: CardSnapshot, now: Date): Promise<"ok" | "access_required" | "not_yet_open"> {
   const { periods, closedAt } = await getAccessSnapshot(tx, spaceId);
-  return accessState(periods, now, closedAt).active;
+  if (!accessState(periods, now, closedAt).active) return "access_required";
+  return stageOf(providedPaidSeconds(periods, now, closedAt)) >= (snapshot.unlockStage ?? 0) ? "ok" : "not_yet_open";
 }
 
 export async function submitAnswer(
@@ -74,7 +77,10 @@ export async function submitAnswer(
     const check = checkAnswerFields(card.snapshot, p.fields, false);
     if (!check.ok) return { ok: false, reason: check.reason, field: check.field };
     // Платная карточка требует доступа только при первой отправке: правка уже отправленного не блокируется
-    if (mine === undefined && card.snapshot.kind === "main" && !(await hasAccess(tx, context.spaceId, p.now))) return { ok: false, reason: "access_required" };
+    if (mine === undefined && card.snapshot.kind === "main") {
+      const check = await openCheck(tx, context.spaceId, card.snapshot, p.now);
+      if (check !== "ok") return { ok: false, reason: check };
+    }
 
     if (mine === undefined) {
       await tx.insert(togetherAnswers).values({ cardId: card.id, spaceId: context.spaceId, userId: p.userId, status: "submitted", fields: check.fields, updatedAt: p.now });
@@ -109,14 +115,15 @@ export async function deleteDraft(
 export async function skipCard(
   db: Database,
   p: { userId: string; cardId: string; track: readonly CardSnapshot[]; now: Date },
-): Promise<{ ok: true } | Failure<"not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required">> {
-  return inCard<{ ok: true } | Failure<"already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required">>(db, p, async (tx, context, card) => {
+): Promise<{ ok: true } | Failure<"not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required" | "not_yet_open">> {
+  return inCard<{ ok: true } | Failure<"already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required" | "not_yet_open">>(db, p, async (tx, context, card) => {
     if (card.closedAt !== null) return { ok: false, reason: "already_closed" };
     if (await pendingCardFor(tx, context.spaceId, p.userId)) return { ok: false, reason: "reveal_pending" };
     if (!card.snapshot.skipAllowed) return { ok: false, reason: "skip_not_allowed" };
     // Платную карточку без доступа пропустить нельзя: пропущенное не возвращается, и пара потеряла бы контент до оплаты
-    if (card.snapshot.kind === "main" && !(await answerStatuses(tx, card.id)).has(p.userId) && !(await hasAccess(tx, context.spaceId, p.now))) {
-      return { ok: false, reason: "access_required" };
+    if (card.snapshot.kind === "main" && !(await answerStatuses(tx, card.id)).has(p.userId)) {
+      const check = await openCheck(tx, context.spaceId, card.snapshot, p.now);
+      if (check !== "ok") return { ok: false, reason: check };
     }
     // Свой прежний ответ затирается: пропуск не оставляет текста; ответ партнёра не трогаем и не раскрываем.
     // Отметку «просмотрено» пропустивший получает, как и партнёр, только на «Продолжить»: итог не теряется после перезагрузки

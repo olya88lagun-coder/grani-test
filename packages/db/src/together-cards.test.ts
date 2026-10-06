@@ -1,10 +1,10 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
 import { togetherAnswers, togetherCardMarks, togetherCards } from "./schema";
-import { createTestDb, seedTogetherSpace, seedUser } from "./testing";
+import { createTestDb, seedTogetherAccess, seedTogetherSpace, seedUser } from "./testing";
 import { closeSpaceForUser, createSpace } from "./together";
 import { listHistory, loadCurrentCard } from "./together-cards";
-import { FIXTURE_TRACK } from "./together-cards.fixtures";
+import { fixtureCard, FIXTURE_TRACK, UNLOCK_TRACK } from "./together-cards.fixtures";
 import type { Database } from "./types";
 
 const NOW = new Date("2026-10-05T10:00:00Z");
@@ -114,7 +114,7 @@ describe("loadCurrentCard", () => {
     await mark(cardId, anna);
     await mark(cardId, boris);
 
-    expect(await current(anna, shortTrack)).toEqual({ ok: true, card: null, progress: { done: 1, total: 1 }, accessActive: false });
+    expect(await current(anna, shortTrack)).toEqual({ ok: true, card: null, progress: { done: 1, total: 1 }, accessActive: false, lock: null });
     expect(await db.select().from(togetherCards).where(eq(togetherCards.spaceId, spaceId))).toHaveLength(1);
   });
 });
@@ -165,5 +165,62 @@ describe("listHistory", () => {
     expect(await listHistory(db, { userId: vera })).toEqual({ ok: false, reason: "not_found" });
     await closeSpaceForUser(db, { userId: anna, now: NOW, reason: "left" });
     expect(await listHistory(db, { userId: boris })).toEqual({ ok: false, reason: "not_found" });
+  });
+});
+
+describe("lock of the current card", () => {
+  const DAY_MS = 86_400_000;
+  const at = (days: number) => new Date(NOW.getTime() + days * DAY_MS);
+
+  async function lockAt(days: number) {
+    const result = await loadCurrentCard(db, { userId: anna, track: UNLOCK_TRACK, now: at(days) });
+    if (!result.ok) throw new Error("no space");
+    return result;
+  }
+
+  async function playTo(cardIndex: number, days: number) {
+    for (let i = 0; i < cardIndex; i++) {
+      const current = await lockAt(days);
+      const cardId = current.card!.id;
+      await answer(cardId, anna, "submitted", { answer: "a" });
+      await answer(cardId, boris, "submitted", { answer: "b" });
+      await close(cardId);
+      await mark(cardId, anna);
+      await mark(cardId, boris);
+    }
+  }
+
+  test("is a payment lock for a paid card without access, and none for a free card", async () => {
+    expect((await lockAt(0)).lock).toBeNull();
+    await playTo(1, 0);
+
+    expect((await lockAt(0)).lock).toEqual({ kind: "payment" });
+  });
+
+  test("is a month lock with the opening moment while access is active but paid time is short", async () => {
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: NOW });
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: at(2) });
+    await playTo(2, 1);
+
+    const result = await lockAt(5);
+    expect(result.lock).toEqual({ kind: "month", month: 2, opensAt: at(30) });
+    expect((await lockAt(31)).lock).toBeNull();
+  });
+
+  test("says the month opens after a renewal when the paid periods cannot reach it yet", async () => {
+    const track = [fixtureCard("intro-01"), fixtureCard("main-01", "main"), fixtureCard("month3-01", "main", true, 2)];
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: NOW });
+    for (let i = 0; i < 2; i++) {
+      const current = await loadCurrentCard(db, { userId: anna, track, now: at(1) });
+      const cardId = (current.ok ? current.card?.id : undefined)!;
+      await answer(cardId, anna, "submitted", { answer: "a" });
+      await answer(cardId, boris, "submitted", { answer: "b" });
+      await close(cardId);
+      await mark(cardId, anna);
+      await mark(cardId, boris);
+    }
+
+    const result = await loadCurrentCard(db, { userId: anna, track, now: at(5) });
+    expect(result.ok && result.lock).toEqual({ kind: "month", month: 3, opensAt: null });
   });
 });

@@ -21,6 +21,8 @@ export type CardSnapshot = {
   hint: string;
   jointAction: string;
   skipAllowed: boolean;
+  // Номер этапа (месяца минус один), с которого карточка открывается по оплаченному времени; 0 или не задан — открыта сразу
+  unlockStage?: number;
   fields: CardField[];
 };
 export type AnswerFields = Record<string, string | boolean>;

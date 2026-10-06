@@ -6,7 +6,7 @@ import { createTestDb, seedTogetherAccess, seedTogetherSpace, seedUser } from ".
 import { closeSpaceForUser } from "./together";
 import { continueCard, deleteDraft, skipCard, submitAnswer } from "./together-card-actions";
 import { loadCurrentCard } from "./together-cards";
-import { fixtureCard, FIXTURE_TRACK } from "./together-cards.fixtures";
+import { fixtureCard, FIXTURE_TRACK, UNLOCK_TRACK } from "./together-cards.fixtures";
 import type { Database } from "./types";
 
 const NOW = new Date("2026-10-05T10:00:00Z");
@@ -38,6 +38,7 @@ async function reveal(cardId: string) {
   await put(boris, cardId, { answer: "ответ Бориса" });
 }
 
+const answerRowOf = (cardId: string) => db.select().from(togetherAnswers).where(eq(togetherAnswers.cardId, cardId));
 const cardRows = () => db.select().from(togetherCards).where(eq(togetherCards.spaceId, spaceId));
 const answerRow = (cardId: string, userId: string) => db.select().from(togetherAnswers).where(and(eq(togetherAnswers.cardId, cardId), eq(togetherAnswers.userId, userId)));
 
@@ -313,5 +314,53 @@ describe("the end of the track", () => {
     await proceed(anna, id);
     await proceed(boris, id);
     expect((await viewOf(anna, shortTrack)).card).toBeNull();
+  });
+});
+
+describe("months open by paid time", () => {
+  const DAY_MS = 86_400_000;
+  const at = (days: number) => new Date(NOW.getTime() + days * DAY_MS);
+
+  // Проходит вводную и карточку месяца 1, чтобы текущей стала карточка месяца 2
+  async function reachMonthTwo(): Promise<string> {
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: NOW });
+    for (let step = 0; step < 2; step++) {
+      const id = (await loadCurrentCard(db, { userId: anna, track: UNLOCK_TRACK, now: at(1) }).then((r) => (r.ok ? r.card?.id : undefined)))!;
+      await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "a" }, track: UNLOCK_TRACK, now: at(1) });
+      await submitAnswer(db, { userId: boris, cardId: id, fields: { answer: "b" }, track: UNLOCK_TRACK, now: at(1) });
+      await continueCard(db, { userId: anna, cardId: id, done: false, now: at(1) });
+      await continueCard(db, { userId: boris, cardId: id, done: false, now: at(1) });
+    }
+    return (await loadCurrentCard(db, { userId: anna, track: UNLOCK_TRACK, now: at(1) }).then((r) => (r.ok ? r.card?.id : undefined)))!;
+  }
+
+  test("a month that needs more paid time refuses an answer and a skip, even with active access", async () => {
+    const id = await reachMonthTwo();
+
+    expect(await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "рано" }, track: UNLOCK_TRACK, now: at(5) })).toEqual({ ok: false, reason: "not_yet_open" });
+    expect(await skipCard(db, { userId: anna, cardId: id, track: UNLOCK_TRACK, now: at(5) })).toEqual({ ok: false, reason: "not_yet_open" });
+    expect(await answerRowOf(id)).toEqual([]);
+  });
+
+  test("without access the person is asked to pay first, not told to wait", async () => {
+    const id = await reachMonthTwo();
+
+    expect(await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "после срока" }, track: UNLOCK_TRACK, now: at(40) })).toEqual({ ok: false, reason: "access_required" });
+  });
+
+  test("opens once the second period carries the pair past 30 days of paid time", async () => {
+    const id = await reachMonthTwo();
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: at(2) });
+
+    expect(await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "ещё рано" }, track: UNLOCK_TRACK, now: at(29) })).toEqual({ ok: false, reason: "not_yet_open" });
+    expect(await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "уже можно" }, track: UNLOCK_TRACK, now: at(31) })).toMatchObject({ ok: true, state: "waiting" });
+  });
+
+  test("a person who already answered can still edit after the month is no longer reachable", async () => {
+    const id = await reachMonthTwo();
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: at(2) });
+    await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "первый" }, track: UNLOCK_TRACK, now: at(31) });
+
+    expect(await submitAnswer(db, { userId: anna, cardId: id, fields: { answer: "правка" }, track: UNLOCK_TRACK, now: at(32) })).toMatchObject({ ok: true, state: "waiting" });
   });
 });
