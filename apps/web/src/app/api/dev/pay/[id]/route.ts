@@ -1,3 +1,5 @@
+import { isTogetherProduct } from "@grani/core";
+import { getPurchase } from "@grani/db";
 import { NextResponse, type NextRequest } from "next/server";
 import { getEnv } from "@/server/env";
 import { isSameOrigin } from "@/server/http";
@@ -16,5 +18,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const payment = await gateway.getPayment(id);
   if (!payment || !gateway.complete(id, outcome)) return new NextResponse(null, { status: 404 });
   await syncPayment(deps, id);
-  return NextResponse.redirect(new URL(`/purchases/${payment.purchaseId}`, getEnv().APP_URL), 303);
+  const purchase = payment.purchaseId ? await getPurchase(deps.db, payment.purchaseId) : null;
+  const target = purchase && isTogetherProduct(purchase.product) ? `/together?purchase=${purchase.id}` : `/purchases/${payment.purchaseId}`;
+  return NextResponse.redirect(new URL(target, getEnv().APP_URL), 303);
 }

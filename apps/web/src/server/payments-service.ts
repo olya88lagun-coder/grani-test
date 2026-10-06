@@ -1,4 +1,4 @@
-import { canBuy, friendsReportDue, isProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type GenerateJob, type Product } from "@grani/core";
+import { canBuy, friendsReportDue, isProduct, isTogetherProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
 import {
   attachPayment,
   countFriendResponses,
@@ -20,6 +20,7 @@ import {
   type ReportTarget,
 } from "@grani/db";
 import type { PaymentGateway } from "./payments/gateway";
+import { healTogetherAccess } from "./together-payments";
 
 export type PaymentsDeps = { db: Database; gateway: PaymentGateway; appUrl: string; now: () => Date; enqueueGenerate: (job: GenerateJob) => Promise<void> };
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "invalid_email" | "not_found" | "not_available" | "payment_failed" };
@@ -37,7 +38,7 @@ export function normalizeReceiptEmail(value: unknown): string | null {
 }
 
 // Попадает в чек «Мой налог» — название услуги, до 128 знаков
-export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
+export const PRODUCT_DESCRIPTIONS: Readonly<Record<PurchaseProduct, string>> = {
   full: "Полный разбор личности «Грани»",
   chapter_money: "Глава «Деньги» к разбору личности «Грани»",
   chapter_conflict: "Глава «Конфликты» к разбору личности «Грани»",
@@ -45,6 +46,7 @@ export const PRODUCT_DESCRIPTIONS: Readonly<Record<Product, string>> = {
   chapter_relationships: "Глава «Отношения» к разбору личности «Грани»",
   chapters_all: "Четыре главы к разбору личности «Грани»",
   pair: "Разбор совместимости пары «Грани»",
+  together_30d: "Доступ к «Грани. Вдвоём» на 30 дней для двоих",
 };
 
 async function resolveTarget(db: Database, userId: string, product: Product, targetId: string): Promise<ReportTarget | null> {
@@ -68,11 +70,19 @@ async function friendsCount(db: Database, resultId: string): Promise<number> {
 async function enqueuePaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
   const target = purchaseTarget(purchase);
   if (!target) return;
+  if (!isProduct(purchase.product)) return;
   const jobs = jobsFor(purchase.product, target);
   if ("resultId" in target && purchase.product === "full" && friendsReportDue(["full"], await friendsCount(deps.db, target.resultId))) {
     jobs.push({ kind: "friends", resultId: target.resultId });
   }
   for (const job of jobs) await deps.enqueueGenerate(job);
+}
+
+async function fulfillPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
+  if (!isTogetherProduct(purchase.product)) return enqueuePaid(deps, purchase);
+  const outcome = await healTogetherAccess(deps, purchase.id);
+  // Деньги приняты, а доступ выдать нельзя (пространство закрыто): покупка попадёт в список владельца
+  if (outcome && !outcome.ok) console.warn("paid together access was not granted", { purchaseId: purchase.id, reason: outcome.reason });
 }
 
 export async function startPurchase(
@@ -116,7 +126,11 @@ export async function startPurchase(
 export async function syncPayment(deps: PaymentsDeps, paymentId: string): Promise<PurchaseRecord | null> {
   const purchase = await getPurchaseByPaymentId(deps.db, paymentId);
   if (!purchase) return null;
-  if (purchase.status !== "pending") return purchase;
+  if (purchase.status !== "pending") {
+    // Выдача периода могла оборваться между статусом и записью: догоняем при повторном уведомлении
+    if (purchase.status === "succeeded" && isTogetherProduct(purchase.product)) await healTogetherAccess(deps, purchase.id);
+    return purchase;
+  }
   const payment = await deps.gateway.getPayment(paymentId);
   if (!payment) return purchase;
   if (payment.purchaseId !== purchase.id || payment.amountKopecks !== purchase.amountKopecks) {
@@ -124,7 +138,7 @@ export async function syncPayment(deps: PaymentsDeps, paymentId: string): Promis
     return purchase;
   }
   if (payment.status === "succeeded" && payment.paid) {
-    if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await enqueuePaid(deps, purchase);
+    if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await fulfillPaid(deps, purchase);
   } else if (payment.status === "canceled") {
     await markPurchaseCanceled(deps.db, purchase.id);
   }
@@ -135,6 +149,8 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   let purchase = await getPurchase(deps.db, p.purchaseId);
   if (!purchase || purchase.userId !== p.userId) return null;
   if (purchase.status === "pending" && purchase.yookassaPaymentId) purchase = (await syncPayment(deps, purchase.yookassaPaymentId)) ?? purchase;
+  // Покупки «Вдвоём» читаются своим маршрутом; в представлении отчётов их нет
+  if (!isProduct(purchase.product)) return null;
 
   const target = purchaseTarget(purchase);
   const reportUrl = !target ? "/me" : "pairId" in target ? `/pair/${target.pairId}` : `/report/${target.resultId}`;

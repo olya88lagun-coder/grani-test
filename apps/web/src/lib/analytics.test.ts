@@ -52,6 +52,12 @@ describe("sanitizePath", () => {
     expect(sanitizePath(`/pair/${UUID}`)).toBe("/pair/:id");
     expect(sanitizePath(`/purchases/${UUID}`)).toBe("/purchases/:id");
     expect(sanitizePath(`/cards/manual/${UUID}`)).toBe("/cards/manual/:id");
+    expect(sanitizePath("/together/invite/AbC123xyzAbC123xyzAbC12")).toBe("/together/invite/:id");
+  });
+
+  it("keeps the public together page and hides nothing else under it", () => {
+    expect(sanitizePath("/together")).toBe("/together");
+    expect(sanitizePath("/together?purchase=abc")).toBe("/together");
   });
 
   it("keeps public pages as they are, without the query", () => {

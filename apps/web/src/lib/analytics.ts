@@ -61,7 +61,7 @@ export function saveChoice(storage: StorageLike, choice: CookieChoice): void {
 }
 
 // Идентификаторы результатов и токены приглашений не должны попадать в Метрику
-const PRIVATE_SEGMENTS = /^\/(result|report|pair|purchases|p|f|cards\/manual|dev\/pay)\/[^/]+/;
+const PRIVATE_SEGMENTS = /^\/(result|report|pair|purchases|p|f|cards\/manual|dev\/pay|together\/invite)\/[^/]+/;
 
 export function sanitizePath(path: string): string {
   const [pathname] = path.split(/[?#]/);

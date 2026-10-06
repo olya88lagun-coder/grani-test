@@ -41,3 +41,7 @@ export function clientKeyFromHeaders(headers: Headers): string {
 const PURCHASES_PER_MINUTE = 10;
 
 export const purchasesLimiter = createRateLimiter({ limit: PURCHASES_PER_MINUTE, windowMs: MINUTE_MS });
+
+const TOGETHER_PER_MINUTE = 30;
+
+export const togetherLimiter = createRateLimiter({ limit: TOGETHER_PER_MINUTE, windowMs: MINUTE_MS });

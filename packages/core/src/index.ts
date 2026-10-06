@@ -6,3 +6,4 @@ export * from "./compatibility";
 export * from "./pricing";
 export * from "./queues";
 export * from "./reports";
+export * from "./together-access";
