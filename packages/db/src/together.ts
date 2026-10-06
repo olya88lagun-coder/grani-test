@@ -35,7 +35,7 @@ async function lockUser(tx: Database, userId: string): Promise<void> {
   await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for("update");
 }
 
-async function lockSpace(tx: Database, spaceId: string) {
+export async function lockSpace(tx: Database, spaceId: string) {
   const [space] = await tx.select().from(togetherSpaces).where(eq(togetherSpaces.id, spaceId)).for("update");
   return space ?? null;
 }
@@ -49,7 +49,7 @@ async function hasActiveMembership(tx: Database, userId: string): Promise<boolea
   return row !== undefined;
 }
 
-async function findActiveMembership(tx: Database, userId: string, role?: TogetherRole): Promise<{ spaceId: string } | null> {
+export async function findActiveMembership(tx: Database, userId: string, role?: TogetherRole): Promise<{ spaceId: string } | null> {
   const conditions = [eq(togetherMembers.userId, userId), isNull(togetherMembers.leftAt)];
   if (role) conditions.push(eq(togetherMembers.role, role));
   const [row] = await tx.select({ spaceId: togetherMembers.spaceId }).from(togetherMembers).where(and(...conditions)).limit(1);
