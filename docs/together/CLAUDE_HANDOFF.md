@@ -161,3 +161,20 @@ Desktop-nav заменяется мобильным меню. В книге им
 Коммит не создавался; push/PR/merge/deployment не выполнялись. Файлы сохранены в C:\dev\grani-test\docs\together. Нативный Git не смог перейти в рабочую папку (Permission denied), поэтому статус ветки/чистота не заявляются проверенными.
 Ограничение: это макеты с вымышленными данными; gateway/roles/query-presets/stage1Demo не переносить в production. Три бесплатных вводных вопроса пока лишь preview, реальный каталог подключает этап 2.
 Следующая задача Claude: подключить представления к /together и /together/invite/[token], существующему согласию/VK ID и безопасному returnTo; проверить обычный перенос результата теста. Статус покупки проверяется через /api/together/purchases/[id], затем GET space; исторического granted недостаточно, если пространство закрыто или access.active=false. Не включать живую оплату до готовности этапов 1–2 и решения владельца.
+
+## Этап 2: карточки, ответы, раскрытие — Claude · 2026-10-06
+Ветка `feat/together-stage2` (от `feat/together-stage1`). Спецификация: [../superpowers/specs/2026-10-06-together-cards-design.md](../superpowers/specs/2026-10-06-together-cards-design.md), план: [../superpowers/plans/2026-10-06-together-cards.md](../superpowers/plans/2026-10-06-together-cards.md).
+
+**Что сделано (код подготовлен).** Маршрут из 29 карточек (3 вводные бесплатные + `m01-d01…d26`), ответы с раскрытием только после ответа обоих, пропуск, правка раскрытого ответа, отметки «Продолжить» и «сделали вместе», история, прогресс. Каталог для сервера — `packages/content/src/together/` (копия `docs/together/content/month-01.json` плюс `intro.json`); файлы в `docs/together/content/` остаются редакционным снимком, актуальным считается пакет.
+
+**Контракт для экранов.**
+`GET /api/together/cards/current` → `{ ok, card | null, progress: { done, total } }`; `card`: `id, position, kind, title, prompt, hint, estimatedMinutes, jointAction, fields[], state ("answer" | "waiting" | "revealed" | "skipped"), locked, mine { fields, revision, done } | null, partner { status ("none" | "answered" | "skipped"), fields?, edited?, done? }`.
+`revealed` и `skipped` — итог закрытой карточки, он показывается, пока человек не нажмёт «Продолжить» (`POST …/continue`); отвечать на следующую до этого нельзя (409 `reveal_pending`).
+`PUT /api/together/cards/[id]/answer` `{ fields }` → `{ ok, state ("waiting" | "revealed" | "edited"), revealed: { card } | null }`; `DELETE` того же пути — черновик до раскрытия; `POST …/skip`; `POST …/continue` `{ done?: boolean }`; `GET /api/together/history?before=<position>` → `{ ok, items[], next }`; `GET /api/together/space` дополнен `progress`.
+Поля с `availableAt: "after_reveal"` (например `share_in_book`) до раскрытия присылать нельзя, даже `false`: 400 `field_not_available`. Коды ошибок: 400 `invalid_field`, `field_not_available`, `invalid`; 404 нейтральный; 409 `already_closed`, `already_revealed`, `reveal_pending`, `access_required`, `skip_not_allowed`, `not_closed`; 429.
+Платные карточки (`kind: "main"`): `locked: true`, пока человек не ответил, а доступа нет. Вводные доступны без оплаты.
+
+**Проверено 2026-10-06:** `pnpm typecheck` без ошибок; `pnpm test` — 102 файла, 759 тестов зелёные (было 702); e2e `together-cards.spec.ts` (два аккаунта, сайт на порту 3001 с `APP_URL=http://localhost:3001`, воркер запущен) зелёный. Покрытие (`test:coverage`) не пересчитывалось. PR, слияние и деплой не выполнялись.
+
+**Ограничения.** Нет экранов карточек (Codex), запасных карточек, свиданий, месяцев 2–3, игровых форматов, карточек `m01-d27`/`m01-d28` (этап 4 вместе с карточкой заботы), книги, наград и уведомлений. После выхода данные сохраняются, но никому не показываются; экран «мои ответы» и выгрузка — этап 4. Гонки проверены порядком блокировок и ограничениями БД, а не параллельными соединениями (PGlite однопоточный). Тексты карточек и трёх вводных — редакционный черновик, нужно утверждение владельца до выхода в master.
+Следующая задача: экраны карточек (Codex рисует, Claude подключает), затем этап 3 (игровые форматы).
