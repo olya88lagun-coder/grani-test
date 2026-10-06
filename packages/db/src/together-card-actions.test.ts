@@ -209,18 +209,21 @@ describe("skipCard", () => {
     expect(await cardRows()).toHaveLength(2);
     expect(await answerRow(id, anna)).toMatchObject([{ status: "skipped", fields: {} }]);
     expect((await viewOf(boris)).card).toMatchObject({ position: 1, state: "skipped", partner: { status: "skipped" } });
+    // Пропустивший видит тот же итог до своего «Продолжить»: после перезагрузки или на другом устройстве он не теряется
+    expect((await viewOf(anna)).card).toMatchObject({ position: 1, state: "skipped", partner: { status: "none" } });
+    await proceed(anna, id);
     expect((await viewOf(anna)).card).toMatchObject({ position: 2, state: "answer" });
   });
 
-  test("skipping after my own answer wipes the text and marks the result as seen for me", async () => {
+  test("skipping after my own answer wipes the text and leaves the result unseen until I continue", async () => {
     const id = await currentId();
     await put(anna, id, { answer: "мой черновик" });
 
     await skip(anna, id);
 
     expect(await answerRow(id, anna)).toMatchObject([{ status: "skipped", fields: {} }]);
-    const [mark] = await db.select().from(togetherCardMarks).where(and(eq(togetherCardMarks.cardId, id), eq(togetherCardMarks.userId, anna)));
-    expect(mark?.seenAt).toEqual(NOW);
+    expect(await db.select().from(togetherCardMarks).where(and(eq(togetherCardMarks.cardId, id), eq(togetherCardMarks.userId, anna)))).toEqual([]);
+    expect(await skip(anna, (await cardRows()).find((card) => card.position === 2)!.id)).toEqual({ ok: false, reason: "reveal_pending" });
   });
 
   test("a skip while the partner has already answered never shows the partner's answer to the skipper", async () => {

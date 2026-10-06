@@ -118,12 +118,12 @@ export async function skipCard(
     if (card.snapshot.kind === "main" && !(await answerStatuses(tx, card.id)).has(p.userId) && !(await hasAccess(tx, context.spaceId, p.now))) {
       return { ok: false, reason: "access_required" };
     }
-    // Свой прежний ответ затирается: пропуск не оставляет текста; ответ партнёра не трогаем и не раскрываем
+    // Свой прежний ответ затирается: пропуск не оставляет текста; ответ партнёра не трогаем и не раскрываем.
+    // Отметку «просмотрено» пропустивший получает, как и партнёр, только на «Продолжить»: итог не теряется после перезагрузки
     await tx
       .insert(togetherAnswers)
       .values({ cardId: card.id, spaceId: context.spaceId, userId: p.userId, status: "skipped", fields: {}, updatedAt: p.now })
       .onConflictDoUpdate({ target: [togetherAnswers.cardId, togetherAnswers.userId], set: { status: "skipped", fields: {}, updatedAt: p.now } });
-    await tx.insert(togetherCardMarks).values({ cardId: card.id, spaceId: context.spaceId, userId: p.userId, seenAt: p.now }).onConflictDoNothing();
     await closeCard(tx, { card, track: p.track, now: p.now });
     return { ok: true };
   });
