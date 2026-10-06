@@ -1,12 +1,13 @@
+import type { CardView, HistoryItem, Progress } from "@/lib/together-cards-view";
 import type { SpaceView } from "@/lib/together-view";
 
 export type ApiResult<T = Record<string, unknown>> = { ok: boolean; status: number; body: T & { ok?: boolean; error?: string } };
 
 // Тонкая обёртка над fetch: сервер всегда отвечает JSON-конвертом { ok, error? }; сеть или разбор не удались — status 0
-export async function callApi<T = Record<string, unknown>>(url: string, init?: { body?: unknown }): Promise<ApiResult<T>> {
+export async function callApi<T = Record<string, unknown>>(url: string, init?: { body?: unknown; method?: "POST" | "PUT" | "DELETE" }): Promise<ApiResult<T>> {
   try {
     const response = await fetch(url, {
-      method: init ? "POST" : "GET",
+      method: init ? (init.method ?? "POST") : "GET",
       headers: init ? { "content-type": "application/json" } : undefined,
       body: init ? JSON.stringify(init.body ?? {}) : undefined,
       cache: "no-store",
@@ -24,3 +25,8 @@ export async function readSpace(): Promise<{ ok: true; space: SpaceView | null }
 }
 
 export const LOGIN_AGAIN_URL = "/api/together/enter?next=space";
+
+export type CurrentCard = { card: CardView | null; progress: Progress };
+
+export const readCurrentCard = () => callApi<CurrentCard>("/api/together/cards/current");
+export const readHistory = (before?: number) => callApi<{ items: HistoryItem[]; next: number | null }>(`/api/together/history${before === undefined ? "" : `?before=${before}`}`);

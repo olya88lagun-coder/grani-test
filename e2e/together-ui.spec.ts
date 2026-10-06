@@ -1,5 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { uniqueName } from "./helpers";
+import { playCardsViaApi, uniqueName } from "./helpers";
 
 const EMAIL = "anna@example.ru";
 
@@ -59,6 +59,11 @@ test("two people go from the sign-in to a paid space through the screens", async
   // Партнёр узнаёт о подтверждении и оплачивает; успех показывается только после проверки на сервере
   await boris.getByRole("button", { name: "Проверить подтверждение" }).click();
   await expect(boris.getByRole("heading", { name: "Вы теперь вдвоём" })).toBeVisible();
+  // Оплата предлагается в закрытой карточке: три вводные бесплатны, до платной пара доходит через API
+  await expect(boris.getByRole("heading", { name: "Замечать хорошее" })).toBeVisible();
+  await playCardsViaApi(anna, boris, 3);
+  await boris.reload();
+  await expect(boris.getByRole("heading", { name: "Продолжите вдвоём" })).toBeVisible();
   await boris.getByLabel("Электронная почта для чека").fill(EMAIL);
   await boris.getByRole("button", { name: "Перейти к оплате 599 ₽" }).click();
   await expect(boris).toHaveURL(/\/dev\/pay\/fake-/);
