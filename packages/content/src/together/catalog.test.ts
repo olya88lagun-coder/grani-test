@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { buildTrack, toSnapshot, TOGETHER_TRACK } from "./catalog";
 import intro from "./intro.json";
+import month01 from "./month-01.json";
 
 const validCard = {
   id: "x-01",
@@ -71,5 +72,32 @@ describe("toSnapshot", () => {
 describe("buildTrack", () => {
   test("fails loudly when a card of the track is missing", () => {
     expect(() => buildTrack(intro.cards.slice(0, 2), [])).toThrow(/intro-03/);
+  });
+});
+
+describe("month 1 editorial invariants", () => {
+  const inTrack = month01.cards.filter((card) => TOGETHER_TRACK.some((item) => item.id === card.id));
+  const bindingType = (card: unknown) => (card as { rewardBinding?: { type?: string } | null }).rewardBinding?.type;
+
+  test("keeps enough sources in the track for the final care card: attention, ease and a ritual", () => {
+    const types = inTrack.map(bindingType);
+    expect(types.filter((type) => type === "attention").length).toBeGreaterThanOrEqual(2);
+    expect(types.filter((type) => type === "ease").length).toBeGreaterThanOrEqual(2);
+    expect(types.filter((type) => type === "ritual").length).toBeGreaterThanOrEqual(1);
+  });
+
+  test("keeps prompts short and puts the steps of a date card into the hint, where they are visible before answering", () => {
+    for (const card of TOGETHER_TRACK) {
+      expect(card.prompt.length, card.id).toBeLessThanOrEqual(220);
+      expect(card.hint.length, card.id).toBeLessThanOrEqual(700);
+    }
+    const dates = TOGETHER_TRACK.filter((card) => card.title.startsWith("Свидание"));
+    expect(dates.map((card) => card.id)).toEqual(["m01-d07", "m01-d13", "m01-d20", "m01-d25"]);
+    for (const card of dates) expect(card.hint, card.id).toContain("\n1. ");
+  });
+
+  test("lists every card of the track in exactly one week, in order", () => {
+    const days = month01.weeks.flatMap((week) => week.days);
+    expect(days).toEqual(Array.from({ length: 26 }, (_, index) => index + 1));
   });
 });

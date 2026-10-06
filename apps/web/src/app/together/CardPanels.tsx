@@ -51,7 +51,7 @@ export function AnswerForm({ card, values, onChange, onSubmit, working, fieldErr
         onSubmit();
       }}
     >
-      {card.hint && <p className="muted">{card.hint}</p>}
+      {card.hint && <p className="muted tc-flow">{card.hint}</p>}
       {texts.map((field) => {
         const value = typeof values[field.id] === "string" ? String(values[field.id]) : "";
         const long = field.id === "answer" || (field.maxLength ?? 0) > 200;
@@ -148,7 +148,7 @@ export function RevealPanel({ card, partnerName, working, doneIntent, onDoneInte
       </div>
       <section className="tc-paper stack">
         <p className="eyebrow">Маленький шаг</p>
-        <p>{card.jointAction}</p>
+        <p className="tc-flow">{card.jointAction}</p>
         <label className="choice">
           <input type="checkbox" checked={alreadyDone || doneIntent} disabled={alreadyDone || working} onChange={(event) => onDoneIntent(event.target.checked)} />
           <span>Сделали вместе</span>
