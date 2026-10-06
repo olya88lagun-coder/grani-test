@@ -2343,6 +2343,12 @@ body.has-cookie-banner .sticky-cta { display: none; }
   .pricing-grid { grid-template-columns: 1.15fr 1fr 1fr; }
 }
 
+/* Совместимость: кнопки первого экрана и после «Как это работает» */
+.pair-actions { gap: 12px; }
+@media (max-width: 559px) {
+  .pair-actions .button { width: 100%; justify-content: center; }
+}
+
 /* Статьи: журнальный список и страница статьи */
 .journal-hero {
   display: grid;

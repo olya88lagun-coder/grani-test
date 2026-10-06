@@ -69,3 +69,17 @@ test("a pair is not created without consent", async ({ browser }) => {
   await vera.context.close();
   await anna.context.close();
 });
+
+test("the compatibility page leads a newcomer to the test and a returning user to the invite", async ({ browser, page }) => {
+  await page.goto("/compatibility");
+  await page.getByRole("link", { name: "Пройти тест" }).first().click();
+  await expect(page).toHaveURL(/\/test$/);
+
+  const anna = await signedInWithResult(browser, uniqueName("Аня"));
+  await anna.page.goto("/compatibility");
+  await anna.page.getByRole("link", { name: "Уже прошли — позвать партнёра" }).first().click();
+  await expect(anna.page).toHaveURL(/\/result\/[0-9a-f-]{36}#pairs$/);
+  await expect(anna.page.getByRole("button", { name: "Позвать партнёра" })).toBeInViewport();
+  await anna.context.close();
+});
+
