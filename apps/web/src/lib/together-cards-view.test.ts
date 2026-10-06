@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { cardFailure, mergeHistory, partnerStatusText, progressText, serializeAnswer, validateDraft, type CardView, type HistoryItem } from "./together-cards-view";
+import { cardFailure, formatOpensAt, lockTitle, mergeHistory, partnerStatusText, progressText, serializeAnswer, validateDraft, type CardView, type HistoryItem } from "./together-cards-view";
 
 const card: CardView = {
   id: "11111111-1111-4111-8111-111111111111",
@@ -18,6 +18,7 @@ const card: CardView = {
   ],
   state: "answer",
   locked: false,
+  lock: null,
   mine: null,
   partner: { status: "none" },
 };
@@ -75,6 +76,7 @@ describe("cardFailure", () => {
     expect(cardFailure(500, "").text).toMatch(/Ничего не потеряно/);
     expect(cardFailure(409, "skip_not_allowed").text).toMatch(/нельзя пропустить/);
     expect(cardFailure(403, "bad_origin").text).toMatch(/Сессия устарела/);
+    expect(cardFailure(409, "not_yet_open")).toMatchObject({ kind: "reload", text: expect.stringMatching(/ещё не открылся/) });
     expect(cardFailure(400, "something_new")).toMatchObject({ kind: "none", text: expect.stringMatching(/Не получилось выполнить действие/) });
   });
 });
@@ -91,5 +93,17 @@ describe("history and progress helpers", () => {
     expect(partnerStatusText("none", "Борис")).toBe("Борис: ответа пока нет.");
     expect(partnerStatusText("answered", "Борис")).toBe("Борис: ответ есть. Текст откроется, когда ответите вы.");
     expect(partnerStatusText("skipped", "Борис")).toBe("Борис: карточка пропущена.");
+  });
+});
+
+describe("month lock texts", () => {
+  test("names the opening day without a time and in the local zone of the person", () => {
+    expect(formatOpensAt("2026-11-04T10:00:00Z", "Europe/Moscow")).toBe("4 ноября");
+    expect(formatOpensAt("2026-11-04T23:30:00Z", "Asia/Yekaterinburg")).toBe("5 ноября");
+  });
+
+  test("says when the month opens or that it waits for a renewal", () => {
+    expect(lockTitle({ kind: "month", month: 2, opensAt: "2026-11-04T10:00:00Z" }, "Europe/Moscow")).toBe("Месяц 2 откроется 4 ноября");
+    expect(lockTitle({ kind: "month", month: 3, opensAt: null }, "Europe/Moscow")).toBe("Месяц 3 откроется после продления доступа");
   });
 });

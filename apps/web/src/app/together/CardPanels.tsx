@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { partnerStatusText, type AnswerValues, type CardView } from "@/lib/together-cards-view";
+import { lockTitle, partnerStatusText, type AnswerValues, type CardLockView, type CardView } from "@/lib/together-cards-view";
 import { SeasonRoadmap } from "./SeasonRoadmap";
 
 export function CardHeader({ card }: { card: CardView }) {
@@ -194,13 +194,27 @@ export function LockedPanel({ price, children }: { price: string; children: Reac
   );
 }
 
+// Месяц ещё не открылся: доступ есть, но накоплено меньше оплаченного времени, чем нужно этому месяцу
+export function MonthLockedPanel({ lock }: { lock: Extract<CardLockView, { kind: "month" }> }) {
+  return (
+    <section className="tc-paper stack">
+      <h3 className="display tc-sub">{lockTitle(lock)}</h3>
+      <p>Каждый месяц открывается, когда у вас накопилось 30 дней оплаченного доступа: у каждой темы есть время на разговоры и свидания.</p>
+      <p className="muted">Пока можно вернуться к прошлым карточкам в истории или повторить любимое свидание.</p>
+      <details className="tc-details">
+        <summary>О чём будет этот месяц</summary>
+        <SeasonRoadmap from={lock.month} compact />
+      </details>
+    </section>
+  );
+}
+
 export function EndPanel({ total }: { total: number }) {
   return (
     <section className="tc-paper stack">
       <p className="eyebrow">{total} карточек позади</p>
       <h3 className="display tc-sub" tabIndex={-1} data-card-heading>Вы прошли этот маршрут</h3>
-      <p>В истории остались ваши ответы и пропуски. Следующие месяцы откроются по порядку, вот что дальше:</p>
-      <SeasonRoadmap from={2} compact />
+      <p>Вы прошли первые полгода. В истории остались ваши ответы и пропуски, а продолжение мы готовим.</p>
     </section>
   );
 }

@@ -11,8 +11,10 @@ import {
 import { getTogetherSpaceView, type TogetherDeps } from "./together-service";
 
 const START = new Date("2026-10-05T10:00:00Z");
+const DAY_MS = 86_400_000;
 
 let db: Database;
+let clock: Date;
 let deps: TogetherDeps;
 let spaceId: string;
 let anna: string;
@@ -41,16 +43,17 @@ async function playCard() {
 
 beforeEach(async () => {
   db = await createTestDb();
-  deps = { db, now: () => START, appUrl: "http://localhost:3000" };
+  clock = START;
+  deps = { db, now: () => clock, appUrl: "http://localhost:3000" };
   ({ spaceId, initiatorId: anna, partnerId: boris } = await seedTogetherSpace(db, { now: START }));
 });
 
 describe("getCurrentTogetherCard", () => {
-  test("starts with the first free intro card and a 29-card track", async () => {
+  test("starts with the first free intro card and a 159-card track", async () => {
     const result = await current(anna);
 
-    expect(result.progress).toEqual({ done: 0, total: 29 });
-    expect(result.card).toMatchObject({ position: 1, kind: "intro", state: "answer", locked: false, mine: null, partner: { status: "none" } });
+    expect(result.progress).toEqual({ done: 0, total: 159 });
+    expect(result.card).toMatchObject({ position: 1, kind: "intro", state: "answer", locked: false, lock: null, mine: null, partner: { status: "none" } });
     expect(result.card?.title).toBe("Замечать хорошее");
     expect(result.card?.fields.map((field) => field.id)).toEqual(["answer", "share_in_book"]);
   });
@@ -59,7 +62,7 @@ describe("getCurrentTogetherCard", () => {
     for (let i = 0; i < 3; i++) await playCard();
 
     const locked = await current(anna);
-    expect(locked.card).toMatchObject({ position: 4, kind: "main", state: "answer", locked: true });
+    expect(locked.card).toMatchObject({ position: 4, kind: "main", state: "answer", locked: true, lock: { kind: "payment" } });
     expect(await answerTogetherCard(deps, { userId: anna, cardId: locked.card!.id, fields: { answer: "платная" } })).toEqual({ ok: false, error: "access_required" });
 
     await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: START });
@@ -72,6 +75,25 @@ describe("getCurrentTogetherCard", () => {
 
     expect(result).toEqual({ ok: false, error: "not_found" });
   });
+});
+
+describe("months open by paid time", () => {
+  test("month 2 waits for 30 days of paid time, says when it opens and then opens", async () => {
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: START });
+    await seedTogetherAccess(db, { spaceId, userId: anna, paidAt: new Date(START.getTime() + 2 * DAY_MS) });
+    clock = new Date(START.getTime() + DAY_MS);
+    for (let i = 0; i < 29; i++) await playCard();
+
+    clock = new Date(START.getTime() + 5 * DAY_MS);
+    const waiting = await current(anna);
+    expect(waiting.card).toMatchObject({ position: 30, kind: "main", state: "answer", locked: true, lock: { kind: "month", month: 2, opensAt: new Date(START.getTime() + 30 * DAY_MS).toISOString() } });
+    expect(await answerTogetherCard(deps, { userId: anna, cardId: waiting.card!.id, fields: { answer: "рано" } })).toEqual({ ok: false, error: "not_yet_open" });
+    expect(await skipTogetherCard(deps, { userId: anna, cardId: waiting.card!.id })).toEqual({ ok: false, error: "not_yet_open" });
+
+    clock = new Date(START.getTime() + 31 * DAY_MS);
+    expect((await current(anna)).card).toMatchObject({ position: 30, locked: false, lock: null });
+    expect(await answerTogetherCard(deps, { userId: anna, cardId: waiting.card!.id, fields: { answer: "теперь можно" } })).toMatchObject({ ok: true, state: "waiting" });
+  }, 120_000);
 });
 
 describe("answers, drafts and skips", () => {
@@ -122,10 +144,10 @@ describe("getTogetherHistory", () => {
 
 describe("space view progress", () => {
   test("reports how many cards the pair has completed", async () => {
-    expect((await getTogetherSpaceView(deps, anna))?.progress).toEqual({ done: 0, total: 29 });
+    expect((await getTogetherSpaceView(deps, anna))?.progress).toEqual({ done: 0, total: 159 });
 
     await playCard();
 
-    expect((await getTogetherSpaceView(deps, boris))?.progress).toEqual({ done: 1, total: 29 });
+    expect((await getTogetherSpaceView(deps, boris))?.progress).toEqual({ done: 1, total: 159 });
   });
 });

@@ -48,7 +48,7 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
         </section>
         <section className="card stack">
           <h2 className="display">Маршрут на полгода</h2>
-          <p className="lead">Каждый месяц у пары своя тема, свои вопросы и четыре свидания. Сейчас открыт первый месяц, следующие открываются по порядку.</p>
+          <p className="lead">Каждый месяц у пары своя тема, свои вопросы и четыре свидания. Месяцы открываются по очереди: каждый следующий, когда у вас накопилось 30 дней оплаченного доступа.</p>
           <SeasonRoadmap />
         </section>
       </main>

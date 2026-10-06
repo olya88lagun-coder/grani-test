@@ -14,7 +14,7 @@ import {
   type Progress,
 } from "@/lib/together-cards-view";
 import { callApi, LOGIN_AGAIN_URL, readCurrentCard } from "./client";
-import { AnswerForm, CardHeader, EndPanel, LockedPanel, PartnerStatus, RevealPanel, SkippedPanel, WaitingPanel } from "./CardPanels";
+import { AnswerForm, CardHeader, EndPanel, LockedPanel, MonthLockedPanel, PartnerStatus, RevealPanel, SkippedPanel, WaitingPanel } from "./CardPanels";
 import { CardHistory } from "./CardHistory";
 import { ConfirmDialog } from "./ConfirmDialog";
 import "./together-cards.css";
@@ -269,7 +269,8 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
         {card ? (
           <>
             <CardHeader card={card} />
-            {card.locked && <LockedPanel price={price}>{renderPayment()}</LockedPanel>}
+            {card.locked && card.lock?.kind === "month" && <MonthLockedPanel lock={card.lock} />}
+            {card.locked && card.lock?.kind !== "month" && <LockedPanel price={price}>{renderPayment()}</LockedPanel>}
             {!card.locked && card.state === "answer" && (
               <>
                 <PartnerStatus card={card} partnerName={partnerName} />

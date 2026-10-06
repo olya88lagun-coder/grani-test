@@ -17,9 +17,11 @@ export type CardView = {
   fields: CardFieldView[];
   state: CardState;
   locked: boolean;
+  lock: CardLockView | null;
   mine: { fields: AnswerValues; revision: number; done: boolean } | null;
   partner: PartnerView;
 };
+export type CardLockView = { kind: "payment" } | { kind: "month"; month: number; opensAt: string | null };
 export type Progress = { done: number; total: number };
 export type HistoryItem = {
   id: string;
@@ -92,6 +94,8 @@ export function cardFailure(status: number, code: string): CardFailure {
       return { kind: "reload", text: "Сначала посмотрите итог предыдущей карточки." };
     case "not_closed":
       return { kind: "reload", text: "Карточка ещё открыта. Обновляем её." };
+    case "not_yet_open":
+      return { kind: "reload", text: "Этот месяц ещё не открылся. Обновляем карточку." };
     case "access_required":
       return { kind: "paywall", text: "Чтобы идти дальше по основному маршруту, откройте доступ для пары." };
     case "skip_not_allowed":
@@ -119,4 +123,13 @@ export function partnerStatusText(status: PartnerView["status"], name: string): 
 export function mergeHistory(current: readonly HistoryItem[], incoming: readonly HistoryItem[]): HistoryItem[] {
   const known = new Set(current.map((item) => item.id));
   return [...current, ...incoming.filter((item) => !known.has(item.id))];
+}
+
+// День открытия месяца в часовом поясе человека, без времени: «4 ноября»
+export function formatOpensAt(iso: string, timeZone?: string): string {
+  return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", timeZone }).format(new Date(iso));
+}
+
+export function lockTitle(lock: Extract<CardLockView, { kind: "month" }>, timeZone?: string): string {
+  return lock.opensAt ? `Месяц ${lock.month} откроется ${formatOpensAt(lock.opensAt, timeZone)}` : `Месяц ${lock.month} откроется после продления доступа`;
 }

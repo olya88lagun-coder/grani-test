@@ -126,7 +126,7 @@ describe("getTogetherSpaceView", () => {
   test("reports zero progress for a pair that has not started", async () => {
     await makeActive();
 
-    expect((await getTogetherSpaceView(deps, anna))?.progress).toEqual({ done: 0, total: 29 });
+    expect((await getTogetherSpaceView(deps, anna))?.progress).toEqual({ done: 0, total: 159 });
   });
 
   test("reports no access before the first payment and allows renewal", async () => {

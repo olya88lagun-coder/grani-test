@@ -26,7 +26,7 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await anna.goto("/together");
   await boris.goto("/together");
   await expect(anna.getByRole("heading", { name: "Замечать хорошее" })).toBeVisible();
-  await expect(anna.getByText("Пройдено: 0 из 29")).toBeVisible();
+  await expect(anna.getByText("Пройдено: 0 из 159")).toBeVisible();
 
   // Аня отвечает; Борис видит только статус, текст до его ответа не приходит ни в сеть, ни в страницу
   await anna.getByLabel(/Какой небольшой поступок/).fill(secret);
@@ -92,7 +92,7 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   for (const page of [boris, anna]) await page.getByRole("button", { name: "Продолжить" }).click();
 
   // История и прогресс
-  await expect(anna.getByText("Пройдено: 2 из 29")).toBeVisible();
+  await expect(anna.getByText("Пройдено: 2 из 159")).toBeVisible();
   await anna.getByRole("button", { name: "История карточек" }).click();
   await expect(anna.getByText("Карточка 2 · пропущена")).toBeVisible();
   await expect(anna.getByText("Карточка 1 · ответы открыты")).toBeVisible();

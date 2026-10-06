@@ -36,7 +36,7 @@ test("two accounts play the first free cards: hidden until both answer, reveal, 
   expect((await vera.request.get("/api/together/cards/current")).status()).toBe(404);
 
   const first = await json<Current>(await anna.request.get("/api/together/cards/current"));
-  expect(first.progress).toEqual({ done: 0, total: 29 });
+  expect(first.progress).toEqual({ done: 0, total: 159 });
   expect(first.card).toMatchObject({ position: 1, state: "answer" });
   const id = first.card!.id;
 
@@ -85,7 +85,7 @@ test("two accounts play the first free cards: hidden until both answer, reveal, 
   ]);
   expect((await anna.request.get("/api/together/history?before=abc")).status()).toBe(400);
   const space = await json<{ space: { progress: { done: number; total: number } } }>(await anna.request.get("/api/together/space"));
-  expect(space.space.progress).toEqual({ done: 2, total: 29 });
+  expect(space.space.progress).toEqual({ done: 2, total: 159 });
 
   // После выхода карточки закрыты для обоих
   expect((await post(boris, "/api/together/leave", { acknowledged: true })).status()).toBe(200);

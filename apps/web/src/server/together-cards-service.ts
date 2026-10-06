@@ -7,6 +7,7 @@ import {
   loadCurrentCard,
   skipCard,
   submitAnswer,
+  type CardLock,
   type CardState,
   type CardView,
   type HistoryItem,
@@ -25,12 +26,19 @@ export type CardResponse = {
   fields: CardField[];
   state: CardState;
   locked: boolean;
+  // Почему закрыта: оплата или месяц, который ещё не открылся (с моментом открытия, null — после продления доступа)
+  lock: { kind: "payment" } | { kind: "month"; month: number; opensAt: string | null } | null;
   mine: CardView["mine"];
   partner: CardView["partner"];
 };
 
-// Платная карточка закрыта, пока человек ещё не ответил, а доступа нет; уже отвеченное остаётся доступным
-function toCardResponse(view: CardView, accessActive: boolean): CardResponse {
+function toLock(lock: CardLock | null): CardResponse["lock"] {
+  if (!lock) return null;
+  return lock.kind === "payment" ? lock : { kind: "month", month: lock.month, opensAt: lock.opensAt ? lock.opensAt.toISOString() : null };
+}
+
+// Платная карточка закрыта, пока человек ещё не ответил, а доступа нет или месяц не открылся; уже отвеченное остаётся доступным
+function toCardResponse(view: CardView, lock: CardLock | null): CardResponse {
   return {
     id: view.id,
     position: view.position,
@@ -42,7 +50,8 @@ function toCardResponse(view: CardView, accessActive: boolean): CardResponse {
     jointAction: view.snapshot.jointAction,
     fields: view.snapshot.fields,
     state: view.state,
-    locked: view.snapshot.kind === "main" && view.state === "answer" && !accessActive,
+    locked: lock !== null,
+    lock: toLock(lock),
     mine: view.mine,
     partner: view.partner,
   };
@@ -54,7 +63,7 @@ export async function getCurrentTogetherCard(
 ): Promise<{ ok: true; card: CardResponse | null; progress: { done: number; total: number } } | { ok: false; error: "not_found" }> {
   const result = await loadCurrentCard(deps.db, { userId, track: TOGETHER_TRACK, now: deps.now() });
   if (!result.ok) return { ok: false, error: "not_found" };
-  return { ok: true, card: result.card ? toCardResponse(result.card, result.accessActive) : null, progress: result.progress };
+  return { ok: true, card: result.card ? toCardResponse(result.card, result.lock) : null, progress: result.progress };
 }
 
 export async function answerTogetherCard(
@@ -62,11 +71,11 @@ export async function answerTogetherCard(
   p: { userId: string; cardId: string; fields: unknown },
 ): Promise<
   | { ok: true; state: "waiting" | "revealed" | "edited"; revealed: { card: CardResponse } | null }
-  | { ok: false; error: "not_found" | "already_closed" | "reveal_pending" | "access_required" | "invalid_field" | "field_not_available" }
+  | { ok: false; error: "not_found" | "already_closed" | "reveal_pending" | "access_required" | "not_yet_open" | "invalid_field" | "field_not_available" }
 > {
   const outcome = await submitAnswer(deps.db, { userId: p.userId, cardId: p.cardId, fields: p.fields, track: TOGETHER_TRACK, now: deps.now() });
   if (!outcome.ok) return { ok: false, error: outcome.reason };
-  return { ok: true, state: outcome.state, revealed: outcome.revealed ? { card: toCardResponse(outcome.revealed, true) } : null };
+  return { ok: true, state: outcome.state, revealed: outcome.revealed ? { card: toCardResponse(outcome.revealed, null) } : null };
 }
 
 export async function deleteTogetherDraft(
@@ -80,7 +89,7 @@ export async function deleteTogetherDraft(
 export async function skipTogetherCard(
   deps: TogetherDeps,
   p: { userId: string; cardId: string },
-): Promise<{ ok: true } | { ok: false; error: "not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required" }> {
+): Promise<{ ok: true } | { ok: false; error: "not_found" | "already_closed" | "reveal_pending" | "skip_not_allowed" | "access_required" | "not_yet_open" }> {
   const outcome = await skipCard(deps.db, { userId: p.userId, cardId: p.cardId, track: TOGETHER_TRACK, now: deps.now() });
   return outcome.ok ? outcome : { ok: false, error: outcome.reason };
 }
