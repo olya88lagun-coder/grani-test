@@ -54,6 +54,27 @@ beforeEach(async () => {
 });
 
 describe("completeLogin", () => {
+  test("returns a person to the together page they came from, keeping the old flow without it", async () => {
+    const token = "t".repeat(24);
+    const consent = await giveConsent(deps);
+
+    const toSpace = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, together: "space" });
+    const toInvite = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, together: `invite:${token}` });
+    const tampered = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, together: "https://evil.example" });
+
+    expect(toSpace.ok && toSpace.redirectTo).toBe("/together");
+    expect(toInvite.ok && toInvite.redirectTo).toBe(`/together/invite/${token}`);
+    expect(tampered.ok && tampered.redirectTo).toBe("/test");
+  });
+
+  test("a pair invite still wins over the together return, and pending answers are saved either way", async () => {
+    const pairInvite = "p".repeat(24);
+
+    const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent: await giveConsent(deps), pending: await pendingToken(), pairInvite, together: "space" });
+
+    expect(outcome.ok && outcome.redirectTo).toBe(`/p/${pairInvite}`);
+  });
+
   test("returns a partner to the pair invite after login, still saving pending answers", async () => {
     const pairInvite = "p".repeat(24);
 
