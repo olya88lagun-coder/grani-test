@@ -202,6 +202,18 @@ export const togetherInvites = pgTable(
   ],
 );
 
+export const togetherPilotSourceEnum = pgEnum("together_pilot_source", ["code", "invite"]);
+export type TogetherPilotSource = (typeof togetherPilotSourceEnum.enumValues)[number];
+
+// Допуск человека к закрытому пилоту «Вдвоём». Пропуск по общему коду занимает место в лимите, пропуск по приглашению — нет
+export const togetherPilotPasses = pgTable("together_pilot_passes", {
+  userId: uuid("user_id")
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  source: togetherPilotSourceEnum("source").notNull(),
+  createdAt: createdAt(),
+});
+
 export const productEnum = pgEnum("product", [
   "full",
   "chapter_money",

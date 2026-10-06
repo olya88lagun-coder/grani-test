@@ -23,6 +23,7 @@ const ENV: AppEnv = {
   vkCommunity: null,
   payments: null,
   owner: null,
+  together: { mode: "open", pilotCode: null, pilotLimit: 40 },
 };
 const NO_COOKIES: LoginCookies = { session: null, pending: null, consent: null };
 const ANNA = { provider: "vk", externalId: "42", displayName: "Аня", gender: null } as const;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
 import { peekTogetherInvite } from "@/server/together-service";
@@ -13,6 +14,7 @@ export const metadata: Metadata = { title: "Приглашение во Вдво
 
 export default async function TogetherInvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
+  if (getEnv().together.mode === "off") notFound();
   const user = await currentUser();
   const { valid } = await peekTogetherInvite({ db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL }, token, user?.id);
 

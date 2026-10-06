@@ -3,12 +3,18 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const getCurrentUser = vi.fn();
 vi.mock("./login-service", () => ({ getCurrentUser: (...args: unknown[]) => getCurrentUser(...args) }));
+const togetherAdmission = vi.fn();
+vi.mock("./together-gate", () => ({ togetherAdmission: (...args: unknown[]) => togetherAdmission(...args) }));
 vi.mock("./deps", () => ({
-  loginDeps: () => ({ db: {}, env: { APP_URL: "http://localhost:3000" }, now: () => new Date("2026-10-05T10:00:00Z") }),
+  loginDeps: () => ({
+    db: {},
+    env: { APP_URL: "http://localhost:3000", owner: null, together: { mode: "pilot", pilotCode: "granitsa-2026", pilotLimit: 40 } },
+    now: () => new Date("2026-10-05T10:00:00Z"),
+  }),
 }));
 
 import { createRateLimiter } from "./rate-limit";
-import { authorizeTogether, cardErrorStatus, failure, readJsonObject } from "./together-route";
+import { authorizeTogether, cardErrorStatus, failure, pilotErrorStatus, readJsonObject } from "./together-route";
 
 const request = (init: { method?: string; origin?: string; cookie?: string; body?: string } = {}) =>
   new NextRequest("http://localhost:3000/api/together/x", {
@@ -17,7 +23,11 @@ const request = (init: { method?: string; origin?: string; cookie?: string; body
     body: init.body,
   });
 
-beforeEach(() => getCurrentUser.mockReset());
+beforeEach(() => {
+  getCurrentUser.mockReset();
+  togetherAdmission.mockReset();
+  togetherAdmission.mockResolvedValue("allowed");
+});
 
 describe("authorizeTogether", () => {
   test("rejects a mutating request from another origin before touching the session", async () => {
@@ -64,6 +74,48 @@ describe("authorizeTogether", () => {
   });
 });
 
+describe("authorizeTogether and the closed pilot", () => {
+  const signedIn = () => getCurrentUser.mockResolvedValue({ id: "u1", displayName: "Аня", gender: null });
+  const call = (options: { entry?: boolean } = {}) => authorizeTogether(request({ method: "GET" }), { mutating: false, ...options });
+
+  test("answers 404 when the feature is switched off", async () => {
+    signedIn();
+    togetherAdmission.mockResolvedValue("unavailable");
+
+    const result = await call();
+
+    expect((result as Response).status).toBe(404);
+    expect(await (result as Response).json()).toEqual({ ok: false, error: "not_found" });
+  });
+
+  test("answers 403 pilot_closed to a person without a pass, and asks the gate about that very person", async () => {
+    signedIn();
+    togetherAdmission.mockResolvedValue("needs_pass");
+
+    const result = await call();
+
+    expect((result as Response).status).toBe(403);
+    expect(await (result as Response).json()).toEqual({ ok: false, error: "pilot_closed" });
+    expect(togetherAdmission).toHaveBeenCalledWith(expect.objectContaining({ together: expect.objectContaining({ mode: "pilot" }) }), "u1");
+  });
+
+  test("an entry route lets a person without a pass through, but never when the feature is off", async () => {
+    signedIn();
+    togetherAdmission.mockResolvedValue("needs_pass");
+    expect(await call({ entry: true })).toMatchObject({ user: { id: "u1" }, gate: { together: { mode: "pilot" } } });
+
+    togetherAdmission.mockResolvedValue("unavailable");
+    expect(((await call({ entry: true })) as Response).status).toBe(404);
+  });
+
+  test("a person who is not signed in still gets 401 and the gate is not asked", async () => {
+    getCurrentUser.mockResolvedValue(null);
+
+    expect(((await call()) as Response).status).toBe(401);
+    expect(togetherAdmission).not.toHaveBeenCalled();
+  });
+});
+
 describe("failure and readJsonObject", () => {
   test("failure builds the error envelope", async () => {
     const response = failure("not_found", 404);
@@ -84,8 +136,16 @@ describe("cardErrorStatus", () => {
   test("maps card errors to stable HTTP statuses", () => {
     expect(cardErrorStatus("not_found")).toBe(404);
     for (const error of ["invalid", "invalid_field", "field_not_available"]) expect(cardErrorStatus(error)).toBe(400);
-    for (const error of ["already_closed", "already_revealed", "reveal_pending", "access_required", "skip_not_allowed", "not_closed"]) {
+    for (const error of ["already_closed", "already_revealed", "reveal_pending", "access_required", "not_yet_open", "skip_not_allowed", "not_closed"]) {
       expect(cardErrorStatus(error)).toBe(409);
     }
+  });
+});
+
+describe("pilotErrorStatus", () => {
+  test("a wrong code is 403, a full pilot is a conflict, a pilot that is not running is not found", () => {
+    expect(pilotErrorStatus("invalid_code")).toBe(403);
+    expect(pilotErrorStatus("limit_reached")).toBe(409);
+    expect(pilotErrorStatus("unavailable")).toBe(404);
   });
 });

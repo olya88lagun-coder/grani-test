@@ -7,6 +7,7 @@ import { peekTogetherInvite } from "@/server/together-service";
 export async function GET(request: NextRequest, { params }: { params: Promise<{ token: string }> }) {
   if (!togetherLimiter.allow(clientKeyFromHeaders(request.headers))) return failure("rate_limited", 429);
   const login = loginDeps();
+  if (login.env.together.mode === "off") return failure("not_found", 404);
   const { token } = await params;
   const outcome = await peekTogetherInvite({ db: login.db, now: login.now, appUrl: login.env.APP_URL }, token);
   return NextResponse.json({ ok: true, ...outcome }, { headers: { "cache-control": "no-store" } });

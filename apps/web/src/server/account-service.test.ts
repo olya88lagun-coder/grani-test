@@ -12,6 +12,7 @@ const ENV: AppEnv = {
   vkCommunity: null,
   payments: null,
   owner: null,
+  together: { mode: "open", pilotCode: null, pilotLimit: 40 },
 };
 
 let db: Database;

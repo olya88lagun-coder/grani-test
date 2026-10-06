@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { publicMetadata } from "@/lib/seo";
 import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
 import { firstName } from "@/server/friends-service";
+import { togetherAdmission } from "@/server/together-gate";
+import { pageGateDeps } from "@/server/together-gate-deps";
 import { getTogetherSpaceView } from "@/server/together-service";
 import { currentUser } from "@/server/viewer";
+import { PilotClosed } from "./PilotClosed";
 import { SeasonRoadmap } from "./SeasonRoadmap";
 import { TogetherSpace } from "./TogetherSpace";
 import "./together-cards.css";
@@ -13,9 +17,10 @@ export const dynamic = "force-dynamic";
 
 const PURCHASE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-// Публичное предложение индексируется; личное пространство вошедшего человека — нет
+// Публичное предложение индексируется только в открытом режиме; личное пространство вошедшего человека — никогда
 export async function generateMetadata(): Promise<Metadata> {
   const user = await currentUser();
+  if (getEnv().together.mode !== "open") return { title: "Вдвоём", robots: { index: false, follow: false } };
   return user
     ? { title: "Ваше пространство", robots: { index: false, follow: false } }
     : publicMetadata({
@@ -27,6 +32,9 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function TogetherPage({ searchParams }: { searchParams: Promise<{ purchase?: string }> }) {
   const [{ purchase }, user] = await Promise.all([searchParams, currentUser()]);
+  const admission = await togetherAdmission(pageGateDeps(), user?.id ?? null);
+  if (admission === "unavailable") notFound();
+  if (admission === "needs_pass") return <PilotClosed signedIn={user !== null} />;
 
   if (!user) {
     return (
