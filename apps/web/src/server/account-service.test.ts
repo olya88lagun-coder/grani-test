@@ -9,7 +9,6 @@ const ENV: AppEnv = {
   DATABASE_URL: "postgres://unused",
   SESSION_SECRET: "s".repeat(40),
   VK_CLIENT_ID: "555",
-  telegram: { botToken: "123456:TEST-TOKEN", botUsername: "test_grani_bot" },
   vkCommunity: null,
   payments: null,
   owner: null,

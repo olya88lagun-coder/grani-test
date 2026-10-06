@@ -1,7 +1,6 @@
 import { getLibrary } from "@grani/content/data";
 import { NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, type GenerateJob, type NotifyJob } from "@grani/core";
 import { createDb, jobIdFor } from "@grani/db";
-import { Api } from "grammy";
 import { PgBoss } from "pg-boss";
 import { createWriter } from "./ai";
 import { readWorkerEnv } from "./env";
@@ -9,7 +8,6 @@ import { runGenerate } from "./generate";
 import { log } from "./log";
 import { runNotify } from "./notify";
 import { dryRunSender, type Senders } from "./senders";
-import { createTelegramSender } from "./telegram";
 import { createVkSender } from "./vk";
 
 const SHUTDOWN_TIMEOUT_MS = 20_000;
@@ -18,11 +16,8 @@ const env = readWorkerEnv();
 const db = createDb(env.DATABASE_URL, { maxConnections: env.poolMax });
 
 function buildSenders(): Senders {
-  if (env.dryRun) return { telegram: dryRunSender("telegram", log), vk: dryRunSender("vk", log) };
-  return {
-    ...(env.telegramToken ? { telegram: createTelegramSender(new Api(env.telegramToken)) } : {}),
-    ...(env.vkGroupToken ? { vk: createVkSender({ token: env.vkGroupToken, fetchFn: fetch }) } : {}),
-  };
+  if (env.dryRun) return { vk: dryRunSender("vk", log) };
+  return env.vkGroupToken ? { vk: createVkSender({ token: env.vkGroupToken, fetchFn: fetch }) } : {};
 }
 
 const senders = buildSenders();
@@ -60,7 +55,7 @@ await boss.work<NotifyJob>(QUEUES.notify, async ([job]) => {
   }
 });
 
-log("info", "worker started", { telegram: senders.telegram !== undefined, vk: senders.vk !== undefined, dryRun: env.dryRun, ai: env.ai.provider });
+log("info", "worker started", { vk: senders.vk !== undefined, dryRun: env.dryRun, ai: env.ai.provider });
 
 let stopping = false;
 async function shutdown(signal: string) {

@@ -9,7 +9,7 @@ test("explains that consent is required", () => {
   expect(loginErrorMessage("consent_required")).toMatch(/согласи/i);
 });
 
-test.each(["telegram_BAD_HASH", "vk_state_mismatch", "vk_missing_params", "invalid_grant", "network"])(
+test.each(["vk_state_mismatch", "vk_missing_params", "invalid_grant", "network"])(
   "shows a readable message for %s",
   (code) => {
     const message = loginErrorMessage(code);
@@ -17,3 +17,7 @@ test.each(["telegram_BAD_HASH", "vk_state_mismatch", "vk_missing_params", "inval
     expect(message).not.toContain(code);
   },
 );
+
+test("an unknown code gets the generic message, including the removed Telegram ones", () => {
+  expect(loginErrorMessage("telegram_BAD_HASH")).toBe("Не получилось войти. Попробуйте ещё раз или выберите другой способ.");
+});
