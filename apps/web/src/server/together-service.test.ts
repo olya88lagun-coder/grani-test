@@ -123,6 +123,12 @@ describe("getTogetherSpaceView", () => {
     expect(await getTogetherSpaceView(deps, vera)).toBeNull();
   });
 
+  test("reports zero progress for a pair that has not started", async () => {
+    await makeActive();
+
+    expect((await getTogetherSpaceView(deps, anna))?.progress).toEqual({ done: 0, total: 29 });
+  });
+
   test("reports no access before the first payment and allows renewal", async () => {
     await makeActive();
 

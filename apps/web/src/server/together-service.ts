@@ -1,6 +1,8 @@
+import { TOGETHER_TRACK } from "@grani/content/together";
 import { accessState, canRenew, providedPaidSeconds, stageOf } from "@grani/core";
 import {
   closeSpaceForUser,
+  countClosedCards,
   createSpace,
   getAccessSnapshot,
   getActiveSpaceForUser,
@@ -20,6 +22,7 @@ export type TogetherSpaceView = {
   members: { role: TogetherRole; displayName: string }[];
   pendingRequest: { displayName: string } | null;
   access: { active: boolean; accessUntil: string | null; stage: number; canRenew: boolean };
+  progress: { done: number; total: number };
 };
 
 const inviteUrl = (deps: TogetherDeps, token: string) => new URL(`/together/invite/${token}`, deps.appUrl).toString();
@@ -91,5 +94,6 @@ export async function getTogetherSpaceView(deps: TogetherDeps, userId: string): 
       stage: stageOf(providedPaidSeconds(periods, now, closedAt)),
       canRenew: canRenew(periods, now, closedAt),
     },
+    progress: { done: await countClosedCards(deps.db, snapshot.space.id), total: TOGETHER_TRACK.length },
   };
 }
