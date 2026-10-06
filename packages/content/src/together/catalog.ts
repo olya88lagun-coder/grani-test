@@ -3,6 +3,10 @@ import type { CardField, CardKind, CardSnapshot } from "@grani/core";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
+import month03 from "./month-03.json";
+import month04 from "./month-04.json";
+import month05 from "./month-05.json";
+import month06 from "./month-06.json";
 
 const fieldSchema = z.discriminatedUnion("type", [
   z.object({ id: z.string().min(1), type: z.literal("short_text"), label: z.string().min(1), required: z.boolean(), maxLength: z.number().int().positive().max(1200) }),
@@ -71,3 +75,12 @@ export function buildMonth(monthCards: readonly unknown[], month: number): CardS
 
 // Месяц 2 написан и проверяется схемой, но в маршрут пока не входит: его открытие по прохождению первого месяца решается отдельно
 export const TOGETHER_MONTH_2: readonly CardSnapshot[] = buildMonth(month02.cards, 2);
+
+// Месяцы 3–6 написаны и проверяются схемой, но в маршрут не входят: открываются по мере готовности механики этапов
+export const TOGETHER_DRAFT_MONTHS: Readonly<Record<number, readonly CardSnapshot[]>> = {
+  2: TOGETHER_MONTH_2,
+  3: buildMonth(month03.cards, 3),
+  4: buildMonth(month04.cards, 4),
+  5: buildMonth(month05.cards, 5),
+  6: buildMonth(month06.cards, 6),
+};

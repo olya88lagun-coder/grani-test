@@ -1,0 +1,1278 @@
+{
+  "schemaVersion": 1,
+  "status": "editorial_draft_v2_for_review",
+  "month": 4,
+  "title": "Романтика в обычной жизни",
+  "goal": "Придумать свидания на любой день и любой бюджет и собрать ваше меню свиданий.",
+  "cadence": {
+    "mainSlots": 26,
+    "dates": 4,
+    "policy": "Слот — порядок карточки, не календарный день. Темп выбирает пара."
+  },
+  "weeks": [
+    {
+      "id": "m04-w01",
+      "title": "Что для нас романтика",
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "m04-w02",
+      "title": "Свидания на любой день",
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "days": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "id": "m04-w03",
+      "title": "Удивить без повода",
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "days": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "m04-w04",
+      "title": "Наше меню свиданий",
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "days": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "m04-d01",
+      "version": 2,
+      "kind": "main",
+      "order": 1,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.question.1",
+      "title": "Романтично и нет",
+      "format": "individual_question",
+      "prompt": "Что для вас романтично, а для партнёра нет?",
+      "hint": "Любопытство вместо спора: свечи, сюрпризы, сообщения, тишина.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что для вас романтично, а для партнёра нет?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите, что из списка партнёра вы готовы попробовать один раз.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d02",
+      "version": 2,
+      "kind": "main",
+      "order": 2,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.question.2",
+      "title": "Идея за 0 ₽ и 30 минут",
+      "format": "individual_question",
+      "prompt": "Свидание за 0 ₽ и 30 минут: какое?",
+      "hint": "Без покупок и дороги. Подойдёт идея из жизни или полёт фантазии.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Свидание за 0 ₽ и 30 минут: какое?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одну идею из двух и поставьте её на ближайший вечер.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d03",
+      "version": 2,
+      "kind": "main",
+      "order": 3,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.question.3",
+      "title": "Романтика в мелочах",
+      "format": "individual_question",
+      "prompt": "Какая мелочь делает ваш день романтичным: взгляд, записка, чай, поздний звонок?",
+      "hint": "Одна конкретная вещь, а не общие слова.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какая мелочь делает ваш день романтичным: взгляд, записка, чай, поздний звонок?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите друг другу, какую из мелочей вы заметили, но не сказали.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d04",
+      "version": 2,
+      "kind": "main",
+      "order": 4,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.question.4",
+      "title": "Как узнать, что хотят порадовать",
+      "format": "individual_question",
+      "prompt": "Как вы понимаете, что вас хотят порадовать: по словам, делам, подаркам, вниманию?",
+      "hint": "Скажите и про то, чего вы не замечаете, даже если стараются.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вы понимаете, что вас хотят порадовать: по словам, делам, подаркам, вниманию?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите способ, которым партнёр может сказать вам об этом яснее.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d05",
+      "version": 2,
+      "kind": "main",
+      "order": 5,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.question.5",
+      "title": "Самое романтичное за год",
+      "format": "individual_question",
+      "prompt": "Что было самым романтичным за последний год и почему?",
+      "hint": "Один эпизод, даже небольшой.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что было самым романтичным за последний год и почему?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Вспомните вместе, что именно сделало его таким. Можно ли повторить?",
+      "bookBinding": {
+        "section": "everyday_memories",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d06",
+      "version": 2,
+      "kind": "main",
+      "order": 6,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.question.6",
+      "title": "Приятнее цветов",
+      "format": "individual_question",
+      "prompt": "Что вам приятнее цветов, подарков и ресторанов?",
+      "hint": "Например, помытая посуда, ночная прогулка, письмо на бумаге.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вам приятнее цветов, подарков и ресторанов?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Составьте общий список «лучше цветов» и выберите одну идею на неделю.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d07",
+      "version": 2,
+      "kind": "main",
+      "order": 7,
+      "week": 1,
+      "estimatedMinutes": 35,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Выяснить, что для каждого из вас значит романтика.",
+      "semanticKey": "month4.date.7",
+      "title": "Свидание: вечер при свечах из того, что есть",
+      "format": "date",
+      "prompt": "Устройте вечер при свечах из того, что есть дома, а потом ответьте: как он называется?",
+      "hint": "35 минут дома.\n1. Выберите, что станет светом: свечи, гирлянда, лампа с мягкой лампочкой.\n2. Накройте на стол из того, что есть: чай, фрукты, бутерброды.\n3. Включите одну песню на двоих и выключите остальные экраны.\n4. Задайте друг другу по одному вопросу о самом приятном моменте недели.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего вечера",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Что понравилось больше всего",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Решите, что из этого вечера вы возьмёте в обычные дни.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d08",
+      "version": 2,
+      "kind": "main",
+      "order": 8,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "semanticKey": "month4.question.8",
+      "title": "Пятнадцать минут вдвоём",
+      "format": "individual_question",
+      "prompt": "Какое свидание можно уместить в 15 минут между делами?",
+      "hint": "Чай на балконе, прогулка по двору, одна песня на двоих.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое свидание можно уместить в 15 минут между делами?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно и поставьте на завтра.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d09",
+      "version": 2,
+      "kind": "main",
+      "order": 9,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "semanticKey": "month4.question.9",
+      "title": "Будний вечер",
+      "format": "individual_question",
+      "prompt": "Как превратить обычный будний вечер в свидание?",
+      "hint": "Не нужно ехать или готовиться: хватит изменить одну вещь.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как превратить обычный будний вечер в свидание?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите, что вы измените в ближайший вечер.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d10",
+      "version": 2,
+      "kind": "main",
+      "order": 10,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "semanticKey": "month4.question.10",
+      "title": "Домашний вечер",
+      "format": "individual_question",
+      "prompt": "Как превратить домашний вечер в свидание без ремонта и покупок?",
+      "hint": "Другой свет, другая посуда, другая музыка.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как превратить домашний вечер в свидание без ремонта и покупок?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Попробуйте одну идею в ближайшие три дня.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d11",
+      "version": 2,
+      "kind": "main",
+      "order": 11,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "semanticKey": "month4.question.11",
+      "title": "Прогулка рядом с домом",
+      "format": "individual_question",
+      "prompt": "Куда вы бы пошли гулять вдвоём, если нужно уложиться в полчаса от дома?",
+      "hint": "Набережная, двор с красивой аркой, крыша, парк.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Куда вы бы пошли гулять вдвоём, если нужно уложиться в полчаса от дома?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите место и назовите время выхода.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d12",
+      "version": 2,
+      "kind": "main",
+      "order": 12,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "semanticKey": "month4.question.12",
+      "title": "Без денег",
+      "format": "individual_question",
+      "prompt": "Какое свидание вы бы устроили, если у вас нет денег совсем?",
+      "hint": "Игра против обстоятельств: чем проще, тем интереснее.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое свидание вы бы устроили, если у вас нет денег совсем?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно, которое можно устроить сегодня.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d13",
+      "version": 2,
+      "kind": "main",
+      "order": 13,
+      "week": 2,
+      "estimatedMinutes": 30,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Придумать свидания на 15 минут и на вечер.",
+      "semanticKey": "month4.date.13",
+      "title": "Свидание: свидание из трёх действий",
+      "format": "date",
+      "prompt": "Устройте свидание из трёх коротких действий, а потом ответьте: как оно называется?",
+      "hint": "30 минут в удобном месте.\n1. Выберите три действия на 10 минут каждое: например, прогулка, чай, песня.\n2. Расставьте их в любом порядке и придумайте им общий смысл.\n3. Проведите свидание, не отвлекаясь на телефон.\n4. Скажите друг другу, какое из трёх действий оказалось лучшим.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего свидания",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Какое действие оказалось лучшим",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Добавьте это свидание в ваше будущее меню.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d14",
+      "version": 2,
+      "kind": "main",
+      "order": 14,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.question.14",
+      "title": "Маленький сюрприз",
+      "format": "individual_question",
+      "prompt": "Какой маленький сюрприз порадовал бы вас без всякого повода?",
+      "hint": "Не дорогой, а точный: ваш любимый чай, записка, письмо.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой маленький сюрприз порадовал бы вас без всякого повода?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите партнёру, какой из сюрпризов вам особенно приятен.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d15",
+      "version": 2,
+      "kind": "main",
+      "order": 15,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.question.15",
+      "title": "Записка",
+      "format": "individual_question",
+      "prompt": "О чём вы написали бы партнёру коротко на листочке?",
+      "hint": "Одна фраза: тёплая, смешная или про вчерашний вечер.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "О чём вы написали бы партнёру коротко на листочке?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Напишите записку и спрячьте её там, где партнёр найдёт к вечеру.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d16",
+      "version": 2,
+      "kind": "main",
+      "order": 16,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.question.16",
+      "title": "Вечер, который выбирает другой",
+      "format": "individual_question",
+      "prompt": "Если партнёр выберет вам вечер, что вы готовы ему доверить, а что нет?",
+      "hint": "Честный список: «доверяю место, но не время» или «доверяю всё, кроме еды».",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Если партнёр выберет вам вечер, что вы готовы ему доверить, а что нет?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Договоритесь, кто выбирает вечер в эти выходные, и назовите границы.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d17",
+      "version": 2,
+      "kind": "main",
+      "order": 17,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.question.17",
+      "title": "Сюрприз без денег",
+      "format": "individual_question",
+      "prompt": "Какой сюрприз можно устроить без денег и покупок?",
+      "hint": "Идея, которую можно сделать сегодня.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой сюрприз можно устроить без денег и покупок?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одну идею и устройте её для партнёра на этой неделе.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d18",
+      "version": 2,
+      "kind": "main",
+      "order": 18,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.question.18",
+      "title": "Удивить, не выходя из дома",
+      "format": "individual_question",
+      "prompt": "Чем вы могли бы удивить партнёра, не выходя из дома?",
+      "hint": "Музыка, ужин из его детства, домашний кинотеатр.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Чем вы могли бы удивить партнёра, не выходя из дома?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите, чем вы удивите, и держите это в секрете.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d19",
+      "version": 2,
+      "kind": "main",
+      "order": 19,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.question.19",
+      "title": "Принимать сюрпризы",
+      "format": "individual_question",
+      "prompt": "Как вам приятнее реагировать на сюрприз и что делать, если он не удался?",
+      "hint": "Скажите, что вам хочется услышать, когда что-то пошло не так.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вам приятнее реагировать на сюрприз и что делать, если он не удался?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Придумайте общую фразу для провалившегося сюрприза.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d20",
+      "version": 2,
+      "kind": "main",
+      "order": 20,
+      "week": 3,
+      "estimatedMinutes": 45,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Попробовать маленькие сюрпризы и научиться их принимать.",
+      "semanticKey": "month4.date.20",
+      "title": "Свидание: вечер-сюрприз по очереди",
+      "format": "date",
+      "prompt": "Устройте друг другу вечер-сюрприз по очереди, а потом ответьте: как он назывался?",
+      "hint": "45 минут дома или рядом.\n1. Один человек готовит 20 минут сюрприза, другой в это время занят чем-то своим.\n2. Откройте сюрприз и проведите время так, как придумал автор.\n3. Поменяйтесь ролями: теперь автор второй.\n4. Скажите друг другу, что вам понравилось в замысле.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего вечера",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Какой момент запомнился",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Решите, какой из сюрпризов вы повторите.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d21",
+      "version": 2,
+      "kind": "main",
+      "order": 21,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "semanticKey": "month4.question.21",
+      "title": "Лучшее свидание у нас",
+      "format": "individual_question",
+      "prompt": "Какое лучшее свидание было у вас и что делало его лучшим?",
+      "hint": "Выберите одно и опишите, что на самом деле работало: место, внимание, ритм, еда.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое лучшее свидание было у вас и что делало его лучшим?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите, что в нём можно повторить уже на этой неделе.",
+      "bookBinding": {
+        "section": "everyday_memories",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d22",
+      "version": 2,
+      "kind": "main",
+      "order": 22,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "semanticKey": "month4.question.22",
+      "title": "Что важнее всего",
+      "format": "individual_question",
+      "prompt": "Что должно быть в свидании, чтобы оно получилось: место, внимание, ритм, еда?",
+      "hint": "Расставьте по важности.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что должно быть в свидании, чтобы оно получилось: место, внимание, ритм, еда?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Сравните списки. Возьмите то, что важно обоим.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d23",
+      "version": 2,
+      "kind": "main",
+      "order": 23,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "semanticKey": "month4.question.23",
+      "title": "Три любимых формата",
+      "format": "individual_question",
+      "prompt": "Какие три формата свиданий вам подходят больше всего?",
+      "hint": "Прогулка, домашний ужин, игра, кино, мастерская, спорт.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие три формата свиданий вам подходят больше всего?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите по одному из списка партнёра и попробуйте.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d24",
+      "version": 2,
+      "kind": "main",
+      "order": 24,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "semanticKey": "month4.question.24",
+      "title": "Что помогает",
+      "format": "individual_question",
+      "prompt": "Какое ограничение делает свидание лучше: время, бюджет, правило без телефонов?",
+      "hint": "Иногда ограничения помогают сфокусироваться.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое ограничение делает свидание лучше: время, бюджет, правило без телефонов?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно ограничение на следующую неделю.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d25",
+      "version": 2,
+      "kind": "main",
+      "order": 25,
+      "week": 4,
+      "estimatedMinutes": 35,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "semanticKey": "month4.date.25",
+      "title": "Свидание: меню наших свиданий",
+      "format": "date",
+      "prompt": "Соберите меню ваших свиданий, а потом ответьте: как оно называется?",
+      "hint": "30 минут в удобном месте.\n1. Каждый выписывает по пять идей свиданий.\n2. Разложите их по трём колонкам: 15 минут, вечер, выходной.\n3. Выберите по одному свиданию из каждой колонки на следующий месяц.\n4. Придумайте меню название и повесьте его на видное место.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего меню",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Что вы выбрали на следующий месяц",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Поставьте первое свидание из меню в календарь.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m04-d26",
+      "version": 2,
+      "kind": "main",
+      "order": 26,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать список свиданий, которые подходят именно вам.",
+      "semanticKey": "month4.question.26",
+      "title": "Что оставить из свиданий",
+      "format": "individual_question",
+      "prompt": "Какую одну идею из этого месяца вам хочется сохранить в обычной жизни?",
+      "hint": "Одно свидание, одна фраза или один жест.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую одну идею из этого месяца вам хочется сохранить в обычной жизни?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Каждый называет идею и придумывает, как сделать её частью недели.",
+      "bookBinding": {
+        "section": "date_ideas",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    }
+  ],
+  "reward": {
+    "id": "date-menu-v1",
+    "title": "Меню наших свиданий",
+    "bindingPolicy": "Выбранные поля раскрытых записей; идеи свиданий добавляются в меню только после явного выбора обоими."
+  },
+  "note": "Разделы книги для месяцев 4–6 будут описаны вместе с механикой книги (этап 4)."
+}

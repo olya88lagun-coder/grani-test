@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildTrack, toSnapshot, TOGETHER_MONTH_2, TOGETHER_TRACK } from "./catalog";
+import { buildTrack, toSnapshot, TOGETHER_DRAFT_MONTHS, TOGETHER_MONTH_2, TOGETHER_TRACK } from "./catalog";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
@@ -125,5 +125,29 @@ describe("month 2 draft (written, not yet in the track)", () => {
   test("keeps the structured acquaintance fields that the first chapter is built from", () => {
     const first = TOGETHER_MONTH_2[0]!;
     expect(first.fields.map((field) => field.id)).toEqual(["answer", "approx_date", "setting", "remembered_detail", "share_in_book"]);
+  });
+});
+
+describe("months 3 to 6 drafts", () => {
+  for (const month of [3, 4, 5, 6]) {
+    test(`month ${month} has 26 unique main cards, four dates in the usual slots and short prompts`, () => {
+      const cards = TOGETHER_DRAFT_MONTHS[month]!;
+      expect(cards).toHaveLength(26);
+      expect(new Set(cards.map((card) => card.id)).size).toBe(26);
+      expect(cards.every((card) => card.kind === "main" && card.skipAllowed)).toBe(true);
+      const dates = cards.filter((card) => card.hint.includes("\n1. "));
+      expect(cards.filter((card) => card.title.startsWith("Свидание")).map((card) => card.id), "date titles").toEqual(dates.map((card) => card.id));
+      expect(dates.map((card) => card.id)).toEqual([7, 13, 20, 25].map((n) => `m0${month}-d${String(n).padStart(2, "0")}`));
+      for (const card of dates) expect(card.hint, card.id).toContain("\n1. ");
+      for (const card of cards) {
+        expect(card.prompt.length, card.id).toBeLessThanOrEqual(220);
+        expect(card.hint.length, card.id).toBeLessThanOrEqual(700);
+        expect(card.prompt, card.id).not.toMatch(/[(][а-я]+[)]/);
+      }
+    });
+  }
+
+  test("none of the drafts is part of the playable track", () => {
+    for (const month of [2, 3, 4, 5, 6]) expect(TOGETHER_TRACK.some((card) => card.id.startsWith(`m0${month}-`))).toBe(false);
   });
 });

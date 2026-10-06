@@ -1,6 +1,10 @@
 import { describe, expect, test } from "vitest";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
+import month03 from "./month-03.json";
+import month04 from "./month-04.json";
+import month05 from "./month-05.json";
+import month06 from "./month-06.json";
 import { TOGETHER_SEASON } from "./season";
 
 describe("together season map", () => {
@@ -29,13 +33,20 @@ describe("together season map", () => {
 });
 
 describe("season teasers are real questions", () => {
-  test("every teaser of months 1 and 2 is the opening of a prompt of that month, so the spoiler is not a different question", () => {
-    const prompts = { 1: month01.cards.map((card) => card.prompt), 2: month02.cards.map((card) => card.prompt) } as const;
-    for (const month of [1, 2] as const) {
+  test("every teaser of the six months is the opening of a prompt of that month, so the spoiler is not a different question", () => {
+    const prompts: Record<number, string[]> = {
+      1: month01.cards.map((card) => card.prompt),
+      2: month02.cards.map((card) => card.prompt),
+      3: month03.cards.map((card) => card.prompt),
+      4: month04.cards.map((card) => card.prompt),
+      5: month05.cards.map((card) => card.prompt),
+      6: month06.cards.map((card) => card.prompt),
+    };
+    for (const month of [1, 2, 3, 4, 5, 6]) {
       const entry = TOGETHER_SEASON.find((item) => item.month === month)!;
       for (const teaser of entry.teasers) {
         const opening = teaser.replace(/\?$/, "");
-        expect(prompts[month].some((prompt) => prompt.startsWith(opening)), teaser).toBe(true);
+        expect((prompts[month] ?? []).some((prompt) => prompt.startsWith(opening)), teaser).toBe(true);
       }
     }
   });
