@@ -1,6 +1,7 @@
 import { COMPATIBILITY_LEVELS, formatRub, PRODUCT_PRICES, RESOURCE_TRAITS, SIMILARITY_TRAITS } from "@grani/core";
 import { compatibilityTexts, TRAIT_LABELS } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
+import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TestCta } from "@/components/TestCta";
 import { publicMetadata } from "@/lib/seo";
@@ -19,6 +20,20 @@ function HeartIcon() {
   );
 }
 
+// Новому человеку — начать с теста; тому, кто уже прошёл, — сразу к блоку приглашения на своём результате
+function PairActions() {
+  return (
+    <div className="row pair-actions">
+      <Link className="button" href="/test">
+        Пройти тест <span aria-hidden="true">→</span>
+      </Link>
+      <Link className="button button--ghost" href="/me?to=pairs">
+        Уже прошли — позвать партнёра
+      </Link>
+    </div>
+  );
+}
+
 // Палитра главной вместо «Глины»: розовый остаётся только акцентом — надзаголовок, сердце, проценты уровней
 export default function CompatibilityPage() {
   const library = getLibrary();
@@ -31,6 +46,7 @@ export default function CompatibilityPage() {
             <p className="eyebrow">Для двоих</p>
             <h1 className="display">Тест на совместимость пары</h1>
             <p className="lead">{DESCRIPTION}</p>
+            <PairActions />
           </div>
           <div className="pair-hero" aria-hidden="true">
             <div className="pair-hero__card">
@@ -51,7 +67,7 @@ export default function CompatibilityPage() {
           <h2>Как это работает</h2>
           <ol className="steps">
             <li>Вы проходите тест — 50 утверждений, около 10 минут.</li>
-            <li>На странице результата создаёте приглашение и отправляете ссылку партнёру.</li>
+            <li>На странице своего результата, в блоке «Посмотреть, как вы сочетаетесь», нажимаете «Позвать партнёра» и отправляете ссылку.</li>
             <li>Партнёр проходит тест и соглашается показать результат вам — без согласия пара не создаётся.</li>
             <li>
               Вы оба видите типы друг друга и процент совместимости. Разбор пары — {formatRub(PRODUCT_PRICES.pair)}, открывается обоим,
@@ -59,6 +75,7 @@ export default function CompatibilityPage() {
             </li>
           </ol>
           <p>Выйти из пары можно в любой момент — страница пары и разбор скроются у обоих.</p>
+          <PairActions />
         </section>
 
         <section className="inner-block stack">
