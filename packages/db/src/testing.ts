@@ -7,6 +7,7 @@ import { acceptPairInvite, getOrCreatePairInvite } from "./pairs";
 import { createResult } from "./results";
 import type { AuthProvider } from "./schema";
 import { createSpace, requestJoin, respondToRequest } from "./together";
+import { grantAccessPeriod } from "./together-billing";
 import { upsertUserFromIdentity, type KnownGender } from "./users";
 import * as schema from "./schema";
 import type { Database } from "./types";
@@ -84,6 +85,17 @@ export async function seedTogetherSpace(
   const responded = await respondToRequest(db, { userId: initiatorId, accept: true, now });
   if (!responded.ok) throw new Error(`seed confirmation failed: ${responded.reason}`);
   return { spaceId: created.spaceId, initiatorId, partnerId };
+}
+
+// Оплаченный период для активного пространства — для тестов карточек категории main
+export async function seedTogetherAccess(db: Database, p: { spaceId: string; userId: string; paidAt?: Date }): Promise<void> {
+  const paidAt = p.paidAt ?? new Date("2026-10-05T10:00:00Z");
+  const [purchase] = await db
+    .insert(schema.purchases)
+    .values({ userId: p.userId, product: "together_30d", spaceId: p.spaceId, amountKopecks: 59_900, status: "succeeded", paidAt })
+    .returning({ id: schema.purchases.id });
+  const granted = await grantAccessPeriod(db, { spaceId: p.spaceId, purchaseId: purchase!.id, paidAt });
+  if (!granted.ok) throw new Error(`seed access failed: ${granted.reason}`);
 }
 
 export * from "./index";
