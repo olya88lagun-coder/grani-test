@@ -1,14 +1,11 @@
 import { z } from "zod";
 
 const VK_COMMUNITY_KEYS = ["VK_GROUP_ID", "VK_CALLBACK_SECRET", "VK_CONFIRMATION_CODE"] as const;
-const TELEGRAM_KEYS = ["TELEGRAM_BOT_TOKEN", "TELEGRAM_BOT_USERNAME"] as const;
 
 const envSchema = z.object({
   APP_URL: z.url(),
   DATABASE_URL: z.string().min(1),
   SESSION_SECRET: z.string().min(32),
-  TELEGRAM_BOT_TOKEN: z.string().regex(/^\d+:[\w-]+$/).optional(),
-  TELEGRAM_BOT_USERNAME: z.string().min(1).optional(),
   VK_CLIENT_ID: z.string().regex(/^\d+$/),
   VK_GROUP_ID: z.string().regex(/^\d+$/).optional(),
   VK_CALLBACK_SECRET: z.string().min(1).optional(),
@@ -17,19 +14,17 @@ const envSchema = z.object({
   YOOKASSA_SECRET_KEY: z.string().min(1).optional(),
   PAYMENTS_FAKE: z.enum(["0", "1"]).optional(),
   // Аккаунт владелицы для страницы чеков: «vk:<id ВКонтакте>»
-  OWNER_IDENTITY: z.string().regex(/^(vk|telegram):[^\s:]+$/).optional(),
+  OWNER_IDENTITY: z.string().regex(/^vk:[^\s:]+$/).optional(),
   NODE_ENV: z.string().optional(),
 });
 
-export type TelegramConfig = { botToken: string; botUsername: string };
 export type VkCommunityConfig = { groupId: string; callbackSecret: string; confirmationCode: string };
 type ParsedEnv = z.infer<typeof envSchema>;
-export type OwnerIdentity = { provider: "vk" | "telegram"; externalId: string };
+export type OwnerIdentity = { provider: "vk"; externalId: string };
 export type PaymentsConfig = { kind: "yookassa"; shopId: string; secretKey: string } | { kind: "fake" } | null;
 const PAYMENT_KEYS = ["YOOKASSA_SHOP_ID", "YOOKASSA_SECRET_KEY", "PAYMENTS_FAKE", "NODE_ENV"] as const;
-export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeof TELEGRAM_KEYS)[number] | (typeof PAYMENT_KEYS)[number] | "OWNER_IDENTITY"> & {
+export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeof PAYMENT_KEYS)[number] | "OWNER_IDENTITY"> & {
   owner: OwnerIdentity | null;
-  telegram: TelegramConfig | null;
   vkCommunity: VkCommunityConfig | null;
   payments: PaymentsConfig;
 };
@@ -40,8 +35,8 @@ function fail(fields: readonly string[]): never {
 
 function readOwner(value: string | undefined): OwnerIdentity | null {
   if (!value) return null;
-  const [provider, externalId] = value.split(":") as ["vk" | "telegram", string];
-  return { provider, externalId };
+  const [, externalId] = value.split(":") as ["vk", string];
+  return { provider: "vk", externalId };
 }
 
 function readPayments(env: ParsedEnv): PaymentsConfig {
@@ -59,8 +54,6 @@ export function readEnv(source: Record<string, string | undefined> = process.env
   const parsed = envSchema.safeParse(source);
   if (!parsed.success) fail(parsed.error.issues.map((issue) => issue.path.join(".")));
   const {
-    TELEGRAM_BOT_TOKEN,
-    TELEGRAM_BOT_USERNAME,
     VK_GROUP_ID,
     VK_CALLBACK_SECRET,
     VK_CONFIRMATION_CODE,
@@ -71,11 +64,6 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     OWNER_IDENTITY,
     ...rest
   } = parsed.data;
-  // Вход через Telegram выключен в первой версии: иностранный сервис — это трансграничная передача данных.
-  // Переменные либо заданы обе, либо ни одной: половина настройки — ошибка выкладки
-  const missingTelegram = TELEGRAM_KEYS.filter((key) => !parsed.data[key]);
-  if (missingTelegram.length === 1) fail(missingTelegram);
-  const telegram = TELEGRAM_BOT_TOKEN && TELEGRAM_BOT_USERNAME ? { botToken: TELEGRAM_BOT_TOKEN, botUsername: TELEGRAM_BOT_USERNAME } : null;
   const missing = VK_COMMUNITY_KEYS.filter((key) => !parsed.data[key]);
   // Сообщество либо настроено целиком, либо выключено: частичная настройка — ошибка выкладки
   if (missing.length > 0 && missing.length < VK_COMMUNITY_KEYS.length) fail(missing);
@@ -83,7 +71,7 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     VK_GROUP_ID && VK_CALLBACK_SECRET && VK_CONFIRMATION_CODE
       ? { groupId: VK_GROUP_ID, callbackSecret: VK_CALLBACK_SECRET, confirmationCode: VK_CONFIRMATION_CODE }
       : null;
-  return { ...rest, telegram, vkCommunity, payments: readPayments(parsed.data), owner: readOwner(OWNER_IDENTITY) };
+  return { ...rest, vkCommunity, payments: readPayments(parsed.data), owner: readOwner(OWNER_IDENTITY) };
 }
 
 let cached: AppEnv | null = null;

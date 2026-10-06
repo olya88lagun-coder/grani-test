@@ -1,6 +1,5 @@
 import { randomBytes } from "node:crypto";
 import { getLatestResultId, getUser, upsertUserFromIdentity, type Database, type IdentityInput, type UserRecord } from "@grani/db";
-import { verifyTelegramLoginWidget } from "./auth/telegram";
 import { signConsent, signSession, signVkState, verifyConsent, verifySession, verifyVkState } from "./auth/tokens";
 import { buildVkAuthorizeUrl, createPkcePair, exchangeVkCode, fetchVkUser, type FetchFn } from "./auth/vk";
 import type { AppEnv } from "./env";
@@ -35,19 +34,6 @@ export async function completeLogin(deps: LoginDeps, identity: IdentityInput, co
     // Партнёр, пришедший по приглашению, возвращается к согласию; отложенные ответы уже сохранены выше
     redirectTo: pairReturnPath(cookies.pairInvite) ?? (resultId ? `/result/${resultId}` : "/test"),
   };
-}
-
-export async function loginWithTelegram(deps: LoginDeps, params: URLSearchParams, cookies: LoginCookies): Promise<LoginOutcome> {
-  // В первой версии вход через Telegram выключен (трансграничная передача данных): бот не настроен — входа нет
-  if (!deps.env.telegram) return { ok: false, error: "telegram_disabled" };
-  const verified = verifyTelegramLoginWidget(params, deps.env.telegram.botToken, deps.now());
-  if (!verified.ok) return { ok: false, error: `telegram_${verified.reason}` };
-  const { user } = verified;
-  return completeLogin(
-    deps,
-    { provider: "telegram", externalId: String(user.id), displayName: fullName(user.firstName, user.lastName), gender: null },
-    cookies,
-  );
 }
 
 export async function startVkLogin(deps: LoginDeps): Promise<{ redirectUrl: string; stateCookie: string }> {

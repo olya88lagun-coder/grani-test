@@ -22,7 +22,7 @@ COPY --from=deps /repo/packages/db ./packages/db
 USER node
 CMD ["node", "packages/db/scripts/migrate.mjs"]
 
-# grammy не входит в бандл воркера (см. apps/worker/scripts/build.mjs), поэтому нужны node_modules
+# pg-native остаётся внешним в бандле воркера (см. apps/worker/scripts/build.mjs), node_modules копируются целиком
 FROM node:${NODE_VERSION} AS worker
 WORKDIR /app
 ENV NODE_ENV=production
