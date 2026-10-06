@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { togetherAnswers, togetherCardMarks, togetherCards } from "./schema";
 import { createTestDb, seedTogetherSpace, seedUser } from "./testing";
 import { closeSpaceForUser, createSpace } from "./together";
-import { loadCurrentCard } from "./together-cards";
+import { listHistory, loadCurrentCard } from "./together-cards";
 import { FIXTURE_TRACK } from "./together-cards.fixtures";
 import type { Database } from "./types";
 
@@ -116,5 +116,54 @@ describe("loadCurrentCard", () => {
 
     expect(await current(anna, shortTrack)).toEqual({ ok: true, card: null, progress: { done: 1, total: 1 }, accessActive: false });
     expect(await db.select().from(togetherCards).where(eq(togetherCards.spaceId, spaceId))).toHaveLength(1);
+  });
+});
+
+describe("listHistory", () => {
+  async function playTwoCards() {
+    const first = await firstCardId();
+    await answer(first, anna, "submitted", { answer: "Аня-1" });
+    await answer(first, boris, "submitted", { answer: "Борис-1" });
+    await close(first);
+    await mark(first, anna);
+    await current(anna);
+    const second = (await db.select().from(togetherCards).where(eq(togetherCards.position, 2)))[0]!;
+    await answer(second.id, anna, "skipped");
+    await answer(second.id, boris, "submitted", { answer: SECRET });
+    await close(second.id);
+    return { first, second: second.id };
+  }
+
+  test("lists closed cards newest first with both answers only for revealed ones", async () => {
+    const { first, second } = await playTwoCards();
+
+    const result = await listHistory(db, { userId: anna });
+    if (!result.ok) throw new Error("no space");
+    expect(result.items.map((item) => [item.id, item.outcome])).toEqual([
+      [second, "skipped"],
+      [first, "revealed"],
+    ]);
+    expect(result.items[1]).toMatchObject({ mine: { fields: { answer: "Аня-1" } }, partner: { status: "answered", fields: { answer: "Борис-1" } } });
+    expect(result.items[0]).toMatchObject({ mine: null, partner: { status: "answered" } });
+    expect(JSON.stringify(result)).not.toContain(SECRET);
+    expect(result.next).toBeNull();
+  });
+
+  test("pages by position and refuses outsiders and closed spaces", async () => {
+    await playTwoCards();
+
+    const page = await listHistory(db, { userId: boris, limit: 1 });
+    if (!page.ok) throw new Error("no space");
+    expect(page.items.map((item) => item.position)).toEqual([2]);
+    expect(page.next).toBe(2);
+    const rest = await listHistory(db, { userId: boris, before: 2, limit: 1 });
+    if (!rest.ok) throw new Error("no space");
+    expect(rest.items.map((item) => item.position)).toEqual([1]);
+    expect(rest.next).toBeNull();
+
+    const vera = await seedUser(db, { externalId: "vera" });
+    expect(await listHistory(db, { userId: vera })).toEqual({ ok: false, reason: "not_found" });
+    await closeSpaceForUser(db, { userId: anna, now: NOW, reason: "left" });
+    expect(await listHistory(db, { userId: boris })).toEqual({ ok: false, reason: "not_found" });
   });
 });

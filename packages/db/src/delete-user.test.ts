@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { deleteUserData } from "./delete-user";
-import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherSpaces, users } from "./schema";
+import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherAnswers, togetherCards, togetherSpaces, users } from "./schema";
 import { createTestDb, seedPair, seedTogetherSpace, seedUserWithResult } from "./testing";
 import { createSpace } from "./together";
 import type { Database } from "./types";
@@ -95,5 +95,22 @@ describe("deleteUserData", () => {
     const [space] = await db.select().from(togetherSpaces).where(eq(togetherSpaces.id, spaceId));
     expect(space).toMatchObject({ status: "closed", closedReason: "account_deleted" });
     expect((await createSpace(db, { userId: partnerId, now: new Date("2026-10-06T10:00:00Z") })).ok).toBe(true);
+  });
+  it("erases the deleted user's together answers but keeps the partner's", async () => {
+    const { spaceId, initiatorId, partnerId } = await seedTogetherSpace(db);
+    const [card] = await db
+      .insert(togetherCards)
+      .values({ spaceId, cardId: "intro-01", position: 1, snapshot: { id: "intro-01", version: 1, kind: "intro", title: "T", estimatedMinutes: 5, prompt: "P", hint: "H", jointAction: "J", skipAllowed: true, fields: [] } })
+      .returning({ id: togetherCards.id });
+    await db.insert(togetherAnswers).values([
+      { cardId: card!.id, spaceId, userId: initiatorId, status: "submitted", fields: { answer: "ушедшего" } },
+      { cardId: card!.id, spaceId, userId: partnerId, status: "submitted", fields: { answer: "оставшегося" } },
+    ]);
+
+    await deleteUserData(db, initiatorId);
+
+    const rows = await db.select().from(togetherAnswers);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ userId: partnerId, fields: { answer: "оставшегося" } });
   });
 });
