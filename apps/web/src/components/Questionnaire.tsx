@@ -121,20 +121,20 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
     setSending(false);
   }
 
-  if (!restored) return <p className="muted">Загружаем вопросы…</p>;
+  if (!restored) return <p className="muted questionnaire__loading" role="status">Загружаем вопросы…</p>;
 
   return (
-    <div className="stack">
+    <div className="stack questionnaire" aria-busy={sending}>
       <div className="progress">
         <span className="muted">
           Ответов: {done} из {items.length}
         </span>
-        <div className="progress__bar" role="progressbar" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
+        <div className="progress__bar" role="progressbar" aria-label="Прогресс ответов" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
           <span style={{ transform: `scaleX(${done / items.length})` }} />
         </div>
       </div>
 
-      <h1 className="eyebrow" ref={headingRef} tabIndex={-1}>
+      <h1 className="eyebrow questionnaire__screen" ref={headingRef} tabIndex={-1}>
         Экран {page + 1} из {pages}
       </h1>
 
@@ -159,18 +159,18 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
       ))}
 
       {storageFailed && (
-        <p className="muted" role="status">
+        <p className="muted questionnaire__notice" role="status">
           {STORAGE_UNAVAILABLE_NOTICE}
         </p>
       )}
 
       {error && (
-        <p className="error" role="alert">
+        <p className="error questionnaire__error" role="alert">
           {error}
         </p>
       )}
 
-      <div className="row">
+      <div className="row questionnaire__navigation">
         {page > 0 && (
           <button type="button" className="button button--ghost" onClick={() => goTo(page - 1)}>
             Назад
