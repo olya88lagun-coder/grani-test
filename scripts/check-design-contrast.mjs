@@ -54,6 +54,11 @@ export function auditDesignContrast(css) {
     check(name, values, '--accent-ink', '--accent', 7);
     check(name, values, '--accent-ink', '--accent-hover', 7);
   }
+  for (const background of ['--page-start', '--page-end', '--home-page-end', '--page-panel']) {
+    check('chrome', base, '--ink', background, 7);
+    check('chrome', base, '--accent', background, 7);
+    check('chrome', base, '--ink-soft', background, 4.5);
+  }
   return { checks, failures };
 }
 

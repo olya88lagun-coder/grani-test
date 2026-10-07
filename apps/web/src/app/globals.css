@@ -18,23 +18,33 @@
   --gold: #CDB57B;
   --danger: #B42318;
   --radius: 14px;
+  --page-start: #F5F1E4;
+  --page-end: #EEF2E4;
+  --home-page-end: #F8F1DF;
+  --page-panel: #EEEBDC;
+  --page-rule: rgba(15,62,23,.14);
+  --chrome-bg: var(--bg);
   --font-display: var(--font-cormorant), Georgia, serif;
   --font-body: var(--font-golos), system-ui, sans-serif;
 }
 
 /* Палитра B «Туман» — как меня видят другие (план 4) */
 [data-palette="friends"],
+:where(main[data-palette="friends"] ~ :is(.footer, .cookie-banner)),
 :where(body:has(> main[data-palette="friends"])) :is(.public-header, .footer, .cookie-banner) {
   --bg: #FCFDFE; --surface: #E3EDF2; --surface-2: #D3E2EA; --surface-3: #B9CFDB; --surface-4: #D9D6E8;
   --accent: #1D3A4F; --accent-hover: #142B3B; --accent-ink: #FCFDFE;
+  --chrome-bg: var(--bg);
   --ink: #1F2328; --ink-soft: #5C6670; --line: #E8ECEF;
 }
 
 /* Палитра C «Глина» — совместимость пары (план 4) */
 [data-palette="pair"],
+:where(main[data-palette="pair"] ~ :is(.footer, .cookie-banner)),
 :where(body:has(> main[data-palette="pair"])) :is(.public-header, .footer, .cookie-banner) {
   --bg: #FFFCFA; --surface: #F6E8E1; --surface-2: #EED8CF; --surface-3: #E2C2B6; --surface-4: #D8D3C4;
   --accent: #4A2230; --accent-hover: #3A1A26; --accent-ink: #FFFCFA;
+  --chrome-bg: var(--bg);
   --ink: #2A2224; --ink-soft: #6E6164; --line: #F0E8E4;
 }
 
@@ -53,12 +63,14 @@
   --line: rgba(205,181,123,.18);
   --gold: #CDB57B;
   --danger: #FFB4A8;
+  --chrome-bg: var(--bg);
   background: var(--bg);
   color: var(--ink);
 }
 
 [data-palette="pair"][data-band="night"],
 [data-palette="pair"] [data-band="night"],
+:where(main[data-palette="pair"] ~ :is(.footer, .cookie-banner))[data-band="night"],
 :where(body:has(> main[data-palette="pair"])) :is(.public-header, .footer, .cookie-banner)[data-band="night"] {
   --gold: #E3B3A0;
   --garnet: #B13A5C;
@@ -176,19 +188,21 @@ details.card[open] > summary { margin-bottom: 21px; }
 .display--article { font-size: clamp(36px, 8vw, 56px); }
 
 /* Общие компоненты продолжают тон страницы без отдельного белого листа. */
-.footer { max-width: none; padding: 0; background: var(--bg); font-size: 14px; color: var(--ink-soft); }
+.footer { max-width: none; padding: 0; background: var(--chrome-bg, var(--bg)); font-size: 14px; color: var(--ink-soft); }
 .footer__inner { max-width: 1240px; margin-inline: auto; padding: 28px 28px 42px; }
 .footer nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px 28px; padding-top: 21px; border-top: 1px solid var(--line); }
 .footer a, .footer .link-button { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; color: var(--ink-soft); text-align: left; overflow-wrap: anywhere; }
 .footer a:hover, .footer .link-button:hover { color: var(--accent); }
-body:has(> .home-page) .footer:not([data-band="night"]) { --bg: #F8F1DF; --line: rgba(15,62,23,.14); }
-body:has(> .inner-page) .footer:not([data-band="night"]) { --bg: #EEF2E4; --line: rgba(15,62,23,.14); }
-body:has(> .home-page) .cookie-banner:not([data-band="night"]) { --bg: #F5F1E4; --surface: #EEEBDC; }
-body:has(> .inner-page) :is(.public-header, .cookie-banner):not([data-band="night"]) { --bg: #F5F1E4; --surface: #EEEBDC; }
-/* У текстовых страниц фон уже лежит на body, подвал продолжает его. */
-body:has(> .inner-text) .footer:not([data-band="night"]) { background: transparent; }
-body:has(> .inner-text) :is(.public-header, .cookie-banner):not([data-band="night"]) { --bg: #F5F1E4; --surface: #EEEBDC; }
-.cookie-banner { position: fixed; z-index: 10; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; max-height: calc(100dvh - 32px - env(safe-area-inset-bottom)); overflow-y: auto; margin-inline: auto; padding: 21px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font-size: 14px; }
+/* main и общие компоненты — соседи. Один набор токенов задаёт конец градиента и подвал.
+   :has() связывает страницу с body; подвал и баннер также имеют обычные sibling-селекторы. */
+:where(.home-page, .home-page ~ .footer, body:has(> .home-page)) { --chrome-bg: var(--home-page-end); }
+:where(.inner-page, .inner-page ~ .footer, body:has(> .inner-page)) { --chrome-bg: var(--page-end); }
+:where(:is(.home-page, .inner-page) ~ .footer, body:has(> :is(.home-page, .inner-page)) .footer):not([data-band="night"]) { --line: var(--page-rule); }
+:where(:is(.home-page, .inner-page, .inner-text) ~ .cookie-banner):not([data-band="night"]),
+:where(body:has(> .home-page)) .cookie-banner:not([data-band="night"]),
+:where(body:has(> :is(.inner-page, .inner-text))) :is(.public-header, .cookie-banner):not([data-band="night"]) { --bg: var(--page-start); --chrome-bg: var(--bg); --surface: var(--page-panel); }
+.inner-text ~ .footer:not([data-band="night"]) { --chrome-bg: transparent; }
+.cookie-banner { position: fixed; z-index: 10; inset-inline: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); max-width: 608px; max-height: calc(100dvh - 32px - env(safe-area-inset-bottom)); overflow-y: auto; margin-inline: auto; padding: 21px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--chrome-bg, var(--bg)); color: var(--ink); font-size: 14px; }
 .cookie-banner p { margin: 0 0 14px; }
 .cookie-banner .button--ghost { box-shadow: none; border: 1px solid var(--accent); }
 /* Место под баннер остаётся в тоне подвала, без белой полосы body. */
@@ -231,7 +245,7 @@ body.has-cookie-banner .footer { padding-bottom: 220px; }
     radial-gradient(ellipse 34% 8% at 12% 48%, rgba(255, 250, 232, 0.8), transparent 70%),
     radial-gradient(ellipse 40% 10% at 88% 66%, rgba(255, 243, 208, 0.6), transparent 70%),
     radial-gradient(ellipse 36% 9% at 20% 86%, rgba(214, 226, 199, 0.55), transparent 70%),
-    linear-gradient(180deg, #f5f1e4 0%, #f1f3e6 34%, #f7f1df 58%, #eef2e4 80%, #f8f1df 100%);
+    linear-gradient(180deg, var(--page-start) 0%, #f1f3e6 34%, #f7f1df 58%, var(--page-end) 80%, var(--chrome-bg) 100%);
   color: var(--home-ink);
 }
 
@@ -1121,7 +1135,7 @@ body.has-cookie-banner .footer { padding-bottom: 220px; }
     radial-gradient(ellipse 40% 26% at 86% 6%, rgba(255, 246, 214, 0.9), transparent 70%),
     radial-gradient(ellipse 36% 22% at 6% 40%, rgba(255, 250, 232, 0.85), transparent 70%),
     radial-gradient(ellipse 40% 26% at 94% 76%, rgba(214, 226, 199, 0.55), transparent 70%),
-    linear-gradient(180deg, #f5f1e4 0%, #f1f3e6 40%, #f7f1df 75%, #eef2e4 100%);
+    linear-gradient(180deg, var(--page-start) 0%, #f1f3e6 40%, #f7f1df 75%, var(--chrome-bg) 100%);
 }
 
 /* Тени листьев в правом верхнем углу: участок стены атриума примерно с 19 по 55% ширины фото — без окна и арки */
@@ -1656,7 +1670,7 @@ body .pair-sections > .card { margin-top: 0; }
 
 /* Свой фон у html — иначе фон body растягивается на холст и на коротких страницах начинается заново под подвалом.
    isolation держит слой с тенями листьев над фоном body */
-html:has(.inner-text) { background: #eef2e4; }
+html:has(.inner-text) { background: var(--page-end); }
 
 body:has(.inner-text) {
   position: relative;
@@ -1666,7 +1680,7 @@ body:has(.inner-text) {
     radial-gradient(ellipse 40% 18% at 86% 4%, rgba(255, 246, 214, 0.9), transparent 70%),
     radial-gradient(ellipse 36% 16% at 6% 38%, rgba(255, 250, 232, 0.85), transparent 70%),
     radial-gradient(ellipse 40% 18% at 94% 74%, rgba(214, 226, 199, 0.5), transparent 70%),
-    linear-gradient(180deg, #f5f1e4 0%, #f1f3e6 40%, #f7f1df 75%, #eef2e4 100%);
+    linear-gradient(180deg, var(--page-start) 0%, #f1f3e6 40%, #f7f1df 75%, var(--page-end) 100%);
 }
 
 /* Тени листьев в правом верхнем углу — тот же фрагмент стены атриума, что у .inner-page */

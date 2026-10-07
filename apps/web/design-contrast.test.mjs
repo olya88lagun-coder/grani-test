@@ -16,6 +16,11 @@ describe('design token contrast', () => {
     expect(auditDesignContrast(css).failures).toEqual([]);
   });
 
+  it('catches unreadable footer and cookie backgrounds', () => {
+    const result = auditDesignContrast(css.replace(/--page-start:\s*#[\da-f]{6}/i, '--page-start: #5E6660'));
+    expect(result.failures.some((failure) => failure.startsWith('chrome: --ink-soft on --page-start'))).toBe(true);
+  });
+
   it('rejects missing night tokens', () => {
     expect(auditDesignContrast(css.replaceAll('[data-band="night"]', '[data-band="removed"]')).failures).toContain('Missing night tokens');
   });

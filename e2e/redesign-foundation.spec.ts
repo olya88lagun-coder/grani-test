@@ -1,20 +1,35 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Locator } from "@playwright/test";
+
+// Разрешаем var()/hex в браузере; значения палитры остаются только в globals.css.
+async function tokenColor(element: Locator, token: string) {
+  return element.evaluate((node, property) => {
+    const probe = document.createElement("span");
+    probe.style.color = getComputedStyle(node).getPropertyValue(property);
+    node.append(probe);
+    const color = getComputedStyle(probe).color;
+    probe.remove();
+    return color;
+  }, token);
+}
 
 for (const width of [320, 390, 1024, 1440]) {
   test(`redesign chrome fits ${width}px and keeps keyboard controls`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: "reduce" });
-    for (const [name, path, footerColor] of [
-      ["home", "/", "rgb(248, 241, 223)"],
-      ["articles", "/articles", "rgb(238, 242, 228)"],
-      ["pair", "/together", "rgb(255, 252, 250)"],
+    for (const [name, path] of [
+      ["home", "/"],
+      ["articles", "/articles"],
+      ["pair", "/together"],
     ] as const) {
       await page.goto(path);
       const header = page.locator(".public-header");
       const footer = page.getByRole("contentinfo");
       await expect(header).toBeVisible();
-      await expect(footer).toHaveCSS("background-color", footerColor);
-      await expect(footer.getByRole("link")).toHaveCount(11);
+      await expect(footer).toHaveCSS("background-color", await tokenColor(page.locator("main"), "--chrome-bg"));
+      for (const [name, href] of [["Оферта", "/offer"], ["Политика обработки данных", "/privacy"], ["Мой результат", "/me"]]) {
+        await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
+      }
+      expect(await footer.getByRole("link").evaluateAll((links) => links.every((link) => link.textContent?.trim() && link.getAttribute("href")?.startsWith("/")))).toBe(true);
       const consent = footer.getByRole("button", { name: "Настройки cookie" });
       await expect(consent).toBeVisible();
       expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
@@ -25,7 +40,7 @@ for (const width of [320, 390, 1024, 1440]) {
       const banner = page.getByRole("dialog", { name: "Cookie" });
       await expect(banner).toBeVisible();
       await expect(banner).toHaveCSS("box-shadow", "none");
-      await expect(banner).toHaveCSS("background-color", name === "pair" ? "rgb(255, 252, 250)" : "rgb(245, 241, 228)");
+      await expect(banner).toHaveCSS("background-color", await tokenColor(page.locator("main"), name === "pair" ? "--bg" : "--page-start"));
       const box = await banner.boundingBox();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(width);
@@ -63,10 +78,12 @@ test("night bands override chrome tones and pair gold inherits on whole sections
     section.innerHTML = '<section data-band="night" id="pair-night"></section>';
     document.querySelector("main")!.append(section);
   });
-  await expect(page.locator(".public-header")).toHaveCSS("background-color", "rgb(10, 31, 23)");
-  await expect(page.locator(".footer")).toHaveCSS("background-color", "rgb(10, 31, 23)");
-  expect(await page.locator("#pair-night").evaluate((element) => getComputedStyle(element).getPropertyValue("--gold").trim().toUpperCase())).toBe("#E3B3A0");
-  expect(await page.locator("#pair-night").evaluate((element) => getComputedStyle(element).getPropertyValue("--garnet").trim().toUpperCase())).toBe("#B13A5C");
+  const reference = page.locator("#pair-night");
+  for (const selector of [".public-header", ".footer"]) {
+    await expect(page.locator(selector)).toHaveCSS("background-color", await tokenColor(reference, "--bg"));
+  }
+  expect(await tokenColor(reference, "--gold")).not.toBe(await tokenColor(page.locator(".footer"), "--gold"));
+  expect(await reference.evaluate((node) => getComputedStyle(node).getPropertyValue("--garnet").trim())).not.toBe("");
 });
 
 test("pair chrome uses rose gold when it is outside the page palette wrapper", async ({ page }) => {
@@ -77,11 +94,51 @@ test("pair chrome uses rose gold when it is outside the page palette wrapper", a
   await expect(page.getByRole("dialog", { name: "Cookie" })).toBeVisible();
   await page.evaluate(() => {
     for (const element of document.querySelectorAll(".public-header, .footer, .cookie-banner")) element.setAttribute("data-band", "night");
+    const reference = document.createElement("section");
+    reference.dataset.band = "night";
+    reference.id = "pair-night";
+    document.querySelector("main")!.append(reference);
   });
   for (const selector of [".public-header", ".footer", ".cookie-banner"]) {
     const element = page.locator(selector);
-    await expect(element).toHaveCSS("background-color", "rgb(10, 31, 23)");
-    expect(await element.evaluate((node) => getComputedStyle(node).getPropertyValue("--gold").trim().toUpperCase())).toBe("#E3B3A0");
-    expect(await element.evaluate((node) => getComputedStyle(node).getPropertyValue("--garnet").trim().toUpperCase())).toBe("#B13A5C");
+    const reference = page.locator("#pair-night");
+    await expect(element).toHaveCSS("background-color", await tokenColor(reference, "--bg"));
+    for (const token of ["--gold", "--garnet"]) expect(await tokenColor(element, token)).toBe(await tokenColor(reference, token));
+  }
+});
+
+test("page endpoint token updates the gradient and footer together", async ({ page }) => {
+  for (const [path, token] of [["/", "--home-page-end"], ["/articles", "--page-end"]]) {
+    await page.goto(path);
+    const main = page.locator("main");
+    const footer = page.getByRole("contentinfo");
+    const before = await tokenColor(main, "--chrome-bg");
+    // Другой существующий тон: проверяем связь, не фиксируем RGB палитры.
+    const next = await tokenColor(main, "--surface-2");
+    expect(next).not.toBe(before);
+    await page.evaluate(({ token, next }) => document.documentElement.style.setProperty(token, next), { token, next });
+    await expect(footer).toHaveCSS("background-color", next);
+    expect(await main.evaluate((node) => getComputedStyle(node).backgroundImage)).toContain(next);
+    await page.evaluate((token) => document.documentElement.style.removeProperty(token), token);
+  }
+});
+
+test("footer and cookie keep page tokens without the body has bridge", async ({ page }) => {
+  await page.route("**/api/session", (route) => route.fulfill({ json: { signedIn: true } }));
+  for (const path of ["/", "/articles", "/together"]) {
+    await page.goto(path);
+    await expect(page.locator(".public-header").getByRole("link", { name: "Мой профиль", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Настройки cookie" }).click();
+    const banner = page.getByRole("dialog", { name: "Cookie" });
+    await expect(banner).toBeVisible();
+    await page.evaluate(() => {
+      // Прямой main исчезает из body: правила body:has(> main/класс) больше не совпадают.
+      const wrapper = document.createElement("div");
+      document.body.append(wrapper);
+      for (const node of document.querySelectorAll("body > main, body > .footer, body > .cookie-banner")) wrapper.append(node);
+    });
+    const main = page.locator("main");
+    await expect(page.getByRole("contentinfo")).toHaveCSS("background-color", await tokenColor(main, "--chrome-bg"));
+    await expect(banner).toHaveCSS("background-color", await tokenColor(main, path === "/together" ? "--bg" : "--page-start"));
   }
 });
