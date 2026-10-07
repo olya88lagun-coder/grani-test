@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EditorialPage } from "@/components/EditorialPage";
 import { publicMetadata } from "@/lib/seo";
-import { DATA_RECIPIENTS, DATA_STORAGE, LEGAL_DATE, LEGAL_VERSIONS, OPERATOR, OPERATOR_DETAILS } from "@/lib/legal";
+import { correspondenceAddress, DATA_RECIPIENTS, DATA_STORAGE, LEGAL_DATE, LEGAL_VERSIONS, OPERATOR, OPERATOR_DETAILS } from "@/lib/legal";
 
 export const metadata: Metadata = publicMetadata({
   title: "Политика обработки персональных данных",
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       <h2>1. Оператор</h2>
       <p>
         {OPERATOR.name}, плательщик налога на профессиональный доход (самозанятая), ИНН {OPERATOR.inn}.
-        {OPERATOR_DETAILS.address && <> Адрес для корреспонденции: {OPERATOR_DETAILS.address}.</>} Почта для вопросов о данных:{" "}
+        {" "}Адрес для корреспонденции: {correspondenceAddress()}. Почта для вопросов о данных:{" "}
         <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>.
         {OPERATOR_DETAILS.rknNumber && <> Оператор внесён в реестр операторов персональных данных Роскомнадзора под номером {OPERATOR_DETAILS.rknNumber}.</>}
       </p>
