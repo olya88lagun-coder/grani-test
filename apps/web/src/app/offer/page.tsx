@@ -1,7 +1,7 @@
 import { formatRub, PRODUCT_PRICES, TOGETHER_INVITE_TTL_DAYS, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS, type Product } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LEGAL_DATE, OFFER_VERSION, OPERATOR, OPERATOR_DETAILS, TOGETHER_REFUND_DAYS, TOGETHER_REFUND_WORKING_DAYS } from "@/lib/legal";
+import { LEGAL_DATE, OFFER_VERSION, correspondenceAddress, OPERATOR, TOGETHER_REFUND_DAYS, TOGETHER_REFUND_WORKING_DAYS } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
@@ -28,7 +28,7 @@ export default function OfferPage() {
         <h2>Исполнитель</h2>
         <p>
           {OPERATOR.name}, плательщик налога на профессиональный доход (самозанятая), ИНН {OPERATOR.inn}.
-          {OPERATOR_DETAILS.address && <> Адрес для претензий и корреспонденции: {OPERATOR_DETAILS.address}.</>} Почта для вопросов и возвратов:{" "}
+          {" "}Адрес для претензий и корреспонденции: {correspondenceAddress()}. Почта для вопросов и возвратов:{" "}
           <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>.
         </p>
         <h2>Услуги и цены</h2>

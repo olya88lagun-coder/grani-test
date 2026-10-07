@@ -120,3 +120,17 @@ test("the compatibility page spells out what the paid pair report contains and w
   await expect(page.getByText(/Одна оплата открывает разбор обоим, платит один/)).toBeVisible();
   await expect(page.getByRole("link", { name: "оферте" })).toHaveAttribute("href", "/offer");
 });
+
+test("the offer, the policy and the consent name the e-mail as the correspondence address", async ({ page }) => {
+  for (const [path, pattern] of [
+    ["/offer", /Адрес для претензий и корреспонденции: электронная почта lagutenkova\.olga@yandex\.ru\./],
+    ["/privacy", /Адрес для корреспонденции: электронная почта lagutenkova\.olga@yandex\.ru\./],
+    ["/consent", /адрес для корреспонденции: электронная почта lagutenkova\.olga@yandex\.ru, далее — оператор/],
+  ] as const) {
+    await page.goto(path);
+    await expect(page.getByRole("main")).toContainText(pattern);
+  }
+  // Номера РКН нет, поэтому страницы не утверждают, что оператор в реестре
+  await page.goto("/privacy");
+  await expect(page.getByRole("main")).not.toContainText("под номером");
+});

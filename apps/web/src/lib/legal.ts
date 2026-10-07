@@ -8,7 +8,11 @@ export const OPERATOR = {
 } as const;
 
 // Реквизиты, которых нет в коде: их вносит владелица. Пока значение null, предложение с ним на страницах не показывается
-export const OPERATOR_DETAILS: { address: string | null; rknNumber: string | null } = { address: null, rknNumber: null };
+type OperatorDetails = { address: string | null; rknNumber: string | null };
+export const OPERATOR_DETAILS: OperatorDetails = { address: null, rknNumber: null };
+
+// Адрес для претензий и корреспонденции: почтового адреса у оператора нет, поэтому им служит электронная почта (так решила владелица)
+export const correspondenceAddress = (details: OperatorDetails = OPERATOR_DETAILS): string => details.address ?? `электронная почта ${OPERATOR.email}`;
 
 export const LEGAL_VERSIONS = { consent: "2026-10-v3", privacy: "2026-10-v3", offer: "2026-10-v3" } as const;
 export const OFFER_VERSION = LEGAL_VERSIONS.offer;
