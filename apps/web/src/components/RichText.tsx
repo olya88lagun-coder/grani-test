@@ -19,11 +19,11 @@ function Inline({ text }: { text: string }) {
 }
 
 // Тексты типов и статьи: подзаголовки, абзацы и списки из разметки библиотеки
-export function RichText({ text }: { text: string }) {
+export function RichText({ text, headingIdPrefix }: { text: string; headingIdPrefix?: string }) {
   return (
     <>
       {parseBlocks(text).map((block, index) => {
-        if (block.kind === "h2") return <h2 key={index}>{block.text}</h2>;
+        if (block.kind === "h2") return <h2 key={index} id={headingIdPrefix ? `${headingIdPrefix}-${index}` : undefined}>{block.text}</h2>;
         if (block.kind === "ul")
           return (
             <ul key={index}>

@@ -1,4 +1,4 @@
-import { inlineLinks, TRAIT_SOURCES, traitPageIntro } from "@grani/content";
+import { inlineLinks, PAGE_POLES, TRAIT_SOURCES, traitPageIntro } from "@grani/content";
 import { getArticles, getLibrary, getTraitGuide } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -7,12 +7,13 @@ import { ArticleTile } from "@/components/ArticleTile";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { Paragraphs } from "@/components/Paragraphs";
-import { RichText } from "@/components/RichText";
+import { PersonalityReading } from "@/components/PersonalityReading";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, faqJsonLd, firstSentences, publicMetadata, TRAIT_PAGES, traitPageBySlug, traitPath, typePath, webPageJsonLd } from "@/lib/seo";
 import { oppositePole, traitPageTitle, typeDisplayName, typesWithPole } from "@/lib/seo-pages";
+import styles from "../../personality.module.css";
 
 export const dynamicParams = false;
 
@@ -61,22 +62,35 @@ export default async function TraitPage({ params }: Props) {
   const sources = TRAIT_SOURCES[page.trait] ?? [];
 
   return (
-    <main className="page inner-text">
-      <article className="stack">
+    <main className={`${styles.page} ${styles.detail}`}>
+      <article>
         <Breadcrumbs items={[{ name: "Черты личности", path: "/traits" }, { name: page.title, path }]} />
-        <p className="eyebrow">Черта личности · Большая пятёрка</p>
-        <h1 className="display">{page.title}</h1>
-        <Paragraphs text={page.intro} />
+        <header className={styles.traitHero}>
+          <p className="eyebrow">Черта личности · Большая пятёрка</p>
+          <h1>{page.title}</h1>
+          <nav aria-label="Полюса этой черты">
+            <ul className={styles.endpoints}>
+              {PAGE_POLES.map((pole) => (
+                <li key={pole}>
+                  <Link href={traitPath(page.trait, pole)} aria-current={pole === page.pole ? "page" : undefined}>
+                    {traitPageTitle(page.trait, pole)}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </header>
+        <div className={`${styles.prose} ${styles.traitIntro}`}>
+          <Paragraphs text={page.intro} />
+        </div>
         {page.guide && (
-          <div className="trait-guide">
-            <RichText text={page.guide.body} />
-          </div>
+          <PersonalityReading text={page.guide.body} />
         )}
-        <TestCta title="Узнать свой показатель" />
+        <div className={styles.cta}><TestCta title="Узнать свой показатель" /></div>
         {types.length > 0 ? (
-          <section className="stack" aria-labelledby="types">
+          <section className={styles.section} aria-labelledby="types">
             <h2 id="types">Типы, у которых {page.title.toLowerCase()}</h2>
-            <ul className="link-grid">
+            <ul className={styles.links}>
               {types.map((code) => (
                 <li key={code}>
                   <Link href={typePath(code)}>{typeDisplayName(code)}</Link>
@@ -85,29 +99,29 @@ export default async function TraitPage({ params }: Props) {
             </ul>
           </section>
         ) : (
-          <p>
+          <p className={styles.note}>
             Эмоциональная устойчивость не входит в код типа, а уточняет его: у каждого из <Link href="/types">16 типов</Link> есть спокойный и
             чувствительный вариант.
           </p>
         )}
-        <p>
+        <p className={styles.note}>
           <Link href={traitPath(page.trait, opposite)}>{traitPageTitle(page.trait, opposite)}</Link> — противоположный полюс этой черты.
         </p>
         {page.guide && (
-          <section className="stack" aria-labelledby="faq">
+          <section className={styles.faq} aria-labelledby="faq">
             <h2 id="faq">Частые вопросы</h2>
             {page.guide.faq.map((item) => (
-              <div className="card stack" key={item.question}>
-                <h3>{item.question}</h3>
+              <details key={item.question}>
+                <summary><h3>{item.question}</h3></summary>
                 <p>{item.answer}</p>
-              </div>
+              </details>
             ))}
           </section>
         )}
         {articles.length > 0 && (
-          <section className="stack" aria-labelledby="related">
+          <section className={`${styles.section} ${styles.related}`} aria-labelledby="related">
             <h2 id="related">Почитать по теме</h2>
-            <ul className="article-grid">
+            <ul>
               {articles.map((article) => (
                 <li key={article.slug}>
                   <ArticleTile article={article} date={articleDate(article.date)} level={3} />
@@ -116,7 +130,7 @@ export default async function TraitPage({ params }: Props) {
             </ul>
           </section>
         )}
-        <SourceList sources={sources} />
+        <div className={styles.sources}><SourceList sources={sources} /></div>
         <JsonLd data={webPageJsonLd({ title: page.title, description: page.description, path })} />
         {page.guide && <JsonLd data={faqJsonLd(page.guide.faq)} />}
       </article>

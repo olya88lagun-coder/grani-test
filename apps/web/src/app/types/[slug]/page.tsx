@@ -6,12 +6,13 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
-import { RichText } from "@/components/RichText";
+import { PersonalityReading } from "@/components/PersonalityReading";
 import { TestCta } from "@/components/TestCta";
 import { TypeGem } from "@/components/TypeGem";
 import { firstSentences, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath, webPageJsonLd } from "@/lib/seo";
 import { POLE_WORDS, typeDisplayName, typePoles } from "@/lib/seo-pages";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
+import styles from "../../personality.module.css";
 
 export const dynamicParams = false;
 
@@ -43,40 +44,40 @@ export default async function TypePage({ params }: Props) {
   const name = typeDisplayName(code);
 
   return (
-    <main className="page inner-text">
-      <article className="stack">
+    <main className={`${styles.page} ${styles.detail}`}>
+      <article>
         <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }, { name, path: typePath(code) }]} />
-        <header className="type-hero">
-          <div className="row" style={{ gap: 21 }}>
-            <span className="type-gem" data-family={visual.family}>
+        <header className={styles.typeHero} data-family={visual.family}>
+          <div className={styles.typeTitle}>
+            <span className={styles.symbol} data-family={visual.family}>
               <TypeGem shape={visual.shape} size={60} />
             </span>
             <div>
               <p className="eyebrow">Тип личности · Большая пятёрка</p>
-              <h1 className="display">{name}</h1>
+              <h1>{name}</h1>
             </div>
           </div>
-          <ul className="pole-list">
+          <ul className={styles.poles}>
             {typePoles(code).map(({ trait, pole }) => (
               <li key={trait}>
                 <Link href={traitPath(trait, pole)}>
-                  {TRAIT_LABELS[trait]} — {POLE_WORDS[pole]}
+                  <span>{TRAIT_LABELS[trait]}</span><span className={styles.poleValue}>— {POLE_WORDS[pole]}</span>
                 </Link>
               </li>
             ))}
           </ul>
-          <p className="lead">{texts.short}</p>
+          <p className={styles.lead}>{texts.short}</p>
         </header>
-        <RichText text={texts.long} />
-        <p>
+        <PersonalityReading text={texts.long} />
+        <p className={styles.note}>
           Пятая шкала — {TRAIT_LABELS.stability.toLowerCase()} — не меняет тип, а уточняет его: каждый тип бывает спокойным или чувствительным.
           Подробнее — о <Link href={traitPath("stability", "high")}>высокой</Link> и <Link href={traitPath("stability", "low")}>низкой</Link>{" "}
           устойчивости.
         </p>
-        <TestCta title="Это ваш тип?" />
-        <section className="stack" aria-labelledby="other-types">
+        <div className={styles.cta}><TestCta title="Это ваш тип?" /></div>
+        <section className={styles.section} aria-labelledby="other-types">
           <h2 id="other-types">Другие типы</h2>
-          <ul className="link-grid">
+          <ul className={styles.links}>
             {ALL_TYPE_CODES.filter((other) => other !== code).map((other) => (
               <li key={other}>
                 <Link href={typePath(other)}>{typeDisplayName(other)}</Link>
