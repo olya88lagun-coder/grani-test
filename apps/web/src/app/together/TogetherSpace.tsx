@@ -15,6 +15,7 @@ import {
 import { callApi, LOGIN_AGAIN_URL, readSpace } from "./client";
 import { CareCard } from "./CareCard";
 import { ConsentCheckbox } from "./ConsentCheckbox";
+import { InviteNote } from "./InviteNote";
 import { PaymentForm } from "./PaymentForm";
 import { ShareFriends } from "./ShareFriends";
 import { TogetherCards } from "./TogetherCards";
@@ -233,20 +234,7 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
               {inviteUrl ? "Выпустить новую ссылку" : "Создать новую ссылку"}
             </button>
           )}
-          <form
-            className="stack"
-            onSubmit={(event) => {
-              event.preventDefault();
-              void saveNote();
-            }}
-          >
-            <div className="stack buy-form">
-              <label className="buy-form__label" htmlFor="together-note">Записка партнёру (необязательно)</label>
-              <textarea id="together-note" className="buy-form__input" rows={3} maxLength={TOGETHER_INVITE_NOTE_MAX} value={note} onChange={(event) => setNote(event.target.value)} />
-            </div>
-            <button type="submit" className="button button--ghost button--block" disabled={working}>Сохранить записку</button>
-            <p className="muted">Партнёр увидит записку и ваше имя на странице приглашения. Ранее сохранённая записка остаётся, пока вы не замените её. Пустое поле стирает её.</p>
-          </form>
+          <InviteNote note={note} maxLength={TOGETHER_INVITE_NOTE_MAX} working={working} onChange={setNote} onSave={() => void saveNote()} />
           <button type="button" className="button button--ghost button--block" disabled={working} onClick={() => run(refresh)}>Обновить статус</button>
         </section>
       )}

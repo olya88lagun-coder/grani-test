@@ -6,6 +6,7 @@ import { getEnv } from "@/server/env";
 import { getTogetherInvitePreview } from "@/server/together-service";
 import { currentUser } from "@/server/viewer";
 import { InviteJoin } from "../../InviteJoin";
+import { InvitePreview } from "../../InvitePreview";
 import "../../together-cards.css";
 
 export const dynamic = "force-dynamic";
@@ -31,13 +32,7 @@ export default async function TogetherInvitePage({ params }: { params: Promise<{
         </section>
       )}
       {preview.valid && (
-        <section className="card stack">
-          <p className="eyebrow">{preview.inviterName} приглашает вас</p>
-          {preview.note && <blockquote className="tc-flow">{preview.note}</blockquote>}
-          <h2 className="display">Первый вопрос</h2>
-          <p className="lead">{preview.firstQuestion.prompt}</p>
-          <p className="muted">Отвечать будете каждый сам: ответ партнёра откроется, когда ответите вы оба.</p>
-        </section>
+        <InvitePreview inviterName={preview.inviterName} note={preview.note} prompt={preview.firstQuestion.prompt} />
       )}
       {valid && !user && (
         <section className="card stack">

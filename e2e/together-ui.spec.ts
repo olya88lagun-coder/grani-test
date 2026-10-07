@@ -118,7 +118,7 @@ test("the invite page shows the inviter's first name, the note and the first que
   await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
   const invitePath = new URL(await anna.getByLabel("Личная ссылка").inputValue()).pathname;
 
-  await anna.getByLabel("Записка партнёру (необязательно)").fill("Давай попробуем вместе");
+  await anna.getByLabel(/Записка партнёру/).fill("Давай попробуем вместе");
   await anna.getByRole("button", { name: "Сохранить записку" }).click();
   await expect(anna.getByText("Записка сохранена.")).toBeVisible();
 
@@ -218,5 +218,5 @@ test("the care card of month 1 shows each person's items under their name and st
   await expect(anna.getByText("Когда я устала")).toBeVisible();
   await expect(anna.getByText("Позвать погулять")).toBeVisible();
   await expect(anna.getByText("Чай по воскресеньям")).toBeVisible();
-  await expect(anna.getByText(/Карточка пополнится/)).toBeVisible();
+  await expect(anna.getByText(/В итог вошли только выбранные вами пункты/)).toBeVisible();
 });

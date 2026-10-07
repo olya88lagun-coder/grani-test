@@ -1,0 +1,360 @@
+{
+  "date": "2026-10-07",
+  "scope": "actual React components and CSS, mocked API/clipboard, file://; no real auth or payment verification",
+  "checks": 80,
+  "passed": 80,
+  "failed": [],
+  "images": [
+    "pilot-login-390.jpg",
+    "pilot-code-390.jpg",
+    "note-390.jpg",
+    "invitation-390.jpg",
+    "invitation-empty-390.jpg",
+    "friends-390.jpg",
+    "friends-expanded-390.jpg",
+    "care-390.jpg",
+    "care-partial-390.jpg",
+    "care-empty-390.jpg",
+    "care-pending-390.jpg",
+    "care-long-390.jpg",
+    "pilot-login-1440.jpg",
+    "pilot-code-1440.jpg",
+    "note-1440.jpg",
+    "invitation-1440.jpg",
+    "invitation-empty-1440.jpg",
+    "friends-1440.jpg",
+    "friends-expanded-1440.jpg",
+    "care-1440.jpg",
+    "care-partial-1440.jpg",
+    "care-empty-1440.jpg",
+    "care-pending-1440.jpg",
+    "care-long-1440.jpg",
+    "pilot-code-error-390.jpg",
+    "note-empty-390.jpg",
+    "friends-ready-390.jpg"
+  ],
+  "errors": [],
+  "externalRequests": [],
+  "results": [
+    {
+      "name": "layout pilot-login at 320",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-code at 320",
+      "pass": true
+    },
+    {
+      "name": "layout note at 320",
+      "pass": true
+    },
+    {
+      "name": "layout invitation at 320",
+      "pass": true
+    },
+    {
+      "name": "layout invitation-empty at 320",
+      "pass": true
+    },
+    {
+      "name": "layout friends at 320",
+      "pass": true
+    },
+    {
+      "name": "layout friends expanded at 320",
+      "pass": true
+    },
+    {
+      "name": "layout care at 320",
+      "pass": true
+    },
+    {
+      "name": "layout care-partial at 320",
+      "pass": true
+    },
+    {
+      "name": "layout care-empty at 320",
+      "pass": true
+    },
+    {
+      "name": "layout care-pending at 320",
+      "pass": true
+    },
+    {
+      "name": "layout care-long at 320",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-login at 390",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-code at 390",
+      "pass": true
+    },
+    {
+      "name": "layout note at 390",
+      "pass": true
+    },
+    {
+      "name": "layout invitation at 390",
+      "pass": true
+    },
+    {
+      "name": "layout invitation-empty at 390",
+      "pass": true
+    },
+    {
+      "name": "layout friends at 390",
+      "pass": true
+    },
+    {
+      "name": "layout friends expanded at 390",
+      "pass": true
+    },
+    {
+      "name": "layout care at 390",
+      "pass": true
+    },
+    {
+      "name": "layout care-partial at 390",
+      "pass": true
+    },
+    {
+      "name": "layout care-empty at 390",
+      "pass": true
+    },
+    {
+      "name": "layout care-pending at 390",
+      "pass": true
+    },
+    {
+      "name": "layout care-long at 390",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-login at 768",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-code at 768",
+      "pass": true
+    },
+    {
+      "name": "layout note at 768",
+      "pass": true
+    },
+    {
+      "name": "layout invitation at 768",
+      "pass": true
+    },
+    {
+      "name": "layout invitation-empty at 768",
+      "pass": true
+    },
+    {
+      "name": "layout friends at 768",
+      "pass": true
+    },
+    {
+      "name": "layout friends expanded at 768",
+      "pass": true
+    },
+    {
+      "name": "layout care at 768",
+      "pass": true
+    },
+    {
+      "name": "layout care-partial at 768",
+      "pass": true
+    },
+    {
+      "name": "layout care-empty at 768",
+      "pass": true
+    },
+    {
+      "name": "layout care-pending at 768",
+      "pass": true
+    },
+    {
+      "name": "layout care-long at 768",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-login at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-code at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout note at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout invitation at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout invitation-empty at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout friends at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout friends expanded at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout care at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout care-partial at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout care-empty at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout care-pending at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout care-long at 1024",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-login at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout pilot-code at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout note at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout invitation at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout invitation-empty at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout friends at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout friends expanded at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout care at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout care-partial at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout care-empty at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout care-pending at 1440",
+      "pass": true
+    },
+    {
+      "name": "layout care-long at 1440",
+      "pass": true
+    },
+    {
+      "name": "pilot has no price or offer, and login keeps from code",
+      "pass": true
+    },
+    {
+      "name": "pilot form binds accessible labels and disables empty submission",
+      "pass": true
+    },
+    {
+      "name": "invalid pilot code uses existing API body, error described by input",
+      "pass": true
+    },
+    {
+      "name": "pilot busy state blocks editing and double click while request pending",
+      "pass": true
+    },
+    {
+      "name": "pilot error 429",
+      "pass": true
+    },
+    {
+      "name": "pilot error network",
+      "pass": true
+    },
+    {
+      "name": "pilot error limit",
+      "pass": true
+    },
+    {
+      "name": "note counters, limit, saving and existing PUT shape",
+      "pass": true
+    },
+    {
+      "name": "empty note makes destructive meaning explicit without auto save",
+      "pass": true
+    },
+    {
+      "name": "invitation with and without note preserves question and no answer form",
+      "pass": true
+    },
+    {
+      "name": "friends link only requested on explicit click, expandable by keyboard",
+      "pass": true
+    },
+    {
+      "name": "copy feedback only after clipboard success",
+      "pass": true
+    },
+    {
+      "name": "clipboard refusal selects link for manual copy",
+      "pass": true
+    },
+    {
+      "name": "friends request error does not create a fake URL",
+      "pass": true
+    },
+    {
+      "name": "care calls actual endpoint, preserves authors and contexts",
+      "pass": true
+    },
+    {
+      "name": "empty and partial care are explicit, no unavailable edit or reward CTA",
+      "pass": true
+    },
+    {
+      "name": "care not ready stays hidden",
+      "pass": true
+    },
+    {
+      "name": "long text wraps and HTML stays literal",
+      "pass": true
+    },
+    {
+      "name": "keyboard focus and reduced motion, loaded Cyrillic fonts",
+      "pass": true
+    },
+    {
+      "name": "no React/JS errors and no external browser requests",
+      "pass": true
+    }
+  ]
+}
