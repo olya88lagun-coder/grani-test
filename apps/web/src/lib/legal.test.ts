@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { DATA_RECIPIENTS, LEGAL_DATE, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OFFER_VERSION, OPERATOR, OPERATOR_DETAILS, TOGETHER_REFUND_DAYS, TOGETHER_REFUND_WORKING_DAYS } from "./legal";
+import { correspondenceAddress, DATA_RECIPIENTS, LEGAL_DATE, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OFFER_VERSION, OPERATOR, OPERATOR_DETAILS, TOGETHER_REFUND_DAYS, TOGETHER_REFUND_WORKING_DAYS } from "./legal";
 
 describe("legal", () => {
   it("has a 12-digit INN of the self-employed operator", () => {
@@ -38,9 +38,14 @@ describe("legal", () => {
     }
   });
 
-  it("keeps the operator details empty until the owner fills them in, so the pages omit those sentences", () => {
+  it("keeps the postal address and the RKN number empty until the owner has them, so the pages omit those sentences", () => {
     expect(OPERATOR_DETAILS).toEqual({ address: null, rknNumber: null });
     expect(OPERATOR.nameDative).toBe("Лагутенковой Ольге Валентиновне");
+  });
+
+  it("names the e-mail as the correspondence address while there is no postal one, and the postal one once it exists", () => {
+    expect(correspondenceAddress()).toBe(`электронная почта ${OPERATOR.email}`);
+    expect(correspondenceAddress({ address: "г. Москва, а/я 1", rknNumber: null })).toBe("г. Москва, а/я 1");
   });
 
   it("states the Together refund terms in one place", () => {

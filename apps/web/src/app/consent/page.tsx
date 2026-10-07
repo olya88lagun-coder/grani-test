@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DATA_STORAGE, LEGAL_DATE, LOGIN_CONSENT_RECIPIENTS, OPERATOR, OPERATOR_DETAILS } from "@/lib/legal";
+import { correspondenceAddress, DATA_STORAGE, LEGAL_DATE, LOGIN_CONSENT_RECIPIENTS, OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { CONSENT_VERSION } from "@/server/login-service";
 
@@ -20,7 +20,7 @@ export default function ConsentPage() {
         </p>
         <p>
           Отмечая согласие на сайте grani-test.ru, я свободно, своей волей и в своём интересе даю {OPERATOR.nameDative} (самозанятая, ИНН {OPERATOR.inn}
-          {OPERATOR_DETAILS.address && <>, адрес для корреспонденции: {OPERATOR_DETAILS.address}</>}, далее — оператор) согласие на обработку моих персональных данных на условиях
+          {", "}адрес для корреспонденции: {correspondenceAddress()}, далее — оператор) согласие на обработку моих персональных данных на условиях
           ниже и <Link href="/privacy">политики обработки персональных данных</Link>. Подтверждаю, что мне есть 14 лет.
         </p>
         <h2>Какие данные</h2>
