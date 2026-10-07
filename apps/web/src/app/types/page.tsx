@@ -8,6 +8,7 @@ import { TypeGem } from "@/components/TypeGem";
 import { firstSentences, publicMetadata, traitPath, typePath } from "@/lib/seo";
 import { typeDisplayName } from "@/lib/seo-pages";
 import { TYPE_VISUALS, type TypeFamily } from "@/lib/type-visuals";
+import styles from "../personality.module.css";
 
 export const metadata = publicMetadata({
   title: "16 типов личности по Большой пятёрке",
@@ -26,52 +27,51 @@ const FAMILIES: readonly { family: TypeFamily; title: string }[] = [
 export default function TypesPage() {
   const library = getLibrary();
   return (
-    <main className="inner-page inner-page--types">
-      <div className="page page--wide stack">
-        <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }]} />
-        <header className="inner-intro">
-          <div className="inner-intro__copy">
-            <p className="eyebrow">Большая пятёрка</p>
-            <h1 className="display">16 типов личности</h1>
-            <p className="lead">
-              Тип складывается из четырёх черт:{" "}
-              {TYPE_TRAITS.map((trait, index) => (
-                <span key={trait}>
-                  {index > 0 && ", "}
-                  <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait].toLowerCase()}</Link>
-                </span>
-              ))}
-              . Каждая бывает высокой или низкой — отсюда 16 сочетаний. Пятая черта,{" "}
-              <Link href={traitPath("stability", "high")}>эмоциональная устойчивость</Link>, уточняет тип: спокойный он или чувствительный.
-            </p>
-          </div>
-          <img className="inner-intro__gem" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
-        </header>
-        {FAMILIES.map(({ family, title }) => (
-          <section key={family} className="type-family stack" aria-labelledby={`family-${family}`}>
-            <h2 id={`family-${family}`}>{title}</h2>
-            <ul className="type-grid">
-              {ALL_TYPE_CODES.filter((code) => TYPE_VISUALS[typeCodeToDir(code)]?.family === family).map((code) => {
-                const visual = TYPE_VISUALS[typeCodeToDir(code)]!;
-                return (
-                  <li key={code} className="card card--paper type-tile">
-                    <span className="type-gem" data-family={visual.family}>
+    <main className={styles.page}>
+      <Breadcrumbs items={[{ name: "Типы личности", path: "/types" }]} />
+      <header className={styles.intro}>
+        <div className={styles.introCopy}>
+          <p className="eyebrow">Большая пятёрка</p>
+          <h1>16 типов личности</h1>
+          <p className={styles.lead}>
+            Тип складывается из четырёх черт:{" "}
+            {TYPE_TRAITS.map((trait, index) => (
+              <span key={trait}>
+                {index > 0 && ", "}
+                <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait].toLowerCase()}</Link>
+              </span>
+            ))}
+            . Каждая бывает высокой или низкой — отсюда 16 сочетаний. Пятая черта,{" "}
+            <Link href={traitPath("stability", "high")}>эмоциональная устойчивость</Link>, уточняет тип: спокойный он или чувствительный.
+          </p>
+        </div>
+        <img className={styles.crystal} src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+      </header>
+      <nav className={styles.familyNav} aria-label="Семейства типов">
+        {FAMILIES.map(({ family, title }) => <a key={family} href={`#family-${family}`}>{title}</a>)}
+      </nav>
+      {FAMILIES.map(({ family, title }) => (
+        <section key={family} className={styles.family} aria-labelledby={`family-${family}`}>
+          <h2 id={`family-${family}`}>{title}</h2>
+          <ul className={styles.typeGrid}>
+            {ALL_TYPE_CODES.filter((code) => TYPE_VISUALS[typeCodeToDir(code)]?.family === family).map((code) => {
+              const visual = TYPE_VISUALS[typeCodeToDir(code)]!;
+              return (
+                <li key={code}>
+                  <Link className={styles.typeCard} href={typePath(code)}>
+                    <span className={styles.symbol} data-family={visual.family}>
                       <TypeGem shape={visual.shape} size={56} />
                     </span>
-                    <div className="stack">
-                      <h3>
-                        <Link href={typePath(code)}>{typeDisplayName(code)}</Link>
-                      </h3>
-                      <p className="muted">{firstSentences(typeTexts(library, code).short, 140)}</p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-        <TestCta />
-      </div>
+                    <h3>{typeDisplayName(code)}</h3>
+                    <p>{firstSentences(typeTexts(library, code).short, 140)}</p>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+      <div className={styles.cta}><TestCta /></div>
     </main>
   );
 }
