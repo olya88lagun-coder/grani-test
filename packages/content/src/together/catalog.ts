@@ -103,3 +103,6 @@ export const CARE_SOURCES: Readonly<Record<string, CareCategory>> = Object.fromE
 
 // Итог месяца 1 показывается, когда пара прошла итоговую карточку месяца
 export const CARE_READY_CARD_ID = "m01-d26";
+
+// Карточки-свидания: в каждом месяце четыре, с шагами «1. …» в подсказке. По ним считается число пройденных свиданий пары
+export const TOGETHER_DATE_CARD_IDS: ReadonlySet<string> = new Set(TOGETHER_TRACK.filter((card) => card.hint.includes("\n1. ")).map((card) => card.id));

@@ -10,6 +10,8 @@ export type SpaceView = {
   members: { role: TogetherRole; displayName: string }[];
   pendingRequest: { displayName: string } | null;
   access: { active: boolean; accessUntil: string | null; stage: number; canRenew: boolean };
+  // Настоящие цифры для блока «Вы уже вместе»: дни с подтверждения пары и пройденные вдвоём разговоры и свидания
+  stats?: { days: number; conversations: number; dates: number };
 };
 export type PurchaseSnapshot = { status: "pending" | "succeeded" | "canceled" | "refunded"; granted: boolean };
 
