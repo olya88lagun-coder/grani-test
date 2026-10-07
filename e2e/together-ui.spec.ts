@@ -172,12 +172,21 @@ test("the offer, the policy and the consent describe the Together service, and t
   await expect(page.getByRole("heading", { name: "«Вдвоём»: общее пространство для двоих" })).toBeVisible();
   await expect(page.getByText(/399\s*₽ за 30 суток/)).toBeVisible();
   await expect(page.getByText(/В течение 7 дней со дня платежа/)).toBeVisible();
+  await expect(page.getByText(/НДС не облагается/)).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Применимое право" })).toBeVisible();
   await page.goto("/privacy");
   await expect(page.getByRole("heading", { name: "Особые сведения" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Возраст" })).toBeVisible();
+  await expect(page.getByText(/удаляются через 3 года после вашего последнего входа/)).toBeVisible();
   await page.goto("/consent");
   await expect(page.getByRole("heading", { name: "Отдельное согласие для «Вдвоём»" })).toBeVisible();
+  await expect(page.getByText("Подтверждаю, что мне есть 14 лет.")).toBeVisible();
+  await expect(page.getByText(/даю Лагутенковой Ольге Валентиновне/)).toBeVisible();
 
   await page.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await page.goto("/me/delete");
+  await expect(page.getByText(/Деньги за уже открытые разборы не возвращаются/)).toBeVisible();
+  await expect(page.getByText(/пространство «Вдвоём»: оно закроется для обоих/)).toBeVisible();
   await page.goto("/together");
   const create = page.getByRole("button", { name: "Создать и получить приглашение" });
   await expect(create).toBeDisabled();
