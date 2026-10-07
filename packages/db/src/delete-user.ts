@@ -7,18 +7,18 @@ import { isUuid } from "./uuid";
 
 // Каскады схемы уносят от результатов ссылки для друзей, ответы друзей, приглашения, пары и разборы.
 // Покупки остаются для налогового учёта: их ссылки на результат и пару обнуляются (on delete set null), почта для чека стирается
-export async function deleteUserData(db: Database, userId: string): Promise<{ deleted: boolean }> {
+export async function deleteUserData(db: Database, userId: string, now: Date = new Date()): Promise<{ deleted: boolean }> {
   if (!isUuid(userId)) return { deleted: false };
   return db.transaction(async (tx) => {
     const [marked] = await tx
       .update(users)
-      .set({ deletedAt: new Date(), gender: null, togetherConsentVersion: null, togetherConsentedAt: null })
+      .set({ deletedAt: now, gender: null, togetherConsentVersion: null, togetherConsentedAt: null })
       .where(and(eq(users.id, userId), isNull(users.deletedAt)))
       .returning({ id: users.id });
     if (!marked) return { deleted: false };
     await tx.delete(results).where(eq(results.userId, userId));
     // Совместное пространство закрывается: партнёр освобождается, записи об оплатах остаются
-    await closeSpaceForUser(tx, { userId, now: new Date(), reason: "account_deleted" });
+    await closeSpaceForUser(tx, { userId, now, reason: "account_deleted" });
     // Пользователь помечается удалённым, а не удаляется, поэтому каскад ответов не сработает сам
     await deleteUserAnswers(tx, userId);
     // Записка в приглашении — тоже текст человека: приглашения остаются в журнале, записки стираются

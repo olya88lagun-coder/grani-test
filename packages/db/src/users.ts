@@ -24,6 +24,7 @@ export async function upsertUserFromIdentity(
   db: Database,
   identity: IdentityInput,
   consent: Consent | null,
+  now: Date = new Date(),
 ): Promise<UpsertOutcome> {
   const owner = await findOwner(db, identity.provider, identity.externalId);
   if (owner) {
@@ -33,7 +34,8 @@ export async function upsertUserFromIdentity(
         .update(authIdentities)
         .set({ displayName: identity.displayName })
         .where(and(eq(authIdentities.provider, identity.provider), eq(authIdentities.externalId, identity.externalId)));
-      if (gender !== owner.gender) await tx.update(users).set({ gender }).where(eq(users.id, owner.userId));
+      // Каждый вход сдвигает срок хранения данных (3 года после последнего входа)
+      await tx.update(users).set({ lastLoginAt: now, ...(gender !== owner.gender ? { gender } : {}) }).where(eq(users.id, owner.userId));
       if (consent) {
         await tx
           .update(users)
@@ -47,7 +49,7 @@ export async function upsertUserFromIdentity(
   const user = await db.transaction(async (tx) => {
     const [created] = await tx
       .insert(users)
-      .values({ gender: identity.gender, consentVersion: consent.version, consentedAt: consent.at })
+      .values({ gender: identity.gender, consentVersion: consent.version, consentedAt: consent.at, lastLoginAt: now })
       .returning({ id: users.id });
     await tx.insert(authIdentities).values({
       userId: created!.id,

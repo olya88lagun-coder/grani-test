@@ -18,6 +18,8 @@ export const users = pgTable("users", {
   togetherConsentVersion: text("together_consent_version"),
   togetherConsentedAt: timestamp("together_consented_at", { withTimezone: true }),
   createdAt: createdAt(),
+  // Последний вход: от него считаются 3 года хранения данных из политики; у существующих пользователей отсчёт начался с момента миграции
+  lastLoginAt: timestamp("last_login_at", { withTimezone: true }).notNull().defaultNow(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
 });
 

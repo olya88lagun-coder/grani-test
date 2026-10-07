@@ -1,6 +1,8 @@
 import type { ReportKind } from "./reports";
 
-export const QUEUES = { notify: "notify", generate: "generate" } as const;
+export const QUEUES = { notify: "notify", generate: "generate", retention: "retention" } as const;
+// Удаление данных по срокам хранения: раз в сутки в 03:00 UTC (ночь по Москве и Екатеринбургу)
+export const RETENTION_CRON = "0 3 * * *";
 
 export type NotifyJob =
   | { kind: "friend_answered"; inviteId: string; friendsCount: number }
