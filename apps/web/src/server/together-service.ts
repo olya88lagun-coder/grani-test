@@ -1,6 +1,7 @@
 import { TOGETHER_DATE_CARD_IDS, TOGETHER_TRACK } from "@grani/content/together";
 import { accessState, canRenew, providedPaidSeconds, stageOf } from "@grani/core";
 import {
+  acknowledgeClosedNotice,
   closeSpaceForUser,
   countClosedCards,
   countRevealedCards,
@@ -8,6 +9,8 @@ import {
   ensureShareCode,
   getAccessSnapshot,
   getActiveSpaceForUser,
+  getClosedNotice,
+  getLiveInviteExpiry,
   getPendingRequest,
   hasTogetherConsent,
   peekInvite,
@@ -36,6 +39,8 @@ export type TogetherSpaceView = {
   progress: { done: number; total: number };
   // Для блока «Вы уже вместе»: дни с подтверждения пары, пройденные вместе разговоры и свидания
   stats: { days: number; conversations: number; dates: number };
+  // Для ожидающего пространства пригласившего: до какого времени живёт ссылка и закончилась ли она. Иначе null
+  invite: { expiresAt: string; expired: boolean } | null;
 };
 
 const inviteUrl = (deps: TogetherDeps, token: string) => new URL(`/together/invite/${token}`, deps.appUrl).toString();
@@ -126,6 +131,24 @@ export async function leaveTogether(
 
 const DAY_MS = 86_400_000;
 
+async function inviteExpiry(deps: TogetherDeps, status: string, role: TogetherRole, userId: string, now: Date): Promise<TogetherSpaceView["invite"]> {
+  if (status !== "pending" || role !== "initiator") return null;
+  const expiresAt = await getLiveInviteExpiry(deps.db, { userId });
+  return expiresAt ? { expiresAt: expiresAt.toISOString(), expired: expiresAt.getTime() <= now.getTime() } : null;
+}
+
+export type ClosedNoticeView = { reason: "left" | "account_deleted"; closedAt: string };
+
+// Сообщение о том, что пространство закрыл партнёр: показывается, пока человек не отметил, что прочитал (и не дольше 30 дней)
+export async function getTogetherClosedNotice(deps: TogetherDeps, p: { userId: string }): Promise<ClosedNoticeView | null> {
+  const notice = await getClosedNotice(deps.db, { userId: p.userId, now: deps.now() });
+  return notice ? { reason: notice.reason, closedAt: notice.closedAt.toISOString() } : null;
+}
+
+export async function acknowledgeTogetherClosedNotice(deps: TogetherDeps, p: { userId: string }): Promise<void> {
+  await acknowledgeClosedNotice(deps.db, { userId: p.userId, now: deps.now() });
+}
+
 // Дни считаются с подтверждения пары (когда вошёл второй участник); пока пара не собрана, их нет
 function daysTogether(snapshot: { space: { status: string }; members: { joinedAt: Date }[] }, now: Date): number {
   if (snapshot.space.status !== "active" || snapshot.members.length < 2) return 0;
@@ -154,6 +177,7 @@ export async function getTogetherSpaceView(deps: TogetherDeps, userId: string): 
       canRenew: canRenew(periods, now, closedAt),
     },
     progress: { done: await countClosedCards(deps.db, snapshot.space.id), total: TOGETHER_TRACK.length },
+    invite: await inviteExpiry(deps, snapshot.space.status, me.role, userId, now),
     stats: { days: daysTogether(snapshot, now), ...(await countRevealedCards(deps.db, { spaceId: snapshot.space.id, dateCardIds: TOGETHER_DATE_CARD_IDS })) },
   };
 }

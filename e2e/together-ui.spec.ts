@@ -291,3 +291,37 @@ test("the creation screen sends a visitor to sign in and a person who already ha
   await expect(anna.getByRole("link", { name: /^Создать пространство для двоих/ })).toHaveCount(0);
   await expect(anna.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });
+
+test("the partner who stayed is told once that the space was closed, and the one who left is not", async ({ browser }) => {
+  const headers = { origin: BASE_URL };
+  const anna = await newPage(browser);
+  const boris = await newPage(browser);
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await boris.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Борис"))}`);
+  const created = (await (await anna.request.post("/api/together/spaces", { data: { consent: true }, headers })).json()) as { inviteUrl: string };
+  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1), consent: true }, headers })).status()).toBe(200);
+  expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers })).status()).toBe(200);
+  expect((await boris.request.post("/api/together/leave", { data: { acknowledged: true }, headers })).status()).toBe(200);
+
+  await anna.goto("/together");
+  await expect(anna.getByRole("heading", { name: "Пространство закрыто" })).toBeVisible();
+  await expect(anna.getByText(/Второй участник вышел из пространства/)).toBeVisible();
+  await anna.getByRole("button", { name: "Понятно" }).click();
+  await expect(anna.getByRole("heading", { name: "Пространство закрыто" })).toHaveCount(0);
+  await anna.reload();
+  await expect(anna.getByRole("heading", { name: "Пространство закрыто" })).toHaveCount(0);
+
+  await boris.goto("/together");
+  await expect(boris.getByRole("heading", { level: 1 })).toHaveText(/Быть ближе\s*—\s*в обычные дни/);
+  await expect(boris.getByRole("heading", { name: "Пространство закрыто" })).toHaveCount(0);
+});
+
+test("the initiator sees until when the invite link works after the page is opened again", async ({ browser }) => {
+  const anna = await newPage(browser);
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  expect((await anna.request.post("/api/together/spaces", { data: { consent: true }, headers: { origin: BASE_URL } })).status()).toBe(200);
+
+  await anna.goto("/together");
+  await expect(anna.getByText("Мы не можем восстановить прежнюю ссылку", { exact: false })).toBeVisible();
+  await expect(anna.getByText(/Ссылка действует до \d{1,2} [а-я]+ в \d{2}:\d{2}\./)).toBeVisible();
+});

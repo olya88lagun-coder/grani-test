@@ -5,6 +5,8 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { LEGAL_VERSIONS } from "../lib/legal";
 import {
   createTogetherSpace,
+  acknowledgeTogetherClosedNotice,
+  getTogetherClosedNotice,
   getTogetherInvitePreview,
   getTogetherShareUrl,
   getTogetherSpaceView,
@@ -253,5 +255,34 @@ describe("consent to process the answers", () => {
     await recordTogetherConsent(db, { userId: gleb, version: "2025-01-v1", at: START });
 
     expect(await createTogetherSpace(deps, { userId: gleb })).toEqual({ ok: false, error: "consent_required" });
+  });
+});
+
+describe("invite expiry in the space view", () => {
+  test("the initiator of a waiting space sees when the link ends and whether it already ended; others and active spaces have none", async () => {
+    await create();
+
+    expect((await getTogetherSpaceView(deps, anna))?.invite).toEqual({ expiresAt: new Date(START.getTime() + TOGETHER_INVITE_TTL_MS).toISOString(), expired: false });
+    clock = new Date(START.getTime() + TOGETHER_INVITE_TTL_MS + 1);
+    expect((await getTogetherSpaceView(deps, anna))?.invite).toMatchObject({ expired: true });
+  });
+
+  test("an active space has no invite to show", async () => {
+    await makeActive();
+
+    expect((await getTogetherSpaceView(deps, anna))?.invite).toBeNull();
+    expect((await getTogetherSpaceView(deps, boris))?.invite).toBeNull();
+  });
+});
+
+describe("closed space notice", () => {
+  test("the partner who stayed is told once why the space closed; the one who left is not", async () => {
+    await makeActive();
+    await leaveTogether(deps, { userId: boris, acknowledged: true });
+
+    expect(await getTogetherClosedNotice(deps, { userId: anna })).toEqual({ reason: "left", closedAt: START.toISOString() });
+    expect(await getTogetherClosedNotice(deps, { userId: boris })).toBeNull();
+    await acknowledgeTogetherClosedNotice(deps, { userId: anna });
+    expect(await getTogetherClosedNotice(deps, { userId: anna })).toBeNull();
   });
 });

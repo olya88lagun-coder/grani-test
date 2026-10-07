@@ -1,0 +1,1 @@
+ALTER TABLE "together_members" ADD COLUMN "close_notice_seen_at" timestamp with time zone;

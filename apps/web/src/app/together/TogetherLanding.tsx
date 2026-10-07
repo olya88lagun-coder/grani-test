@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 import { TOGETHER_MONTHS, TOGETHER_TRACK } from "@grani/content/together";
 import { TOGETHER_SEASON } from "@grani/content/together-season";
 import { formatRub, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/core";
@@ -43,12 +44,15 @@ type Props = {
   ctaHref?: string;
   // Для пары, у которой пространство уже есть: все кнопки ведут обратно в пространство
   member?: boolean;
+  // Сообщение над витриной (например, что пространство закрыто); без него витрина как раньше
+  notice?: ReactNode;
 };
 
-export function TogetherLanding({ enterQuery, ctaHref, member = false }: Props) {
+export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }: Props) {
   const enterHref = member ? "/together" : (ctaHref ?? `/api/together/enter?next=space${enterQuery}`);
   const cta = (label = "Создать пространство для двоих") => <a className={styles.cta} href={enterHref}>{member ? "Открыть моё пространство" : label}<span aria-hidden="true">↗</span></a>;
   return <main className={styles.landing} data-palette="pair">
+    {notice}
     <section className={styles.hero} aria-labelledby="together-title">
       <div className={styles.heroInner}>
         <div className={styles.intro}>
