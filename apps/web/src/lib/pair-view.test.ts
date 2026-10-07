@@ -3,7 +3,7 @@ import { compatibilityTexts } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import type { PairRecord } from "@grani/db";
 import { describe, expect, test } from "vitest";
-import { buildPairReportView, buildPairView, pairConsentLabel } from "./pair-view";
+import { buildPairReportView, buildPairView, pairConsentLabel, PAIR_SECTION_PITCH, PAIR_SECTION_TITLES } from "./pair-view";
 
 const ANNA: TraitScores = { openness: 80, conscientiousness: 40, extraversion: 70, agreeableness: 65, stability: 55 };
 const BORIS: TraitScores = { openness: 45, conscientiousness: 70, extraversion: 30, agreeableness: 60, stability: 40 };
@@ -63,5 +63,19 @@ describe("buildPairReportView", () => {
       "Быт и деньги",
       "Как поддерживать друг друга",
     ]);
+  });
+});
+
+describe("PAIR_SECTION_PITCH", () => {
+  test("describes every section of the pair report, and only those", () => {
+    expect(Object.keys(PAIR_SECTION_PITCH).sort()).toEqual(Object.keys(PAIR_SECTION_TITLES).sort());
+  });
+
+  test("keeps each description short and concrete, and never promises an outcome for the relationship", () => {
+    for (const [key, text] of Object.entries(PAIR_SECTION_PITCH)) {
+      expect(text.length, key).toBeGreaterThan(60);
+      expect(text.length, key).toBeLessThanOrEqual(240);
+      expect(text, key).not.toMatch(/гарантир|навсегда|решит все|избавит|без ссор|идеальн/i);
+    }
   });
 });

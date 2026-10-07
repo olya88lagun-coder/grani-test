@@ -4,7 +4,7 @@ import Link from "next/link";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
 import { Paragraphs } from "@/components/Paragraphs";
-import { buildPairReportView, PAIR_SECTION_TITLES } from "@/lib/pair-view";
+import { buildPairReportView, PAIR_SECTION_PITCH, PAIR_SECTION_TITLES } from "@/lib/pair-view";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { getDb } from "@/server/db";
 
@@ -31,8 +31,10 @@ export async function PairReport({ pairId, viewerResultId }: { pairId: string; v
               Пять разделов помогут увидеть, где вам легко и где вы по-разному смотрите на быт, деньги и споры. Одна оплата открывает разбор обоим.
             </p>
             <ol className="pair-offer__sections" aria-label="Что внутри разбора пары">
-              {Object.values(PAIR_SECTION_TITLES).map((title) => (
-                <li key={title}>{title}</li>
+              {(Object.keys(PAIR_SECTION_TITLES) as (keyof typeof PAIR_SECTION_TITLES)[]).map((key) => (
+                <li key={key}>
+                  <strong>{PAIR_SECTION_TITLES[key]}</strong> {PAIR_SECTION_PITCH[key]}
+                </li>
               ))}
             </ol>
             <div className="pair-offer__buy">
@@ -40,7 +42,7 @@ export async function PairReport({ pairId, viewerResultId }: { pairId: string; v
               <p className="result-offer__note">Откроется обоим участникам пары. Платит один.</p>
             </div>
             <p className="result-offer__legal">
-              Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих, деньги не возвращаются.
+              Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих; условия возврата — в оферте.
             </p>
           </>
         ) : (

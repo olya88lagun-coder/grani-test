@@ -107,3 +107,14 @@ test("documents are linked from the footer of public pages", async ({ page }) =>
   await page.goto("/contacts");
   await expect(page.getByText(/ИНН \d{12}/)).toBeVisible();
 });
+
+test("the compatibility page spells out what the paid pair report contains and what it costs", async ({ page }) => {
+  await page.goto("/compatibility");
+  await expect(page.getByRole("heading", { name: "Процент — это начало. Разбор объясняет, что за ним" })).toBeVisible();
+  const sections = page.getByRole("list", { name: "Пять разделов разбора пары" }).getByRole("listitem");
+  await expect(sections).toHaveCount(5);
+  await expect(sections.filter({ hasText: "Откуда будут конфликты и как договариваться" })).toHaveCount(1);
+  await expect(page.getByRole("heading", { name: /Что бесплатно, а что за 399/ })).toBeVisible();
+  await expect(page.getByText(/Одна оплата открывает разбор обоим, платит один/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "оферте" })).toHaveAttribute("href", "/offer");
+});
