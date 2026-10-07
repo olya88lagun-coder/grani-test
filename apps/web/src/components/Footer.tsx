@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CookieSettingsButton } from "./CookieSettingsButton";
+import styles from "./Footer.module.css";
 
 const LINKS = [
   { href: "/big-five-test", label: "Тест Big Five" },
@@ -15,16 +16,23 @@ const LINKS = [
   { href: "/me", label: "Мой результат" },
 ] as const;
 
+const GROUPS = [
+  { title: "Исследовать", links: [LINKS[0], LINKS[1], LINKS[3], LINKS[4]] },
+  { title: "Ваши результаты", links: [LINKS[10], LINKS[5], LINKS[2]] },
+  { title: "Помощь и документы", links: [LINKS[6], LINKS[7], LINKS[8], LINKS[9]] },
+] as const;
+
 export function Footer() {
   return (
-    <footer className="page footer">
-      <nav aria-label="Документы и разделы">
-        {LINKS.map((link) => (
-          <Link key={link.href} href={link.href}>
-            {link.label}
-          </Link>
+    <footer className={styles.footer}>
+      <nav className={styles.content} aria-label="Документы и разделы">
+        {GROUPS.map((group, index) => (
+          <section key={group.title}>
+            <h2>{group.title}</h2>
+            <ul>{group.links.map((link) => <li key={link.href}><Link href={link.href}>{link.label}</Link></li>)}</ul>
+            {index === GROUPS.length - 1 && <CookieSettingsButton />}
+          </section>
         ))}
-        <CookieSettingsButton />
       </nav>
     </footer>
   );

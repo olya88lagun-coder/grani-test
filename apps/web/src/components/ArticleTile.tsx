@@ -12,7 +12,7 @@ export function ArticleTile({ article, date, level = 2 }: { article: ArticleCard
         <Heading className="article-tile__title">{article.title}</Heading>
         <p className="article-tile__text">{article.description}</p>
         <p className="article-tile__meta">
-          {date} <span aria-hidden="true">→</span>
+          {date}{article.readingMinutes ? ` · ≈ ${article.readingMinutes} мин` : ""} <span aria-hidden="true">→</span>
         </p>
       </div>
     </Link>

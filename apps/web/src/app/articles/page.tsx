@@ -1,10 +1,10 @@
 import { getArticles } from "@grani/content/data";
-import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, publicMetadata } from "@/lib/seo";
 import { ArticleGrid } from "./ArticleGrid";
+import styles from "./journal.module.css";
 
 export const metadata = publicMetadata({
   title: "Статьи о личности и отношениях",
@@ -18,40 +18,23 @@ const FEATURED_SLUG = "big-five";
 export default function ArticlesPage() {
   const cards = getArticles().map(articleCard);
   const featured = cards.find((card) => card.slug === FEATURED_SLUG) ?? cards[0];
-  const rest = cards.filter((card) => card !== featured);
   const dates = Object.fromEntries(cards.map((card) => [card.slug, articleDate(card.date)]));
 
   return (
-    <main className="inner-page inner-page--articles">
-      <div className="page page--wide stack">
-        <Breadcrumbs items={[{ name: "Статьи", path: "/articles" }]} />
-        <header className="journal-hero">
-          <p className="eyebrow">Журнал «Граней»</p>
-          <h1 className="display">Статьи</h1>
-          <p className="lead">О личности, отношениях и том, как нас видят другие. Психология — просто, глубоко и по делу.</p>
-        </header>
+    <main className={styles.page}>
+      <Breadcrumbs items={[{ name: "Статьи", path: "/articles" }]} />
+      <header className={styles.journalHero}>
+        <p className="eyebrow">Журнал «Граней»</p>
+        <h1>Статьи</h1>
+        <p className={styles.lead}>О личности, отношениях и том, как нас видят другие. Психология — просто, глубоко и по делу.</p>
+      </header>
 
-        {featured && (
-          <Link className="journal-featured" href={`/articles/${featured.slug}`}>
-            <div className="journal-featured__body">
-              <span className="article-badge">{featured.tag}</span>
-              <h2>{featured.title}</h2>
-              <p>{featured.description}</p>
-              <p className="article-tile__meta">
-                {dates[featured.slug]} <span aria-hidden="true">→</span>
-              </p>
-            </div>
-            <img className="journal-featured__image" src={featured.image} alt="" />
-          </Link>
-        )}
+      <section className={styles.list} aria-labelledby="all-articles">
+        <h2 id="all-articles">Все статьи</h2>
+        <ArticleGrid articles={cards} dates={dates} featured={featured} />
+      </section>
 
-        <section className="journal-list stack" aria-labelledby="all-articles">
-          <h2 id="all-articles">Все статьи</h2>
-          <ArticleGrid articles={rest} dates={dates} />
-        </section>
-
-        <TestCta />
-      </div>
+      <div className={styles.cta}><TestCta /></div>
     </main>
   );
 }
