@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 import { PRODUCT_PRICES } from "@grani/core";
 import { goalForProduct, reachGoal } from "@/lib/analytics";
+import { OPERATOR } from "@/lib/legal";
+import { pollDelayMs, purchaseStage, STAGE_TEXT } from "@/lib/purchase-view";
 import type { PurchaseView } from "@/server/payments-service";
-
-const POLL_MS = 3000;
 
 // Страницу ожидания можно открыть повторно — цель покупки отправляется один раз на покупку
 function markPurchase(view: PurchaseView): void {
@@ -25,10 +25,15 @@ function markPurchase(view: PurchaseView): void {
 export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
   const router = useRouter();
   const [view, setView] = useState(initial);
-  const finished = view.ready || view.status === "canceled" || view.status === "refunded";
+  const [now, setNow] = useState(() => Date.now());
+  // Счётчик перезапускает опрос и после неудачного запроса: иначе при одном сбое сети опрос остановился бы навсегда
+  const [round, setRound] = useState(0);
+  const elapsed = now - Date.parse(view.since);
+  const stage = purchaseStage(view, elapsed);
+  const finished = stage === "ready" || stage === "not_paid" || stage === "refunded";
 
   useEffect(() => {
-    if (view.ready) {
+    if (stage === "ready") {
       markPurchase(view);
       router.replace(view.reportUrl);
       return;
@@ -39,43 +44,53 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
         const response = await fetch(`/api/purchases/${view.id}`, { cache: "no-store" });
         if (response.ok) setView((await response.json()) as PurchaseView);
       } catch {
-        // Сеть мигнула — следующий опрос через 3 секунды
+        // Сеть мигнула — следующий опрос по расписанию
       }
-    }, POLL_MS);
+      setNow(Date.now());
+      setRound((value) => value + 1);
+    }, pollDelayMs(elapsed));
     return () => clearTimeout(timer);
-  }, [view, finished, router]);
+  }, [view, stage, finished, elapsed, round, router]);
 
-  if (view.status === "canceled" || view.status === "refunded") {
+  const text = STAGE_TEXT[stage];
+
+  if (stage === "not_paid" || stage === "refunded" || stage === "payment_unconfirmed") {
     return (
-      <WaitCard>
-        <h1 className="display">Оплата не прошла</h1>
-        <p className="lead">Деньги не списаны. Можно попробовать ещё раз.</p>
+      <WaitCard busy={stage === "payment_unconfirmed"}>
+        <h1 className="display">{text.title}</h1>
+        <p className="lead">{text.lead}</p>
         <div>
-          <Link className="button" href={view.reportUrl.startsWith("/pair/") ? view.reportUrl : "/me"}>
+          <Link className="button" href={view.reportUrl}>
             Вернуться
           </Link>
         </div>
       </WaitCard>
     );
   }
-  if (view.status === "pending") {
+  if (stage === "awaiting_payment") {
     return (
       <WaitCard busy>
-        <h1 className="display">Ждём подтверждения оплаты</h1>
-        <p className="lead">Обычно это занимает несколько секунд.</p>
+        <h1 className="display">{text.title}</h1>
+        <p className="lead">{text.lead}</p>
       </WaitCard>
     );
   }
+  const ready = stage === "ready";
   return (
-    <WaitCard busy={!view.ready}>
-      <h1 className="display">{view.ready ? "Разбор готов" : "Готовим разбор"}</h1>
-      <p className="lead">Обычно это занимает около минуты. Страницу можно не обновлять — она откроется сама.</p>
+    <WaitCard busy={!ready}>
+      <h1 className="display">{text.title}</h1>
+      <p className="lead">{text.lead}</p>
       <ol className="wait-steps">
         <li className="wait-steps__done">Собираем ответы</li>
-        <li className={view.ready ? "wait-steps__done" : "wait-steps__active"}>Формируем портрет</li>
-        <li className={view.ready ? "wait-steps__done" : undefined}>Откроем страницу автоматически</li>
+        <li className={ready ? "wait-steps__done" : "wait-steps__active"}>Формируем портрет</li>
+        <li className={ready ? "wait-steps__done" : undefined}>Откроем страницу автоматически</li>
       </ol>
-      {view.ready && (
+      {stage === "preparing_long" && (
+        <p className="muted">
+          Напишите на <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>, если разбор не появится.
+        </p>
+      )}
+      {ready && (
         <div>
           <Link className="button" href={view.reportUrl}>
             Открыть разбор <span aria-hidden="true">→</span>
