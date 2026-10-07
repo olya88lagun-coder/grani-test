@@ -1499,6 +1499,51 @@ body .level-grid > .level-card { margin-top: 0; }
 
 .site-nav a[aria-current="page"] { border-bottom-color: var(--accent); }
 
+/* «Вдвоём» в меню: розовая таблетка с сердечком в цветах палитры «Глина». Один вид для шапки внутренних страниц и для навигации главной */
+.site-nav a.nav-together,
+.home-nav nav a.nav-together {
+  --together-ink: #7d2d4a;
+  gap: 7px;
+  padding: 0 16px;
+  min-height: 40px;
+  border: 1px solid rgba(190, 96, 124, 0.38);
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fbe6e8 0%, #f4d0d6 100%);
+  color: var(--together-ink);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 4px 12px -6px rgba(168, 70, 100, 0.45);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.site-nav a.nav-together::before,
+.home-nav nav a.nav-together::before {
+  content: "";
+  width: 14px;
+  height: 14px;
+  flex: none;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6 5c2 0 3.3 1.1 4 2.2.7-1.1 2-2.2 4-2.2 3.3 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6 5c2 0 3.3 1.1 4 2.2.7-1.1 2-2.2 4-2.2 3.3 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+.site-nav a.nav-together:hover,
+.home-nav nav a.nav-together:hover {
+  background: linear-gradient(135deg, #f8d9de 0%, #eebcc6 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.7) inset, 0 8px 18px -8px rgba(168, 70, 100, 0.55);
+  transform: translateY(-1px);
+}
+
+.site-nav a.nav-together[aria-current="page"] {
+  border-color: rgba(168, 70, 100, 0.6);
+  background: linear-gradient(135deg, #f3c6d0 0%, #e9a9b8 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-nav a.nav-together,
+  .home-nav nav a.nav-together { transition: none; }
+  .site-nav a.nav-together:hover,
+  .home-nav nav a.nav-together:hover { transform: none; }
+}
+
 .site-login {
   display: inline-flex;
   align-items: center;

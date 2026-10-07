@@ -40,7 +40,7 @@ function SiteNav({ pathname }: { pathname: string }) {
     <>
       <nav className="site-nav" aria-label="Основная навигация">
         {LINKS.map((link) => (
-          <Link key={link.href} href={link.href} aria-current={pathname.startsWith(link.href) ? "page" : undefined}>
+          <Link key={link.href} href={link.href} className={link.href === "/together" ? "nav-together" : undefined} aria-current={pathname.startsWith(link.href) ? "page" : undefined}>
             {link.label}
           </Link>
         ))}
