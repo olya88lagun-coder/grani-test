@@ -1,0 +1,52 @@
+.page { color: var(--ink); }
+.container { display: flex; flex-direction: column; gap: 56px; padding-bottom: 64px; }
+.hero { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); align-items: center; gap: 64px; }
+.copy { min-width: 0; }
+.title { font-family: var(--font-cormorant), Georgia, serif; font-weight: 300; font-size: clamp(48px, 4.6vw, 66px); line-height: 1.07; margin: 16px 0 24px; letter-spacing: -.02em; }
+.copy :global(.lead) { font-size: 17px; line-height: 1.75; max-width: 580px; }
+.actions { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 28px; }
+.page :global(.button) { min-height: 52px; padding: 14px 24px; font-size: 15px; }
+.preview { width: 100%; padding: 28px; border: 1px solid #dbe1d2; background: #fbfcf6e8; border-radius: 20px; box-shadow: 0 12px 36px #3543330b; text-align: center; }
+.art { height: 170px; margin-bottom: 12px; }
+.art img { width: 100%; height: 100%; object-fit: contain; }
+.example { color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
+.preview h2 { font-size: 38px; margin: 6px 0; }
+.preview > span { font-size: 13px; color: var(--ink-soft); }
+.preview :global(.home-result-card__scales) { margin-top: 24px; }
+.preview :global(.home-scale > div) { gap: 16px; text-align: left; }
+.preview :global(.home-scale b) { white-space: nowrap; }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; margin: 0; padding: 24px 0; border-block: 1px solid #dbe1d2; gap: 20px; }
+.facts li { margin: 0; font-size: 14px; text-align: center; }
+.reading { width: 100%; max-width: 800px; margin-inline: auto; }
+.reading h2 { font-size: clamp(34px, 3.1vw, 44px); line-height: 1.15; margin: 0 0 24px; }
+.reading p, .reading li { font-size: 16px; line-height: 1.8; }
+.reading p + p { margin-top: 16px; }
+.traits { margin-top: 28px; }
+.trait { display: grid; grid-template-columns: minmax(0, .7fr) minmax(0, 1.3fr); gap: 28px; padding: 28px 0; border-top: 1px solid #dbe1d2; }
+.trait h3 { font-size: 30px; line-height: 1.15; margin: 0; overflow-wrap: anywhere; }
+.trait p { margin: 0; }
+.trait :global(.row) { margin-top: 16px; font-size: 14px; gap: 16px; }
+.faq { border-top: 1px solid #dbe1d2; }
+.faq:last-child { border-bottom: 1px solid #dbe1d2; }
+.faq summary { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding: 20px 0; cursor: pointer; list-style: none; font-size: 17px; line-height: 1.5; font-weight: 600; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; flex: 0 0 20px; font-size: 24px; font-weight: 400; text-align: center; }
+.faq[open] summary::after { content: "−"; }
+.faq p { margin: 0; padding: 0 32px 24px 0; }
+@media (max-width: 900px) {
+  .hero { gap: 32px; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
+  .preview { padding: 20px; }
+  .title { font-size: 48px; }
+}
+@media (max-width: 640px) {
+  .container { gap: 40px; padding-inline: 20px; }
+  .hero { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .title { font-size: 46px; }
+  .copy :global(.lead) { font-size: 16px; }
+  .preview { max-width: 420px; justify-self: center; }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 12px; }
+  .facts li { font-size: 13px; }
+  .trait { grid-template-columns: minmax(0, 1fr); gap: 16px; padding-block: 24px; }
+  .trait h3 { font-size: 30px; }
+  .faq summary { font-size: 16px; }
+}

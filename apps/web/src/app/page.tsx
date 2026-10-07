@@ -1,13 +1,13 @@
-import type { TypeCode } from "@grani/core";
+import { formatRub, PRODUCT_PRICES, type TypeCode } from "@grani/core";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
-import { AccountLink } from "@/components/AccountLink";
+import { HomeHeader } from "@/components/PublicHeader";
 import { JsonLd } from "@/components/JsonLd";
-import { TypeGem } from "@/components/TypeGem";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
+import styles from "./home-refined.module.css";
 
 // Главная — бренд и продукт «Граней». Запрос «тест Big Five / большая пятёрка» отдан /big-five-test:
 // две страницы под один запрос сменяли бы друг друга в выдаче
@@ -187,25 +187,9 @@ function CrystalScene() {
 
 export default function HomePage() {
   return (
-    <main className="home-page">
+    <main className={`home-page ${styles.page}`}>
       <section className="home-hero" aria-labelledby="home-title">
-        <header className="home-nav" aria-label="Основная навигация">
-          <Link className="home-brand" href="/" aria-label="Грани">
-            <span className="home-brand__mark" aria-hidden="true">
-              <TypeGem shape="hexagon" size={30} />
-            </span>
-            <span>грани</span>
-          </Link>
-          <nav>
-            <Link href="/test">Пройти тест</Link>
-            <Link href="/types">16 типов</Link>
-            <Link href="/compatibility">Совместимость</Link>
-            <Link className="nav-together" href="/together">Вдвоём</Link>
-            <Link href="/articles">Статьи</Link>
-            <Link href="/about">О проекте</Link>
-          </nav>
-          <AccountLink className="home-login" />
-        </header>
+        <HomeHeader />
 
         <div className="home-hero__grid">
           <div className="home-hero__copy">
@@ -218,8 +202,8 @@ export default function HomePage() {
               <span className="home-title__main">Узнай себя глубже</span>
             </h1>
             <p className="home-lead">
-              <span>50 утверждений → твой тип личности</span>
-              <span>5 ключевых черт → взгляд окружающих → карточка для сторис</span>
+              <span>50 утверждений — твой тип личности.</span>
+              <span>Пять ключевых черт, взгляд друзей и карточка для сторис.</span>
             </p>
             <div className="home-hero__actions">
               <Link className="button button--lg" href="/test">
@@ -254,7 +238,7 @@ export default function HomePage() {
           <h2 id="result-title">Больше, чем просто тип</h2>
           <p>
             Бесплатно ты получишь свой тип, 5 ключевых черт и карточку для сторис. Если захочется глубже — подробный
-            разбор можно открыть отдельно за 299 ₽.
+            разбор можно открыть отдельно за {formatRub(PRODUCT_PRICES.full)}.
           </p>
           <Link className="button button--lg" href="/test">
             Пройти тест <span aria-hidden="true">→</span>
@@ -315,7 +299,7 @@ export default function HomePage() {
               <h3>{type.title}</h3>
               <p>{type.text}</p>
               <Link href={typePath(type.code)} aria-label={`Смотреть тип ${type.title}`}>
-                →
+                <span>О типе</span><span aria-hidden="true">→</span>
               </Link>
             </article>
           ))}
@@ -382,7 +366,7 @@ export default function HomePage() {
               <p>{firstSentences(article.description, 120)}</p>
               <small>{articleDate(article.date)}</small>
               <Link href={`/articles/${slug}`} aria-label={`Открыть статью ${article.title}`}>
-                →
+                <span>Читать статью</span><span aria-hidden="true">→</span>
               </Link>
             </article>
           ))}
