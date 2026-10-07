@@ -1,4 +1,4 @@
-import type { Product } from "@grani/core";
+import type { Product, PurchaseProduct } from "@grani/core";
 import { and, asc, desc, eq, gt, gte, isNotNull, isNull } from "drizzle-orm";
 import { targetColumns, targetId, type ReportTarget } from "./reports";
 import { purchases, type PurchaseStatus } from "./schema";
@@ -6,12 +6,14 @@ import type { Database } from "./types";
 import { isUuid } from "./uuid";
 
 export type { PurchaseStatus } from "./schema";
+export type PurchaseTarget = ReportTarget | { spaceId: string };
 export type PurchaseRecord = {
   id: string;
   userId: string;
-  product: Product;
+  product: PurchaseProduct;
   resultId: string | null;
   pairId: string | null;
+  spaceId: string | null;
   amountKopecks: number;
   status: PurchaseStatus;
   yookassaPaymentId: string | null;
@@ -24,21 +26,25 @@ export type PurchaseRecord = {
 
 type PurchaseRow = typeof purchases.$inferSelect;
 
-const toRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row, product: row.product as Product });
+export const toPurchaseRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row, product: row.product as PurchaseProduct });
 
 function targetWhere(target: ReportTarget) {
   return "resultId" in target ? eq(purchases.resultId, target.resultId) : eq(purchases.pairId, target.pairId);
 }
 
+function purchaseTargetColumns(target: PurchaseTarget): { resultId: string | null; pairId: string | null; spaceId: string | null } {
+  return "spaceId" in target ? { resultId: null, pairId: null, spaceId: target.spaceId } : { ...targetColumns(target), spaceId: null };
+}
+
 export async function createPurchase(
   db: Database,
-  p: { userId: string; product: Product; target: ReportTarget; amountKopecks: number; receiptEmail?: string | null },
+  p: { userId: string; product: PurchaseProduct; target: PurchaseTarget; amountKopecks: number; receiptEmail?: string | null },
 ): Promise<PurchaseRecord> {
   const [row] = await db
     .insert(purchases)
-    .values({ userId: p.userId, product: p.product, ...targetColumns(p.target), amountKopecks: p.amountKopecks, receiptEmail: p.receiptEmail ?? null })
+    .values({ userId: p.userId, product: p.product, ...purchaseTargetColumns(p.target), amountKopecks: p.amountKopecks, receiptEmail: p.receiptEmail ?? null })
     .returning();
-  return toRecord(row!);
+  return toPurchaseRecord(row!);
 }
 
 export async function attachPayment(db: Database, purchaseId: string, p: { paymentId: string; confirmationUrl: string }): Promise<void> {
@@ -48,12 +54,12 @@ export async function attachPayment(db: Database, purchaseId: string, p: { payme
 export async function getPurchase(db: Database, purchaseId: string): Promise<PurchaseRecord | null> {
   if (!isUuid(purchaseId)) return null;
   const [row] = await db.select().from(purchases).where(eq(purchases.id, purchaseId)).limit(1);
-  return row ? toRecord(row) : null;
+  return row ? toPurchaseRecord(row) : null;
 }
 
 export async function getPurchaseByPaymentId(db: Database, paymentId: string): Promise<PurchaseRecord | null> {
   const [row] = await db.select().from(purchases).where(eq(purchases.yookassaPaymentId, paymentId)).limit(1);
-  return row ? toRecord(row) : null;
+  return row ? toPurchaseRecord(row) : null;
 }
 
 export async function findOpenPurchase(
@@ -76,7 +82,7 @@ export async function findOpenPurchase(
     )
     .orderBy(desc(purchases.createdAt))
     .limit(1);
-  return row ? toRecord(row) : null;
+  return row ? toPurchaseRecord(row) : null;
 }
 
 // Условный UPDATE: из двух одновременных уведомлений переход сделает только одно — и только оно поставит генерацию
@@ -111,7 +117,7 @@ export async function setReceiptEmail(db: Database, purchaseId: string, email: s
   await db.update(purchases).set({ receiptEmail: email }).where(eq(purchases.id, purchaseId));
 }
 
-export type ReceiptToSend = { id: string; product: Product; amountKopecks: number; paidAt: Date | null; paymentId: string | null; email: string | null };
+export type ReceiptToSend = { id: string; product: PurchaseProduct; amountKopecks: number; paidAt: Date | null; paymentId: string | null; email: string | null };
 
 // Оплаченные покупки, по которым чек «Мой налог» ещё не отправлен — для страницы чеков владелицы
 export async function listReceiptsToSend(db: Database): Promise<ReceiptToSend[]> {
@@ -128,7 +134,7 @@ export async function listReceiptsToSend(db: Database): Promise<ReceiptToSend[]>
     // Бесплатные покупки владелицы — не доход, чек по ним не нужен
     .where(and(eq(purchases.status, "succeeded"), isNull(purchases.receiptSentAt), gt(purchases.amountKopecks, 0)))
     .orderBy(asc(purchases.paidAt));
-  return rows.map((row) => ({ ...row, product: row.product as Product }));
+  return rows.map((row) => ({ ...row, product: row.product as PurchaseProduct }));
 }
 
 // Чек отправлен — почта больше не нужна и стирается

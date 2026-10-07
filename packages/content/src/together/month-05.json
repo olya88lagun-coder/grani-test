@@ -1,0 +1,1278 @@
+{
+  "schemaVersion": 1,
+  "status": "editorial_draft_v2_for_review",
+  "month": 5,
+  "title": "Новое вместе",
+  "goal": "Попробовать маленькие новые вещи и отметить, что вам понравилось.",
+  "cadence": {
+    "mainSlots": 26,
+    "dates": 4,
+    "policy": "Слот — порядок карточки, не календарный день. Темп выбирает пара."
+  },
+  "weeks": [
+    {
+      "id": "m05-w01",
+      "title": "Что мы хотим попробовать",
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "m05-w02",
+      "title": "Маленькие эксперименты",
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "days": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "id": "m05-w03",
+      "title": "Выйти из привычного",
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "days": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "m05-w04",
+      "title": "Карта открытий",
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "days": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "m05-d01",
+      "version": 2,
+      "kind": "main",
+      "order": 1,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.question.1",
+      "title": "Впервые вдвоём",
+      "format": "individual_question",
+      "prompt": "Что вы хотели бы впервые попробовать вдвоём и чего в этом боитесь?",
+      "hint": "Страх может быть смешным: «упасть лицом в снег» или «опозориться на уроке».",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы хотели бы впервые попробовать вдвоём и чего в этом боитесь?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите, что поможет партнёру не бояться. Выберите одно, что попробуете в этом месяце.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d02",
+      "version": 2,
+      "kind": "main",
+      "order": 2,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.question.2",
+      "title": "Приключение на час",
+      "format": "individual_question",
+      "prompt": "Мини-приключение на один час: какое?",
+      "hint": "Другой маршрут, новая кухня, место, куда вы всё не доходили.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Мини-приключение на один час: какое?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одну идею и поставьте в календарь.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d03",
+      "version": 2,
+      "kind": "main",
+      "order": 3,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.question.3",
+      "title": "Новое за пять минут",
+      "format": "individual_question",
+      "prompt": "Что новое можно попробовать за пять минут?",
+      "hint": "Новый напиток, новая песня, зарядка на двоих.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что новое можно попробовать за пять минут?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Попробуйте одну идею прямо сегодня.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d04",
+      "version": 2,
+      "kind": "main",
+      "order": 4,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.question.4",
+      "title": "Заранее «нет»",
+      "format": "individual_question",
+      "prompt": "От чего вы заранее отказываетесь, хотя ни разу не пробовали, и что за этим стоит?",
+      "hint": "Ничего серьёзного: еда, жанр, транспорт.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "От чего вы заранее отказываетесь, хотя ни разу не пробовали, и что за этим стоит?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно «нет», которое готовы превратить в «давайте один раз».",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d05",
+      "version": 2,
+      "kind": "main",
+      "order": 5,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.question.5",
+      "title": "Список «когда-нибудь»",
+      "format": "individual_question",
+      "prompt": "Что в вашем списке «когда-нибудь» лежит дольше всего?",
+      "hint": "Поездка, курс, ремонт, книга, ужин.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что в вашем списке «когда-нибудь» лежит дольше всего?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно и назовите самую маленькую версию на этот месяц.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d06",
+      "version": 2,
+      "kind": "main",
+      "order": 6,
+      "week": 1,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.question.6",
+      "title": "Новый вкус",
+      "format": "individual_question",
+      "prompt": "Какую кухню или блюдо вы бы попробовали вдвоём?",
+      "hint": "Ресторан, домашний вариант или доставка.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую кухню или блюдо вы бы попробовали вдвоём?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно и договоритесь о дате.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d07",
+      "version": 2,
+      "kind": "main",
+      "order": 7,
+      "week": 1,
+      "estimatedMinutes": 40,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Собрать желания и страхи вокруг нового.",
+      "semanticKey": "month5.date.7",
+      "title": "Свидание: новая улица",
+      "format": "date",
+      "prompt": "Пройдите по улице, где вы не были, а потом ответьте: как называется ваша прогулка?",
+      "hint": "40 минут на улице.\n1. Найдите на карте улицу или двор рядом с домом, где вы ни разу не были.\n2. Пройдите по нему без цели. Каждый находит три детали, которых раньше не замечал.\n3. Остановитесь там, где вам понравилось, и посидите пять минут.\n4. Расскажите друг другу, что вы увидели по-разному.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашей прогулки",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Что вы открыли",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Решите, вернётесь ли вы сюда.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d08",
+      "version": 2,
+      "kind": "main",
+      "order": 8,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "semanticKey": "month5.question.8",
+      "title": "Поменяться ролями",
+      "format": "individual_question",
+      "prompt": "Что бы вы поменяли в ролях на один вечер: кто готовит, кто выбирает, кто ведёт?",
+      "hint": "Это игра, а не требование.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что бы вы поменяли в ролях на один вечер: кто готовит, кто выбирает, кто ведёт?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите роль и проведите вечер по новым правилам.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d09",
+      "version": 2,
+      "kind": "main",
+      "order": 9,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "semanticKey": "month5.question.9",
+      "title": "Эксперимент на неделю",
+      "format": "individual_question",
+      "prompt": "Какой маленький эксперимент вы бы провели в быту: другой маршрут, другой завтрак, другое время сна?",
+      "hint": "Одна маленькая перемена на семь дней.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой маленький эксперимент вы бы провели в быту: другой маршрут, другой завтрак, другое время сна?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите эксперимент и договоритесь, что вы скажете в конце недели.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d10",
+      "version": 2,
+      "kind": "main",
+      "order": 10,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "semanticKey": "month5.question.10",
+      "title": "Чужое хобби",
+      "format": "individual_question",
+      "prompt": "Какое хобби партнёра вы бы попробовали один раз?",
+      "hint": "Только на час, без обязательств.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое хобби партнёра вы бы попробовали один раз?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Попросите партнёра показать самую простую версию.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d11",
+      "version": 2,
+      "kind": "main",
+      "order": 11,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "semanticKey": "month5.question.11",
+      "title": "Первый раз недавно",
+      "format": "individual_question",
+      "prompt": "Что вы делали впервые за последнее время и как это было?",
+      "hint": "Любое: приготовили блюдо, поехали по новому маршруту, написали письмо.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы делали впервые за последнее время и как это было?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите, что вам помогло и что мешало.",
+      "bookBinding": {
+        "section": "everyday_memories",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d12",
+      "version": 2,
+      "kind": "main",
+      "order": 12,
+      "week": 2,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "semanticKey": "month5.question.12",
+      "title": "Когда новое не вышло",
+      "format": "individual_question",
+      "prompt": "Как вам лучше реагировать, когда новое не получилось?",
+      "hint": "Смех, пауза, разбор или «ладно, давай ещё раз».",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вам лучше реагировать, когда новое не получилось?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Договоритесь об общей реакции на провал.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d13",
+      "version": 2,
+      "kind": "main",
+      "order": 13,
+      "week": 2,
+      "estimatedMinutes": 45,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Пробовать новое в масштабе одной недели.",
+      "semanticKey": "month5.date.13",
+      "title": "Свидание: новый вкус",
+      "format": "date",
+      "prompt": "Устройте ужин с новым вкусом, а потом ответьте: как называется ваше блюдо?",
+      "hint": "45 минут дома.\n1. Выберите блюдо или продукт, который вы ещё не пробовали.\n2. Приготовьте или закажите его, распределив роли.\n3. Каждый описывает вкус тремя словами.\n4. Оцените по шкале от одного до десяти и решите, будете ли повторять.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего блюда",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Оценки и впечатления",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Добавьте блюдо в вашу карту открытий, если оно понравилось.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d14",
+      "version": 2,
+      "kind": "main",
+      "order": 14,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.question.14",
+      "title": "Место, где мы не были",
+      "format": "individual_question",
+      "prompt": "В каком месте вашего города вы ещё ни разу не были вместе?",
+      "hint": "Район, музей, кафе, остановка.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "В каком месте вашего города вы ещё ни разу не были вместе?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одно и договоритесь о дате.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d15",
+      "version": 2,
+      "kind": "main",
+      "order": 15,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.question.15",
+      "title": "Вне вкусов",
+      "format": "individual_question",
+      "prompt": "Какая музыка, фильм или книга выходит за пределы ваших привычных вкусов, но вам любопытна?",
+      "hint": "Один пример.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какая музыка, фильм или книга выходит за пределы ваших привычных вкусов, но вам любопытна?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одну вещь из списка партнёра и дайте ей десять минут.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d16",
+      "version": 2,
+      "kind": "main",
+      "order": 16,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.question.16",
+      "title": "Смена обстановки",
+      "format": "individual_question",
+      "prompt": "Какую смену обстановки вы бы устроили: мебель, маршрут, место отдыха?",
+      "hint": "Что-то небольшое и возможное.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую смену обстановки вы бы устроили: мебель, маршрут, место отдыха?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одну идею и попробуйте до конца недели.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d17",
+      "version": 2,
+      "kind": "main",
+      "order": 17,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.question.17",
+      "title": "Страшно, но интересно",
+      "format": "individual_question",
+      "prompt": "Что вам одновременно страшно и интересно попробовать?",
+      "hint": "Не обязательно что-то смелое: публично спеть, встать на сноуборд, начать учить язык.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вам одновременно страшно и интересно попробовать?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите, как партнёр может вас поддержать в этом.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d18",
+      "version": 2,
+      "kind": "main",
+      "order": 18,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.question.18",
+      "title": "Небольшая смелость",
+      "format": "individual_question",
+      "prompt": "Какую небольшую смелость вы проявили недавно?",
+      "hint": "Мелочь тоже считается: попросить, отказаться, предложить.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую небольшую смелость вы проявили недавно?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите партнёру, что вы в нём заметили в похожей ситуации.",
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d19",
+      "version": 2,
+      "kind": "main",
+      "order": 19,
+      "week": 3,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.question.19",
+      "title": "Спонтанно и по плану",
+      "format": "individual_question",
+      "prompt": "Что вам приятнее: спонтанное или запланированное, и что вы выбираете для новых вещей?",
+      "hint": "Можно по-разному для разных ситуаций.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вам приятнее: спонтанное или запланированное, и что вы выбираете для новых вещей?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Найдите один вечер, который будет спонтанным, и один запланированным.",
+      "bookBinding": {
+        "section": "everyday_rhythm",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d20",
+      "version": 2,
+      "kind": "main",
+      "order": 20,
+      "week": 3,
+      "estimatedMinutes": 40,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Сменить обстановку и привычный порядок.",
+      "semanticKey": "month5.date.20",
+      "title": "Свидание: день наоборот",
+      "format": "date",
+      "prompt": "Проведите вечер в обратном порядке, а потом ответьте: как он называется?",
+      "hint": "30 минут в удобном месте.\n1. Придумайте обычный вечер: ужин, прогулка, чай, фильм.\n2. Поменяйте порядок: начните с десерта или с чая.\n3. Проведите вечер по новому порядку, не споря о смысле.\n4. Скажите друг другу, что изменилось в ощущениях.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего вечера",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Что изменилось",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Решите, какой из перевёрнутых порядков оставить на выходные.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d21",
+      "version": 2,
+      "kind": "main",
+      "order": 21,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "semanticKey": "month5.question.21",
+      "title": "Что мы открыли",
+      "format": "individual_question",
+      "prompt": "Что вы открыли за этот месяц: о себе, о партнёре, о вашем городе?",
+      "hint": "Одно главное открытие.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы открыли за этот месяц: о себе, о партнёре, о вашем городе?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Скажите, что вас удивило больше всего.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d22",
+      "version": 2,
+      "kind": "main",
+      "order": 22,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "semanticKey": "month5.question.22",
+      "title": "Что понравилось больше всего",
+      "format": "individual_question",
+      "prompt": "Что из нового вам понравилось больше всего?",
+      "hint": "Один пример.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что из нового вам понравилось больше всего?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Решите, как вернуть это в обычную неделю.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d23",
+      "version": 2,
+      "kind": "main",
+      "order": 23,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "semanticKey": "month5.question.23",
+      "title": "Не пошло, но смешно",
+      "format": "individual_question",
+      "prompt": "Что не пошло, но получилось смешно?",
+      "hint": "Вспомните и посмейтесь.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что не пошло, но получилось смешно?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Придумайте этому эпизоду название.",
+      "bookBinding": {
+        "section": "everyday_memories",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d24",
+      "version": 2,
+      "kind": "main",
+      "order": 24,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "semanticKey": "month5.question.24",
+      "title": "Что повторим",
+      "format": "individual_question",
+      "prompt": "Что из нового вы бы повторили и когда?",
+      "hint": "Назовите дату или повод.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что из нового вы бы повторили и когда?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Поставьте повтор в календарь.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d25",
+      "version": 2,
+      "kind": "main",
+      "order": 25,
+      "week": 4,
+      "estimatedMinutes": 35,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "semanticKey": "month5.date.25",
+      "title": "Свидание: карта наших открытий",
+      "format": "date",
+      "prompt": "Нарисуйте карту ваших открытий, а потом ответьте: как она называется?",
+      "hint": "30 минут в удобном месте.\n1. Возьмите лист бумаги или экран и обозначьте пять открытий месяца: места, вкусы, занятия.\n2. Подпишите, что вам понравилось больше, а что меньше.\n3. Соедините открытия линиями: что на что вдохновило.\n4. Выберите одно, что вы повторите в ближайшее время.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название карты",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Что вы повторите",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Сохраните карту или сфотографируйте её на память.",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    },
+    {
+      "id": "m05-d26",
+      "version": 2,
+      "kind": "main",
+      "order": 26,
+      "week": 4,
+      "estimatedMinutes": 5,
+      "revealPolicy": "after_both_submit",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "purpose": "Заметить, что вы открыли, и выбрать, что повторить.",
+      "semanticKey": "month5.question.26",
+      "title": "Что дальше",
+      "format": "individual_question",
+      "prompt": "Что вы хотите попробовать в следующий месяц?",
+      "hint": "Одна идея.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы хотите попробовать в следующий месяц?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "jointAction": "Выберите одну идею из двух и назовите срок.",
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      }
+    }
+  ],
+  "reward": {
+    "id": "discovery-map-v1",
+    "title": "Карта наших открытий",
+    "bindingPolicy": "Выбранные поля раскрытых записей; открытия попадают на карту только после явного выбора обоими."
+  },
+  "note": "Разделы книги для месяцев 4–6 будут описаны вместе с механикой книги (этап 4)."
+}

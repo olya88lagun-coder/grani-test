@@ -15,16 +15,25 @@ const envSchema = z.object({
   PAYMENTS_FAKE: z.enum(["0", "1"]).optional(),
   // Аккаунт владелицы для страницы чеков: «vk:<id ВКонтакте>»
   OWNER_IDENTITY: z.string().regex(/^vk:[^\s:]+$/).optional(),
+  // Доступ к «Вдвоём»: off — закрыто, pilot — по общему коду и приглашениям, open — всем. В продакшене без настройки — off
+  TOGETHER_MODE: z.enum(["off", "pilot", "open"]).optional(),
+  TOGETHER_PILOT_CODE: z.string().min(12).optional(),
+  TOGETHER_PILOT_LIMIT: z.coerce.number().int().min(1).max(1000).optional(),
   NODE_ENV: z.string().optional(),
 });
 
 export type VkCommunityConfig = { groupId: string; callbackSecret: string; confirmationCode: string };
 type ParsedEnv = z.infer<typeof envSchema>;
 export type OwnerIdentity = { provider: "vk"; externalId: string };
+export type TogetherMode = "off" | "pilot" | "open";
+export type TogetherConfig = { mode: TogetherMode; pilotCode: string | null; pilotLimit: number };
 export type PaymentsConfig = { kind: "yookassa"; shopId: string; secretKey: string } | { kind: "fake" } | null;
 const PAYMENT_KEYS = ["YOOKASSA_SHOP_ID", "YOOKASSA_SECRET_KEY", "PAYMENTS_FAKE", "NODE_ENV"] as const;
-export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeof PAYMENT_KEYS)[number] | "OWNER_IDENTITY"> & {
+const TOGETHER_KEYS = ["TOGETHER_MODE", "TOGETHER_PILOT_CODE", "TOGETHER_PILOT_LIMIT"] as const;
+const DEFAULT_PILOT_LIMIT = 40;
+export type AppEnv = Omit<ParsedEnv, (typeof VK_COMMUNITY_KEYS)[number] | (typeof PAYMENT_KEYS)[number] | (typeof TOGETHER_KEYS)[number] | "OWNER_IDENTITY"> & {
   owner: OwnerIdentity | null;
+  together: TogetherConfig;
   vkCommunity: VkCommunityConfig | null;
   payments: PaymentsConfig;
 };
@@ -50,6 +59,12 @@ function readPayments(env: ParsedEnv): PaymentsConfig {
   return null;
 }
 
+function readTogether(env: ParsedEnv): TogetherConfig {
+  const mode = env.TOGETHER_MODE ?? (env.NODE_ENV === "production" ? "off" : "open");
+  if (mode === "pilot" && !env.TOGETHER_PILOT_CODE) fail(["TOGETHER_PILOT_CODE"]);
+  return { mode, pilotCode: mode === "pilot" ? (env.TOGETHER_PILOT_CODE ?? null) : null, pilotLimit: env.TOGETHER_PILOT_LIMIT ?? DEFAULT_PILOT_LIMIT };
+}
+
 export function readEnv(source: Record<string, string | undefined> = process.env): AppEnv {
   const parsed = envSchema.safeParse(source);
   if (!parsed.success) fail(parsed.error.issues.map((issue) => issue.path.join(".")));
@@ -61,6 +76,9 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     YOOKASSA_SECRET_KEY: _key,
     PAYMENTS_FAKE: _fake,
     NODE_ENV: _nodeEnv,
+    TOGETHER_MODE: _mode,
+    TOGETHER_PILOT_CODE: _code,
+    TOGETHER_PILOT_LIMIT: _limit,
     OWNER_IDENTITY,
     ...rest
   } = parsed.data;
@@ -71,7 +89,7 @@ export function readEnv(source: Record<string, string | undefined> = process.env
     VK_GROUP_ID && VK_CALLBACK_SECRET && VK_CONFIRMATION_CODE
       ? { groupId: VK_GROUP_ID, callbackSecret: VK_CALLBACK_SECRET, confirmationCode: VK_CONFIRMATION_CODE }
       : null;
-  return { ...rest, vkCommunity, payments: readPayments(parsed.data), owner: readOwner(OWNER_IDENTITY) };
+  return { ...rest, vkCommunity, payments: readPayments(parsed.data), owner: readOwner(OWNER_IDENTITY), together: readTogether(parsed.data) };
 }
 
 let cached: AppEnv | null = null;

@@ -1,0 +1,1734 @@
+{
+  "schemaVersion": 1,
+  "status": "editorial_draft_for_review",
+  "month": 2,
+  "title": "Узнавать друг друга заново",
+  "goal": "Узнать новые детали друг о друге и выбрать собственные истории для первой главы.",
+  "cadence": {
+    "mainSlots": 28,
+    "reserveSlots": 3,
+    "dates": 4,
+    "policy": "Слот — порядок встречи, не обязательный календарный день. Резерв заменяет карточку, а не добавляет обязательную нагрузку."
+  },
+  "introductorySessionsSeparate": true,
+  "weeks": [
+    {
+      "id": "m02-w01",
+      "title": "Истории до и вокруг знакомства",
+      "purpose": "Узнать новые детали друг о друге и выбрать собственные истории для первой главы.",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "m02-w02",
+      "title": "Личный мир в деталях",
+      "purpose": "Узнать новые детали друг о друге и выбрать собственные истории для первой главы.",
+      "days": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "id": "m02-w03",
+      "title": "Новые открытия без одинаковых вкусов",
+      "purpose": "Узнать новые детали друг о друге и выбрать собственные истории для первой главы.",
+      "days": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "m02-w04",
+      "title": "Собрать первую главу",
+      "purpose": "Узнать новые детали друг о друге и выбрать собственные истории для первой главы.",
+      "days": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "m02-d01",
+      "semanticKey": "month2.meeting_story.1",
+      "version": 1,
+      "kind": "main",
+      "order": 1,
+      "week": 1,
+      "title": "История нашего знакомства",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Как вы рассказываете о знакомстве, если оставить только факты и одну запомнившуюся деталь?",
+      "hint": "Выберите ту часть истории, которой комфортно делиться. Дата может быть примерной.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вы рассказываете о знакомстве, если оставить только факты и одну запомнившуюся деталь?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "approx_date",
+          "type": "short_text",
+          "label": "Когда это было (необязательно, можно приблизительно)",
+          "required": false,
+          "maxLength": 80
+        },
+        {
+          "id": "setting",
+          "type": "short_text",
+          "label": "Место или обстановка без точного адреса",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "remembered_detail",
+          "type": "short_text",
+          "label": "Одна деталь, которую помню",
+          "required": false,
+          "maxLength": 400
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Послушайте обе версии и отметьте деталь, которую помните по-разному.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "meeting_story",
+        "fields": [
+          "answer",
+          "approx_date",
+          "setting",
+          "remembered_detail"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d02",
+      "semanticKey": "month2.first_impressions.2",
+      "version": 1,
+      "kind": "main",
+      "order": 2,
+      "week": 1,
+      "title": "Первое впечатление",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что вы заметили в партнёре при первых встречах и что заметили позже?",
+      "hint": "Можно говорить о манере общаться, интересах или поступке; внешность обсуждать необязательно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы заметили в партнёре при первых встречах и что заметили позже?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "later_discovery",
+          "type": "short_text",
+          "label": "Что заметилось позже",
+          "required": false,
+          "maxLength": 400
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Назовите одно открытие, которое приятно услышать сейчас.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "first_impressions",
+        "fields": [
+          "answer",
+          "later_discovery"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d03",
+      "semanticKey": "month2.personal_worlds.3",
+      "version": 1,
+      "kind": "main",
+      "order": 3,
+      "week": 1,
+      "title": "Место, которое многое объясняет",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какое место помогает понять вашу жизнь до знакомства?",
+      "hint": "Это может быть двор, библиотека, город или маршрут. Точный адрес не нужен.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое место помогает понять вашу жизнь до знакомства?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Покажите безопасный снимок или опишите одну деталь этого места.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d04",
+      "semanticKey": "month2.personal_worlds.4",
+      "version": 1,
+      "kind": "main",
+      "order": 4,
+      "week": 1,
+      "title": "Вкус с историей",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой вкус напоминает вам о хорошем периоде жизни?",
+      "hint": "Если семейные воспоминания неудобны, возьмите любое приятное блюдо из взрослой жизни.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой вкус напоминает вам о хорошем периоде жизни?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите, какой вкус хотелось бы попробовать вместе.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d05",
+      "semanticKey": "month2.personal_worlds.5",
+      "version": 1,
+      "kind": "main",
+      "order": 5,
+      "week": 1,
+      "title": "Занятие, в котором я теряю счёт времени",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что увлекает вас настолько, что время проходит незаметно?",
+      "hint": "Даже если сейчас редко этим занимаетесь, расскажите о самом интересном моменте.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что увлекает вас настолько, что время проходит незаметно?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Партнёр задаёт один вопрос из любопытства, не предлагает улучшения.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d06",
+      "semanticKey": "month2.personal_worlds.6",
+      "version": 1,
+      "kind": "main",
+      "order": 6,
+      "week": 1,
+      "title": "Откуда появился мой интерес",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Как начался один из ваших нынешних интересов?",
+      "hint": "Можно вспомнить книгу, человека, случай или маленькую пробу.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как начался один из ваших нынешних интересов?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Найдите в рассказе неожиданную деталь и перескажите её партнёру.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d07",
+      "semanticKey": "month2.discoveries.7",
+      "version": 1,
+      "kind": "main",
+      "order": 7,
+      "week": 1,
+      "title": "Одна новая деталь о тебе",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что из рассказанного на этой неделе оказалось для вас новым?",
+      "hint": "Это обзор недели, а не повтор вопроса о первом впечатлении.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что из рассказанного на этой неделе оказалось для вас новым?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Каждый выбирает собственную фразу для черновика первой главы.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d08",
+      "semanticKey": "month2.personal_worlds.8",
+      "version": 1,
+      "kind": "main",
+      "order": 8,
+      "week": 2,
+      "title": "Моя музыка с пояснениями",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какую композицию вы бы включили, чтобы показать часть своего мира?",
+      "hint": "Не нужно угадывать любимый жанр партнёра; расскажите, что слышите вы.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую композицию вы бы включили, чтобы показать часть своего мира?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Послушайте по короткому фрагменту и обменяйтесь впечатлениями.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d09",
+      "semanticKey": "month2.personal_worlds.9",
+      "version": 1,
+      "kind": "main",
+      "order": 9,
+      "week": 2,
+      "title": "История за одной вещью",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "О какой обычной вещи вы можете рассказать маленькую историю?",
+      "hint": "Не выбирайте документы, дорогие ценности или предметы с тяжёлыми воспоминаниями.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "О какой обычной вещи вы можете рассказать маленькую историю?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Покажите вещь, если хочется, и спросите о детали рассказа.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d10",
+      "semanticKey": "month2.personal_worlds.10",
+      "version": 1,
+      "kind": "main",
+      "order": 10,
+      "week": 2,
+      "title": "Любопытная привычка",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какая ваша безобидная привычка имеет неожиданное объяснение?",
+      "hint": "Можно взять способ читать, раскладывать вещи или выбирать маршрут.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какая ваша безобидная привычка имеет неожиданное объяснение?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Расскажите, какая часть объяснения удивила партнёра.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d11",
+      "semanticKey": "month2.discoveries.11",
+      "version": 1,
+      "kind": "main",
+      "order": 11,
+      "week": 2,
+      "title": "Мой маленький навык",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что вы умеете и могли бы показать за пять минут?",
+      "hint": "Это может быть простая бытовая, творческая или игровая вещь. Учить партнёра необязательно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы умеете и могли бы показать за пять минут?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Предложите мини-показ; отказаться или перенести можно без объяснений.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d12",
+      "semanticKey": "month2.personal_worlds.12",
+      "version": 1,
+      "kind": "main",
+      "order": 12,
+      "week": 2,
+      "title": "История, которую я люблю пересказывать",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой лёгкий случай из вашей жизни вам приятно рассказывать снова?",
+      "hint": "Не раскрывайте чужие секреты и персональные данные.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой лёгкий случай из вашей жизни вам приятно рассказывать снова?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Спросите, почему именно этот момент остался в памяти.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d13",
+      "semanticKey": "month2.discoveries.13",
+      "version": 1,
+      "kind": "main",
+      "order": 13,
+      "week": 2,
+      "title": "Что меня сейчас интересует",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "О чём вы недавно стали читать, смотреть или расспрашивать?",
+      "hint": "Тема не обязана быть серьёзной или полезной.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "О чём вы недавно стали читать, смотреть или расспрашивать?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Партнёр выбирает один вопрос, на который ему интересно услышать ответ.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d14",
+      "semanticKey": "month2.discoveries.14",
+      "version": 1,
+      "kind": "main",
+      "order": 14,
+      "week": 2,
+      "title": "Наша выставка недели",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какие две детали из рассказов этой недели вы бы поставили рядом на выставке?",
+      "hint": "Выбирайте только уже раскрытые истории; это авторский обзор недели.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие две детали из рассказов этой недели вы бы поставили рядом на выставке?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Придумайте название маленькой выставки из ваших двух миров.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Личный мир в деталях",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d15",
+      "semanticKey": "month2.shared_activities.15",
+      "version": 1,
+      "kind": "main",
+      "order": 15,
+      "week": 3,
+      "title": "Как я люблю открывать новое",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Вам удобнее узнавать новое через пробу, рассказ, наблюдение или подготовку?",
+      "hint": "Ответ про исследование нового, а не оценка характера.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Вам удобнее узнавать новое через пробу, рассказ, наблюдение или подготовку?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите способ для маленького общего открытия на этой неделе.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d16",
+      "semanticKey": "month2.personal_worlds.16",
+      "version": 1,
+      "kind": "main",
+      "order": 16,
+      "week": 3,
+      "title": "Моя версия выходного",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Каким был бы свободный выходной без обязательного списка дел?",
+      "hint": "Считайте доступный бюджет и реальные ограничения; фантазия может быть небольшой.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Каким был бы свободный выходной без обязательного списка дел?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Найдите один фрагмент, который подходит вам обоим.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d17",
+      "semanticKey": "month2.personal_worlds.17",
+      "version": 1,
+      "kind": "main",
+      "order": 17,
+      "week": 3,
+      "title": "Книга, фильм или история",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какую историю из книги, фильма или игры вам хочется обсудить с партнёром?",
+      "hint": "Спойлеры сначала согласуйте. Не нужно выбирать самый умный пример.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую историю из книги, фильма или игры вам хочется обсудить с партнёром?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Расскажите, какой момент заинтересовал именно вас.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d18",
+      "semanticKey": "month2.personal_worlds.18",
+      "version": 1,
+      "kind": "main",
+      "order": 18,
+      "week": 3,
+      "title": "Смешно по-разному",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой добрый юмор вам обычно нравится?",
+      "hint": "Не используйте насмешки над партнёром, унижение или проверку чувства юмора.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой добрый юмор вам обычно нравится?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Поделитесь одним примером, который обоим комфортно посмотреть.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d19",
+      "semanticKey": "month2.shared_activities.19",
+      "version": 1,
+      "kind": "main",
+      "order": 19,
+      "week": 3,
+      "title": "Моя идея маленького приключения",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какую новую доступную вещь вы хотели бы попробовать вместе?",
+      "hint": "Укажите ограничения по времени, деньгам и доступности.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую новую доступную вещь вы хотели бы попробовать вместе?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите одну пробу или договоритесь вернуться к выбору позже.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d20",
+      "semanticKey": "month2.shared_activities.20",
+      "version": 1,
+      "kind": "main",
+      "order": 20,
+      "week": 3,
+      "title": "Что я мог бы показать тебе",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой небольшой фрагмент своего увлечения вы хотите показать партнёру?",
+      "hint": "Показать — не значит убедить полюбить то же самое.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой небольшой фрагмент своего увлечения вы хотите показать партнёру?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Договоритесь о длительности и возможности остановиться.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d21",
+      "semanticKey": "month2.discoveries.21",
+      "version": 1,
+      "kind": "main",
+      "order": 21,
+      "week": 3,
+      "title": "Открытие без одинаковых вкусов",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что вы узнали о вкусе партнёра, даже если ваш собственный другой?",
+      "hint": "Это обзор различий без требования прийти к одинаковому выбору.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы узнали о вкусе партнёра, даже если ваш собственный другой?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Каждый завершает фразу: «Теперь я лучше понимаю, почему тебе нравится…».",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Новые открытия без одинаковых вкусов",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d22",
+      "semanticKey": "month2.everyday_memories.22",
+      "version": 1,
+      "kind": "main",
+      "order": 22,
+      "week": 4,
+      "title": "Одна сцена из нашей истории",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой совместный эпизод хочется описать как короткую сцену?",
+      "hint": "Выберите безопасное воспоминание: где были, что происходило, что запомнилось.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой совместный эпизод хочется описать как короткую сцену?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Сопоставьте две версии; оставьте различия, если обе важны.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d23",
+      "semanticKey": "month2.everyday_memories.23",
+      "version": 1,
+      "kind": "main",
+      "order": 23,
+      "week": 4,
+      "title": "Наша смешная деталь",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какое выражение или забавная деталь понятны именно вам двоим?",
+      "hint": "Сохранить её можно только если обоим комфортен смысл.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое выражение или забавная деталь понятны именно вам двоим?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Расскажите происхождение без добавления того, чего не помните.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d24",
+      "semanticKey": "month2.words_about_each_other.24",
+      "version": 1,
+      "kind": "main",
+      "order": 24,
+      "week": 4,
+      "title": "Что открылось со временем",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что хорошее в партнёре вы увидели постепенно, а не сразу?",
+      "hint": "Нужен конкретный поступок или пример, а не сравнение с другими людьми.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что хорошее в партнёре вы увидели постепенно, а не сразу?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Поблагодарите за этот пример, если хочется.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d25",
+      "semanticKey": "month2.chapter_titles.25",
+      "version": 1,
+      "kind": "main",
+      "order": 25,
+      "week": 4,
+      "title": "Заголовок нашей первой главы",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Как вы назвали бы главу о знакомстве и открытиях друг друга?",
+      "hint": "Можно предложить по одному варианту; общего выбора сегодня не требуется.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вы назвали бы главу о знакомстве и открытиях друг друга?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите название вместе либо оставьте два авторских варианта.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "chapter_titles",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-d26",
+      "semanticKey": "month2.editorial_review.26",
+      "version": 1,
+      "kind": "main",
+      "order": 26,
+      "week": 4,
+      "title": "Факты, которые хочется уточнить",
+      "format": "curation",
+      "estimatedMinutes": 10,
+      "prompt": "Какие детали выбранных историй стоит уточнить перед книгой?",
+      "hint": "Это редактура выбранных материалов; ответы других людей не исправляются за них.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие детали выбранных историй стоит уточнить перед книгой?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Каждый исправляет только свою запись и проверяет имена, даты и места.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "review_existing_materials"
+    },
+    {
+      "id": "m02-d27",
+      "semanticKey": "month2.editorial_review.27",
+      "version": 1,
+      "kind": "main",
+      "order": 27,
+      "week": 4,
+      "title": "Что оставить в первой главе",
+      "format": "curation",
+      "estimatedMinutes": 10,
+      "prompt": "Какие свои рассказы этого месяца вы хотите включить в черновик?",
+      "hint": "Выбор добровольный; можно оставить одну историю или ничего.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие свои рассказы этого месяца вы хотите включить в черновик?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Каждый выбирает собственные записи и нужные поля, партнёр видит предложение.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "review_existing_materials"
+    },
+    {
+      "id": "m02-d28",
+      "semanticKey": "month2.editorial_review.28",
+      "version": 1,
+      "kind": "main",
+      "order": 28,
+      "week": 4,
+      "title": "Прочитать нашу главу вдвоём",
+      "format": "curation",
+      "estimatedMinutes": 10,
+      "prompt": "Что хочется добавить, убрать или оставить после чтения черновика?",
+      "hint": "Чужую запись можно обсудить, но изменить может её автор.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что хочется добавить, убрать или оставить после чтения черновика?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Просмотрите главу вместе; согласуйте текущую версию или сохраните черновик.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать первую главу",
+      "intent": "review_existing_materials"
+    }
+  ],
+  "reserveCards": [
+    {
+      "id": "m02-r01",
+      "semanticKey": "month2.reserve.1",
+      "version": 1,
+      "kind": "reserve",
+      "order": null,
+      "week": null,
+      "title": "Цвет моего интереса",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Если выбрать цвет для одного из нынешних интересов, какой это цвет и почему?",
+      "hint": "Ответ может быть игровой метафорой, без психологической расшифровки.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Если выбрать цвет для одного из нынешних интересов, какой это цвет и почему?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Покажите выбранные цвета и поясните свой смысл.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-r02",
+      "semanticKey": "month2.reserve.2",
+      "version": 1,
+      "kind": "reserve",
+      "order": null,
+      "week": null,
+      "title": "Короткий маршрут в моём мире",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какие три названия вы бы дали человеку, который хочет узнать о вашем интересе?",
+      "hint": "Это может быть автор, канал или простое занятие; ссылки необязательны.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие три названия вы бы дали человеку, который хочет узнать о вашем интересе?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите одно название, о котором интересно расспросить.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m02-r03",
+      "semanticKey": "month2.reserve.3",
+      "version": 1,
+      "kind": "reserve",
+      "order": null,
+      "week": null,
+      "title": "Загадка с пояснением",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой безопасный факт о вашем увлечении можно сначала предложить партнёру угадать?",
+      "hint": "Правильный ответ не является проверкой, насколько вас хорошо знают.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой безопасный факт о вашем увлечении можно сначала предложить партнёру угадать?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "После догадки объясните факт и поблагодарите за любопытство.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Истории до и вокруг знакомства",
+      "intent": "new_prompt"
+    }
+  ],
+  "dates": [
+    {
+      "id": "m02-date01",
+      "version": 1,
+      "kind": "date",
+      "week": 1,
+      "title": "Гид по моему миру",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Каждый выбирает три безопасных предмета, снимка или названия, которые рассказывают о его интересах.",
+        "По очереди проведите мини-экскурсию: по две минуты на предмет.",
+        "Слушатель задаёт один вопрос о каждой истории без оценки выбора.",
+        "Выберите одну деталь для личной записи и решите, хотите ли попробовать связанное занятие."
+      ],
+      "homeAlternative": "Если предметы недоступны, используйте три устных описания.",
+      "conversation": "Что сегодня стало для меня новым?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "personal_worlds",
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m02-date02",
+      "version": 1,
+      "kind": "date",
+      "week": 2,
+      "title": "Плейлист с историями",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Каждый выбирает две композиции и согласует комфортную громкость.",
+        "Сначала коротко расскажите, с каким периодом или настроением связан выбор.",
+        "Послушайте по минуте каждой композиции; полные треки необязательны.",
+        "Назовите общий плейлист и выберите одну собственную историю, которую хочется сохранить."
+      ],
+      "homeAlternative": "Можно описать музыку без воспроизведения или взять две другие истории о своих вкусах.",
+      "conversation": "Какая история стоит за моим выбором?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "personal_worlds",
+      "bookBinding": {
+        "section": "personal_worlds",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m02-date03",
+      "version": 1,
+      "kind": "date",
+      "week": 3,
+      "title": "Поменяться ролями любопытных",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Каждый предлагает доступное занятие из своих интересов, которое можно показать за десять минут.",
+        "Выберите формат участия: попробовать, наблюдать или только послушать.",
+        "Проведите два коротких знакомства с занятиями, оставляя право остановиться.",
+        "Запишите собственное открытие, даже если увлечение не стало общим."
+      ],
+      "homeAlternative": "Возьмите рисунок, книгу, коллекцию или устное объяснение без покупки материалов.",
+      "conversation": "Что я узнал о мире партнёра?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "discoveries",
+      "bookBinding": {
+        "section": "discoveries",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m02-date04",
+      "version": 1,
+      "kind": "date",
+      "week": 4,
+      "title": "Редакция нашей первой главы",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Откройте только добровольно выбранные и уже раскрытые записи о знакомстве и открытиях.",
+        "Каждый вслух читает один собственный фрагмент, который считает важным.",
+        "Проверьте факты: автор исправляет свою запись; разные воспоминания можно оставить рядом.",
+        "Выберите название и согласуйте черновик либо отложите решение. Одобрение главы не равно одобрению будущей полной книги."
+      ],
+      "homeAlternative": "Без экрана прочитайте друг другу собственные заметки и выберите порядок.",
+      "conversation": "Что хочется оставить в нашей первой главе?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "chapter_titles",
+      "bookBinding": {
+        "section": "chapter_titles",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    }
+  ],
+  "reward": {
+    "id": "first-chapter-v1",
+    "title": "Наша первая глава",
+    "bindingPolicy": "Выбранные поля раскрытых записей; каждая совместная запись подтверждена обоими. Экспорт только после отдельного одобрения текущего снимка двумя участниками.",
+    "entitlementProvidedDays": 60
+  }
+}

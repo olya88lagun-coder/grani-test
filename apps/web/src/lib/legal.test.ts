@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DATA_RECIPIENTS, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OFFER_VERSION, OPERATOR } from "./legal";
+import { DATA_RECIPIENTS, LEGAL_DATE, LEGAL_VERSIONS, LOGIN_CONSENT_RECIPIENTS, OFFER_VERSION, OPERATOR, TOGETHER_REFUND_DAYS, TOGETHER_REFUND_WORKING_DAYS } from "./legal";
 
 describe("legal", () => {
   it("has a 12-digit INN of the self-employed operator", () => {
@@ -20,7 +20,13 @@ describe("legal", () => {
   });
 
   it("uses the new document versions", () => {
-    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-10-v1", privacy: "2026-10-v1", offer: "2026-10-v1" });
-    expect(OFFER_VERSION).toBe("2026-10-v1");
+    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-10-v2", privacy: "2026-10-v2", offer: "2026-10-v2" });
+    expect(OFFER_VERSION).toBe("2026-10-v2");
+    expect(LEGAL_DATE).toBe("7 октября 2026 года");
+  });
+
+  it("states the Together refund terms in one place", () => {
+    expect(TOGETHER_REFUND_DAYS).toBe(7);
+    expect(TOGETHER_REFUND_WORKING_DAYS).toBe(10);
   });
 });

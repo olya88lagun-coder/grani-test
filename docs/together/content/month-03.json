@@ -1,0 +1,1718 @@
+{
+  "schemaVersion": 1,
+  "status": "editorial_draft_for_review",
+  "month": 3,
+  "title": "Мы команда",
+  "goal": "Опробовать удобные способы совместных решений и собрать книгу из трёх этапов.",
+  "cadence": {
+    "mainSlots": 28,
+    "reserveSlots": 3,
+    "dates": 4,
+    "policy": "Слот — порядок встречи, не обязательный календарный день. Резерв заменяет карточку, а не добавляет обязательную нагрузку."
+  },
+  "introductorySessionsSeparate": true,
+  "weeks": [
+    {
+      "id": "m03-w01",
+      "title": "Один небольшой общий результат",
+      "purpose": "Опробовать удобные способы совместных решений и собрать книгу из трёх этапов.",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "m03-w02",
+      "title": "Выбирать вместе",
+      "purpose": "Опробовать удобные способы совместных решений и собрать книгу из трёх этапов.",
+      "days": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ]
+    },
+    {
+      "id": "m03-w03",
+      "title": "Договорённости, которые можно менять",
+      "purpose": "Опробовать удобные способы совместных решений и собрать книгу из трёх этапов.",
+      "days": [
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21
+      ]
+    },
+    {
+      "id": "m03-w04",
+      "title": "Собрать и одобрить книгу",
+      "purpose": "Опробовать удобные способы совместных решений и собрать книгу из трёх этапов.",
+      "days": [
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "m03-d01",
+      "semanticKey": "month3.small_agreements.1",
+      "version": 1,
+      "kind": "main",
+      "order": 1,
+      "week": 1,
+      "title": "Один общий приоритет",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой небольшой общий результат вам обоим нужен в ближайшие семь дней?",
+      "hint": "Возьмите обычную задачу: выбрать маршрут, подготовить вечер или разобрать одну полку.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой небольшой общий результат вам обоим нужен в ближайшие семь дней?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите один результат; остальные предложения пока остаются идеями.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d02",
+      "semanticKey": "month3.small_agreements.2",
+      "version": 1,
+      "kind": "main",
+      "order": 2,
+      "week": 1,
+      "title": "Что будет достаточно хорошо",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "По каким признакам будет понятно, что выбранная задача выполнена достаточно хорошо?",
+      "hint": "Обсудите минимальный удобный результат без требования идеальности.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "По каким признакам будет понятно, что выбранная задача выполнена достаточно хорошо?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Сравните ожидания и запишите подходящий обоим минимум.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d03",
+      "semanticKey": "month3.small_agreements.3",
+      "version": 1,
+      "kind": "main",
+      "order": 3,
+      "week": 1,
+      "title": "Что уже ограничивает неделю",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какие известные ограничения важно учесть в общей задаче?",
+      "hint": "Можно назвать время, бюджет или доступность без объяснения личных причин.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие известные ограничения важно учесть в общей задаче?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Скорректируйте задачу по реальным условиям.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d04",
+      "semanticKey": "month3.small_agreements.4",
+      "version": 1,
+      "kind": "main",
+      "order": 4,
+      "week": 1,
+      "title": "Разделить задачу на части",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какую часть выбранной задачи вы готовы взять на себя?",
+      "hint": "Не назначайте обязанности другому. Можно честно сказать, что сейчас не готовы.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую часть выбранной задачи вы готовы взять на себя?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Соберите распределение только из добровольно принятых частей.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d05",
+      "semanticKey": "month3.small_agreements.5",
+      "version": 1,
+      "kind": "main",
+      "order": 5,
+      "week": 1,
+      "title": "Как дать знать о ходе",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Как удобно сообщать друг другу о ходе общей задачи?",
+      "hint": "Выберите короткое сообщение или одно время проверки; постоянный контроль не нужен.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как удобно сообщать друг другу о ходе общей задачи?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Договоритесь об одном удобном способе связи по этой задаче.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d06",
+      "semanticKey": "month3.small_agreements.6",
+      "version": 1,
+      "kind": "main",
+      "order": 6,
+      "week": 1,
+      "title": "Если план пришлось изменить",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что делать с выбранной задачей, если один из вас не успевает?",
+      "hint": "Это правило изменения плана, а не поиск виноватого.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что делать с выбранной задачей, если один из вас не успевает?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите вариант: уменьшить объём, перенести или отказаться вместе.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d07",
+      "semanticKey": "month3.team_experiments.7",
+      "version": 1,
+      "kind": "main",
+      "order": 7,
+      "week": 1,
+      "title": "Итог нашей первой пробы",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что помогло или помешало выполнить общую задачу этой недели?",
+      "hint": "Это обзор эксперимента. Не оценивайте партнёра баллами.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что помогло или помешало выполнить общую задачу этой недели?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Оставьте одно полезное правило и уберите лишнее.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d08",
+      "semanticKey": "month3.small_agreements.8",
+      "version": 1,
+      "kind": "main",
+      "order": 8,
+      "week": 2,
+      "title": "Решение с небольшими ставками",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой ближайший небольшой выбор вы хотите сделать вдвоём?",
+      "hint": "Избегайте сложных вопросов денег, здоровья или отношений; возьмите план досуга.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой ближайший небольшой выбор вы хотите сделать вдвоём?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Назовите конкретный выбор и срок, когда решение действительно нужно.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d09",
+      "semanticKey": "month3.small_agreements.9",
+      "version": 1,
+      "kind": "main",
+      "order": 9,
+      "week": 2,
+      "title": "Критерий удобного выбора",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какие два критерия важны вам в этом выборе?",
+      "hint": "Например, доступность маршрута и время возвращения. Не подменяйте критерий требованием согласиться.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие два критерия важны вам в этом выборе?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Найдите общий критерий и сохраните различающиеся.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d10",
+      "semanticKey": "month3.team_experiments.10",
+      "version": 1,
+      "kind": "main",
+      "order": 10,
+      "week": 2,
+      "title": "Предложить третий вариант",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой третий вариант учитывал бы хотя бы часть пожеланий каждого?",
+      "hint": "Не обязательно выбирать между двумя исходными предложениями.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой третий вариант учитывал бы хотя бы часть пожеланий каждого?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Рассмотрите третий вариант или честно отметьте, что он не подходит.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d11",
+      "semanticKey": "month3.small_agreements.11",
+      "version": 1,
+      "kind": "main",
+      "order": 11,
+      "week": 2,
+      "title": "Кому сегодня выбирать",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "В каком небольшом вопросе вам удобно доверить окончательный выбор партнёру?",
+      "hint": "Передача выбора добровольна, с оговорёнными ограничениями и возможностью отказаться.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "В каком небольшом вопросе вам удобно доверить окончательный выбор партнёру?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Обозначьте область и границы такого выбора.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d12",
+      "semanticKey": "month3.small_agreements.12",
+      "version": 1,
+      "kind": "main",
+      "order": 12,
+      "week": 2,
+      "title": "Когда нужен ответ",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Как обозначить срок ответа на предложение, чтобы избежать неопределённости?",
+      "hint": "Это договорённость для конкретного выбора, не контроль времени партнёра.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как обозначить срок ответа на предложение, чтобы избежать неопределённости?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Используйте одну понятную формулировку и согласуйте срок.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d13",
+      "semanticKey": "month3.small_agreements.13",
+      "version": 1,
+      "kind": "main",
+      "order": 13,
+      "week": 2,
+      "title": "Наш вариант на этот раз",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какое решение вы готовы попробовать в выбранном небольшом вопросе?",
+      "hint": "Разовое решение не становится вечным правилом.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое решение вы готовы попробовать в выбранном небольшом вопросе?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Запишите вариант и дату, когда можно будет его пересмотреть.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d14",
+      "semanticKey": "month3.team_experiments.14",
+      "version": 1,
+      "kind": "main",
+      "order": 14,
+      "week": 2,
+      "title": "Что показал этот выбор",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Что оказалось удобным в вашем способе принимать решение?",
+      "hint": "Это обзор недели; можно признать, что эксперимент не подошёл.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что оказалось удобным в вашем способе принимать решение?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите один приём, который хочется использовать ещё раз.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Выбирать вместе",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d15",
+      "semanticKey": "month3.small_agreements.15",
+      "version": 1,
+      "kind": "main",
+      "order": 15,
+      "week": 3,
+      "title": "Где нужен совместный ответ",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "В каких обычных планах вам важно предварительно согласовать решение?",
+      "hint": "Назовите конкретную область. Личные границы не отменяются ради общего ответа.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "В каких обычных планах вам важно предварительно согласовать решение?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Отделите общие планы от тех, где каждый решает самостоятельно.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d16",
+      "semanticKey": "month3.small_agreements.16",
+      "version": 1,
+      "kind": "main",
+      "order": 16,
+      "week": 3,
+      "title": "Достаточно сообщить",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "О каком изменении общего плана вам достаточно короткого сообщения?",
+      "hint": "Не требуйте отчёта о личных перемещениях или доступ к устройствам.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "О каком изменении общего плана вам достаточно короткого сообщения?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите одно правило для уже согласованных совместных планов.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d17",
+      "semanticKey": "month3.personal_rhythm.17",
+      "version": 1,
+      "kind": "main",
+      "order": 17,
+      "week": 3,
+      "title": "Одна личная граница",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какую повседневную границу вы хотите обозначить коротко и понятно?",
+      "hint": "Можно выбрать время сосредоточенной работы или личные вещи. Объяснять причину необязательно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую повседневную границу вы хотите обозначить коротко и понятно?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Партнёр повторяет, как понял границу; не торгуется о праве на неё.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "personal_rhythm",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d18",
+      "semanticKey": "month3.small_agreements.18",
+      "version": 1,
+      "kind": "main",
+      "order": 18,
+      "week": 3,
+      "title": "Помощь по запросу",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "В какой совместной задаче помощь должна начинаться с вопроса?",
+      "hint": "Пример — ваш участок подготовки общего ужина; речь о согласии вмешиваться.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "В какой совместной задаче помощь должна начинаться с вопроса?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Согласуйте фразу, с которой удобно предлагать участие.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d19",
+      "semanticKey": "month3.small_agreements.19",
+      "version": 1,
+      "kind": "main",
+      "order": 19,
+      "week": 3,
+      "title": "Куда складывать общие планы",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Где вам удобно держать общий список планов?",
+      "hint": "Можно выбрать бумагу или существующий календарь; новый сервис не нужен.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Где вам удобно держать общий список планов?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Запишите одну реальную задачу и проверьте, что оба могут её найти.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d20",
+      "semanticKey": "month3.small_agreements.20",
+      "version": 1,
+      "kind": "main",
+      "order": 20,
+      "week": 3,
+      "title": "Как пересмотреть договорённость",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой короткой фразой можно предложить изменить правило, которое перестало подходить?",
+      "hint": "Договорённость можно пересмотреть без признания ошибки или вины.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой короткой фразой можно предложить изменить правило, которое перестало подходить?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите фразу и условие, когда вернётесь к разговору.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d21",
+      "semanticKey": "month3.team_experiments.21",
+      "version": 1,
+      "kind": "main",
+      "order": 21,
+      "week": 3,
+      "title": "Правило, которое не пригодилось",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какую пробную договорённость вы готовы убрать после этой недели?",
+      "hint": "Это обзор, а не обязательное сохранение всего ради книги.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какую пробную договорённость вы готовы убрать после этой недели?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Удалите один лишний пункт или подтвердите, что текущий набор удобен.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Договорённости, которые можно менять",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d22",
+      "semanticKey": "month3.team_experiments.22",
+      "version": 1,
+      "kind": "main",
+      "order": 22,
+      "week": 4,
+      "title": "Что у нас получилось вместе",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой небольшой совместный результат последних недель хочется отметить?",
+      "hint": "Приведите реальный пример; если результата пока нет, можно пропустить.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой небольшой совместный результат последних недель хочется отметить?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Назовите вклад каждого без сравнения, кто сделал больше.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d23",
+      "semanticKey": "month3.small_agreements.23",
+      "version": 1,
+      "kind": "main",
+      "order": 23,
+      "week": 4,
+      "title": "Наша версия удобной команды",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какие два приёма из проб действительно подходят вам сейчас?",
+      "hint": "Это отбор опробованного, а не новый тест совместимости. Совместное правило появится отдельной записью только после подтверждения обоими.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие два приёма из проб действительно подходят вам сейчас?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "rule_proposal",
+          "type": "short_text",
+          "label": "Мой вариант короткой договорённости",
+          "required": false,
+          "maxLength": 300
+        },
+        {
+          "id": "review_on",
+          "type": "short_text",
+          "label": "Когда предлагаю её пересмотреть",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Составьте короткую памятку с возможностью пересмотра.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer",
+          "rule_proposal",
+          "review_on"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d24",
+      "semanticKey": "month3.small_agreements.24",
+      "version": 1,
+      "kind": "main",
+      "order": 24,
+      "week": 4,
+      "title": "Дата следующей проверки",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Когда вам удобно вернуться к выбранным договорённостям?",
+      "hint": "Выберите реалистичный срок; это приглашение, не контроль.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Когда вам удобно вернуться к выбранным договорённостям?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Сохраните дату и одну тему разговора.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d25",
+      "semanticKey": "month3.next_chapter.25",
+      "version": 1,
+      "kind": "main",
+      "order": 25,
+      "week": 4,
+      "title": "Что хочется попробовать дальше",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой совместный опыт вы выбрали бы для следующего этапа?",
+      "hint": "Можно выбрать маленькое свидание или общее новое занятие; платить сегодня не нужно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой совместный опыт вы выбрали бы для следующего этапа?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Оставьте одну взаимно выбранную идею для следующей главы.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "next_chapter",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-d26",
+      "semanticKey": "month3.editorial_review.26",
+      "version": 1,
+      "kind": "main",
+      "order": 26,
+      "week": 4,
+      "title": "Материалы о нашей команде",
+      "format": "curation",
+      "estimatedMinutes": 10,
+      "prompt": "Какие свои примеры и согласованные правила вы хотите сохранить в книге?",
+      "hint": "Отбор добровольный. Чужую запись или общее правило нельзя добавить единолично.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие свои примеры и согласованные правила вы хотите сохранить в книге?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите только свои материалы и взаимно подтверждённые совместные записи.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "review_existing_materials"
+    },
+    {
+      "id": "m03-d27",
+      "semanticKey": "month3.editorial_review.27",
+      "version": 1,
+      "kind": "main",
+      "order": 27,
+      "week": 4,
+      "title": "Редактура книги о нас",
+      "format": "curation",
+      "estimatedMinutes": 10,
+      "prompt": "Что нужно исправить в черновике книги из трёх этапов?",
+      "hint": "Проверьте точность собственных цитат, порядок и необязательные разделы.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что нужно исправить в черновике книги из трёх этапов?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Каждый редактирует свои источники; после изменений оба согласуют новую версию.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "review_existing_materials"
+    },
+    {
+      "id": "m03-d28",
+      "semanticKey": "month3.editorial_review.28",
+      "version": 1,
+      "kind": "main",
+      "order": 28,
+      "week": 4,
+      "title": "Книга, которую мы одобрили",
+      "format": "curation",
+      "estimatedMinutes": 10,
+      "prompt": "Готовы ли вы сохранить текущую версию книги или хотите оставить её черновиком?",
+      "hint": "Скачивание добровольное; нехватка записей не лишает заработанной награды.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Готовы ли вы сохранить текущую версию книги или хотите оставить её черновиком?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Просмотрите одинаковую версию и отдельно подтвердите её либо отложите решение.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Собрать и одобрить книгу",
+      "intent": "review_existing_materials"
+    }
+  ],
+  "reserveCards": [
+    {
+      "id": "m03-r01",
+      "semanticKey": "month3.reserve.1",
+      "version": 1,
+      "kind": "reserve",
+      "order": null,
+      "week": null,
+      "title": "Сократить общий список",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой необязательный пункт ближайшего общего плана можно убрать?",
+      "hint": "Согласуйте изменение только совместного плана, не личных обязанностей другого.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой необязательный пункт ближайшего общего плана можно убрать?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Уберите пункт только при согласии обоих.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-r02",
+      "semanticKey": "month3.reserve.2",
+      "version": 1,
+      "kind": "reserve",
+      "order": null,
+      "week": null,
+      "title": "Две минуты на выбор",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой маленький обратимый выбор можно сделать без долгого обсуждения?",
+      "hint": "Если выбор важен хотя бы одному, остановите эксперимент.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой маленький обратимый выбор можно сделать без долгого обсуждения?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Согласуйте одну пробу и сохраните право передумать.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    },
+    {
+      "id": "m03-r03",
+      "semanticKey": "month3.reserve.3",
+      "version": 1,
+      "kind": "reserve",
+      "order": null,
+      "week": null,
+      "title": "Запасной вариант",
+      "format": "individual_question",
+      "estimatedMinutes": 7,
+      "prompt": "Какой запасной формат подойдёт вам, если совместный план станет недоступен?",
+      "hint": "Берите конкретный досуг, избегайте решений с серьёзными последствиями.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой запасной формат подойдёт вам, если совместный план станет недоступен?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Выбираю собственный ответ для книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите один резервный вариант или согласуйте отмену.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "answer"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "purpose": "Один небольшой общий результат",
+      "intent": "new_prompt"
+    }
+  ],
+  "dates": [
+    {
+      "id": "m03-date01",
+      "version": 1,
+      "kind": "date",
+      "week": 1,
+      "title": "Спланировать один настоящий выход",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Каждый предлагает доступный формат небольшого выхода или домашнего досуга.",
+        "Запишите ограничения по времени, бюджету и доступности; уточните минимально удобный результат.",
+        "Выберите вариант и добровольно распределите два небольших шага подготовки.",
+        "Договоритесь, как перенести план, и сохраните только взаимно подтверждённую запись."
+      ],
+      "homeAlternative": "Спланируйте домашний просмотр, чай или настольную игру без покупки вещей.",
+      "conversation": "Какой план мы оба готовы попробовать?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "small_agreements",
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m03-date02",
+      "version": 1,
+      "kind": "date",
+      "week": 2,
+      "title": "Мастерская третьего варианта",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Выберите безопасный бытовой выбор, по которому у вас есть разные предпочтения.",
+        "Каждый называет один важный критерий; другой повторяет его своими словами.",
+        "Придумайте вместе третий вариант без требования уступить.",
+        "Решите: попробовать, оставить на потом или отказаться. Если пробу выбрали, укажите дату пересмотра."
+      ],
+      "homeAlternative": "Все шаги можно провести дома или в голосовом разговоре.",
+      "conversation": "Что нового появилось, когда мы назвали критерии?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "team_experiments",
+      "bookBinding": {
+        "section": "team_experiments",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m03-date03",
+      "version": 1,
+      "kind": "date",
+      "week": 3,
+      "title": "Памятка нашей команды",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Откройте только уже опробованные договорённости; каждый выбирает собственный полезный пример.",
+        "Предложите не больше трёх коротких правил, чтобы памятка оставалась удобной.",
+        "Для каждого совместного правила оба подтверждают формулировку; неподтверждённое остаётся предложением.",
+        "Выберите дату пересмотра и решите отдельно, какие пункты включать в книгу."
+      ],
+      "homeAlternative": "Составьте памятку устно, затем каждый запишет только собственные предложения.",
+      "conversation": "Какие правила подходят нам сейчас?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "small_agreements",
+      "bookBinding": {
+        "section": "small_agreements",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m03-date04",
+      "version": 1,
+      "kind": "date",
+      "week": 4,
+      "title": "Вечер нашей книги",
+      "estimatedMinutes": 30,
+      "setting": "В удобном обоим месте; допускается разговор на расстоянии",
+      "materials": [
+        "Выбранные вами записи или предметы; покупки не обязательны"
+      ],
+      "steps": [
+        "Откройте актуальный черновик, собранный из выбранных материалов первых трёх этапов.",
+        "По очереди прочитайте любимый собственный фрагмент и проверьте факты, имена и разрешения на фото.",
+        "Каждый сам меняет или исключает свои записи; любые изменения снимают прежние одобрения всей книги.",
+        "Если текущая версия устраивает обоих и награда доступна, каждый отдельно одобряет её. Сохраните электронный PDF либо оставьте черновик."
+      ],
+      "homeAlternative": "Можно прочитать только текстовые фрагменты; фото необязательны.",
+      "conversation": "Какой фрагмент этой книги хочется перечитать?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "label": "Название, которое предлагаю",
+          "maxLength": 80
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Моя запись об этой встрече",
+          "maxLength": 600
+        }
+      ],
+      "bookSection": "editorial_review",
+      "bookBinding": {
+        "section": "editorial_review",
+        "fields": [
+          "title",
+          "memory"
+        ],
+        "requiresExplicitSelection": true,
+        "defaultSelected": false
+      },
+      "recordingMode": "two_individual_notes; optional separately coauthored agreement",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    }
+  ],
+  "reward": {
+    "id": "couple-book-v1",
+    "title": "Книга о нас",
+    "bindingPolicy": "Выбранные поля раскрытых записей; каждая совместная запись подтверждена обоими. Экспорт только после отдельного одобрения текущего снимка двумя участниками.",
+    "entitlementProvidedDays": 90
+  }
+}

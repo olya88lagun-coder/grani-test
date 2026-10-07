@@ -1,0 +1,97 @@
+{
+  "isFictional": true,
+  "notice": "Все записи вымышлены для проверки сборщика; это не отзыв и не история пользователей.",
+  "spaceId": "fictional-anna-alexey",
+  "memberIds": [
+    "anna",
+    "alexey"
+  ],
+  "displayNames": {
+    "anna": "Анна",
+    "alexey": "Алексей"
+  },
+  "providedPaidDays": 90,
+  "milestone": 3,
+  "templateVersion": "text-book-v1",
+  "approvals": [],
+  "sources": [
+    {
+      "id": "fictional-meeting-a",
+      "spaceId": "fictional-anna-alexey",
+      "cardId": "m02-d01",
+      "revision": 1,
+      "authorIds": [
+        "anna"
+      ],
+      "visibility": "revealed",
+      "values": {
+        "answer": "Познакомились на встрече друзей. Я запомнила, как мы оба потянулись за последним мандарином.",
+        "approx_date": "Осень, точную дату не помню",
+        "setting": "Вечер у друзей",
+        "remembered_detail": "Последний мандарин"
+      },
+      "selection": {
+        "revision": 1,
+        "selectedBy": [
+          "anna"
+        ],
+        "fieldIds": [
+          "answer",
+          "remembered_detail"
+        ]
+      }
+    },
+    {
+      "id": "fictional-discovery-b",
+      "spaceId": "fictional-anna-alexey",
+      "cardId": "m02-d11",
+      "revision": 1,
+      "authorIds": [
+        "alexey"
+      ],
+      "visibility": "revealed",
+      "values": {
+        "answer": "Я показал Анне, как складываю бумажный кораблик."
+      },
+      "selection": {
+        "revision": 1,
+        "selectedBy": [
+          "alexey"
+        ],
+        "fieldIds": [
+          "answer"
+        ]
+      }
+    },
+    {
+      "id": "fictional-rule-ab",
+      "spaceId": "fictional-anna-alexey",
+      "cardId": "joint-agreement-v1",
+      "revision": 1,
+      "authorIds": [
+        "anna",
+        "alexey"
+      ],
+      "confirmedBy": [
+        "anna",
+        "alexey"
+      ],
+      "visibility": "revealed",
+      "values": {
+        "statement": "Перед прогулкой выбираем удобное обоим время возвращения.",
+        "review_on": "Через две недели"
+      },
+      "selection": {
+        "revision": 1,
+        "selectedBy": [
+          "anna",
+          "alexey"
+        ],
+        "fieldIds": [
+          "statement",
+          "review_on"
+        ]
+      }
+    }
+  ]
+}

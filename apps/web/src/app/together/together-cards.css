@@ -1,0 +1,52 @@
+/* Карточки «Вдвоём»: поверх общих классов сайта (.card, .stack, .buy-form, .choice, .button) */
+.tc-title { font-size: clamp(32px, 7vw, 48px); overflow-wrap: anywhere; }
+.tc-title:focus { outline: none; }
+.tc-title:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+.tc-sub { font-size: clamp(26px, 5vw, 34px); overflow-wrap: anywhere; }
+
+.tc-progress { display: grid; gap: 8px; }
+.tc-progress progress { width: 100%; height: 4px; border: 0; border-radius: 2px; background: var(--line); accent-color: var(--accent); }
+
+.tc-paper { background: var(--bg); border-radius: var(--radius); padding: 21px; min-inline-size: 0; }
+.tc-text { margin: 0; font-size: 17px; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.tc-replies { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .tc-replies { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.tc-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.tc-actions .button { min-height: 44px; }
+
+.tc-textarea { min-height: 132px; resize: vertical; line-height: 1.5; }
+
+.tc-history-item { display: grid; gap: 6px; width: 100%; min-height: 44px; padding: 18px 20px; text-align: left; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: inherit; cursor: pointer; }
+.tc-history-item:hover { background: var(--surface); }
+.tc-history-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.tc-history-item__title { font-family: var(--font-display, inherit); font-size: 22px; overflow-wrap: anywhere; }
+
+.tc-dialog { width: min(560px, calc(100vw - 32px)); max-height: calc(100dvh - 48px); overflow: auto; padding: 28px 21px; border: 0; border-radius: var(--radius); background: var(--surface); color: var(--ink); }
+.tc-dialog::backdrop { background: rgb(42 34 36 / 0.45); }
+.tc-dialog__title { font-size: clamp(28px, 6vw, 40px); }
+@media (min-width: 760px) { .tc-dialog { padding: 36px; } }
+
+@media (prefers-reduced-motion: reduce) { .tc-history-item { transition: none; } }
+
+/* Полоса прогресса в цветах сайта: стандартный вид браузера не подхватывает акцент */
+.tc-progress progress { appearance: none; -webkit-appearance: none; overflow: hidden; }
+.tc-progress progress::-webkit-progress-bar { background: var(--line); border-radius: 2px; }
+.tc-progress progress::-webkit-progress-value { background: var(--accent); border-radius: 2px; }
+.tc-progress progress::-moz-progress-bar { background: var(--accent); border-radius: 2px; }
+
+.tc-banner { margin: 0; padding: 14px 16px; border-radius: var(--radius); background: var(--bg); box-shadow: inset 0 0 0 1px var(--accent); font-size: 15px; line-height: 1.5; }
+
+/* Шаги свидания приходят списком в подсказке: переносы строк сохраняются */
+.tc-flow { white-space: pre-line; overflow-wrap: anywhere; }
+
+/* Маршрут на полгода */
+.tc-season { display: grid; gap: 21px; margin: 0; padding: 0; list-style: none; }
+.tc-season__item { display: grid; gap: 6px; padding-top: 18px; border-top: 1px solid var(--line); }
+.tc-season__item:first-child { padding-top: 0; border-top: 0; }
+.tc-season__item p { margin: 0; }
+.tc-season__title { font-family: var(--font-display, inherit); font-size: 26px; line-height: 1.15; overflow-wrap: anywhere; }
+.tc-season__teasers { display: grid; gap: 6px; margin: 4px 0 0; padding-left: 18px; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+.tc-details > summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+.tc-details[open] > summary { margin-bottom: 14px; }

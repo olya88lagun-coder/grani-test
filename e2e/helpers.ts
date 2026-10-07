@@ -29,3 +29,17 @@ export async function signedInWithResult(browser: Browser, name: string): Promis
 
 // Имя через пробел: на страницах показывается первое слово, а dev-вход различает пользователей по полному имени
 export const uniqueName = (prefix: string) => `${prefix} ${Date.now()}${Math.floor(Math.random() * 1000)}`;
+
+type CurrentCardJson = { card: { id: string; state: string } | null };
+
+// Проходит n карточек через API: оба отвечают и нажимают «Продолжить». Нужен, чтобы дойти до платной карточки без кликов по экранам
+export async function playCardsViaApi(first: Page, second: Page, count: number) {
+  const headers = { origin: BASE_URL };
+  for (let round = 0; round < count; round += 1) {
+    const current = (await (await first.request.get("/api/together/cards/current")).json()) as CurrentCardJson;
+    const id = current.card!.id;
+    expect((await first.request.put(`/api/together/cards/${id}/answer`, { data: { fields: { answer: `ответ первого ${round}` } }, headers })).ok()).toBe(true);
+    expect((await second.request.put(`/api/together/cards/${id}/answer`, { data: { fields: { answer: `ответ второго ${round}` } }, headers })).ok()).toBe(true);
+    for (const page of [first, second]) expect((await page.request.post(`/api/together/cards/${id}/continue`, { data: {}, headers })).ok()).toBe(true);
+  }
+}

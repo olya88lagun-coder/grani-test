@@ -1,0 +1,2 @@
+ALTER TABLE "together_invites" ADD COLUMN "note" text;--> statement-breakpoint
+ALTER TABLE "together_invites" ADD CONSTRAINT "together_invites_note_length" CHECK ("together_invites"."note" is null or char_length("together_invites"."note") <= 200);

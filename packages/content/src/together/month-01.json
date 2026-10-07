@@ -1,0 +1,1742 @@
+{
+  "schemaVersion": 1,
+  "status": "editorial_draft_v2_for_review",
+  "month": 1,
+  "title": "Карта друг друга",
+  "goal": "Узнать друг друга по-новому, собрать приятные мелочи и выбрать один общий ритуал.",
+  "cadence": {
+    "mainSlots": 28,
+    "reserveSlots": 3,
+    "dates": 4,
+    "policy": "Слот — порядок встречи, не обязательный календарный день. Темп выбирает пара. Запасные встречи заменяют пропуск или доступны дополнительно, не продлевают оплату."
+  },
+  "introductorySessionsSeparate": true,
+  "weeks": [
+    {
+      "id": "m01-w01",
+      "title": "Карта друг друга",
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали.",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "m01-w02",
+      "title": "Приятные мелочи",
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться.",
+      "days": [
+        8,
+        9,
+        10,
+        11,
+        12,
+        13
+      ]
+    },
+    {
+      "id": "m01-w03",
+      "title": "Обычный день вдвоём",
+      "purpose": "Договориться о мелочах, которые делают день теплее.",
+      "days": [
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20
+      ]
+    },
+    {
+      "id": "m01-w04",
+      "title": "Вперёд",
+      "purpose": "Помечтать вместе и выбрать общий ритуал.",
+      "days": [
+        21,
+        22,
+        23,
+        24,
+        25,
+        26
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "id": "m01-d01",
+      "semanticKey": "month01.memory_question.1",
+      "version": 2,
+      "kind": "main",
+      "order": 1,
+      "week": 1,
+      "title": "Первое впечатление",
+      "format": "memory_question",
+      "estimatedMinutes": 5,
+      "prompt": "Что вы заметили в партнёре при знакомстве и что подумали тогда на самом деле?",
+      "hint": "Честно и без обид: сегодня это уже смешная история. Одного-двух предложений достаточно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы заметили в партнёре при знакомстве и что подумали тогда на самом деле?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Прочитайте ответы и расскажите друг другу, что из этого вы запомнили до сих пор.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d02",
+      "semanticKey": "month01.discovery_question.2",
+      "version": 2,
+      "kind": "main",
+      "order": 2,
+      "week": 1,
+      "title": "Чего вы не знаете",
+      "format": "discovery_question",
+      "estimatedMinutes": 5,
+      "prompt": "Расскажите о себе то, чего партнёр, скорее всего, не знает: привычку, странность или маленький секрет без драмы.",
+      "hint": "Что-то лёгкое: «никогда не доедаю последний кусочек» или «знаю наизусть песни из мультиков». Тяжёлые темы не нужны.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Расскажите о себе то, чего партнёр, скорее всего, не знает: привычку, странность или маленький секрет без драмы.",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите один пункт из ответа партнёра и задайте о нём три вопроса.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d03",
+      "semanticKey": "month01.story_question.3",
+      "version": 2,
+      "kind": "main",
+      "order": 3,
+      "week": 1,
+      "title": "Вещь с историей",
+      "format": "story_question",
+      "estimatedMinutes": 5,
+      "prompt": "Какая ваша вещь пережила больше всего приключений и что с ней случалось?",
+      "hint": "Куртка, рюкзак, кружка, телефон. Достаточно одной истории.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какая ваша вещь пережила больше всего приключений и что с ней случалось?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Расскажите свои истории вслух, не читая. Потом решите, чья вещь счастливее.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d04",
+      "semanticKey": "month01.fun_question.4",
+      "version": 2,
+      "kind": "main",
+      "order": 4,
+      "week": 1,
+      "title": "Как вы просыпаетесь",
+      "format": "fun_question",
+      "estimatedMinutes": 5,
+      "prompt": "На кого вы больше похожи по утрам: на будильник, сурка, кота или на кого-то ещё? Объясните почему.",
+      "hint": "Можно шутить: правильного ответа здесь нет.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "На кого вы больше похожи по утрам: на будильник, сурка, кота или на кого-то ещё? Объясните почему.",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Сравните ответы: кто в паре сова, кто жаворонок и чем это помогает вам или мешает?",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_rhythm",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d05",
+      "semanticKey": "month01.finish_sentence.5",
+      "version": 2,
+      "kind": "main",
+      "order": 5,
+      "week": 1,
+      "title": "Закончите фразу",
+      "format": "finish_sentence",
+      "estimatedMinutes": 5,
+      "prompt": "Закончите фразу: «Когда мы вдвоём, я чаще всего чувствую себя…»",
+      "hint": "Слово или короткая картинка: «как дома», «как на каникулах», «как перед экзаменом». Подойдёт любой честный вариант.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Закончите фразу: «Когда мы вдвоём, я чаще всего чувствую себя…»",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Прочитайте фразы друг другу и скажите, что вас приятно удивило.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d06",
+      "semanticKey": "month01.habit_question.6",
+      "version": 2,
+      "kind": "main",
+      "order": 6,
+      "week": 1,
+      "title": "Мой способ выдохнуть",
+      "format": "habit_question",
+      "estimatedMinutes": 5,
+      "prompt": "Что вы делаете, когда нужно выдохнуть и побыть наедине с собой?",
+      "hint": "Музыка, душ, прогулка, пустое окно в браузере. Это не про «мне плохо», а про привычки.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вы делаете, когда нужно выдохнуть и побыть наедине с собой?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите один способ партнёра, который вы можете поддержать: хотя бы не мешать.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_rhythm",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d07",
+      "semanticKey": "month01.date.7",
+      "version": 2,
+      "kind": "main",
+      "order": 7,
+      "week": 1,
+      "title": "Свидание: прогулка с тремя остановками",
+      "format": "date",
+      "estimatedMinutes": 25,
+      "prompt": "Устройте эту прогулку, а потом ответьте: как бы вы её назвали?",
+      "hint": "25 минут на улице.\n1. Каждый предлагает короткий маршрут. Выберите тот, что подходит обоим.\n2. На первой остановке каждый замечает одну приятную деталь вокруг.\n3. На второй каждый решает: идти дальше молча или обсудить замеченное.\n4. На третьей придумайте название этой прогулки.\nДома: пройдитесь по комнатам или посмотрите из окна. Каждый выбирает три детали и показывает партнёру одну.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашей прогулки",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Что хочется запомнить",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Сравните названия и выберите одно общее или оставьте оба.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Узнать друг о друге то, чего вы ещё не знали."
+    },
+    {
+      "id": "m01-d08",
+      "semanticKey": "month01.gratitude_question.8",
+      "version": 2,
+      "kind": "main",
+      "order": 8,
+      "week": 2,
+      "title": "Тихая благодарность",
+      "format": "gratitude_question",
+      "estimatedMinutes": 5,
+      "prompt": "За что вы тихо благодарны партнёру, но так и не сказали об этом прямо?",
+      "hint": "Хватит мелочи: привычка, жест, то, что давно стало само собой.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "За что вы тихо благодарны партнёру, но так и не сказали об этом прямо?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Прочитайте свой ответ вслух. В ответ можно сказать только «спасибо», без «да ладно тебе».",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться."
+    },
+    {
+      "id": "m01-d09",
+      "semanticKey": "month01.fun_question.9",
+      "version": 2,
+      "kind": "main",
+      "order": 9,
+      "week": 2,
+      "title": "Фильм про нас",
+      "format": "fun_question",
+      "estimatedMinutes": 5,
+      "prompt": "Как назывался бы фильм о вашей паре, в каком он жанре и кто вас сыграл бы?",
+      "hint": "Комедия, документалка, сериал на десять сезонов. Любой жанр и любые актёры.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как назывался бы фильм о вашей паре, в каком он жанре и кто вас сыграл бы?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите общий постер: одно название и по одному актёру на каждого.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "words_about_each_other",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться."
+    },
+    {
+      "id": "m01-d10",
+      "semanticKey": "month01.observation.10",
+      "version": 2,
+      "kind": "main",
+      "order": 10,
+      "week": 2,
+      "title": "Одна хорошая деталь дня",
+      "format": "observation",
+      "estimatedMinutes": 5,
+      "prompt": "Что сегодня оказалось приятным вне ваших отношений? Одна конкретная мелочь.",
+      "hint": "Свет в окне, музыка, чай, удачная задача. Выберите один момент.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что сегодня оказалось приятным вне ваших отношений? Одна конкретная мелочь.",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Расскажите свою деталь так, будто показываете фотографию, и задайте по одному любопытному вопросу.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться."
+    },
+    {
+      "id": "m01-d11",
+      "semanticKey": "month01.message_design.11",
+      "version": 2,
+      "kind": "main",
+      "order": 11,
+      "week": 2,
+      "title": "Сообщение, которому приятно обрадоваться",
+      "format": "message_design",
+      "estimatedMinutes": 5,
+      "prompt": "Какое короткое сообщение от партнёра приятно получить в самый обычный день?",
+      "hint": "Без требования отвечать сразу: смешная деталь, приглашение или тёплая фраза.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое короткое сообщение от партнёра приятно получить в самый обычный день?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Отправьте друг другу такие сообщения в удобное время. Быстро отвечать не нужно.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "small_gestures",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться."
+    },
+    {
+      "id": "m01-d12",
+      "semanticKey": "month01.memory_question.12",
+      "version": 2,
+      "kind": "main",
+      "order": 12,
+      "week": 2,
+      "title": "Любимый глупый момент",
+      "format": "memory_question",
+      "estimatedMinutes": 5,
+      "prompt": "Какой глупый или нелепый момент вдвоём вспоминается вам с улыбкой?",
+      "hint": "Пролитый чай, потерянный билет, шутка, которую никто не понял. Главное, чтобы сейчас было смешно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой глупый или нелепый момент вдвоём вспоминается вам с улыбкой?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Вспомните его вместе и решите, нужно ли ему название.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться."
+    },
+    {
+      "id": "m01-d13",
+      "semanticKey": "month01.date.13",
+      "version": 2,
+      "kind": "main",
+      "order": 13,
+      "week": 2,
+      "title": "Свидание: дегустация из того, что есть",
+      "format": "date",
+      "estimatedMinutes": 30,
+      "prompt": "Устройте домашнюю дегустацию, а потом ответьте: как называется ваше меню?",
+      "hint": "30 минут дома.\n1. Выберите знакомые доступные продукты: покупать специально ничего не нужно.\n2. Каждый описывает вкус, запах или ассоциацию. Правильных ответов нет.\n3. Выберите своё любимое сочетание и покажите его партнёру.\n4. Придумайте название вашему домашнему меню.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название вашего меню",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Какое сочетание запомнилось",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Решите, хочется ли повторить дегустацию и что в неё добавить.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Заметить хорошее, поблагодарить и посмеяться."
+    },
+    {
+      "id": "m01-d14",
+      "semanticKey": "month01.choice_then_text.2",
+      "version": 2,
+      "kind": "main",
+      "order": 14,
+      "week": 3,
+      "title": "Сначала выслушать или помочь?",
+      "format": "choice_then_text",
+      "estimatedMinutes": 5,
+      "prompt": "Когда вы рассказываете о небольшом затруднении, чего чаще хочется сначала: чтобы вас выслушали, предложили идеи или спросили?",
+      "hint": "Отвечайте про обычные повседневные ситуации. Можно написать свой вариант.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Когда вы рассказываете о небольшом затруднении, чего чаще хочется сначала: чтобы вас выслушали, предложили идеи или спросили?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "care_action",
+          "type": "short_text",
+          "label": "Какая короткая фраза поможет понять, что вам сейчас нужно?",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "care_context",
+          "type": "short_text",
+          "label": "Когда её лучше произнести?",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "allow_care_reward",
+          "type": "boolean",
+          "label": "Предлагаю этот пункт для итоговой карточки",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "По очереди расскажите о небольшой задаче. Перед ответом спросите: «Тебя послушать или вместе подумать?»",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "attention",
+        "actionField": "care_action",
+        "contextField": "care_context",
+        "consentField": "allow_care_reward"
+      },
+      "bookBinding": {
+        "section": "care_preferences",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d15",
+      "semanticKey": "month01.context_question.5",
+      "version": 2,
+      "kind": "main",
+      "order": 15,
+      "week": 3,
+      "title": "Когда мало сил",
+      "format": "context_question",
+      "estimatedMinutes": 5,
+      "prompt": "Что из простых вещей делает ваш обычный уставший вечер немного легче?",
+      "hint": "Выберите посильный вариант. Можно честно попросить время для себя.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что из простых вещей делает ваш обычный уставший вечер немного легче?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "care_action",
+          "type": "short_text",
+          "label": "Какое небольшое действие партнёра действительно облегчило бы такой вечер?",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "care_context",
+          "type": "short_text",
+          "label": "Как понять, что предложение уместно?",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "allow_care_reward",
+          "type": "boolean",
+          "label": "Предлагаю этот пункт для итоговой карточки",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Сегодня предложите помощь в выбранной форме. Второй человек может принять её или перенести.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "ease",
+        "actionField": "care_action",
+        "contextField": "care_context",
+        "consentField": "allow_care_reward"
+      },
+      "bookBinding": {
+        "section": "care_preferences",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d16",
+      "semanticKey": "month01.quiet_activity.11",
+      "version": 2,
+      "kind": "main",
+      "order": 16,
+      "week": 3,
+      "title": "Вместе без разговора",
+      "format": "quiet_activity",
+      "estimatedMinutes": 5,
+      "prompt": "Какое спокойное занятие вам было бы приятно делать рядом, даже если разговаривать не хочется?",
+      "hint": "Например, каждый читает своё, вы готовите или рисуете. Можно предложить другой формат.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое спокойное занятие вам было бы приятно делать рядом, даже если разговаривать не хочется?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Попробуйте десять минут такого соседства. Занятие и молчание не обязательны.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d17",
+      "semanticKey": "month01.invitation_design.8",
+      "version": 2,
+      "kind": "main",
+      "order": 17,
+      "week": 3,
+      "title": "Приглашение без угадывания",
+      "format": "invitation_design",
+      "estimatedMinutes": 5,
+      "prompt": "Как вам приятнее получать предложение провести время вместе: заранее, спонтанно или с выбором вариантов?",
+      "hint": "Можно уточнить: «В будни заранее, в выходные по настроению».",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вам приятнее получать предложение провести время вместе: заранее, спонтанно или с выбором вариантов?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "care_action",
+          "type": "short_text",
+          "label": "Как должно звучать удобное для вас приглашение?",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "care_context",
+          "type": "short_text",
+          "label": "Для каких случаев этот вариант подходит?",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "allow_care_reward",
+          "type": "boolean",
+          "label": "Предлагаю этот пункт для итоговой карточки",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Составьте короткое приглашение в подходящей партнёру форме. Он может выбрать время или предложить своё.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "attention",
+        "actionField": "care_action",
+        "contextField": "care_context",
+        "consentField": "allow_care_reward"
+      },
+      "bookBinding": {
+        "section": "small_gestures",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d18",
+      "semanticKey": "month01.ritual_design.12",
+      "version": 2,
+      "kind": "main",
+      "order": 18,
+      "week": 3,
+      "title": "Маленькое приветствие",
+      "format": "ritual_design",
+      "estimatedMinutes": 5,
+      "prompt": "Какой небольшой способ здороваться или прощаться вам нравится?",
+      "hint": "Выберите слова, жест или короткое действие, комфортное обоим. Прикосновения всегда по желанию.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой небольшой способ здороваться или прощаться вам нравится?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "care_action",
+          "type": "short_text",
+          "label": "Какой способ приветствия вам подходит?",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "care_context",
+          "type": "short_text",
+          "label": "Когда вы хотели бы его использовать?",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "allow_care_reward",
+          "type": "boolean",
+          "label": "Предлагаю этот пункт для итоговой карточки",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Спросите, подходит ли предложенное действие партнёру, и попробуйте его в ближайший удобный момент.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "attention",
+        "actionField": "care_action",
+        "contextField": "care_context",
+        "consentField": "allow_care_reward"
+      },
+      "bookBinding": {
+        "section": "small_gestures",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d19",
+      "semanticKey": "month01.personal_space.18",
+      "version": 2,
+      "kind": "main",
+      "order": 19,
+      "week": 3,
+      "title": "Время переключиться",
+      "format": "personal_space",
+      "estimatedMinutes": 5,
+      "prompt": "Как вам удобнее обозначить, что нужно немного времени для себя, а потом хочется вернуться к общению?",
+      "hint": "Можно подобрать короткую фразу и примерное время возвращения. Отвечайте без объяснения личных причин.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Как вам удобнее обозначить, что нужно немного времени для себя, а потом хочется вернуться к общению?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "care_action",
+          "type": "short_text",
+          "label": "Какая фраза и какое действие партнёра помогут вам переключиться?",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "care_context",
+          "type": "short_text",
+          "label": "Как вы сами сообщите, что снова готовы общаться?",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "allow_care_reward",
+          "type": "boolean",
+          "label": "Предлагаю этот пункт для итоговой карточки",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Обменяйтесь фразами. Каждый уточняет, правильно ли понял предпочтение второго.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "ease",
+        "actionField": "care_action",
+        "contextField": "care_context",
+        "consentField": "allow_care_reward"
+      },
+      "bookBinding": {
+        "section": "everyday_rhythm",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d20",
+      "semanticKey": "month01.date.20",
+      "version": 2,
+      "kind": "main",
+      "order": 20,
+      "week": 3,
+      "title": "Свидание: афиша нашего обычного вечера",
+      "format": "date",
+      "estimatedMinutes": 35,
+      "prompt": "Сделайте афишу вашего обычного вечера, а потом ответьте: как она называется?",
+      "hint": "35 минут дома или в спокойном месте.\n1. Каждый выбирает два слова или небольших рисунка о приятном совместном вечере.\n2. Соберите их в одну афишу: название, место и занятие.\n3. Подпишите время, когда устроите такой вечер.\nХудожественное качество не оценивается.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название афиши",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Когда и чем займётесь",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Повесьте афишу на видное место или сохраните фото и устройте такой вечер в ближайшие дни.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Договориться о мелочах, которые делают день теплее."
+    },
+    {
+      "id": "m01-d21",
+      "semanticKey": "month01.dream_question.21",
+      "version": 2,
+      "kind": "main",
+      "order": 21,
+      "week": 4,
+      "title": "Идеальный вторник",
+      "format": "dream_question",
+      "estimatedMinutes": 5,
+      "prompt": "Опишите идеальный обычный вторник вдвоём: от утра до вечера, без денег и поездок.",
+      "hint": "Что вы едите, чем заняты, во сколько ложитесь. Мелочи важнее размаха.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Опишите идеальный обычный вторник вдвоём: от утра до вечера, без денег и поездок.",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Возьмите по одному кусочку из двух описаний и устройте их на этой неделе.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Помечтать вместе и выбрать общий ритуал."
+    },
+    {
+      "id": "m01-d22",
+      "semanticKey": "month01.dream_question.22",
+      "version": 2,
+      "kind": "main",
+      "order": 22,
+      "week": 4,
+      "title": "Через год",
+      "format": "dream_question",
+      "estimatedMinutes": 5,
+      "prompt": "Что вам хочется, чтобы было у вас вдвоём через год? Одной картинкой, одним предложением.",
+      "hint": "Не план, а картинка: «мы пьём чай на нашем балконе», «мы привезли магнит из нового города».",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что вам хочется, чтобы было у вас вдвоём через год? Одной картинкой, одним предложением.",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Покажите друг другу картинки и найдите общую деталь, даже если картинки разные.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Помечтать вместе и выбрать общий ритуал."
+    },
+    {
+      "id": "m01-d23",
+      "semanticKey": "month01.dream_question.23",
+      "version": 2,
+      "kind": "main",
+      "order": 23,
+      "week": 4,
+      "title": "Место, куда хочется",
+      "format": "dream_question",
+      "estimatedMinutes": 5,
+      "prompt": "Куда вам хотелось бы съездить вдвоём, пусть даже «когда-нибудь»?",
+      "hint": "Страна, улица в вашем городе, озеро за городом. Бюджет и реальность пока не важны.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Куда вам хотелось бы съездить вдвоём, пусть даже «когда-нибудь»?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите одно место из двух и придумайте самую маленькую версию поездки на ближайшие выходные.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Помечтать вместе и выбрать общий ритуал."
+    },
+    {
+      "id": "m01-d24",
+      "semanticKey": "month01.ritual_proposal.20",
+      "version": 2,
+      "kind": "main",
+      "order": 24,
+      "week": 4,
+      "title": "Ритуал из обычного",
+      "format": "ritual_proposal",
+      "estimatedMinutes": 5,
+      "prompt": "Какое простое совместное действие хочется иногда повторять?",
+      "hint": "Пусть оно легко помещается в жизнь: чай, прогулка, музыка или короткий разговор. Ежедневность не обязательна.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какое простое совместное действие хочется иногда повторять?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "care_action",
+          "type": "short_text",
+          "label": "Как называется предложенный вами ритуал?",
+          "required": false,
+          "maxLength": 180
+        },
+        {
+          "id": "care_context",
+          "type": "short_text",
+          "label": "Когда и сколько времени вам удобно ему уделять?",
+          "required": false,
+          "maxLength": 100
+        },
+        {
+          "id": "allow_care_reward",
+          "type": "boolean",
+          "label": "Предлагаю этот пункт для итоговой карточки",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Предложите по одному варианту и попробуйте тот, который подходит обоим.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "ritual",
+        "actionField": "care_action",
+        "contextField": "care_context",
+        "consentField": "allow_care_reward"
+      },
+      "bookBinding": {
+        "section": "shared_rituals",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Помечтать вместе и выбрать общий ритуал."
+    },
+    {
+      "id": "m01-d25",
+      "semanticKey": "month01.date.25",
+      "version": 2,
+      "kind": "main",
+      "order": 25,
+      "week": 4,
+      "title": "Свидание: первый раз нашего ритуала",
+      "format": "date",
+      "estimatedMinutes": 25,
+      "prompt": "Попробуйте ваш ритуал в коротком варианте, а потом ответьте: как он называется?",
+      "hint": "25 минут в любом удобном месте.\n1. Выберите один простой ритуал из карточек этого месяца.\n2. Попробуйте его в короткой версии.\n3. Каждый говорит, что хочется оставить, а что изменить.\n4. Запишите согласованный вариант: как часто и сколько он длится.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Название и вариант ритуала",
+          "required": true,
+          "maxLength": 200
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "label": "Как часто и сколько времени",
+          "required": false,
+          "maxLength": 500
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Если ритуал не подошёл, спокойно выберите другой или отложите. Это тоже результат.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Помечтать вместе и выбрать общий ритуал."
+    },
+    {
+      "id": "m01-d26",
+      "semanticKey": "month01.reflection.26",
+      "version": 2,
+      "kind": "main",
+      "order": 26,
+      "week": 4,
+      "title": "Что оставить из этого месяца",
+      "format": "reflection",
+      "estimatedMinutes": 5,
+      "prompt": "Что из этого месяца вам хочется оставить в вашей жизни, а что лучше изменить?",
+      "hint": "Выберите одну вещь, которую попробовали или узнали. Можно сказать, что пока ничего.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что из этого месяца вам хочется оставить в вашей жизни, а что лучше изменить?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Каждый предлагает небольшую поправку к одному действию. Оставляйте только то, что подходит обоим.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "care_preferences",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Помечтать вместе и выбрать общий ритуал."
+    },
+    {
+      "id": "m01-d27",
+      "semanticKey": "month01.curation.27",
+      "version": 1,
+      "kind": "main",
+      "order": 27,
+      "week": 4,
+      "title": "Выбрать свои способы заботы",
+      "format": "curation",
+      "estimatedMinutes": 8,
+      "prompt": "Какие два ваших предпочтения хочется добавить в итоговую карточку: одно про внимание и одно про облегчение обычного дня?",
+      "hint": "Выберите сохранённые кандидаты или сформулируйте новые короткие действия. Предпочтения выбирает сам их автор.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какие два ваших предпочтения хочется добавить в итоговую карточку: одно про внимание и одно про облегчение обычного дня?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "selected_attention_id",
+          "type": "candidate_reference",
+          "category": "attention",
+          "owner": "self",
+          "required": false,
+          "label": "Мой способ внимания"
+        },
+        {
+          "id": "selected_ease_id",
+          "type": "candidate_reference",
+          "category": "ease",
+          "owner": "self",
+          "required": false,
+          "label": "Что делает мой день легче"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "По очереди покажите выбранные пункты. Можно уточнить формулировку или исключить её.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "final_selection"
+      },
+      "bookBinding": {
+        "section": "care_preferences",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Отредактировать личные предпочтения и общий ритуал."
+    },
+    {
+      "id": "m01-d28",
+      "semanticKey": "month01.joint_curation.28",
+      "version": 1,
+      "kind": "main",
+      "order": 28,
+      "week": 4,
+      "title": "Наш маленький ритуал",
+      "format": "joint_curation",
+      "estimatedMinutes": 8,
+      "prompt": "Какой один ритуал вы оба хотите попробовать в следующем месяце?",
+      "hint": "Выберите общий вариант, удобную частоту и длительность. Его можно потом изменить или убрать.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какой один ритуал вы оба хотите попробовать в следующем месяце?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        },
+        {
+          "id": "ritual_id",
+          "type": "shared_candidate_reference",
+          "category": "ritual",
+          "required": false,
+          "label": "Выбранный общий ритуал"
+        },
+        {
+          "id": "ritual_schedule",
+          "type": "short_text",
+          "required": false,
+          "maxLength": 100,
+          "label": "Как часто нам удобно"
+        },
+        {
+          "id": "ritual_duration",
+          "type": "short_text",
+          "required": false,
+          "maxLength": 60,
+          "label": "Сколько времени"
+        },
+        {
+          "id": "confirm_shared_ritual",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "label": "Этот вариант мне подходит"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Оба подтвердите один вариант. Посмотрите итоговую карточку «Наши способы заботы» и поправьте её перед сохранением.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": {
+        "type": "final_ritual"
+      },
+      "bookBinding": {
+        "section": "shared_rituals",
+        "requiresExplicitSelection": true
+      },
+      "purpose": "Отредактировать личные предпочтения и общий ритуал."
+    }
+  ],
+  "reserveCards": [
+    {
+      "id": "m01-r01",
+      "semanticKey": "month01.reserve.1",
+      "version": 1,
+      "kind": "reserve",
+      "order": 1,
+      "title": "Найти любопытную деталь",
+      "format": "observation",
+      "estimatedMinutes": 4,
+      "prompt": "Выберите один необычный предмет или деталь вокруг и расскажите, чем он привлёк внимание.",
+      "hint": "Можно прислать описание вместо фотографии. Снимать и показывать личные вещи не требуется.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Выберите один необычный предмет или деталь вокруг и расскажите, чем он привлёк внимание.",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Задайте друг другу по одному любопытному вопросу об этой детали.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "everyday_memories",
+        "requiresExplicitSelection": true
+      }
+    },
+    {
+      "id": "m01-r02",
+      "semanticKey": "month01.reserve.2",
+      "version": 1,
+      "kind": "reserve",
+      "order": 2,
+      "title": "Три слова для этого вечера",
+      "format": "creative_action",
+      "estimatedMinutes": 4,
+      "prompt": "Какими тремя словами вы описали бы приятный вечер сегодня?",
+      "hint": "Это могут быть ощущения, занятия или смешные сочетания. Подробный рассказ не нужен.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Какими тремя словами вы описали бы приятный вечер сегодня?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Выберите одно слово каждого и придумайте короткое название вашего вечера.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "requiresExplicitSelection": true
+      }
+    },
+    {
+      "id": "m01-r03",
+      "semanticKey": "month01.reserve.3",
+      "version": 1,
+      "kind": "reserve",
+      "order": 3,
+      "title": "Лёгкий выбор вдвоём",
+      "format": "shared_choice",
+      "estimatedMinutes": 4,
+      "prompt": "Что сейчас приятнее: короткая прогулка, чай рядом или десять минут каждый со своим занятием?",
+      "hint": "Можно предложить свой вариант или выбрать отдых отдельно.",
+      "fields": [
+        {
+          "id": "answer",
+          "type": "short_text",
+          "label": "Что сейчас приятнее: короткая прогулка, чай рядом или десять минут каждый со своим занятием?",
+          "required": true,
+          "maxLength": 1200
+        },
+        {
+          "id": "share_in_book",
+          "type": "boolean",
+          "label": "Хочу выбрать свой ответ для будущей книги",
+          "required": false,
+          "default": false,
+          "availableAt": "after_reveal"
+        }
+      ],
+      "revealPolicy": "after_both_submit",
+      "jointAction": "Посмотрите, есть ли совпадение, и попробуйте подходящий обоим вариант.",
+      "completion": "shared_ack_after_reveal",
+      "skipAllowed": true,
+      "comfort": "ordinary_daily_life",
+      "rewardBinding": null,
+      "bookBinding": {
+        "section": "shared_activities",
+        "requiresExplicitSelection": true
+      }
+    }
+  ],
+  "dates": [
+    {
+      "id": "m01-date01",
+      "week": 1,
+      "title": "Прогулка с тремя остановками",
+      "estimatedMinutes": 25,
+      "setting": "На улице; домашний вариант ниже",
+      "materials": [
+        "Удобный доступный маршрут"
+      ],
+      "steps": [
+        "Каждый предлагает короткий маршрут; выберите подходящий обоим.",
+        "На первой остановке каждый замечает одну приятную деталь вокруг.",
+        "На второй каждый выбирает, идти дальше молча или обсудить замеченное.",
+        "На третьей придумайте название этой прогулки и решите, что хочется сохранить."
+      ],
+      "homeAlternative": "Пройдитесь по доступному пространству дома или посмотрите из окна: каждый выбирает три детали и одну показывает партнёру.",
+      "conversation": "Какой момент прогулки хочется оставить в памяти?",
+      "outputFields": [
+        {
+          "id": "title",
+          "type": "short_text",
+          "maxLength": 80,
+          "label": "Название нашей прогулки"
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "maxLength": 500,
+          "label": "Что хочу сохранить"
+        }
+      ],
+      "bookSection": "everyday_memories",
+      "version": 1,
+      "kind": "date",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m01-date02",
+      "week": 2,
+      "title": "Дегустация из того, что есть",
+      "estimatedMinutes": 30,
+      "setting": "Дома",
+      "materials": [
+        "Два-три знакомых продукта или напитка, которые подходят обоим"
+      ],
+      "steps": [
+        "Выберите знакомые доступные продукты: специально покупать что-то не нужно.",
+        "Каждый описывает один вкус, запах или ассоциацию без угадывания правильного ответа.",
+        "Выберите своё любимое сочетание и покажите его партнёру.",
+        "Придумайте название домашнего меню и решите, хочется ли повторить."
+      ],
+      "homeAlternative": "Если еда сейчас не подходит, сравните два знакомых музыкальных фрагмента или две картинки, которые вы сами выбрали.",
+      "conversation": "Что вам понравилось пробовать вместе?",
+      "outputFields": [
+        {
+          "id": "menu",
+          "type": "short_text",
+          "maxLength": 150,
+          "label": "Наше сочетание"
+        },
+        {
+          "id": "memory",
+          "type": "short_text",
+          "maxLength": 500,
+          "label": "Момент вечера"
+        }
+      ],
+      "bookSection": "shared_activities",
+      "version": 1,
+      "kind": "date",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m01-date03",
+      "week": 3,
+      "title": "Афиша нашего обычного вечера",
+      "estimatedMinutes": 35,
+      "setting": "Дома или в спокойном месте",
+      "materials": [
+        "Бумага и карандаш; можно использовать заметки телефона"
+      ],
+      "steps": [
+        "Каждый выбирает два слова или небольших рисунка о приятном совместном вечере.",
+        "Соберите их в одну простую афишу: название, место и занятие.",
+        "Подпишите время, когда могли бы устроить такой вечер.",
+        "Решите, сохранить ли афишу для себя или включить в книгу. Художественное качество не оценивается."
+      ],
+      "homeAlternative": "Напишите общий список из четырёх деталей вечера без рисунков.",
+      "conversation": "Какая деталь делает этот вечер именно вашим?",
+      "outputFields": [
+        {
+          "id": "poster_title",
+          "type": "short_text",
+          "maxLength": 80,
+          "label": "Название афиши"
+        },
+        {
+          "id": "details",
+          "type": "short_text",
+          "maxLength": 500,
+          "label": "Наши четыре детали"
+        }
+      ],
+      "bookSection": "shared_activities",
+      "version": 1,
+      "kind": "date",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    },
+    {
+      "id": "m01-date04",
+      "week": 4,
+      "title": "Первый раз нашего ритуала",
+      "estimatedMinutes": 25,
+      "setting": "Любое удобное место",
+      "materials": [
+        "Только то, что нужно для выбранного ритуала"
+      ],
+      "steps": [
+        "Выберите один простой общий ритуал из предложений этого месяца.",
+        "Попробуйте его в удобной короткой версии.",
+        "Каждый говорит, что хочется сохранить и что изменить.",
+        "Запишите согласованный вариант, частоту и длительность. Если вариант не подошёл, спокойно выберите другой или отложите."
+      ],
+      "homeAlternative": "Если общей встречи сейчас нет, обсудите предложение в коротком звонке или переписке и выберите время для первой попытки.",
+      "conversation": "Как сделать этот ритуал удобным для нас обоих?",
+      "outputFields": [
+        {
+          "id": "ritual_name",
+          "type": "short_text",
+          "maxLength": 180,
+          "label": "Наш ритуал"
+        },
+        {
+          "id": "schedule",
+          "type": "short_text",
+          "maxLength": 100,
+          "label": "Когда нам удобно"
+        },
+        {
+          "id": "duration",
+          "type": "short_text",
+          "maxLength": 60,
+          "label": "Сколько времени"
+        }
+      ],
+      "bookSection": "shared_rituals",
+      "version": 1,
+      "kind": "date",
+      "skipAllowed": true,
+      "requiresBothConsent": true,
+      "bookRequiresExplicitSelection": true
+    }
+  ],
+  "reward": {
+    "id": "care-card-v1",
+    "title": "Наши способы заботы",
+    "bindingPolicy": "Only explicit selected care_action fields, owned by their author, plus one mutually confirmed ritual. No extraction from free text."
+  }
+}

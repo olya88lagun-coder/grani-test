@@ -1,0 +1,588 @@
+{
+  "status": "pass",
+  "widths": [
+    320,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "views": [
+    "start",
+    "login",
+    "create",
+    "invite",
+    "lost",
+    "public",
+    "invalid",
+    "requested",
+    "confirm",
+    "ready",
+    "checkout",
+    "gateway",
+    "waiting",
+    "success",
+    "delayed",
+    "cancelled",
+    "paid",
+    "limit",
+    "unavailable",
+    "error",
+    "loading",
+    "left"
+  ],
+  "checks": [
+    {
+      "name": "layout 320 start",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 login",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 create",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 invite",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 lost",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 public",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 invalid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 requested",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 confirm",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 ready",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 checkout",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 gateway",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 waiting",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 success",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 delayed",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 cancelled",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 paid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 limit",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 error",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 loading",
+      "status": "pass"
+    },
+    {
+      "name": "layout 320 left",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 start",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 login",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 create",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 invite",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 lost",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 public",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 invalid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 requested",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 confirm",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 ready",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 checkout",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 gateway",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 waiting",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 success",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 delayed",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 cancelled",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 paid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 limit",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 error",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 loading",
+      "status": "pass"
+    },
+    {
+      "name": "layout 390 left",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 start",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 login",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 create",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 invite",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 lost",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 public",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 invalid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 requested",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 confirm",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 ready",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 checkout",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 gateway",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 waiting",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 success",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 delayed",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 cancelled",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 paid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 limit",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 error",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 loading",
+      "status": "pass"
+    },
+    {
+      "name": "layout 768 left",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 start",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 login",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 create",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 invite",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 lost",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 public",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 invalid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 requested",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 confirm",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 ready",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 checkout",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 gateway",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 waiting",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 success",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 delayed",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 cancelled",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 paid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 limit",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 error",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 loading",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1024 left",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 start",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 login",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 create",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 invite",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 lost",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 public",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 invalid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 requested",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 confirm",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 ready",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 checkout",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 gateway",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 waiting",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 success",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 delayed",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 cancelled",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 paid",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 limit",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 error",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 loading",
+      "status": "pass"
+    },
+    {
+      "name": "layout 1440 left",
+      "status": "pass"
+    },
+    {
+      "name": "both brand fonts loaded",
+      "status": "pass"
+    },
+    {
+      "name": "consent gate before provider; no real network requests",
+      "status": "pass"
+    },
+    {
+      "name": "double create only records one operation",
+      "status": "pass"
+    },
+    {
+      "name": "copy fallback is explicit; link regeneration changes source",
+      "status": "pass"
+    },
+    {
+      "name": "public invitation has no pair identity and requires separate login",
+      "status": "pass"
+    },
+    {
+      "name": "initiator accepts displayed identity before checkout",
+      "status": "pass"
+    },
+    {
+      "name": "valid email required; payment return not immediately success",
+      "status": "pass"
+    },
+    {
+      "name": "decline returns to lost link when token unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "unavailable invitation remains anonymous",
+      "status": "pass"
+    },
+    {
+      "name": "paid but ungranted state has no pay button",
+      "status": "pass"
+    },
+    {
+      "name": "renewal cap offers no third checkout",
+      "status": "pass"
+    },
+    {
+      "name": "payment unavailable has no purchase form",
+      "status": "pass"
+    },
+    {
+      "name": "leave requires explicit acknowledgment; Escape restores focus",
+      "status": "pass"
+    },
+    {
+      "name": "long participant name literal and wraps",
+      "status": "pass"
+    },
+    {
+      "name": "keyboard focus and reduced motion",
+      "status": "pass"
+    },
+    {
+      "name": "standalone HTML opens offline with embedded fonts",
+      "status": "pass"
+    }
+  ],
+  "images": [
+    "stage1-start-390.jpg",
+    "stage1-login-390.jpg",
+    "stage1-create-390.jpg",
+    "stage1-invite-390.jpg",
+    "stage1-lost-390.jpg",
+    "stage1-public-390.jpg",
+    "stage1-invalid-390.jpg",
+    "stage1-requested-390.jpg",
+    "stage1-confirm-390.jpg",
+    "stage1-ready-390.jpg",
+    "stage1-checkout-390.jpg",
+    "stage1-gateway-390.jpg",
+    "stage1-waiting-390.jpg",
+    "stage1-success-390.jpg",
+    "stage1-delayed-390.jpg",
+    "stage1-cancelled-390.jpg",
+    "stage1-paid-390.jpg",
+    "stage1-limit-390.jpg",
+    "stage1-unavailable-390.jpg",
+    "stage1-error-390.jpg",
+    "stage1-loading-390.jpg",
+    "stage1-left-390.jpg",
+    "stage1-start-1440.jpg",
+    "stage1-login-1440.jpg",
+    "stage1-create-1440.jpg",
+    "stage1-invite-1440.jpg",
+    "stage1-lost-1440.jpg",
+    "stage1-public-1440.jpg",
+    "stage1-invalid-1440.jpg",
+    "stage1-requested-1440.jpg",
+    "stage1-confirm-1440.jpg",
+    "stage1-ready-1440.jpg",
+    "stage1-checkout-1440.jpg",
+    "stage1-gateway-1440.jpg",
+    "stage1-waiting-1440.jpg",
+    "stage1-success-1440.jpg",
+    "stage1-delayed-1440.jpg",
+    "stage1-cancelled-1440.jpg",
+    "stage1-paid-1440.jpg",
+    "stage1-limit-1440.jpg",
+    "stage1-unavailable-1440.jpg",
+    "stage1-error-1440.jpg",
+    "stage1-loading-1440.jpg",
+    "stage1-left-1440.jpg"
+  ],
+  "errors": [],
+  "badRequests": []
+}

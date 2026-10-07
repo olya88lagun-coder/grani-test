@@ -41,3 +41,12 @@ export function clientKeyFromHeaders(headers: Headers): string {
 const PURCHASES_PER_MINUTE = 10;
 
 export const purchasesLimiter = createRateLimiter({ limit: PURCHASES_PER_MINUTE, windowMs: MINUTE_MS });
+
+const TOGETHER_PER_MINUTE = 30;
+
+export const togetherLimiter = createRateLimiter({ limit: TOGETHER_PER_MINUTE, windowMs: MINUTE_MS });
+
+// Код пилота перебирают по одному: попыток мало, чтобы подбор не имел смысла
+const PILOT_CODE_ATTEMPTS_PER_MINUTE = 6;
+
+export const pilotCodeLimiter = createRateLimiter({ limit: PILOT_CODE_ATTEMPTS_PER_MINUTE, windowMs: MINUTE_MS });

@@ -6,7 +6,9 @@
     ".": "./src/index.ts",
     "./check": "./src/check.ts",
     "./content-plan": "./src/content-plan.ts",
-    "./data": "./src/data.ts"
+    "./data": "./src/data.ts",
+    "./together": "./src/together/catalog.ts",
+    "./together-season": "./src/together/season.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",

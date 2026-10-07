@@ -1,0 +1,49 @@
+name: together-visuals
+on:
+  push:
+    branches: [feat/together-prototype]
+    paths:
+      - docs/together/design/*.html
+      - docs/together/design/*.css
+      - docs/together/design/*.js
+      - docs/together/design/*render.mjs
+      - .github/workflows/together-visuals.yml
+  pull_request:
+    paths:
+      - docs/together/design/*.html
+      - docs/together/design/*.css
+      - docs/together/design/*.js
+      - docs/together/design/*render.mjs
+      - .github/workflows/together-visuals.yml
+permissions:
+  contents: read
+concurrency:
+  group: together-visuals-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Browser runtime
+        run: npm install --prefix "$RUNNER_TEMP/together-visual-runtime" --no-save --no-package-lock playwright@1.63.0
+      - name: Chromium
+        run: node "$RUNNER_TEMP/together-visual-runtime/node_modules/playwright/cli.js" install --with-deps chromium
+      - name: Render and verify
+        env:
+          PW_MODULE: ${{ runner.temp }}/together-visual-runtime/node_modules/playwright/index.mjs
+        run: node docs/together/design/render.mjs
+      - name: New feature screens
+        env:
+          PW_MODULE: ${{ runner.temp }}/together-visual-runtime/node_modules/playwright/index.mjs
+        run: node docs/together/design/features-render.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: together-visuals-${{ github.sha }}
+          path: visual-output/
+          retention-days: 14

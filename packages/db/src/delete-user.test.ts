@@ -1,8 +1,11 @@
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import { deleteUserData } from "./delete-user";
-import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, users } from "./schema";
-import { createTestDb, seedPair, seedUserWithResult } from "./testing";
+import { authIdentities, friendResponses, invites, pairInvites, pairs, purchases, reports, results, togetherAnswers, togetherCards, togetherInvites, togetherSpaces, users } from "./schema";
+import { createTestDb, seedPair, seedTogetherSpace, seedUserWithResult } from "./testing";
+import { createSpace, setInviteNote } from "./together";
+import { grantPilotPass, hasPilotPass } from "./together-pilot";
+import { hasTogetherConsent, recordTogetherConsent } from "./together-consent";
 import type { Database } from "./types";
 import { getUser } from "./users";
 
@@ -84,5 +87,55 @@ describe("deleteUserData", () => {
     expect(await deleteUserData(db, userId)).toEqual({ deleted: false });
     expect(await deleteUserData(db, "not-a-uuid")).toEqual({ deleted: false });
     expect(await deleteUserData(db, "0b6f1f0e-5a7e-4c1e-9d2a-3f1b2c3d4e5f")).toEqual({ deleted: false });
+  });
+
+  it("closes the together space of the deleted user and frees the partner", async () => {
+    const { spaceId, initiatorId, partnerId } = await seedTogetherSpace(db);
+
+    expect(await deleteUserData(db, initiatorId)).toEqual({ deleted: true });
+
+    const [space] = await db.select().from(togetherSpaces).where(eq(togetherSpaces.id, spaceId));
+    expect(space).toMatchObject({ status: "closed", closedReason: "account_deleted" });
+    expect((await createSpace(db, { userId: partnerId, now: new Date("2026-10-06T10:00:00Z") })).ok).toBe(true);
+  });
+  it("erases the deleted user's together answers but keeps the partner's", async () => {
+    const { spaceId, initiatorId, partnerId } = await seedTogetherSpace(db);
+    const [card] = await db
+      .insert(togetherCards)
+      .values({ spaceId, cardId: "intro-01", position: 1, snapshot: { id: "intro-01", version: 1, kind: "intro", title: "T", estimatedMinutes: 5, prompt: "P", hint: "H", jointAction: "J", skipAllowed: true, fields: [] } })
+      .returning({ id: togetherCards.id });
+    await db.insert(togetherAnswers).values([
+      { cardId: card!.id, spaceId, userId: initiatorId, status: "submitted", fields: { answer: "ушедшего" } },
+      { cardId: card!.id, spaceId, userId: partnerId, status: "submitted", fields: { answer: "оставшегося" } },
+    ]);
+
+    await deleteUserData(db, initiatorId);
+
+    const rows = await db.select().from(togetherAnswers);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({ userId: partnerId, fields: { answer: "оставшегося" } });
+  });
+
+  it("erases the invite note the deleted user wrote", async () => {
+    const { userId } = await seedUserWithResult(db, { externalId: "tg-note" });
+    await createSpace(db, { userId, now: new Date("2026-10-06T10:00:00Z") });
+    await setInviteNote(db, { userId, note: "Личная записка" });
+
+    await deleteUserData(db, userId);
+
+    const notes = await db.select({ note: togetherInvites.note }).from(togetherInvites).where(eq(togetherInvites.inviterId, userId));
+    expect(notes.every((row) => row.note === null)).toBe(true);
+  });
+
+  it("erases the together consent record and the pilot pass of the deleted user", async () => {
+    const { userId } = await seedUserWithResult(db, { externalId: "tg-consent" });
+    const at = new Date("2026-10-07T10:00:00Z");
+    await recordTogetherConsent(db, { userId, version: "2026-10-v2", at });
+    await grantPilotPass(db, { userId, source: "code", limit: 5, now: at });
+
+    await deleteUserData(db, userId);
+
+    expect(await hasTogetherConsent(db, userId, "2026-10-v2")).toBe(false);
+    expect(await hasPilotPass(db, userId)).toBe(false);
   });
 });
