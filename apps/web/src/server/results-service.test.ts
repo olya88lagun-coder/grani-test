@@ -23,6 +23,60 @@ beforeEach(async () => {
   db = await createTestDb();
 });
 
+describe("submitAnswers is safe to repeat", () => {
+  const MINUTE_MS = 60_000;
+
+  async function signedIn() {
+    return signSession(await createUser(), SECRET);
+  }
+
+  test("a repeated submission of the same answers returns the same result instead of creating a duplicate", async () => {
+    const session = await signedIn();
+
+    const first = await submitAnswers({ db, secret: SECRET }, allAnswers(4), session);
+    const second = await submitAnswers({ db, secret: SECRET }, allAnswers(4), session);
+
+    expect(first.kind).toBe("saved");
+    expect(second).toEqual(first);
+  });
+
+  test("different answers make a new result, and so does the same test taken again after the window", async () => {
+    const session = await signedIn();
+    const first = await submitAnswers({ db, secret: SECRET }, allAnswers(4), session);
+
+    const other = await submitAnswers({ db, secret: SECRET }, allAnswers(2), session);
+    const later = await submitAnswers({ db, secret: SECRET, now: () => new Date(Date.now() + 11 * MINUTE_MS) }, allAnswers(4), session);
+
+    expect(other).not.toEqual(first);
+    expect(later).not.toEqual(first);
+  });
+
+  test("two people with identical answers each get their own result", async () => {
+    const first = await submitAnswers({ db, secret: SECRET }, allAnswers(3), await signedIn());
+    const outcome = await upsertUserFromIdentity(
+      db,
+      { provider: "telegram", externalId: "43", displayName: "Боря", gender: null },
+      { version: "2026-09-v1", at: new Date() },
+    );
+    if (!outcome.ok) throw new Error("user was not created");
+
+    const second = await submitAnswers({ db, secret: SECRET }, allAnswers(3), await signSession(outcome.user.id, SECRET));
+
+    expect(second).not.toEqual(first);
+  });
+
+  test("saving the same pending result twice at sign-in gives one result", async () => {
+    const userId = await createUser();
+    const token = await signPending(allAnswers(5) as never, SECRET);
+
+    const first = await savePendingResult({ db, secret: SECRET }, userId, token);
+    const second = await savePendingResult({ db, secret: SECRET }, userId, token);
+
+    expect(first).not.toBeNull();
+    expect(second).toBe(first);
+  });
+});
+
 describe("parseAnswers", () => {
   test("accepts all 50 answers in range", () => {
     expect(parseAnswers(allAnswers(3))).toEqual(allAnswers(3));

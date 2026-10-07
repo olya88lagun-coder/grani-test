@@ -16,6 +16,8 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
   await boris.getByRole("link", { name: "Пройти тест" }).click();
   await answerSelfTest(boris);
   await expect(boris).toHaveURL(/\/login$/);
+  // Приглашение пары важнее посчитанного результата: вход ведёт к согласию, и вступление говорит о сравнении
+  await expect(boris.getByRole("heading", { level: 1, name: "Продолжим сравнение" })).toBeVisible();
   await boris.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Борис"))}`);
 
   // После входа партнёр возвращается к согласию, а не на свой результат
