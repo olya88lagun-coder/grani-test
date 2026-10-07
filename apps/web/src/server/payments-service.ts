@@ -34,7 +34,8 @@ export type PaymentsDeps = {
   isOwner: (userId: string) => Promise<boolean>;
 };
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "email_required" | "invalid_email" | "not_found" | "not_available" | "payment_failed" };
-export type PurchaseView = { id: string; product: Product; status: PurchaseStatus; ready: boolean; reportUrl: string; free: boolean };
+// since — с какого момента считать ожидание: создание покупки, а у оплаченной время оплаты (ISO-строка)
+export type PurchaseView = { id: string; product: Product; status: PurchaseStatus; ready: boolean; reportUrl: string; free: boolean; since: string };
 
 const REUSE_WINDOW_MS = 30 * 60_000;
 const MAX_EMAIL_LENGTH = 254;
@@ -186,7 +187,8 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   const target = purchaseTarget(purchase);
   const reportUrl = !target ? "/me" : "pairId" in target ? `/pair/${target.pairId}` : `/report/${target.resultId}`;
   const free = purchase.amountKopecks === 0;
-  if (!target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: false, reportUrl, free };
+  const since = (purchase.status === "succeeded" ? (purchase.paidAt ?? purchase.createdAt) : purchase.createdAt).toISOString();
+  if (!target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: false, reportUrl, free, since };
 
   const kinds = new Set((await listReports(deps.db, target)).map((report) => report.kind));
   const ready = jobsFor(purchase.product, target).every((job) => kinds.has(job.kind));
@@ -194,5 +196,5 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   if (purchase.status === "succeeded" && !ready) {
     for (const job of jobsFor(purchase.product, target)) if (!kinds.has(job.kind)) await deps.enqueueGenerate(job);
   }
-  return { id: purchase.id, product: purchase.product, status: purchase.status, ready, reportUrl, free };
+  return { id: purchase.id, product: purchase.product, status: purchase.status, ready, reportUrl, free, since };
 }

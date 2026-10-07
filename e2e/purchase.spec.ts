@@ -60,6 +60,11 @@ test("a canceled payment opens nothing", async ({ browser }) => {
   await page.getByRole("button", { name: "Отменить" }).click();
 
   await expect(page.getByRole("heading", { name: "Оплата не прошла" })).toBeVisible({ timeout: GENERATION_TIMEOUT });
+  await expect(page.getByText("Деньги не списаны. Можно попробовать ещё раз.")).toBeVisible();
+  // «Вернуться» ведёт к предложению, где можно купить снова, а не на общую страницу профиля
+  await page.getByRole("link", { name: "Вернуться" }).click();
+  await expect(page).toHaveURL(new RegExp(`/result/${resultId}$`));
+  await expect(page.getByRole("button", { name: /^Открыть полный разбор за 299/ })).toBeVisible();
   await page.goto(`/report/${resultId}`);
   await expect(page).toHaveURL(new RegExp(`/result/${resultId}$`));
 

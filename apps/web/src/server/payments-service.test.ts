@@ -236,10 +236,24 @@ describe("getPurchaseView", () => {
       ready: false,
       reportUrl: `/report/${anna.resultId}`,
       free: false,
+      since: NOW.toISOString(),
     });
     await saveReport(db, { target: { resultId: anna.resultId }, kind: "full", sections: {}, source: "fallback" });
     expect((await getPurchaseView(deps, { purchaseId, userId: anna.userId }))?.ready).toBe(true);
     expect(await getPurchaseView(deps, { purchaseId, userId: "00000000-0000-0000-0000-000000000000" })).toBeNull();
+  });
+
+  test("counts the waiting from the creation of an unconfirmed purchase and from the payment of a paid one", async () => {
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
+    const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
+    const purchaseId = payment.purchaseId!;
+
+    const pending = await getPurchaseView(deps, { purchaseId, userId: anna.userId });
+    expect(pending?.status).toBe("pending");
+    expect(Math.abs(Date.now() - Date.parse(pending!.since))).toBeLessThan(60_000);
+
+    gateway.complete(payment.id, "succeeded");
+    expect((await getPurchaseView(deps, { purchaseId, userId: anna.userId }))?.since).toBe(NOW.toISOString());
   });
 
   test("enqueues missing reports of a paid purchase again", async () => {
