@@ -118,7 +118,9 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await boris.getByRole("button", { name: "Выйти из пространства" }).last().click();
   await expect(boris.getByRole("button", { name: "Создать и получить приглашение" })).toBeVisible();
   await anna.reload();
-  await expect(anna.getByRole("button", { name: "Создать и получить приглашение" })).toBeVisible();
+  // Без пространства человек видит витрину; создание — на следующем шаге
+  await expect(anna.getByRole("heading", { level: 1 })).toHaveText(/Быть ближе\s*—\s*в обычные дни/);
+  await expect(anna.getByRole("link", { name: /^Создать пространство для двоих/ }).first()).toHaveAttribute("href", "/together/start");
 });
 
 test("an edit that started before the reveal is not silently turned into an edit after it", async ({ browser }) => {

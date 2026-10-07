@@ -43,6 +43,9 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
   if (!user) return <TogetherLanding enterQuery={enterQuery} />;
 
   const space = await getTogetherSpaceView({ db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL }, user.id);
+  // Вошедший человек без пространства сначала видит витрину, а не форму создания; кнопка ведёт на /together/start.
+  // Возврат с оплаты (purchase) и пара с пространством идут в экран пространства
+  if (space === null && !(purchase && PURCHASE_ID.test(purchase))) return <TogetherLanding enterQuery={enterQuery} ctaHref={`/together/start${referral ? `?from=${referral}` : ""}`} />;
   return (
     <main className="page stack" data-palette="pair">
       <p className="eyebrow">Грани · Вдвоём</p>
