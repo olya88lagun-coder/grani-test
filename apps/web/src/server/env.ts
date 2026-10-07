@@ -15,7 +15,7 @@ const envSchema = z.object({
   PAYMENTS_FAKE: z.enum(["0", "1"]).optional(),
   // Аккаунт владелицы для страницы чеков: «vk:<id ВКонтакте>»
   OWNER_IDENTITY: z.string().regex(/^vk:[^\s:]+$/).optional(),
-  // Доступ к «Вдвоём»: off — закрыто, pilot — по общему коду и приглашениям, open — всем. В продакшене без настройки — off
+  // Доступ к «Вдвоём»: open — всем (по умолчанию), pilot — по общему коду и приглашениям, off — закрыто совсем
   TOGETHER_MODE: z.enum(["off", "pilot", "open"]).optional(),
   TOGETHER_PILOT_CODE: z.string().min(12).optional(),
   TOGETHER_PILOT_LIMIT: z.coerce.number().int().min(1).max(1000).optional(),
@@ -60,7 +60,7 @@ function readPayments(env: ParsedEnv): PaymentsConfig {
 }
 
 function readTogether(env: ParsedEnv): TogetherConfig {
-  const mode = env.TOGETHER_MODE ?? (env.NODE_ENV === "production" ? "off" : "open");
+  const mode = env.TOGETHER_MODE ?? "open";
   if (mode === "pilot" && !env.TOGETHER_PILOT_CODE) fail(["TOGETHER_PILOT_CODE"]);
   return { mode, pilotCode: mode === "pilot" ? (env.TOGETHER_PILOT_CODE ?? null) : null, pilotLimit: env.TOGETHER_PILOT_LIMIT ?? DEFAULT_PILOT_LIMIT };
 }

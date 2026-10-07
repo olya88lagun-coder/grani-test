@@ -200,6 +200,7 @@ export default function HomePage() {
             <Link href="/test">Пройти тест</Link>
             <Link href="/types">16 типов</Link>
             <Link href="/compatibility">Совместимость</Link>
+            <Link href="/together">Вдвоём</Link>
             <Link href="/articles">Статьи</Link>
             <Link href="/about">О проекте</Link>
           </nav>
