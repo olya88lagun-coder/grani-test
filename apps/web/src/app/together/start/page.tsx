@@ -6,8 +6,9 @@ import { getEnv } from "@/server/env";
 import { firstName } from "@/server/friends-service";
 import { togetherAdmission } from "@/server/together-gate";
 import { pageGateDeps } from "@/server/together-gate-deps";
-import { getTogetherSpaceView } from "@/server/together-service";
+import { getTogetherClosedNotice, getTogetherSpaceView } from "@/server/together-service";
 import { currentUser } from "@/server/viewer";
+import { ClosedNotice } from "../ClosedNotice";
 import { PilotClosed } from "../PilotClosed";
 import { TogetherSpace } from "../TogetherSpace";
 import "../together-cards.css";
@@ -26,11 +27,14 @@ export default async function TogetherStartPage({ searchParams }: { searchParams
   if (admission === "needs_pass") return <PilotClosed signedIn={user !== null} enterQuery={enterQuery} />;
   if (!user) redirect(`/api/together/enter?next=space${enterQuery}`);
 
-  const space = await getTogetherSpaceView({ db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL }, user.id);
+  const deps = { db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL };
+  const space = await getTogetherSpaceView(deps, user.id);
   if (space !== null) redirect("/together");
+  const closed = await getTogetherClosedNotice(deps, { userId: user.id });
   return (
     <main className="page stack" data-palette="pair">
       <p className="eyebrow">Грани · Вдвоём</p>
+      {closed && <ClosedNotice reason={closed.reason} />}
       <TogetherSpace initial={null} referral={referral} firstName={firstName(user.displayName)} purchaseId={null} />
     </main>
   );

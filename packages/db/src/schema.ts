@@ -170,6 +170,8 @@ export const togetherMembers = pgTable(
     role: togetherRoleEnum("role").notNull(),
     joinedAt: timestamp("joined_at", { withTimezone: true }).notNull(),
     leftAt: timestamp("left_at", { withTimezone: true }),
+    // Участник прочитал сообщение о том, что пространство закрыли без него: оно показывается один раз
+    closeNoticeSeenAt: timestamp("close_notice_seen_at", { withTimezone: true }),
   },
   (t) => [
     // Не больше двух участников: по одному на роль

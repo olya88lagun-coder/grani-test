@@ -78,6 +78,13 @@
       "when": 1791314510261,
       "tag": "0010_together_consent",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791365918083,
+      "tag": "0011_together_close_notice",
+      "breakpoints": true
     }
   ]
 }

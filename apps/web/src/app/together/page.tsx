@@ -7,8 +7,9 @@ import { getEnv } from "@/server/env";
 import { firstName } from "@/server/friends-service";
 import { togetherAdmission } from "@/server/together-gate";
 import { pageGateDeps } from "@/server/together-gate-deps";
-import { getTogetherSpaceView } from "@/server/together-service";
+import { getTogetherClosedNotice, getTogetherSpaceView } from "@/server/together-service";
 import { currentUser } from "@/server/viewer";
+import { ClosedNotice } from "./ClosedNotice";
 import { PilotClosed } from "./PilotClosed";
 import { TogetherLanding } from "./TogetherLanding";
 import { TogetherSpace } from "./TogetherSpace";
@@ -42,10 +43,15 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
 
   if (!user) return <TogetherLanding enterQuery={enterQuery} />;
 
-  const space = await getTogetherSpaceView({ db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL }, user.id);
+  const deps = { db: getDb(), now: () => new Date(), appUrl: getEnv().APP_URL };
+  const space = await getTogetherSpaceView(deps, user.id);
   // Вошедший человек без пространства сначала видит витрину, а не форму создания; кнопка ведёт на /together/start.
   // Возврат с оплаты (purchase) и пара с пространством идут в экран пространства
-  if (space === null && !(purchase && PURCHASE_ID.test(purchase))) return <TogetherLanding enterQuery={enterQuery} ctaHref={`/together/start${referral ? `?from=${referral}` : ""}`} />;
+  if (space === null && !(purchase && PURCHASE_ID.test(purchase))) {
+    // Если пространство закрыл партнёр, человек один раз видит, что произошло
+    const closed = await getTogetherClosedNotice(deps, { userId: user.id });
+    return <TogetherLanding enterQuery={enterQuery} ctaHref={`/together/start${referral ? `?from=${referral}` : ""}`} notice={closed ? <ClosedNotice reason={closed.reason} /> : undefined} />;
+  }
   return (
     <main className="page stack" data-palette="pair">
       <p className="eyebrow">Грани · Вдвоём</p>

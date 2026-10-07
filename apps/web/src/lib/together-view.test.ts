@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
 import {
+  CLOSED_NOTICE_TEXT,
   formatAccessUntil,
+  inviteLine,
   POLL_INTERVAL_MS,
   POLL_MAX_ATTEMPTS,
   purchaseOutcome,
@@ -98,5 +100,36 @@ describe("polling and dates", () => {
   test("formats the end of access in the given time zone with date and time", () => {
     expect(formatAccessUntil("2026-11-05T13:30:00Z", "Europe/Moscow")).toBe("5 ноября в 16:30");
     expect(formatAccessUntil("2026-11-05T13:30:00Z", "Asia/Yekaterinburg")).toBe("5 ноября в 18:30");
+  });
+});
+
+describe("spaceScreen after the access ended", () => {
+  test("a pair whose paid access ended gets its own screen, not the one of a pair that has not paid yet", () => {
+    expect(spaceScreen(view({}, { active: false, accessUntil: null }))).toBe("ready");
+    expect(spaceScreen(view({}, { active: false, accessUntil: "2026-11-05T13:30:00Z" }))).toBe("expired");
+    expect(spaceScreen(view({}, { active: true, accessUntil: "2026-11-05T13:30:00Z", canRenew: true }))).toBe("paid");
+  });
+});
+
+describe("inviteLine", () => {
+  test("says until when the link works, or that it ended; nothing without a live link", () => {
+    expect(inviteLine({ expiresAt: "2026-10-14T10:00:00Z", expired: false }, "UTC")).toBe("Ссылка действует до 14 октября в 10:00.");
+    expect(inviteLine({ expiresAt: "2026-10-14T10:00:00Z", expired: true }, "UTC")).toBe("Срок ссылки истёк. Выпустите новую и отправьте партнёру.");
+    expect(inviteLine(null)).toBeNull();
+    expect(inviteLine(undefined)).toBeNull();
+  });
+});
+
+describe("CLOSED_NOTICE_TEXT", () => {
+  test("explains each reason without naming or blaming anyone, and points to a way forward", () => {
+    for (const reason of ["left", "account_deleted"] as const) {
+      const { title, lead } = CLOSED_NOTICE_TEXT[reason];
+      expect(title).toBe("Пространство закрыто");
+      expect(lead, reason).toMatch(/второй участник/i);
+      expect(lead, reason).toMatch(/новое пространство/i);
+      expect(lead, reason).not.toMatch(/виноват|бросил|ушёл от/i);
+    }
+    expect(CLOSED_NOTICE_TEXT.left.lead).toMatch(/вышел/);
+    expect(CLOSED_NOTICE_TEXT.account_deleted.lead).toMatch(/удалил/);
   });
 });

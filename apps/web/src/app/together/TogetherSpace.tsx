@@ -4,6 +4,7 @@ import { formatRub, TOGETHER_INVITE_NOTE_MAX, TOGETHER_PRICE_KOPECKS } from "@gr
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   formatAccessUntil,
+  inviteLine,
   POLL_INTERVAL_MS,
   POLL_MAX_ATTEMPTS,
   purchaseOutcome,
@@ -224,6 +225,11 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
           ) : (
             <p className="lead">Мы не можем восстановить прежнюю ссылку. Можно выпустить новую: старая перестанет работать.</p>
           )}
+          {inviteLine(space.invite) && (
+            <p className="muted" role="status">
+              {inviteLine(space.invite)}
+            </p>
+          )}
           {reissuing ? (
             <div className="stack">
               <p>Прежняя ссылка перестанет работать. Новую нужно отправить партнёру.</p>
@@ -256,6 +262,16 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
         <section className="card stack">
           <h1 className="display">Вы теперь вдвоём</h1>
           <p className="lead">{names(space)} подтвердили участие. Три вводные карточки доступны бесплатно, а доступ на 30 дней откроется, когда дойдёте до основного маршрута.</p>
+        </section>
+      )}
+
+      {screen === "expired" && space?.access.accessUntil && (
+        <section className="card stack">
+          <h1 className="display">Доступ закончился</h1>
+          <p className="lead">
+            Платный доступ закончился {formatAccessUntil(space.access.accessUntil)}. История ваших ответов осталась, платные карточки откроются снова после продления.
+          </p>
+          <PaymentForm idPrefix="together-expired" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={`Продлить на 30 дней за ${PRICE}`} workingLabel="Готовим оплату…" legal />
         </section>
       )}
 

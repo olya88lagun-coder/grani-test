@@ -12,10 +12,12 @@ export type SpaceView = {
   access: { active: boolean; accessUntil: string | null; stage: number; canRenew: boolean };
   // Настоящие цифры для блока «Вы уже вместе»: дни с подтверждения пары и пройденные вдвоём разговоры и свидания
   stats?: { days: number; conversations: number; dates: number };
+  // Для ожидающего пространства пригласившего: до какого времени живёт ссылка и закончилась ли она
+  invite?: { expiresAt: string; expired: boolean } | null;
 };
 export type PurchaseSnapshot = { status: "pending" | "succeeded" | "canceled" | "refunded"; granted: boolean };
 
-export type SpaceScreen = "start" | "invite" | "confirm" | "ready" | "paid" | "limit";
+export type SpaceScreen = "start" | "invite" | "confirm" | "ready" | "expired" | "paid" | "limit";
 export type PurchaseScreen = "waiting" | "delayed" | "success" | "cancelled" | "closed";
 
 export const POLL_INTERVAL_MS = 5000;
@@ -24,7 +26,8 @@ export const POLL_MAX_ATTEMPTS = 12;
 export function spaceScreen(space: SpaceView | null): SpaceScreen {
   if (!space) return "start";
   if (space.status === "pending") return space.pendingRequest ? "confirm" : "invite";
-  if (!space.access.active) return "ready";
+  // accessUntil есть только у пары, которая платила: значит, неактивный доступ с датой окончания — это закончившийся, а не ещё не начатый
+  if (!space.access.active) return space.access.accessUntil ? "expired" : "ready";
   return space.access.canRenew ? "paid" : "limit";
 }
 
@@ -59,3 +62,23 @@ export const startErrorMessage = (code: string): ActionError => ACTION_ERRORS[co
 export function formatAccessUntil(iso: string, timeZone?: string): string {
   return new Intl.DateTimeFormat("ru-RU", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit", timeZone }).format(new Date(iso));
 }
+
+// Строка о сроке ссылки приглашения; без живой ссылки её нет
+export function inviteLine(invite: SpaceView["invite"], timeZone?: string): string | null {
+  if (!invite) return null;
+  return invite.expired ? "Срок ссылки истёк. Выпустите новую и отправьте партнёру." : `Ссылка действует до ${formatAccessUntil(invite.expiresAt, timeZone)}.`;
+}
+
+export type ClosedNoticeReason = "left" | "account_deleted";
+
+// Сообщение оставшемуся участнику: без имён и без вины, с понятным выходом
+export const CLOSED_NOTICE_TEXT: Readonly<Record<ClosedNoticeReason, { title: string; lead: string }>> = {
+  left: {
+    title: "Пространство закрыто",
+    lead: "Второй участник вышел из пространства, поэтому совместная программа и доступ прекращены для обоих. Можно создать новое пространство. Условия возврата за неиспользованные дни — в оферте.",
+  },
+  account_deleted: {
+    title: "Пространство закрыто",
+    lead: "Второй участник удалил свой аккаунт, поэтому совместная программа и доступ прекращены для обоих. Можно создать новое пространство. Условия возврата за неиспользованные дни — в оферте.",
+  },
+};
