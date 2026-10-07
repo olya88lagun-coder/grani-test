@@ -46,7 +46,9 @@ test("articles cite their sources and the about page explains the method", async
 
 test("inner pages have the site header, pages a link preview and the site an icon", async ({ page, request }) => {
   await page.goto("/articles");
-  const nav = page.getByRole("navigation", { name: "Основная навигация" });
+  const menu = page.locator(".site-header summary");
+  if (await menu.isVisible()) await menu.click();
+  const nav = page.getByRole("navigation", { name: "Основная навигация" }).filter({ visible: true });
   await expect(nav.getByRole("link", { name: "16 типов" })).toBeVisible();
   await page.getByRole("link", { name: "Грани — на главную" }).click();
   await expect(page).toHaveURL(/\/$/);

@@ -1,0 +1,70 @@
+.page { --home-line: #dce1d3; }
+.page :global(.home-hero) { padding: 12px max(24px, calc((100vw - 1240px) / 2)) 72px; min-height: auto; }
+.page :global(.home-hero__grid) { grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr); gap: 48px; padding-top: 56px; align-items: center; }
+.page :global(.home-hero__copy) { display: block; }
+.page :global(.home-hero h1) { font-size: clamp(64px, 6.6vw, 96px); line-height: 1.02; max-width: 650px; }
+.page :global(.home-kicker) { font-size: 12px; line-height: 1.5; letter-spacing: .12em; }
+.page :global(.home-lead) { max-width: 470px; font-size: 17px; line-height: 1.65; margin-top: 24px; }
+.page :global(.home-hero__actions) { gap: 16px; margin-top: 28px; }
+.page :global(.button) { min-height: 52px; padding: 14px 24px; font-size: 15px; }
+.page :global(.home-time) { font-size: 13px; line-height: 1.7; }
+.page :global(.home-crystal) { min-width: 0; }
+.page :global(.home-feature-strip) { padding: 28px max(24px, calc((100vw - 1240px) / 2)); gap: 24px; border-top: 1px solid var(--home-line); border-bottom: 1px solid var(--home-line); }
+.page :global(.home-feature) { gap: 12px; min-width: 0; }
+.page :global(.home-feature__icon) { width: 40px; height: 40px; flex-basis: 40px; background: transparent; box-shadow: none; }
+.page :global(.home-feature__icon svg) { width: 30px; height: 30px; }
+.page :global(.home-section) { padding: 80px max(24px, calc((100vw - 1240px) / 2)); gap: 48px; }
+.page :global(.home-section)::before, .page :global(.home-section)::after { display: none; }
+.page :global(.home-section__copy h2) { font-size: clamp(42px, 4.3vw, 62px); line-height: 1.08; margin-bottom: 20px; }
+.page :global(.home-section__copy > p:not(.home-kicker)) { font-size: 16px; line-height: 1.75; max-width: 560px; }
+.page :global(.home-result) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
+.page :global(.home-result-card) { width: 100%; max-width: 420px; justify-self: end; border: 1px solid var(--home-line); border-radius: 20px; box-shadow: 0 12px 36px #3543330b; backdrop-filter: none; padding: 24px; }
+.page :global(.home-result-card h3) { font-family: var(--font-cormorant), Georgia, serif; font-size: 42px; text-transform: none; font-weight: 400; }
+.page :global(.home-result-card__art) { height: 170px; }
+.page :global(.home-note-cards) { grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.page :global(.home-note-card) { padding: 26px; border: 1px solid var(--home-line); border-radius: 16px; box-shadow: none; }
+.page :global(.home-note-card h3) { font-size: 30px; line-height: 1.15; }
+.page :global(.home-note-card p) { font-size: 15px; line-height: 1.65; }
+.page :global(.home-types), .page :global(.home-articles) { grid-template-columns: minmax(0, 1fr); }
+.page :global(.home-type-carousel) { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
+.page :global(.home-type-card) { display: flex; flex-direction: column; min-width: 0; padding: 20px; min-height: 0; border-radius: 16px; box-shadow: none; border: 1px solid var(--home-line); }
+.page :global(.home-type-card__art) { min-height: 0; height: 170px; }
+.page :global(.home-type-card h3) { font-family: var(--font-cormorant), Georgia, serif; font-size: 30px; text-transform: none; letter-spacing: 0; font-weight: 400; line-height: 1.15; overflow-wrap: anywhere; }
+.page :global(.home-type-card p) { min-height: 0; font-size: 14px; line-height: 1.6; }
+.page :global(.home-type-card > a), .page :global(.home-article-card > a) { position: static; width: 100%; min-height: 48px; height: auto; margin-top: auto; padding: 12px 0 0; display: flex; align-items: center; justify-content: space-between; border-radius: 0; border: 0; border-top: 1px solid var(--home-line); background: transparent; box-shadow: none; font-size: 14px; line-height: 1.4; gap: 12px; }
+.page :global(.home-type-card > a span:last-child), .page :global(.home-article-card > a span:last-child) { font-size: 22px; }
+.page :global(.home-article-grid) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.page :global(.home-article-card) { display: flex; flex-direction: column; padding-bottom: 20px; box-shadow: none; border: 1px solid var(--home-line); border-radius: 16px; }
+.page :global(.home-article-card > a) { width: auto; margin: 16px 22px 0; }
+.page :global(.home-article-card h3) { font-size: 32px; line-height: 1.15; }
+.page :global(.home-pair) { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
+@media (max-width: 1100px) {
+  .page :global(.home-hero__grid) { gap: 24px; }
+  .page :global(.home-feature-strip) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .page :global(.home-type-carousel) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .page :global(.home-pair) { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .page :global(.home-hero) { padding: 8px 20px 40px; }
+  .page :global(.home-hero__grid) { grid-template-columns: minmax(0, 1fr); padding-top: 32px; gap: 24px; }
+  .page :global(.home-hero h1) { font-size: clamp(50px, 12vw, 68px); line-height: 1.04; }
+  .page :global(.home-lead) { font-size: 16px; margin-top: 20px; }
+  .page :global(.home-crystal) { max-width: 500px; width: 100%; justify-self: center; }
+  .page :global(.home-feature-strip) { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 24px 20px; gap: 22px 12px; }
+  .page :global(.home-feature:last-child) { grid-column: 1 / -1; }
+  .page :global(.home-feature) { gap: 8px; }
+  .page :global(.home-feature b), .page :global(.home-feature small) { font-size: 12px; line-height: 1.5; }
+  .page :global(.home-section) { padding: 48px 20px; gap: 28px; }
+  .page :global(.home-section__copy h2) { font-size: 42px; }
+  .page :global(.home-result) { grid-template-columns: minmax(0, 1fr); }
+  .page :global(.home-result-card) { justify-self: center; padding: 20px; }
+  .page :global(.home-note-cards) { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .page :global(.home-note-card) { padding: 20px; }
+  .page :global(.home-type-carousel) { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .page :global(.home-type-card) { display: grid; grid-template-columns: 80px minmax(0, 1fr); column-gap: 20px; row-gap: 8px; padding: 16px; }
+  .page :global(.home-type-card__art) { grid-row: 1 / 4; height: 130px; }
+  .page :global(.home-type-card h3) { font-size: 30px; margin: 0; }
+  .page :global(.home-type-card p) { margin: 0; }
+  .page :global(.home-type-card > a) { grid-column: 2; }
+  .page :global(.home-article-grid) { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}
