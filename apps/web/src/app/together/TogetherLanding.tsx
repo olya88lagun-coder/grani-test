@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
+import { PAIR_PRODUCTS } from "@/lib/pair-products";
 import { TOGETHER_MONTHS, TOGETHER_TRACK } from "@grani/content/together";
 import { TOGETHER_SEASON } from "@grani/content/together-season";
 import { formatRub, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/core";
@@ -125,6 +126,7 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
     <section className={`${styles.section} ${styles.faq}`} aria-labelledby="faq-title">
       <p className={styles.eyebrow}>Перед первым вопросом</p><h2 id="faq-title">Частые вопросы</h2>
       <details><summary>Нужно ли проходить тест личности?</summary><p>Нет. «Вдвоём» работает независимо от теста Big Five. Для участия нужны два личных аккаунта.</p></details>
+      <details><summary>Чем «Вдвоём» отличается от разбора совместимости?</summary><p>{PAIR_PRODUCTS.compatibility.title}: {PAIR_PRODUCTS.compatibility.summary} {PAIR_PRODUCTS.compatibility.needsTest} «Вдвоём»: {PAIR_PRODUCTS.together.summary} {PAIR_PRODUCTS.together.needsTest} Продукты не заменяют друг друга и покупаются отдельно. <a href="/compatibility">О разборе совместимости</a>.</p></details>
       <details><summary>Партнёр сразу увидит мои ответы?</summary><p>Нет. Каждый отвечает самостоятельно. Ответы карточки открываются, когда ответили оба.</p></details>
       <details><summary>Что будет, если один из нас выйдет?</summary><p>Совместная программа и доступ прекратятся для обоих. Остаток срока автоматически не переносится. Плательщик может запросить возврат за неиспользованные сутки по <a href="/offer">условиям оферты</a>.</p></details>
       <details><summary>Где хранятся ответы и как удалить данные?</summary><p>Данные хранятся {DATA_STORAGE}. Условия хранения и удаления описаны в <a href="/privacy">политике</a>. Удаление аккаунта доступно в <a href="/me/delete">личном кабинете</a>.</p></details>
