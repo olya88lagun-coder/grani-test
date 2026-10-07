@@ -33,7 +33,7 @@ export function LoginPanel({ hasPendingResult }: { hasPendingResult: boolean }) 
           <label className="choice">
             <input type="checkbox" checked={agreed} onChange={(event) => setAgreed(event.target.checked)} />
             <span>
-              Я соглашаюсь на <Link href="/consent">обработку персональных данных</Link> в соответствии с{" "}
+              Мне есть 14 лет. Я соглашаюсь на <Link href="/consent">обработку персональных данных</Link> в соответствии с{" "}
               <Link href="/privacy">политикой</Link>
             </span>
           </label>

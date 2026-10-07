@@ -14,7 +14,6 @@ const FULL_SECTIONS = [
   "Сильные стороны",
   "Слепые зоны и что с ними делать",
   "Инструкция по применению меня: как с тобой работать, спорить и что тебя бесит",
-  "«Как меня видят другие» — когда ответят трое друзей",
 ] as const;
 
 export default function PricingPage() {
@@ -40,6 +39,9 @@ export default function PricingPage() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
+            <p className="muted">
+              Без доплаты: раздел «Как меня видят другие» — он появляется, когда на вопросы о вас ответят трое друзей, и в цену разбора не входит.
+            </p>
             <div className="pricing-card__cta">
               <Link className="button" href="/test">
                 Пройти тест <span aria-hidden="true">→</span>
