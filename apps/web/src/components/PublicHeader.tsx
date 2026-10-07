@@ -48,7 +48,6 @@ export function PublicHeader({ pathname, home = false, focused = false }: Header
           <Link
             key={link.href}
             href={link.href}
-            className={link.href === "/together" ? styles.together : undefined}
             aria-current={pathname.startsWith(link.href) ? "page" : undefined}
             onClick={mobile ? () => {
               const menu = menuRef.current;
@@ -65,7 +64,7 @@ export function PublicHeader({ pathname, home = false, focused = false }: Header
   }
 
   return (
-    <header className={`${home ? "" : "site-header "}${styles.header}${home ? ` ${styles.home}` : ""}`}>
+    <header className={`public-header ${home ? "" : "site-header "}${styles.header}${home ? ` ${styles.home}` : ""}`}>
       <div className={styles.inner}>
         <Link className={styles.brand} href="/" aria-label="Грани — на главную">
           <TypeGem shape="hexagon" size={28} />

@@ -17,15 +17,17 @@ const LINKS = [
 
 export function Footer() {
   return (
-    <footer className="page footer">
-      <nav aria-label="Документы и разделы">
-        {LINKS.map((link) => (
-          <Link key={link.href} href={link.href}>
-            {link.label}
-          </Link>
-        ))}
-        <CookieSettingsButton />
-      </nav>
+    <footer className="footer">
+      <div className="footer__inner">
+        <nav aria-label="Документы и разделы">
+          {LINKS.map((link) => (
+            <Link key={link.href} href={link.href}>
+              {link.label}
+            </Link>
+          ))}
+          <CookieSettingsButton />
+        </nav>
+      </div>
     </footer>
   );
 }
