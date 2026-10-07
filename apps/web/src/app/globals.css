@@ -1387,6 +1387,21 @@ body.has-cookie-banner { padding-bottom: 220px; }
 }
 
 body .level-grid > .level-card { margin-top: 0; }
+
+/* Пять разделов разбора пары: на телефоне в столбик, дальше в две колонки; нечётная последняя карточка во всю ширину, чтобы не оставалось дыры */
+.pair-sections {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+body .pair-sections > .card { margin-top: 0; }
+.pair-sections h3 { font-size: 26px; }
+
+@media (min-width: 700px) {
+  .pair-sections { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pair-sections > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+}
 .level-card h3 { font-size: 26px; }
 
 /* Уровни: высокий — тёмно-зелёная карточка, остальные светлые с тёплой подсветкой; проценты — румянцем */

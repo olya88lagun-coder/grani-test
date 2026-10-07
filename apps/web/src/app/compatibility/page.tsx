@@ -4,6 +4,7 @@ import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { TestCta } from "@/components/TestCta";
+import { PAIR_SECTION_PITCH, PAIR_SECTION_TITLES } from "@/lib/pair-view";
 import { publicMetadata } from "@/lib/seo";
 
 const DESCRIPTION = "Пройдите тест вдвоём и узнайте процент совместимости по Большой пятёрке. Бесплатно — типы обоих и процент, подробный разбор пары — по желанию.";
@@ -37,6 +38,7 @@ function PairActions() {
 // Палитра главной вместо «Глины»: розовый остаётся только акцентом — надзаголовок, сердце, проценты уровней
 export default function CompatibilityPage() {
   const library = getLibrary();
+  const price = formatRub(PRODUCT_PRICES.pair);
   return (
     <main className="inner-page inner-page--pair">
       <article className="page page--wide stack">
@@ -69,13 +71,56 @@ export default function CompatibilityPage() {
             <li>Вы проходите тест — 50 утверждений, около 10 минут.</li>
             <li>На странице своего результата, в блоке «Посмотреть, как вы сочетаетесь», нажимаете «Позвать партнёра» и отправляете ссылку.</li>
             <li>Партнёр проходит тест и соглашается показать результат вам — без согласия пара не создаётся.</li>
-            <li>
-              Вы оба видите типы друг друга и процент совместимости. Разбор пары — {formatRub(PRODUCT_PRICES.pair)}, открывается обоим,
-              платит один.
-            </li>
+            <li>Вы оба видите типы друг друга и процент совместимости, это бесплатно. Захотите разобраться глубже — откроете разбор пары: одна оплата, доступ обоим.</li>
           </ol>
           <p>Выйти из пары можно в любой момент — страница пары и разбор скроются у обоих.</p>
           <PairActions />
+        </section>
+
+        <section className="inner-block stack" aria-labelledby="pair-familiar">
+          <h2 id="pair-familiar">Знакомо?</h2>
+          <ul className="stack">
+            <li>Один планирует на месяц вперёд, другой решает по настроению.</li>
+            <li>Один хочет обсудить сразу, другому нужно время побыть с мыслями.</li>
+            <li>По-разному смотрите на порядок дома и на деньги.</li>
+            <li>Хочется поддержать, но не всегда понятно, как именно.</li>
+          </ul>
+          <p>Это не поломка, а разные характеры. Разбор пары называет эти различия словами и подсказывает, о чём договориться.</p>
+        </section>
+
+        <section className="inner-block stack" aria-labelledby="pair-report-inside">
+          <p className="eyebrow">Платный разбор · {price}</p>
+          <h2 id="pair-report-inside">Процент — это начало. Разбор объясняет, что за ним</h2>
+          <p className="lead">
+            Это не общий текст для всех пар: разбор собран из результатов вас обоих — как ваши пять черт сочетаются в каждой теме. Он говорит о вас как о паре, без «кто прав»
+            и «кто виноват».
+          </p>
+          <div className="pair-sections" role="list" aria-label="Пять разделов разбора пары">
+            {(Object.keys(PAIR_SECTION_TITLES) as (keyof typeof PAIR_SECTION_TITLES)[]).map((key, index) => (
+              <section key={key} role="listitem" className="card stack">
+                <p className="eyebrow">Раздел {index + 1}</p>
+                <h3>{PAIR_SECTION_TITLES[key]}</h3>
+                <p>{PAIR_SECTION_PITCH[key]}</p>
+              </section>
+            ))}
+          </div>
+          <div className="card card--paper stack" aria-labelledby="pair-price-title">
+            <h3 id="pair-price-title">Что бесплатно, а что за {price}</h3>
+            <ul className="stack">
+              <li>
+                <strong>Бесплатно:</strong> типы обоих, процент совместимости, пояснение вашего уровня и из чего сложился процент.
+              </li>
+              <li>
+                <strong>За {price}:</strong> пять разделов разбора, развёрнутым текстом по вашим результатам.
+              </li>
+              <li>Одна оплата открывает разбор обоим, платит один. Это разовая покупка, без подписки.</li>
+              <li>Разбор появляется примерно через минуту после оплаты, чек самозанятого приходит на указанную почту.</li>
+              <li>
+                Условия возврата — в <Link href="/offer">оферте</Link>.
+              </li>
+            </ul>
+            <PairActions />
+          </div>
         </section>
 
         <section className="inner-block stack">
