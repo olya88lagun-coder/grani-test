@@ -296,6 +296,9 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
 
       {space && (
         <section className="stack">
+          <p className="muted">
+            <a href="/together/about">Как «Вдвоём» выглядит для тех, кто видит его впервые</a>
+          </p>
           {!leaving && <button type="button" className="button button--ghost" onClick={() => setLeaving(true)}>Выйти из пространства</button>}
           {leaving && (
             <div className="card stack" role="dialog" aria-labelledby="leave-title">

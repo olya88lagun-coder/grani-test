@@ -11,7 +11,7 @@ export function togetherEntryValue(entry: string | null, token: string | null): 
 }
 
 export function togetherReturnPath(value: string | null | undefined): string | null {
-  if (value === "space") return "/together";
+  if (value === "space") return "/together/start";
   if (value?.startsWith(INVITE_PREFIX)) {
     const token = value.slice(INVITE_PREFIX.length);
     return isInviteToken(token) ? `/together/invite/${token}` : null;

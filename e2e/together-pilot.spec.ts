@@ -37,6 +37,8 @@ test("the pilot lets in people with the code or an invite and shows outsiders no
   // Верный код с экрана открывает обычное пространство
   await anna.getByLabel("Код доступа").fill(CODE);
   await anna.getByRole("button", { name: "Войти по коду" }).click();
+  // После кода человек видит витрину и идёт к созданию пространства
+  await anna.getByRole("link", { name: /^Создать пространство для двоих/ }).click();
   await anna.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await anna.getByRole("button", { name: "Создать и получить приглашение" }).click();
   await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();

@@ -36,9 +36,18 @@ function Example({ kind, title, text, className = "" }: { kind: string; title: s
   </article>;
 }
 
-export function TogetherLanding({ enterQuery }: { enterQuery: string }) {
-  const enterHref = `/api/together/enter?next=space${enterQuery}`;
-  const cta = (label = "Создать пространство для двоих") => <a className={styles.cta} href={enterHref}>{label}<span aria-hidden="true">↗</span></a>;
+type Props = {
+  // Для не вошедшего человека кнопка ведёт во вход с возвратом к созданию пространства
+  enterQuery: string;
+  // Для вошедшего человека без пространства кнопка ведёт сразу к созданию
+  ctaHref?: string;
+  // Для пары, у которой пространство уже есть: все кнопки ведут обратно в пространство
+  member?: boolean;
+};
+
+export function TogetherLanding({ enterQuery, ctaHref, member = false }: Props) {
+  const enterHref = member ? "/together" : (ctaHref ?? `/api/together/enter?next=space${enterQuery}`);
+  const cta = (label = "Создать пространство для двоих") => <a className={styles.cta} href={enterHref}>{member ? "Открыть моё пространство" : label}<span aria-hidden="true">↗</span></a>;
   return <main className={styles.landing} data-palette="pair">
     <section className={styles.hero} aria-labelledby="together-title">
       <div className={styles.heroInner}>
