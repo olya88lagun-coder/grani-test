@@ -1,5 +1,5 @@
 import type { Answers, Stability, TraitScores, TypeCode } from "@grani/core";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { results } from "./schema";
 import type { Database } from "./types";
 import { isUuid } from "./uuid";
@@ -25,6 +25,19 @@ function toRecord(row: ResultRow): ResultRecord {
 export async function createResult(db: Database, input: NewResult): Promise<ResultRecord> {
   const [row] = await db.insert(results).values(input).returning();
   return toRecord(row!);
+}
+
+// Результат того же человека с точно такими же ответами, сделанный не раньше since: так повторная отправка
+// (двойной клик, повтор после потерянного ответа) не создаёт дубликат. jsonb сравнивается без учёта порядка ключей
+export async function findRecentResultWithAnswers(db: Database, p: { userId: string; answers: Answers; since: Date }): Promise<ResultRecord | null> {
+  if (!isUuid(p.userId)) return null;
+  const [row] = await db
+    .select()
+    .from(results)
+    .where(and(eq(results.userId, p.userId), gte(results.createdAt, p.since), sql`${results.answers} = ${JSON.stringify(p.answers)}::jsonb`))
+    .orderBy(desc(results.createdAt))
+    .limit(1);
+  return row ? toRecord(row) : null;
 }
 
 export async function getResultForOwner(db: Database, resultId: string, userId: string): Promise<ResultRecord | null> {

@@ -9,11 +9,11 @@ import {
   type TraitScores,
   type TypeCode,
 } from "@grani/core";
-import { createResult, getUser, type Database } from "@grani/db";
+import { createResult, findRecentResultWithAnswers, getUser, type Database } from "@grani/db";
 import { signPending, verifyPending, verifySession } from "./auth/tokens";
 
 export type ComputedResult = { scores: TraitScores; typeCode: TypeCode; stability: Stability };
-export type ResultsDeps = { db: Database; secret: string };
+export type ResultsDeps = { db: Database; secret: string; now?: () => Date };
 export type SubmitOutcome = { kind: "saved"; resultId: string } | { kind: "pending"; pendingToken: string } | { kind: "invalid" };
 
 const ITEM_IDS = new Set(SELF_ITEMS.map((item) => item.id));
@@ -41,8 +41,14 @@ export function computeResult(answers: Answers): ComputedResult {
   return { scores, typeCode: typeCodeOf(scores), stability: stabilityOf(scores) };
 }
 
-async function saveFor(db: Database, userId: string, answers: Answers): Promise<string> {
-  const created = await createResult(db, { userId, answers, ...computeResult(answers) });
+// Те же ответы того же человека в течение этого окна считаются повторной отправкой того же теста, а не новым прохождением
+const REPEAT_WINDOW_MS = 10 * 60_000;
+
+async function saveFor(deps: ResultsDeps, userId: string, answers: Answers): Promise<string> {
+  const since = new Date((deps.now?.() ?? new Date()).getTime() - REPEAT_WINDOW_MS);
+  const existing = await findRecentResultWithAnswers(deps.db, { userId, answers, since });
+  if (existing) return existing.id;
+  const created = await createResult(deps.db, { userId, answers, ...computeResult(answers) });
   return created.id;
 }
 
@@ -50,12 +56,12 @@ export async function submitAnswers(deps: ResultsDeps, raw: unknown, sessionToke
   const answers = parseAnswers(raw);
   if (!answers) return { kind: "invalid" };
   const userId = sessionToken ? await verifySession(sessionToken, deps.secret) : null;
-  if (userId && (await getUser(deps.db, userId))) return { kind: "saved", resultId: await saveFor(deps.db, userId, answers) };
+  if (userId && (await getUser(deps.db, userId))) return { kind: "saved", resultId: await saveFor(deps, userId, answers) };
   return { kind: "pending", pendingToken: await signPending(answers, deps.secret) };
 }
 
 export async function savePendingResult(deps: ResultsDeps, userId: string, pendingToken: string | null): Promise<string | null> {
   if (!pendingToken) return null;
   const answers = parseAnswers(await verifyPending(pendingToken, deps.secret));
-  return answers ? saveFor(deps.db, userId, answers) : null;
+  return answers ? saveFor(deps, userId, answers) : null;
 }

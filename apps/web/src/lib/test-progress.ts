@@ -45,6 +45,9 @@ export const SUBMIT_ERRORS: Readonly<Record<string, string>> = {
   not_found: "Ссылка не работает. Попросите прислать её ещё раз.",
 };
 
+// Показывается, только когда браузер действительно отказал в сохранении (частный режим, запрет хранилища)
+export const STORAGE_UNAVAILABLE_NOTICE = "Браузер не сохраняет прогресс на этом устройстве. Не обновляйте и не закрывайте страницу до конца теста.";
+
 const SUBMIT_FALLBACK = "Не получилось отправить ответы. Проверьте интернет и попробуйте ещё раз.";
 
 export function submitErrorMessage(code: string | undefined): string {
