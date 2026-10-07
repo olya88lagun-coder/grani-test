@@ -28,6 +28,8 @@ export type PaymentsDeps = {
   appUrl: string;
   now: () => Date;
   enqueueGenerate: (job: GenerateJob) => Promise<void>;
+  // Оплата принята, чек владелица формирует вручную: напоминание уходит ей одним сообщением на окно времени
+  remindReceipts: (now: Date) => Promise<void>;
   // Владелица сайта получает разборы бесплатно — без ЮKassa и без чека
   isOwner: (userId: string) => Promise<boolean>;
 };
@@ -86,7 +88,17 @@ async function enqueuePaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
   for (const job of jobs) await deps.enqueueGenerate(job);
 }
 
+// Напоминание о чеке не должно ломать выдачу оплаченного: при сбое оплата остаётся в списке на странице чеков
+async function remindAboutReceipt(deps: PaymentsDeps): Promise<void> {
+  try {
+    await deps.remindReceipts(deps.now());
+  } catch (error) {
+    console.error("receipts reminder failed", { error: String(error) });
+  }
+}
+
 async function fulfillPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promise<void> {
+  await remindAboutReceipt(deps);
   if (!isTogetherProduct(purchase.product)) return enqueuePaid(deps, purchase);
   const outcome = await healTogetherAccess(deps, purchase.id);
   // Деньги приняты, а доступ выдать нельзя (пространство закрыто): покупка попадёт в список владельца

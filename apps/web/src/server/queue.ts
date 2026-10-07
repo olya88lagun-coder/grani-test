@@ -19,10 +19,14 @@ function queue(): Promise<PgBoss> {
   return holder.__graniQueue;
 }
 
-export async function enqueueNotify(job: NotifyJob): Promise<void> {
+export async function enqueueNotify(job: NotifyJob, options: { startAfterSeconds?: number } = {}): Promise<void> {
   try {
     const boss = await queue();
-    await boss.send(QUEUES.notify, job, { ...NOTIFY_JOB_OPTIONS, id: jobIdFor(notifyJobKey(job)) });
+    await boss.send(QUEUES.notify, job, {
+      ...NOTIFY_JOB_OPTIONS,
+      id: jobIdFor(notifyJobKey(job)),
+      ...(options.startAfterSeconds ? { startAfter: options.startAfterSeconds } : {}),
+    });
   } catch (error) {
     // Действие пользователя уже сохранено; потерянное уведомление не должно его ломать
     console.error("enqueue notify failed", { kind: job.kind, error: String(error) });

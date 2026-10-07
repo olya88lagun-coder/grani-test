@@ -62,6 +62,11 @@ export async function upsertUserFromIdentity(
   return { ok: true, created: true, user: { id: user.id, displayName: identity.displayName, gender: identity.gender } };
 }
 
+// Кто стоит за внешним идентификатором (например, владелица по OWNER_IDENTITY); удалённого пользователя и неизвестный идентификатор находит как null
+export async function findUserIdByIdentity(db: Database, identity: { provider: AuthProvider; externalId: string }): Promise<string | null> {
+  return (await findOwner(db, identity.provider, identity.externalId))?.userId ?? null;
+}
+
 export async function getUser(db: Database, userId: string): Promise<UserRecord | null> {
   if (!isUuid(userId)) return null;
   const [row] = await db

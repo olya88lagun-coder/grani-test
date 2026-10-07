@@ -1,11 +1,12 @@
-import { hasIdentity } from "@grani/db";
+import { receiptsReminderWindow } from "@grani/core";
+import { findUserIdByIdentity, hasIdentity } from "@grani/db";
 import { getDb } from "./db";
 import { getEnv, type PaymentsConfig } from "./env";
 import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { PaymentGateway } from "./payments/gateway";
 import { createYooKassaGateway } from "./payments/yookassa";
 import type { PaymentsDeps } from "./payments-service";
-import { enqueueGenerate } from "./queue";
+import { enqueueGenerate, enqueueNotify } from "./queue";
 
 export function createGateway(config: PaymentsConfig, p: { appUrl: string; fetchFn: typeof fetch }): PaymentGateway | null {
   if (!config) return null;
@@ -20,7 +21,15 @@ export function paymentsDeps(): PaymentsDeps | null {
   const db = getDb();
   const owner = env.owner;
   const isOwner = async (userId: string) => owner !== null && (await hasIdentity(db, userId, owner));
-  return { db, gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate, isOwner };
+  // Владелицу сайта находим по OWNER_IDENTITY; без неё напоминать некому, чеки остаются на странице
+  const remindReceipts = async (now: Date) => {
+    if (owner === null) return;
+    const ownerUserId = await findUserIdByIdentity(db, owner);
+    if (ownerUserId === null) return;
+    const { bucket, delaySeconds } = receiptsReminderWindow(now);
+    await enqueueNotify({ kind: "receipts_pending", bucket, ownerUserId }, { startAfterSeconds: delaySeconds });
+  };
+  return { db, gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate, remindReceipts, isOwner };
 }
 
 export function fakeGateway(): FakeGateway | null {

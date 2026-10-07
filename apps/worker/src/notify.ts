@@ -1,8 +1,8 @@
 import { compatibilityScore, type NotifyJob } from "@grani/core";
-import { getActivePair, getFriendAnsweredNotice, getNotifyTargets, getReportById, getResult, setCanNotify, type Database } from "@grani/db";
+import { getActivePair, getFriendAnsweredNotice, getNotifyTargets, getReportById, getResult, listReceiptsToSend, setCanNotify, type Database } from "@grani/db";
 import type { Logger } from "./log";
 import type { Senders } from "./senders";
-import { chaptersReadyText, friendAnsweredText, pairCreatedText, reportReadyText } from "./texts";
+import { chaptersReadyText, friendAnsweredText, pairCreatedText, receiptsPendingText, reportReadyText } from "./texts";
 
 export type NotifyDeps = { db: Database; senders: Senders; appUrl: string; log: Logger };
 
@@ -70,6 +70,15 @@ async function notifyChaptersReady(deps: NotifyDeps, job: Extract<NotifyJob, { k
   return (await deliver(deps, result.userId, chaptersReadyText(new URL(`/report/${result.id}`, deps.appUrl).toString()))) !== "failed";
 }
 
+// Чеки владелица формирует в «Мой налог» вручную. Число и сумма берутся на момент отправки: в окно могло попасть несколько оплат
+async function notifyReceiptsPending(deps: NotifyDeps, job: Extract<NotifyJob, { kind: "receipts_pending" }>): Promise<boolean> {
+  const receipts = await listReceiptsToSend(deps.db);
+  if (receipts.length === 0) return true;
+  const total = receipts.reduce((sum, receipt) => sum + receipt.amountKopecks, 0);
+  const url = new URL("/admin/receipts", deps.appUrl).toString();
+  return (await deliver(deps, job.ownerUserId, receiptsPendingText(receipts.length, total, url))) !== "failed";
+}
+
 export async function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void> {
   const done =
     job.kind === "friend_answered"
@@ -78,6 +87,8 @@ export async function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void>
         ? await notifyPairCreated(deps, job)
         : job.kind === "report_ready"
           ? await notifyReportReady(deps, job)
-          : await notifyChaptersReady(deps, job);
+          : job.kind === "receipts_pending"
+            ? await notifyReceiptsPending(deps, job)
+            : await notifyChaptersReady(deps, job);
   if (!done) throw new Error(`Notification ${job.kind} was not delivered, retry later`);
 }

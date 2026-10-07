@@ -54,7 +54,7 @@ beforeEach(async () => {
   gateway = createFakeGateway({ appUrl: APP_URL, store });
   clock = START;
   enqueue = vi.fn<(job: GenerateJob) => Promise<void>>().mockResolvedValue(undefined);
-  deps = { db, gateway, appUrl: APP_URL, now: () => clock, enqueueGenerate: enqueue, isOwner: async () => false };
+  deps = { db, gateway, appUrl: APP_URL, now: () => clock, enqueueGenerate: enqueue, remindReceipts: vi.fn().mockResolvedValue(undefined), isOwner: async () => false };
   space = await seedTogetherSpace(db);
 });
 

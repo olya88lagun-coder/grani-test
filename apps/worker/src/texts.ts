@@ -1,4 +1,4 @@
-import { MIN_FRIENDS, type ReportKind } from "@grani/core";
+import { formatRub, MIN_FRIENDS, type ReportKind } from "@grani/core";
 
 export function friendAnsweredText(friendsCount: number, url: string): string {
   if (friendsCount < MIN_FRIENDS) {
@@ -28,4 +28,9 @@ export function reportReadyText(kind: ReportKind, url: string): string {
 
 export function chaptersReadyText(url: string): string {
   return `Готово: все четыре главы. Открыть: ${url}`;
+}
+
+// Только число и сумма: ни имён, ни почты, ни номеров платежей. Подробности владелица видит на странице за входом
+export function receiptsPendingText(count: number, totalKopecks: number, url: string): string {
+  return `Чеков к отправке: ${count} на ${formatRub(totalKopecks)}. Открыть: ${url}`;
 }
