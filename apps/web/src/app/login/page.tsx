@@ -9,6 +9,7 @@ import { confirmPendingResult, resolveLoginContext } from "@/server/login-contex
 import { currentUser } from "@/server/viewer";
 import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { LoginPanel } from "./LoginPanel";
+import styles from "./login.module.css";
 
 export const metadata: Metadata = { title: "Вход" };
 
@@ -22,19 +23,20 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const [context, hasPendingResult] = await Promise.all([resolveLoginContext(cookieValues, secret), confirmPendingResult(cookieValues.pending, secret)]);
   const intro = LOGIN_INTRO[context];
   return (
-    <main className="page stack inner-text">
-      <p className="eyebrow">Грани</p>
-      <h1 className="display">{intro.title}</h1>
-      {message && (
-        <p className="error" role="alert">
-          {message}
-        </p>
-      )}
-      <InAppBrowserNotice place="login" hasPendingResult={hasPendingResult} />
-      <div className="card">
-        <LoginPanel lead={intro.lead} />
+    <main className={`inner-page ${styles.page}`}>
+      <div className={styles.container}>
+        <InAppBrowserNotice place="login" hasPendingResult={hasPendingResult} />
+        <section className={styles.panel} aria-labelledby="login-title">
+          <h1 className={styles.title} id="login-title">{intro.title}</h1>
+          {message && (
+            <p className={`error ${styles.error}`} role="alert">
+              {message}
+            </p>
+          )}
+          <LoginPanel lead={intro.lead} />
+        </section>
+        <InAppBrowserNotice place="login-fallback" hasPendingResult={hasPendingResult} />
       </div>
-      <InAppBrowserNotice place="login-fallback" hasPendingResult={hasPendingResult} />
     </main>
   );
 }
