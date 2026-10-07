@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export function LoginPanel({ hasPendingResult }: { hasPendingResult: boolean }) {
+export function LoginPanel({ lead }: { lead: string }) {
   const [agreed, setAgreed] = useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -22,11 +22,7 @@ export function LoginPanel({ hasPendingResult }: { hasPendingResult: boolean }) 
 
   return (
     <div className="stack">
-      <p className="lead">
-        {hasPendingResult
-          ? "Результат посчитан. Войдите, чтобы увидеть и сохранить его."
-          : "Войдите, чтобы открыть свои результаты."}
-      </p>
+      <p className="lead">{lead}</p>
 
       {!ready && (
         <>

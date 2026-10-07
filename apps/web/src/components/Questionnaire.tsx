@@ -14,6 +14,7 @@ import {
   pageCount,
   pageItems,
   parseStoredProgress,
+  STORAGE_UNAVAILABLE_NOTICE,
   submitErrorMessage,
   withAnswer,
 } from "@/lib/test-progress";
@@ -42,12 +43,14 @@ function readStorage(key: string): string | null {
   }
 }
 
-function writeStorage(key: string, value: string | null): void {
+// false — браузер не дал сохранить: вопросы проходятся, но прогресс не переживёт перезагрузку, и человеку об этом нужно сказать
+function writeStorage(key: string, value: string | null): boolean {
   try {
     if (value === null) window.localStorage.removeItem(key);
     else window.localStorage.setItem(key, value);
+    return true;
   } catch {
-    // Без localStorage вопросы проходятся, просто прогресс не переживёт перезагрузку
+    return false;
   }
 }
 
@@ -58,6 +61,9 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
   const [restored, setRestored] = useState(false);
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [storageFailed, setStorageFailed] = useState(false);
+  // Состояние обновляется после отрисовки, поэтому второй быстрый щелчок успевает пройти: отправку закрывает ref
+  const sendingRef = useRef(false);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // localStorage есть только в браузере, поэтому прогресс восстанавливается после гидратации
@@ -79,7 +85,7 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
     const next = withAnswer(answers, id, value);
     if (trackProgress) for (const goal of progressGoalsCrossed(before, answeredCount(items, next), items.length)) reachGoal(goal);
     setAnswers(next);
-    writeStorage(storageKey, JSON.stringify(next));
+    setStorageFailed(!writeStorage(storageKey, JSON.stringify(next)));
   }
 
   function goTo(nextPage: number) {
@@ -90,6 +96,8 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
   }
 
   async function submit() {
+    if (sendingRef.current) return;
+    sendingRef.current = true;
     setSending(true);
     setError(null);
     try {
@@ -109,6 +117,7 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
     } catch {
       setError(submitErrorMessage(undefined));
     }
+    sendingRef.current = false;
     setSending(false);
   }
 
@@ -148,6 +157,12 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
           </div>
         </fieldset>
       ))}
+
+      {storageFailed && (
+        <p className="muted" role="status">
+          {STORAGE_UNAVAILABLE_NOTICE}
+        </p>
+      )}
 
       {error && (
         <p className="error" role="alert">

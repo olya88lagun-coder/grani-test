@@ -17,7 +17,7 @@ test("passes the test, logs in and sees the saved result with a story card", asy
   await answerSelfTest(page);
 
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByText("Результат посчитан")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Осталось увидеть результат" })).toBeVisible();
   await expect(page.getByRole("checkbox")).not.toBeChecked();
   await expect(page.getByRole("button", { name: "Продолжить" })).toBeDisabled();
 

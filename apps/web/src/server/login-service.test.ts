@@ -51,7 +51,7 @@ describe("completeLogin", () => {
     const toInvite = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, together: `invite:${token}` });
     const tampered = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, together: "https://evil.example" });
 
-    expect(toSpace.ok && toSpace.redirectTo).toBe("/together");
+    expect(toSpace.ok && toSpace.redirectTo).toBe("/together/start");
     expect(toInvite.ok && toInvite.redirectTo).toBe(`/together/invite/${token}`);
     expect(tampered.ok && tampered.redirectTo).toBe("/test");
   });

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import {
   createResult,
   createTestDb,
+  findRecentResultWithAnswers,
   getLatestResultId,
   getResult,
   getResultForOwner,
@@ -74,5 +75,33 @@ describe("getResult", () => {
 
     expect((await getResult(db, resultId))?.id).toBe(resultId);
     expect(await getResult(db, "not-a-uuid")).toBeNull();
+  });
+});
+
+describe("findRecentResultWithAnswers", () => {
+  const MINUTE_MS = 60_000;
+
+  test("finds the user's result with the same answers made after the given moment", async () => {
+    const created = await createResult(db, newResult(ownerId));
+
+    const found = await findRecentResultWithAnswers(db, { userId: ownerId, answers: { "ipip-02": 1, "ipip-01": 5 }, since: new Date(Date.now() - MINUTE_MS) });
+
+    expect(found?.id).toBe(created.id);
+  });
+
+  test("does not find a result with other answers, an older one, or one of another user", async () => {
+    await createResult(db, newResult(ownerId));
+    const since = new Date(Date.now() - MINUTE_MS);
+
+    expect(await findRecentResultWithAnswers(db, { userId: ownerId, answers: { "ipip-01": 4, "ipip-02": 1 }, since })).toBeNull();
+    expect(await findRecentResultWithAnswers(db, { userId: ownerId, answers: { "ipip-01": 5, "ipip-02": 1 }, since: new Date(Date.now() + MINUTE_MS) })).toBeNull();
+    expect(await findRecentResultWithAnswers(db, { userId: strangerId, answers: { "ipip-01": 5, "ipip-02": 1 }, since })).toBeNull();
+  });
+
+  test("returns the newest of several equal results", async () => {
+    await createResult(db, newResult(ownerId));
+    const newest = await createResult(db, newResult(ownerId));
+
+    expect((await findRecentResultWithAnswers(db, { userId: ownerId, answers: newResult(ownerId).answers, since: new Date(Date.now() - MINUTE_MS) }))?.id).toBe(newest.id);
   });
 });

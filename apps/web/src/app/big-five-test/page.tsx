@@ -6,6 +6,8 @@ import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
 import { faqJsonLd, publicMetadata, traitPath, webPageJsonLd } from "@/lib/seo";
 
+import styles from "./big-five.module.css";
+
 const TITLE = "Тест Big Five онлайн бесплатно — Большая пятёрка личности";
 const DESCRIPTION =
   "Бесплатный тест Big Five на русском: 50 утверждений, около 10 минут, результат сразу. Узнай свой уровень открытости, добросовестности, экстраверсии, доброжелательности и эмоциональной устойчивости.";
@@ -76,28 +78,28 @@ const FAQ = [
 
 export default function BigFiveTestPage() {
   return (
-    <main className="inner-page">
-      <div className="page page--wide stack">
+    <main className={`inner-page ${styles.page}`}>
+      <div className={`page page--wide ${styles.container}`}>
         <Breadcrumbs items={[{ name: "Тест Big Five", path: PATH }]} />
-        <section className="home-section home-result" aria-labelledby="big-five-title">
-          <div className="home-section__copy">
+        <section className={styles.hero} aria-labelledby="big-five-title">
+          <div className={styles.copy}>
             <p className="home-kicker">Big Five · OCEAN · IPIP-50</p>
-            <h1 id="big-five-title" className="display">
+            <h1 id="big-five-title" className={styles.title}>
               Тест Big Five — Большая пятёрка личности
             </h1>
             <p className="lead">Бесплатно, 50 утверждений, около 10 минут — и сразу результат: профиль по пяти чертам и один из 16 типов «Граней».</p>
-            <div className="home-hero__actions">
+            <div className={styles.actions}>
               <Link className="button button--lg" href="/test">
                 Пройти тест бесплатно <span aria-hidden="true">→</span>
               </Link>
               <span className="home-time">Результат сразу после ответов</span>
             </div>
           </div>
-          <article className="home-result-card" aria-label="Что внутри теста">
-            <div className="home-result-card__art">
+          <article className={styles.preview} aria-label="Пример результата теста">
+            <div className={styles.art}>
               <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} loading="eager" decoding="async" />
             </div>
-            <p>Что покажет тест</p>
+            <p className={styles.example}>Пример результата</p>
             <h2>5 черт + тип</h2>
             <span>Профиль личности простым языком</span>
             <div className="home-result-card__scales">
@@ -105,7 +107,7 @@ export default function BigFiveTestPage() {
                 <div className="home-scale" key={trait}>
                   <div>
                     <span>{label}</span>
-                    <b>{70 - index * 7}%</b>
+                    <b>{70 - index * 7} / 100</b>
                   </div>
                   <i>
                     <span style={{ width: `${70 - index * 7}%` }} />
@@ -116,39 +118,34 @@ export default function BigFiveTestPage() {
           </article>
         </section>
 
-        <section className="home-feature-strip" aria-label="Кратко о тесте">
-          {FACTS.map((fact) => (
-            <div className="home-feature" key={fact}>
-              <span>
-                <b>{fact}</b>
-                <small>Big Five</small>
-              </span>
-            </div>
-          ))}
-        </section>
+        <ul className={styles.facts} aria-label="Кратко о тесте">
+          {FACTS.map((fact) => <li key={fact}>{fact}</li>)}
+        </ul>
 
-        <section className="stack" aria-labelledby="what-shows">
+        <section className={styles.reading} aria-labelledby="what-shows">
           <h2 id="what-shows">Что измеряет тест: пять черт Big Five</h2>
           <p>
             «Большая пятёрка» описывает личность не типом-ярлыком, а пятью шкалами. У каждой два полюса, и сильные стороны есть на любом из них — важно не «сколько баллов хорошо», а как черта проявляется именно у тебя.
           </p>
-          <div className="article-grid">
+          <div className={styles.traits}>
             {TRAIT_LINKS.map(([trait, label]) => (
-              <article className="card stack" key={trait}>
+              <article className={styles.trait} key={trait}>
                 <h3>{label}</h3>
-                <p>{TRAIT_TEXTS[trait]}</p>
-                <p className="row">
-                  <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait]}: высокая</Link>
-                  <Link href={traitPath(trait, "low")}>низкая</Link>
-                </p>
+                <div>
+                  <p>{TRAIT_TEXTS[trait]}</p>
+                  <p className="row">
+                    <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait]}: высокая</Link>
+                    <Link href={traitPath(trait, "low")}>низкая</Link>
+                  </p>
+                </div>
               </article>
             ))}
           </div>
         </section>
 
-        <TestButton label="Узнать свои пять черт" />
+        <div className={styles.reading}><TestButton label="Узнать свои пять черт" /></div>
 
-        <section className="stack" aria-labelledby="how-it-works">
+        <section className={styles.reading} aria-labelledby="how-it-works">
           <h2 id="how-it-works">Как считается результат</h2>
           <p>
             Основа теста — IPIP-50: 50 утверждений из открытого банка International Personality Item Pool. По каждой из пяти черт есть прямые и обратные утверждения, поэтому итог меньше зависит от привычки соглашаться со всем подряд.
@@ -158,7 +155,7 @@ export default function BigFiveTestPage() {
           </p>
         </section>
 
-        <section className="stack" aria-labelledby="what-you-get">
+        <section className={styles.reading} aria-labelledby="what-you-get">
           <h2 id="what-you-get">Что ты получишь</h2>
           <ul>
             <li>пять шкал личности с понятной расшифровкой;</li>
@@ -170,7 +167,7 @@ export default function BigFiveTestPage() {
           <TestButton />
         </section>
 
-        <section className="stack" aria-labelledby="accuracy">
+        <section className={styles.reading} aria-labelledby="accuracy">
           <h2 id="accuracy">Насколько точен тест</h2>
           <p>
             «Большая пятёрка» — самая изученная модель личности в психологии: её черты воспроизводятся в разных странах и довольно устойчивы у взрослых на протяжении лет. IPIP-50 — короткая открытая версия опросника, поэтому она хорошо показывает общий профиль, но не заменяет длинные методики и тем более консультацию специалиста.
@@ -180,24 +177,24 @@ export default function BigFiveTestPage() {
           </p>
         </section>
 
-        <section className="stack" aria-labelledby="who">
+        <section className={styles.reading} aria-labelledby="who">
           <h2 id="who">Кому подходит</h2>
           <p>
             Тем, кто хочет лучше понять себя и свои реакции, выбирает работу или ритм жизни, хочет спокойнее договариваться с близкими или просто любопытно, как описывает личность современная психология. Тест рассчитан на взрослых и не предназначен для диагностики.
           </p>
         </section>
 
-        <section className="stack" aria-labelledby="faq">
+        <section className={styles.reading} aria-labelledby="faq">
           <h2 id="faq">Вопросы о тесте Big Five</h2>
           {FAQ.map((item) => (
-            <article className="card stack" key={item.question}>
-              <h3>{item.question}</h3>
+            <details className={styles.faq} key={item.question}>
+              <summary>{item.question}</summary>
               <p>{item.answer}</p>
-            </article>
+            </details>
           ))}
         </section>
 
-        <SourceList sources={METHOD_SOURCES} />
+        <div className={styles.reading}><SourceList sources={METHOD_SOURCES} /></div>
         <TestCta title="Пройти тест Big Five бесплатно" />
         <JsonLd data={webPageJsonLd({ title: TITLE, description: DESCRIPTION, path: PATH })} />
         <JsonLd data={faqJsonLd(FAQ)} />

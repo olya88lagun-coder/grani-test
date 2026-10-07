@@ -23,7 +23,7 @@ test("a result taken in the VK app browser moves to Safari by the page link", as
   const page = await safari.newPage();
   await page.goto(handoffUrl);
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByText("Результат посчитан")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Осталось увидеть результат" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Откройте сайт в Safari или Chrome" })).toHaveCount(0);
 
   await page.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Сафари"))}`);

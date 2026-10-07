@@ -20,7 +20,8 @@ describe("togetherEntryValue", () => {
 
 describe("togetherReturnPath", () => {
   test("maps a stored entry to a fixed local path", () => {
-    expect(togetherReturnPath("space")).toBe("/together");
+    // Человек нажал «Создать пространство» на витрине, вошёл и попадает сразу к созданию, а не снова на витрину
+    expect(togetherReturnPath("space")).toBe("/together/start");
     expect(togetherReturnPath(`invite:${TOKEN}`)).toBe(`/together/invite/${TOKEN}`);
   });
 

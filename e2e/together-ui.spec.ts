@@ -31,7 +31,7 @@ test("two people go from the sign-in to a paid space through the screens", async
   await anna.getByRole("link", { name: "Создать пространство для двоих" }).click();
   await expect(anna).toHaveURL(/\/login/);
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(annaName)}`);
-  await expect(anna).toHaveURL(/\/together$/);
+  await expect(anna).toHaveURL(/\/together\/start$/);
 
   await anna.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
 
@@ -90,7 +90,7 @@ test("two people go from the sign-in to a paid space through the screens", async
   await anna.getByLabel("Я понимаю последствия").check();
   await confirmLeave.click();
   await expect(anna.getByRole("button", { name: "Создать и получить приглашение" })).toBeVisible();
-  await boris.goto("/together");
+  await boris.goto("/together/start");
   await expect(boris.getByRole("button", { name: "Создать и получить приглашение" })).toBeVisible();
 });
 
@@ -105,14 +105,14 @@ test("an unusable invite link shows a neutral page and the private pages are not
   await page.goto("/together");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /^index/);
   await signInThrough(page, "/api/together/enter?next=space", uniqueName("Вера"));
-  await expect(page).toHaveURL(/\/together$/);
+  await expect(page).toHaveURL(/\/together\/start$/);
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });
 
 test("the invite page shows the inviter's first name, the note and the first question before any sign-in", async ({ browser }) => {
   const anna = await newPage(browser);
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
-  await anna.goto("/together");
+  await anna.goto("/together/start");
   await anna.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
   await anna.getByRole("button", { name: "Создать и получить приглашение" }).click();
   await expect(anna.getByRole("heading", { name: "Ваше приглашение готово" })).toBeVisible();
@@ -157,7 +157,7 @@ test("an active pair gets a link for friends; a friend who comes by it keeps the
   await vera.getByRole("link", { name: "Создать пространство для двоих" }).click();
   await expect(vera).toHaveURL(/\/login/);
   await vera.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Вера"))}`);
-  await expect(vera).toHaveURL(/\/together$/);
+  await expect(vera).toHaveURL(/\/together\/start$/);
   const cookieNames = async () => (await vera.context().cookies()).map((cookie) => cookie.name);
   expect(await cookieNames()).toContain("grani_together_from");
   await vera.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
@@ -187,7 +187,7 @@ test("the offer, the policy and the consent describe the Together service, and t
   await page.goto("/me/delete");
   await expect(page.getByText(/Деньги за уже открытые разборы не возвращаются/)).toBeVisible();
   await expect(page.getByText(/пространство «Вдвоём»: оно закроется для обоих/)).toBeVisible();
-  await page.goto("/together");
+  await page.goto("/together/start");
   const create = page.getByRole("button", { name: "Создать и получить приглашение" });
   await expect(create).toBeDisabled();
   await page.getByRole("checkbox", { name: /Мне есть 18 лет/ }).check();
@@ -252,4 +252,42 @@ test("the public Together page leads with the promise and the price, labels its 
   expect(heroImages.some((path) => !path.includes("mobile"))).toBe(false);
   expect(await page.locator('link[rel="preload"][as="image"]').count()).toBe(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test("a signed-in person without a space sees the landing first, and its button leads to the creation screen", async ({ browser }) => {
+  const page = await newPage(browser);
+  await page.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await page.goto("/together");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Быть ближе\s*—\s*в обычные дни/);
+  await expect(page.getByRole("button", { name: "Создать и получить приглашение" })).toHaveCount(0);
+
+  await page.getByRole("link", { name: /^Создать пространство для двоих/ }).click();
+  await expect(page).toHaveURL(/\/together\/start$/);
+  await expect(page.getByRole("button", { name: "Создать и получить приглашение" })).toBeDisabled();
+});
+
+test("the creation screen sends a visitor to sign in and a person who already has a space back to it", async ({ browser }) => {
+  const headers = { origin: BASE_URL };
+  const visitor = await newPage(browser);
+  await visitor.goto("/together/start");
+  await expect(visitor).toHaveURL(/\/login/);
+
+  const anna = await newPage(browser);
+  const boris = await newPage(browser);
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await boris.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Борис"))}`);
+  const created = (await (await anna.request.post("/api/together/spaces", { data: { consent: true }, headers })).json()) as { inviteUrl: string };
+  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1), consent: true }, headers })).status()).toBe(200);
+  expect((await anna.request.post("/api/together/invite/confirm", { data: { accept: true }, headers })).status()).toBe(200);
+
+  await anna.goto("/together/start");
+  await expect(anna).toHaveURL(/\/together$/);
+  await expect(anna.getByRole("heading", { level: 1, name: /Быть ближе/ })).toHaveCount(0);
+
+  // Витрину можно открыть и паре: все кнопки ведут обратно в пространство, страница не индексируется
+  await anna.goto("/together/about");
+  await expect(anna.getByRole("heading", { level: 1 })).toHaveText(/Быть ближе\s*—\s*в обычные дни/);
+  await expect(anna.getByRole("link", { name: /^Открыть моё пространство/ }).first()).toHaveAttribute("href", "/together");
+  await expect(anna.getByRole("link", { name: /^Создать пространство для двоих/ })).toHaveCount(0);
+  await expect(anna.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
 });
