@@ -120,3 +120,22 @@ test("the compatibility page spells out what the paid pair report contains and w
   await expect(page.getByText(/Одна оплата открывает разбор обоим, платит один/)).toBeVisible();
   await expect(page.getByRole("link", { name: "оферте" })).toHaveAttribute("href", "/offer");
 });
+
+test("the pricing, compatibility and Together pages explain how the two pair products differ", async ({ page }) => {
+  await page.goto("/pricing");
+  await expect(page.getByRole("heading", { level: 2, name: "Грани. Вдвоём" })).toBeVisible();
+  const compare = page.getByRole("region", { name: "Чем отличаются два продукта для пары" });
+  await expect(compare.getByText("Тест нужен вам обоим.")).toBeVisible();
+  await expect(compare.getByText("Тест не нужен, достаточно двух аккаунтов.")).toBeVisible();
+  await expect(compare.getByRole("link", { name: /Подробнее/ })).toHaveCount(2);
+
+  await page.goto("/compatibility");
+  const onCompatibility = page.getByRole("region", { name: "Чем отличаются два продукта для пары" });
+  await expect(onCompatibility.getByRole("link", { name: /Подробнее/ })).toHaveCount(1);
+  await expect(onCompatibility.getByRole("link", { name: /Подробнее/ })).toHaveAttribute("href", "/together");
+
+  await page.goto("/together");
+  const answer = page.locator("details", { hasText: "Чем «Вдвоём» отличается от разбора совместимости?" });
+  await answer.locator("summary").click();
+  await expect(answer.getByRole("link", { name: "О разборе совместимости" })).toHaveAttribute("href", "/compatibility");
+});

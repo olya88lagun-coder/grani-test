@@ -1,8 +1,9 @@
-import { COMPATIBILITY_LEVELS, formatRub, PRODUCT_PRICES, RESOURCE_TRAITS, SIMILARITY_TRAITS } from "@grani/core";
+import { COMPATIBILITY_LEVELS, formatRub, PRODUCT_PRICES, RESOURCE_TRAITS, SIMILARITY_TRAITS, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/core";
 import { compatibilityTexts, TRAIT_LABELS } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PairProductsCompare } from "@/components/PairProductsCompare";
 import { TestCta } from "@/components/TestCta";
 import { PAIR_SECTION_PITCH, PAIR_SECTION_TITLES } from "@/lib/pair-view";
 import { publicMetadata } from "@/lib/seo";
@@ -157,6 +158,12 @@ export default function CompatibilityPage() {
             })}
           </div>
         </section>
+
+        <PairProductsCompare
+          headingId="pair-products"
+          current="compatibility"
+          prices={{ compatibility: price, together: `${formatRub(TOGETHER_PRICE_KOPECKS)} за ${TOGETHER_PERIOD_DAYS} дней` }}
+        />
 
         <p className="muted">Процент — повод поговорить о том, как вы устроены, а не приговор отношениям.</p>
         <TestCta title="Начните с себя" />
