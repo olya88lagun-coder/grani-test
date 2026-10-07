@@ -7,7 +7,9 @@ import {
   POLL_MAX_ATTEMPTS,
   purchaseOutcome,
   spaceScreen,
+  isWaitingForPartner,
   startErrorMessage,
+  waitingPollDelayMs,
   type SpaceView,
 } from "./together-view";
 
@@ -131,5 +133,29 @@ describe("CLOSED_NOTICE_TEXT", () => {
     }
     expect(CLOSED_NOTICE_TEXT.left.lead).toMatch(/вышел/);
     expect(CLOSED_NOTICE_TEXT.account_deleted.lead).toMatch(/удалил/);
+  });
+});
+
+describe("waitingPollDelayMs", () => {
+  test("polls often at first, then slows down while the partner has not answered", () => {
+    expect(waitingPollDelayMs(0)).toBe(5_000);
+    expect(waitingPollDelayMs(4 * 60_000)).toBe(5_000);
+    expect(waitingPollDelayMs(6 * 60_000)).toBe(15_000);
+    expect(waitingPollDelayMs(40 * 60_000)).toBe(60_000);
+  });
+
+  test("treats a broken elapsed time as the start", () => {
+    expect(waitingPollDelayMs(Number.NaN)).toBe(5_000);
+    expect(waitingPollDelayMs(-1)).toBe(5_000);
+  });
+});
+
+describe("isWaitingForPartner", () => {
+  test("is true only while the pair is still being formed", () => {
+    expect(isWaitingForPartner("invite")).toBe(true);
+    expect(isWaitingForPartner("confirm")).toBe(true);
+    expect(isWaitingForPartner("ready")).toBe(false);
+    expect(isWaitingForPartner("start")).toBe(false);
+    expect(isWaitingForPartner("expired")).toBe(false);
   });
 });

@@ -23,6 +23,22 @@ export type PurchaseScreen = "waiting" | "delayed" | "success" | "cancelled" | "
 export const POLL_INTERVAL_MS = 5000;
 export const POLL_MAX_ATTEMPTS = 12;
 
+const WAITING_FAST_MS = 5_000;
+const WAITING_SLOW_MS = 15_000;
+const WAITING_SLOWEST_MS = 60_000;
+const WAITING_FAST_UNTIL_MS = 5 * 60_000;
+const WAITING_SLOW_UNTIL_MS = 30 * 60_000;
+
+// Пока пара ещё собирается, экран сам узнаёт об ответе партнёра: сначала часто, потом всё реже, чтобы не нагружать сервер
+export function waitingPollDelayMs(elapsedMs: number): number {
+  const elapsed = Number.isFinite(elapsedMs) && elapsedMs > 0 ? elapsedMs : 0;
+  if (elapsed < WAITING_FAST_UNTIL_MS) return WAITING_FAST_MS;
+  if (elapsed < WAITING_SLOW_UNTIL_MS) return WAITING_SLOW_MS;
+  return WAITING_SLOWEST_MS;
+}
+
+export const isWaitingForPartner = (screen: SpaceScreen): boolean => screen === "invite" || screen === "confirm";
+
 export function spaceScreen(space: SpaceView | null): SpaceScreen {
   if (!space) return "start";
   if (space.status === "pending") return space.pendingRequest ? "confirm" : "invite";

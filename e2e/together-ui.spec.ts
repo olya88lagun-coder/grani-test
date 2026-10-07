@@ -325,3 +325,22 @@ test("the initiator sees until when the invite link works after the page is open
   await expect(anna.getByText("Мы не можем восстановить прежнюю ссылку", { exact: false })).toBeVisible();
   await expect(anna.getByText(/Ссылка действует до \d{1,2} [а-я]+ в \d{2}:\d{2}\./)).toBeVisible();
 });
+
+test("the inviter's open page shows the partner's request without a reload", async ({ browser }) => {
+  const headers = { origin: BASE_URL };
+  const anna = await newPage(browser);
+  const boris = await newPage(browser);
+  const borisName = uniqueName("Борис");
+  await anna.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Аня"))}`);
+  await boris.goto(`/api/dev/login?name=${encodeURIComponent(borisName)}`);
+  const created = (await (await anna.request.post("/api/together/spaces", { data: { consent: true }, headers })).json()) as { inviteUrl: string };
+
+  await anna.goto("/together");
+  await expect(anna.getByText(/Ссылка действует до/)).toBeVisible();
+  await expect(anna.getByRole("heading", { name: "Это ваш человек?" })).toHaveCount(0);
+
+  expect((await boris.request.post("/api/together/invite/request", { data: { token: created.inviteUrl.split("/").at(-1), consent: true }, headers })).status()).toBe(200);
+
+  await expect(anna.getByRole("heading", { name: "Это ваш человек?" })).toBeVisible({ timeout: 15_000 });
+  await expect(anna.getByText(borisName)).toBeVisible();
+});

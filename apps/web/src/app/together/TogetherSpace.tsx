@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   formatAccessUntil,
   inviteLine,
+  isWaitingForPartner,
   POLL_INTERVAL_MS,
   POLL_MAX_ATTEMPTS,
   purchaseOutcome,
@@ -21,6 +22,7 @@ import { PaymentForm } from "./PaymentForm";
 import { ShareFriends } from "./ShareFriends";
 import { TogetherCards } from "./TogetherCards";
 import { TogetherStats } from "./TogetherStats";
+import { useWaitingPoll } from "./useWaitingPoll";
 
 const BUSY_RETRY_MS = 1000;
 const BUSY_RETRY_LIMIT = 3;
@@ -192,6 +194,7 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
   const refreshSpace = useCallback(() => void refresh(), [refresh]);
 
   const screen = spaceScreen(space);
+  useWaitingPoll(isWaitingForPartner(screen), setSpace);
   const outcome = purchase ? purchaseOutcome(purchase, space) : null;
 
   return (
