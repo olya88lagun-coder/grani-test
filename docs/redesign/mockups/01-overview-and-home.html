@@ -1,0 +1,429 @@
+<title>Референс образа Грани</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Layout: dark-first editorial review. One reading column of verdict and scores,
+   then full-width "artwork" blocks (fixed dark mocks) that show the proposed look. */
+:root{
+  --bg:#08170f; --bg2:#0d2218; --panel:#102a1f; --line:rgba(226,214,180,.16);
+  --ink:#EDE7D6; --muted:#A3B0A2; --gold:#CDB57B; --em:#3FAE7C; --warn:#E0A27A;
+  --display:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --body:'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif;
+  /* mock artwork: fixed, independent of page theme */
+  --m-bg:#0A1F17; --m-bg2:#0F2B20; --m-ink:#EFE9DA; --m-muted:#9FB1A3; --m-gold:#CDB57B; --m-line:rgba(205,181,123,.28);
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#F2EEE2; --bg2:#E9E4D4; --panel:#FBF8EF; --line:rgba(14,42,32,.16);
+    --ink:#0E2A20; --muted:#4F6358; --gold:#7D6528; --em:#1F7A52; --warn:#9A5425; color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#F2EEE2; --bg2:#E9E4D4; --panel:#FBF8EF; --line:rgba(14,42,32,.16);
+  --ink:#0E2A20; --muted:#4F6358; --gold:#7D6528; --em:#1F7A52; --warn:#9A5425; color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);padding-inline:20px;padding-block:0 96px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin-inline:auto}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.02;margin:0;text-wrap:balance}
+p{margin:0}
+.eyebrow{font:500 12px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.sec{padding-top:112px}
+.sec>.eyebrow{display:block;margin-bottom:18px}
+.sec h2{font-size:clamp(36px,5.4vw,60px);max-width:16ch}
+.sec .lead{max-width:60ch;color:var(--muted);margin-top:22px;font-size:17px}
+.gem svg{display:block;width:100%;height:auto;overflow:visible}
+.gem{filter:drop-shadow(0 18px 30px rgba(0,0,0,.45)) drop-shadow(0 0 34px rgba(63,174,124,.22))}
+.sheen{animation:sweep 8s ease-in-out infinite}
+@keyframes sweep{0%,58%{transform:translateX(0)}100%{transform:translateX(340px)}}
+@media (prefers-reduced-motion:reduce){.sheen{animation:none;opacity:0}}
+
+/* intro */
+.top{display:flex;justify-content:space-between;align-items:center;padding-block:22px;border-bottom:1px solid var(--line)}
+.top .brand{font:500 26px/1 var(--display);letter-spacing:.01em}
+.top .tag{font-size:13px;color:var(--muted)}
+.intro{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:72px;padding-top:88px;align-items:start}
+.intro h1{font-size:clamp(46px,7.6vw,96px);letter-spacing:-.01em}
+.intro h1 em{font-style:italic;color:var(--gold);font-weight:300}
+.intro .lead{margin-top:28px;color:var(--muted);max-width:50ch;font-size:18px}
+.verdict{display:flex;align-items:baseline;gap:18px;margin-top:40px;font-family:var(--display)}
+.verdict b{font-weight:300;font-size:clamp(64px,9vw,112px);line-height:.9;color:var(--ink)}
+.verdict i{font-size:clamp(34px,5vw,56px);color:var(--gold);font-style:italic;font-weight:300}
+.verdict span{font:400 14px/1.4 var(--body);color:var(--muted);max-width:18ch}
+.scores{display:grid;gap:18px;padding-top:6px}
+.row{display:grid;grid-template-columns:minmax(0,1fr) 3.2ch;gap:6px 14px;align-items:end}
+.row .n{font-size:15px}
+.row .v{font:500 15px/1 var(--body);text-align:right;font-variant-numeric:tabular-nums}
+.track{grid-column:1/-1;height:6px;border-radius:3px;background:var(--line);position:relative}
+.track::before{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--s)*10%);background:linear-gradient(90deg,#1c6b49,var(--em));border-radius:3px}
+.track::after{content:"";position:absolute;top:-4px;bottom:-4px;left:calc(var(--t)*10%);width:2px;background:var(--gold)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px;color:var(--muted);margin-top:4px}
+.legend span::before{content:"";display:inline-block;width:14px;height:6px;border-radius:3px;background:var(--em);margin-right:8px;vertical-align:middle}
+.legend span+span::before{width:2px;height:12px;background:var(--gold);border-radius:0}
+
+/* problems */
+.cmp{margin-top:56px;border-top:1px solid var(--line)}
+.cmp .r{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1fr) minmax(0,1.1fr);gap:8px 40px;padding-block:28px;border-bottom:1px solid var(--line)}
+.cmp h3{font-size:30px;line-height:1.1}
+.cmp .k{display:block;font:500 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.cmp .now .k{color:var(--warn)}
+.cmp .fix .k{color:var(--gold)}
+.cmp p{font-size:15px;color:var(--muted)}
+.cmp .fix p{color:var(--ink)}
+
+/* mock frame */
+.frame{margin-top:48px;border:1px solid var(--m-line);border-radius:18px;overflow:hidden;color:var(--m-ink);
+  background:radial-gradient(900px 520px at 78% 38%,rgba(63,174,124,.30),transparent 60%),radial-gradient(600px 400px at 8% 100%,rgba(205,181,123,.10),transparent 70%),linear-gradient(160deg,#0B2319,#07140E 70%)}
+.nav{display:flex;align-items:center;gap:28px;padding:22px 36px;border-bottom:1px solid rgba(205,181,123,.14);font-size:14px}
+.logo{display:flex;align-items:center;gap:10px;font:500 28px/1 var(--display);margin-right:auto}
+.logo .gem{width:26px;filter:none}
+.nav a{color:var(--m-muted);text-decoration:none}
+.nav .cta-s{border:1px solid var(--m-line);padding:9px 20px;border-radius:99px;color:var(--m-ink)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;padding:72px 36px 64px;align-items:center}
+.hero h2{font-size:clamp(52px,7.4vw,104px);max-width:none;line-height:.95;letter-spacing:-.015em}
+.hero h2 em{font-style:italic;font-weight:300;color:var(--m-gold)}
+.hero .eyebrow{display:block;margin-bottom:26px;color:var(--m-muted)}
+.hero p.t{max-width:36ch;color:var(--m-muted);margin-top:28px;font-size:17px}
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;margin-top:38px}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--m-ink);color:#0A1F17;font:600 16px/1 var(--body);padding:19px 30px;border-radius:99px;text-decoration:none}
+.btn::after{content:"→"}
+.lnk{color:var(--m-ink);font-size:15px;border-bottom:1px solid var(--m-gold);padding-bottom:3px;text-decoration:none}
+.meta{margin-top:22px;font-size:13px;color:var(--m-muted)}
+.stage{position:relative;aspect-ratio:1/1;max-width:520px;width:100%;margin-inline:auto}
+.stage .gem{position:absolute;inset:12% 12%}
+.stage .ring{position:absolute;inset:3%;border:1px solid rgba(205,181,123,.16);border-radius:50%}
+.stage .ring.b{inset:-4%;border-color:rgba(205,181,123,.08)}
+.ax{position:absolute;font:italic 400 15px/1.2 var(--display);color:var(--m-gold);white-space:nowrap}
+.ax::before{content:"";display:inline-block;width:26px;height:1px;background:var(--m-gold);opacity:.7;vertical-align:middle;margin-right:8px}
+.ax.l{text-align:right}.ax.l::before{display:none}.ax.l::after{content:"";display:inline-block;width:26px;height:1px;background:var(--m-gold);opacity:.7;vertical-align:middle;margin-left:8px}
+.strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-top:1px solid rgba(205,181,123,.14);font-size:13px;color:var(--m-muted)}
+.strip div{padding:20px 24px;border-right:1px solid rgba(205,181,123,.1)}
+.strip div:last-child{border-right:0}
+.strip b{display:block;color:var(--m-ink);font-weight:500;font-size:14px;margin-bottom:2px}
+.notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px;margin-top:36px}
+.notes div{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:15px}
+.notes b{display:block;color:var(--ink);font:400 24px/1.1 var(--display);margin-bottom:8px}
+
+/* gems series */
+.cuts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px;margin-top:52px}
+.cut{background:linear-gradient(170deg,#0F2B20,#08170F);border:1px solid var(--m-line);border-radius:16px;padding:22px 18px 20px;color:var(--m-ink)}
+.cut .gem{width:78%;margin:6px auto 18px}
+.cut h3{font-size:30px}
+.cut p{font-size:13px;color:var(--m-muted);margin-top:6px}
+.cut small{display:block;margin-top:14px;padding-top:12px;border-top:1px solid rgba(205,181,123,.16);font:500 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--m-gold)}
+.mini{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:10px;margin-top:16px;padding:22px;border:1px solid var(--m-line);border-radius:16px;background:linear-gradient(170deg,#0F2B20,#08170F)}
+.mini .gem{width:78%;margin-inline:auto;filter:drop-shadow(0 8px 12px rgba(0,0,0,.4))}
+.cap{margin-top:18px;font-size:14px;color:var(--muted);max-width:70ch}
+
+/* share cards */
+.share{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:48px;margin-top:52px;align-items:start}
+.story{aspect-ratio:9/16;border-radius:26px;border:1px solid var(--m-line);color:var(--m-ink);padding:26px 26px 22px;display:flex;flex-direction:column;position:relative;overflow:hidden;
+  background:radial-gradient(420px 340px at 50% 30%,rgba(63,174,124,.34),transparent 65%),linear-gradient(170deg,#0C261B,#06120C)}
+.story::after,.pair::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+.story .hd{display:flex;justify-content:space-between;align-items:center;font:500 22px/1 var(--display)}
+.story .hd span{font:500 10px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--m-gold);border:1px solid var(--m-line);padding:6px 10px;border-radius:99px}
+.story .gem{width:58%;margin:22px auto 6px}
+.story .lab{font:500 10px/1 var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--m-muted);text-align:center}
+.story h3{font-size:68px;text-align:center;margin-top:8px;font-weight:300}
+.story .sub{text-align:center;font:italic 400 17px/1.2 var(--display);color:var(--m-gold);margin-top:6px}
+.bars{display:grid;gap:11px;margin-top:auto;padding-top:20px}
+.bars div{display:grid;grid-template-columns:1fr auto;gap:5px 10px;font-size:12px;color:var(--m-muted)}
+.bars b{font:500 12px/1 var(--body);color:var(--m-gold);font-variant-numeric:tabular-nums}
+.bars i{grid-column:1/-1;height:2px;background:rgba(239,233,218,.12);position:relative}
+.bars i::before{content:"";position:absolute;inset:0 auto 0 0;width:var(--w);background:var(--m-gold)}
+.story .ft{margin-top:20px;padding-top:14px;border-top:1px solid rgba(205,181,123,.18);font-size:11px;color:var(--m-muted);display:flex;justify-content:space-between}
+.pair{border-radius:26px;border:1px solid var(--m-line);color:var(--m-ink);padding:44px 44px 36px;position:relative;overflow:hidden;
+  background:radial-gradient(520px 320px at 50% 38%,rgba(63,174,124,.26),transparent 68%),linear-gradient(170deg,#0C261B,#06120C)}
+.pair .eyebrow{color:var(--m-gold)}
+.duo{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;margin-top:22px}
+.duo .gem{width:72%;margin-inline:auto}
+.duo .pct{text-align:center;font:300 clamp(80px,13vw,150px)/.9 var(--display);color:var(--m-gold)}
+.duo .pct small{display:block;font:500 10px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--m-muted);margin-top:12px}
+.names{display:flex;justify-content:space-between;font:400 26px/1 var(--display);margin-top:6px}
+.lists{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:34px;padding-top:24px;border-top:1px solid rgba(205,181,123,.18);font-size:14px;color:var(--m-muted)}
+.lists b{display:block;color:var(--m-ink);font-weight:500;margin-bottom:8px;font-size:13px}
+.lists ul{margin:0;padding:0;list-style:none;display:grid;gap:5px}
+.lists li::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:10px;background:var(--em)}
+.lists .no li::before{background:var(--m-gold);border-radius:1px;transform:rotate(45deg)}
+.pair .tag{position:absolute;top:22px;right:26px;font:500 10px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--m-muted)}
+
+/* system */
+.sys{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:56px;margin-top:52px}
+.sw{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.sw div{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:13px;color:var(--muted)}
+.sw i{display:block;height:84px}
+.sw span{display:block;padding:10px 12px}
+.sw b{display:block;color:var(--ink);font-weight:500}
+.type{border-top:1px solid var(--line);padding-top:18px}
+.type .big{font:300 clamp(60px,9vw,104px)/.95 var(--display);color:var(--gold)}
+.type .big em{font-style:italic}
+.type p{color:var(--muted);font-size:15px;margin-top:12px;max-width:44ch}
+.rules{margin:34px 0 0;padding:0;list-style:none;display:grid;gap:0;border-top:1px solid var(--line)}
+.rules li{padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;color:var(--muted)}
+.rules b{color:var(--ink);font-weight:500}
+
+/* steps */
+.steps{margin-top:48px;border-top:1px solid var(--line);counter-reset:s}
+.steps .s{display:grid;grid-template-columns:56px minmax(0,1fr) auto;gap:8px 24px;padding-block:24px;border-bottom:1px solid var(--line);align-items:baseline;counter-increment:s}
+.steps .s::before{content:counter(s);font:300 44px/1 var(--display);color:var(--gold)}
+.steps h3{font-size:28px}
+.steps p{font-size:15px;color:var(--muted);margin-top:6px;max-width:60ch}
+.pill{font:500 11px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);border-radius:99px;padding:8px 12px;color:var(--muted);white-space:nowrap}
+.foot{margin-top:96px;padding-top:24px;border-top:1px solid var(--line);font-size:13px;color:var(--muted);max-width:80ch}
+
+@media (max-width:900px){
+  .intro,.sys,.share{grid-template-columns:minmax(0,1fr);gap:44px}
+  .share .story{max-width:340px}
+  .cmp .r{grid-template-columns:minmax(0,1fr);gap:14px}
+  .hero{grid-template-columns:minmax(0,1fr);padding:48px 22px 40px}
+  .nav{padding:18px 22px;gap:16px}.nav a:not(.cta-s){display:none}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}.strip div{border-right:0;border-bottom:1px solid rgba(205,181,123,.1)}
+  .cuts{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .mini{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .notes{grid-template-columns:minmax(0,1fr)}
+  .ax{display:none}
+  .steps .s{grid-template-columns:40px minmax(0,1fr)}.steps .pill{grid-column:2;justify-self:start}
+  .pair{padding:40px 22px 28px}
+}
+@media (max-width:520px){.sec{padding-top:84px}.sw{grid-template-columns:repeat(2,minmax(0,1fr))}.lists{grid-template-columns:1fr}.cuts{grid-template-columns:minmax(0,1fr)}}
+</style>
+
+<div class="wrap">
+  <header class="top"><span class="brand">грани</span><span class="tag">Референс образа · grani-test.ru</span></header>
+
+  <section class="intro">
+    <div>
+      <span class="eyebrow">Разбор и предложение</span>
+      <h1 style="margin-top:22px">Те же Грани, но&nbsp;<em>дороже</em></h1>
+      <p class="lead">Цвет, шрифт и идея кристалла уже хороши. Не хватает глубины, единого материала и сильной серии картинок. Ниже видно, где сайт теряет ощущение дорогого бренда и как это может выглядеть.</p>
+      <div class="verdict"><b>7</b><i>→ 9</i><span>образ сейчас и ориентир после доработки</span></div>
+    </div>
+    <div class="scores" aria-label="Оценки по элементам">
+      <div class="row"><span class="n">Палитра</span><span class="v">8,5</span><div class="track" style="--s:8.5;--t:9"></div></div>
+      <div class="row"><span class="n">Hero и кристалл</span><span class="v">8</span><div class="track" style="--s:8;--t:9.5"></div></div>
+      <div class="row"><span class="n">Типографика</span><span class="v">7</span><div class="track" style="--s:7;--t:8.5"></div></div>
+      <div class="row"><span class="n">Карточки и поверхности</span><span class="v">6</span><div class="track" style="--s:6;--t:8.5"></div></div>
+      <div class="row"><span class="n">Детали: кнопки, чипы, футер, cookie</span><span class="v">6</span><div class="track" style="--s:6;--t:8.5"></div></div>
+      <div class="row"><span class="n">Фото и иллюстрации</span><span class="v">5,5</span><div class="track" style="--s:5.5;--t:9"></div></div>
+      <div class="row"><span class="n">Ритм страницы</span><span class="v">5,5</span><div class="track" style="--s:5.5;--t:8.5"></div></div>
+      <div class="legend"><span>оценка сейчас</span><span>ориентир</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Диагноз</span>
+    <h2>Пять причин, почему пока не «богато»</h2>
+    <div class="cmp">
+      <div class="r"><h3>Всё одной светлоты</h3><div class="now"><span class="k">Сейчас</span><p>Кремовый фон, кремовые карточки, белый футер. Нет смены света и тени, поэтому страница плоская.</p></div><div class="fix"><span class="k">Предложение</span><p>Два-три глубоких изумрудных блока между светлыми: первый экран, 16 типов, результат. Контраст создаёт ощущение витрины.</p></div></div>
+      <div class="r"><h3>Картинки из разных миров</h3><div class="now"><span class="k">Сейчас</span><p>3D-кристалл, фото суккулента, облака, камень, плоские линейные иконки и ИИ-портреты в статьях.</p></div><div class="fix"><span class="k">Предложение</span><p>Одна серия: огранённые камни в едином рендере и с единым светом. Фото оставить только в статьях, с одной цветокоррекцией.</p></div></div>
+      <div class="r"><h3>Идея граней живёт только в hero</h3><div class="now"><span class="k">Сейчас</span><p>Дальше идут обычные карточки с растениями. Название обещает огранку, а сайт её не показывает.</p></div><div class="fix"><span class="k">Предложение</span><p>16 типов становятся 16 огранками. Грань повторяется в иконках, разделителях и форме кнопок.</p></div></div>
+      <div class="r"><h3>Нет материала</h3><div class="now"><span class="k">Сейчас</span><p>Карточки с тонкой обводкой и бледной тенью читаются как интерфейс, а не как предметы.</p></div><div class="fix"><span class="k">Предложение</span><p>Лёгкое зерно, блик на кристалле, золотая линия толщиной в один пиксель. Металл только как тонкий акцент.</p></div></div>
+      <div class="r"><h3>Типографика сильна только крупно</h3><div class="now"><span class="k">Сейчас</span><p>Тонкая антиква на ценах и мелких подписях, серый текст на кремовом фоне. Нет ни одного громкого типографского момента.</p></div><div class="fix"><span class="k">Предложение</span><p>Один огромный кегль на экран (процент, название типа). Цены плотнее. Контраст мелкого текста не ниже 4,5 к 1.</p></div></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Главный экран</span>
+    <h2>Как мог бы выглядеть первый экран</h2>
+    <p class="lead">Тот же текст и та же структура, что на сайте. Меняются глубина фона, размер и материал кристалла, иерархия кнопок.</p>
+
+    <div class="frame" role="img" aria-label="Макет главного экрана на тёмном изумрудном фоне с крупным кристаллом">
+      <div class="nav"><span class="logo"><span class="gem" data-mini="iskra"></span>грани</span><a>Пройти тест</a><a>16 типов</a><a>Совместимость</a><a>Вдвоём</a><a>Статьи</a><a>О проекте</a><a class="cta-s">Войти</a></div>
+      <div class="hero">
+        <div>
+          <span class="eyebrow">Тест личности «Грани»</span>
+          <h2>Узнай себя <em>глубже</em></h2>
+          <p class="t">50 утверждений — твой тип личности. Пять ключевых черт, взгляд друзей и карточка для сторис.</p>
+          <div class="actions"><a class="btn">Пройти тест</a><a class="lnk">О тесте Big Five</a></div>
+          <p class="meta">Бесплатно · ≈ 10 минут</p>
+        </div>
+        <div class="stage">
+          <div class="ring b"></div><div class="ring"></div>
+          <div class="gem" id="heroGem"></div>
+          <span class="ax" style="left:2%;top:11%">Открытость к новому</span>
+          <span class="ax" style="right:-1%;top:22%">Экстраверсия</span>
+          <span class="ax l" style="left:-6%;top:58%">Эмоциональная устойчивость</span>
+          <span class="ax" style="right:-4%;top:72%">Доброжелательность</span>
+          <span class="ax" style="left:34%;top:94%">Добросовестность</span>
+        </div>
+      </div>
+      <div class="strip"><div><b>Big Five</b>научная основа</div><div><b>Тип личности</b>уникальный результат</div><div><b>5 черт</b>в процентах</div><div><b>Взгляд других</b>как тебя видят</div><div><b>Карточка</b>для сторис</div></div>
+    </div>
+    <div class="notes">
+      <div><b>Одна главная кнопка</b>Светлая на тёмном, крупная. Второе действие стало текстовой ссылкой с золотой линией.</div>
+      <div><b>Кристалл крупнее</b>С мягким свечением и редким медленным бликом. Подписи осей тоньше и светлее, они читаются на тёмном фоне.</div>
+      <div><b>Золото только линиями</b>Тонкие кольца вокруг камня, подчёркивание ссылки, подписи осей. Больше нигде.</div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Единая серия</span>
+    <h2>16 типов — 16 огранок</h2>
+    <p class="lead">Вместо суккулента, облаков и камня каждый тип получает свой камень. Форма и число граней задают характер, оттенок задаёт настроение.</p>
+    <div class="cuts">
+      <div class="cut"><div class="gem" data-g="iskra"></div><h3>Искра</h3><p>Энергия. Вдохновение. Новые идеи.</p><small>Бриллиант, 12 граней</small></div>
+      <div class="cut"><div class="gem" data-g="arch"></div><h3>Архитектор</h3><p>Структура. Анализ. Результат.</p><small>Ступенчатая огранка</small></div>
+      <div class="cut"><div class="gem" data-g="dream"></div><h3>Мечтатель</h3><p>Воображение. Глубина. Смысл.</p><small>Овал, мягкий свет</small></div>
+      <div class="cut"><div class="gem" data-g="cmd"></div><h3>Командир</h3><p>Лидерство. Уверенность. Движение.</p><small>Принцесса, 4 луча</small></div>
+      <div class="cut"><div class="gem" data-g="rock"></div><h3>Опора</h3><p>Надёжность. Стабильность. Забота.</p><small>Кушон, тёмный и тяжёлый</small></div>
+    </div>
+    <div class="mini" id="mini" aria-label="Все 16 огранок серии"></div>
+    <p class="cap">Камни нарисованы кодом, чтобы показать стиль. Для сайта нужны финальные рендеры в одном освещении. Пять типов взяты с главной страницы, остальные одиннадцать показаны как образец серии.</p>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Что люди покажут друзьям</span>
+    <h2>Карточка для сторис и совместимость</h2>
+    <p class="lead">Эти два экрана уходят в соцсети, и по ним судят о бренде. Здесь образ должен быть самым дорогим: один камень, одно крупное число, ничего лишнего.</p>
+    <div class="share">
+      <div class="story" role="img" aria-label="Макет карточки для сторис с типом Искра">
+        <div class="hd">грани<span>Пример</span></div>
+        <div class="gem" data-g="iskra"></div>
+        <div class="lab">Твой тип</div>
+        <h3>Искра</h3>
+        <div class="sub">Энергия · Вдохновение · Новые идеи</div>
+        <div class="bars">
+          <div><span>Открытость к новому</span><b>87%</b><i style="--w:87%"></i></div>
+          <div><span>Экстраверсия</span><b>74%</b><i style="--w:74%"></i></div>
+          <div><span>Доброжелательность</span><b>81%</b><i style="--w:81%"></i></div>
+          <div><span>Добросовестность</span><b>43%</b><i style="--w:43%"></i></div>
+          <div><span>Эмоциональная устойчивость</span><b>68%</b><i style="--w:68%"></i></div>
+        </div>
+        <div class="ft"><span>grani-test.ru</span><span>Пройди тест</span></div>
+      </div>
+      <div class="pair" role="img" aria-label="Макет карточки совместимости Искра и Архитектор, 78 процентов">
+        <span class="eyebrow">Совместимость</span><span class="tag">Пример</span>
+        <div class="duo">
+          <div class="gem" data-g="iskra"></div>
+          <div class="pct">78%<small>совместимость</small></div>
+          <div class="gem" data-g="arch"></div>
+        </div>
+        <div class="names"><span>Искра</span><span>Архитектор</span></div>
+        <div class="lists">
+          <div><b>Вам легко вместе в</b><ul><li>общении</li><li>интересе к новому</li><li>поддержке идей</li></ul></div>
+          <div class="no"><b>Стоит договориться о</b><ul><li>планировании</li><li>темпе жизни</li><li>распределении обязанностей</li></ul></div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">Числа в карточках взяты из примеров на сайте. Процент совместимости выводится огромным кеглем: это тот самый «громкий» типографский момент.</p>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Система</span>
+    <h2>Палитра, шрифты и правила</h2>
+    <div class="sys">
+      <div>
+        <div class="sw">
+          <div><i style="background:#0A1F17"></i><span><b>Глубокий изумруд</b>фон тёмных блоков</span></div>
+          <div><i style="background:#123226"></i><span><b>Хвоя</b>карточки на тёмном</span></div>
+          <div><i style="background:#2F8F63"></i><span><b>Изумруд</b>главный цвет камней</span></div>
+          <div><i style="background:#BFEBD3"></i><span><b>Мята</b>блики и свет</span></div>
+          <div><i style="background:#CDB57B"></i><span><b>Шампань</b>только линии и числа</span></div>
+          <div><i style="background:#EFE9DA"></i><span><b>Слоновая кость</b>текст и светлые блоки</span></div>
+        </div>
+        <ul class="rules">
+          <li><b>Золота мало.</b> Тонкие линии, процент, одна деталь на экран. Залитых золотых кнопок нет.</li>
+          <li><b>Тёмный блок раз в два экрана.</b> Светлые секции остаются кремовыми, как сейчас.</li>
+          <li><b>Одна картинка на тип.</b> Только огранённый камень, один источник света сверху слева.</li>
+          <li><b>Мелкий текст светлее и крупнее.</b> Не меньше 14 px, контраст не ниже 4,5 к 1.</li>
+        </ul>
+      </div>
+      <div class="type">
+        <div class="eyebrow" style="margin-bottom:14px">Шрифты</div>
+        <div class="big">Узнай <em>себя</em></div>
+        <p><b style="color:var(--ink);font-weight:500">Cormorant Garamond</b> для заголовков, крупных чисел и названий типов. Курсив используем для одного слова в заголовке. <b style="color:var(--ink);font-weight:500">Golos Text</b> для текста, кнопок и подписей. Оба уже на сайте, менять их не нужно.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <span class="eyebrow">Порядок работ</span>
+    <h2>С чего начать</h2>
+    <div class="steps">
+      <div class="s"><div><h3>Серия из 16 огранок</h3><p>Финальные рендеры в одном освещении. Это основа для главной, страниц типов, сторис и совместимости.</p></div><span class="pill">Долго</span></div>
+      <div class="s"><div><h3>Тёмные изумрудные блоки и единая палитра в коде</h3><p>Первый экран, 16 типов, результат. Заодно белый футер и мятный cookie-баннер переводятся в палитру сайта.</p></div><span class="pill">Быстро</span></div>
+      <div class="s"><div><h3>Карточка для сторис и совместимость</h3><p>Новая вёрстка с камнем, зерном и крупным числом. Именно её будут пересылать.</p></div><span class="pill">Средне</span></div>
+      <div class="s"><div><h3>Типографика и контраст</h3><p>Цены плотнее, мелкий текст светлее, один громкий кегль на каждый экран.</p></div><span class="pill">Быстро</span></div>
+      <div class="s"><div><h3>Страницы теста и цен в той же системе</h3><p>Экран вопросов получает фон и ритм бренда, карточки цен выравниваются и выигрывают от тёмного акцентного блока.</p></div><span class="pill">Средне</span></div>
+    </div>
+    <p class="foot">Это референс стиля, а не готовая вёрстка. Макеты собраны по скриншотам главной, типов, совместимости и цен. Экран результата и оплаты на сайте я не проходил, поэтому карточки для сторис показаны по примерам с главной.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  var mix=function(a,b,t){var p=function(h){return[1,3,5].map(function(i){return parseInt(h.slice(i,i+2),16)})},A=p(a),B=p(b);return'rgb('+A.map(function(v,i){return Math.round(v+(B[i]-v)*t)}).join(',')+')'};
+  var ramp=function(s,t){t=Math.max(0,Math.min(.999,t));var x=t*(s.length-1),i=Math.floor(x);return mix(s[i],s[i+1],x-i)};
+  var rng=function(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
+  var PAL={
+    em:['#04180F','#0F5A3B','#2FA36E','#C6F0D9'],
+    teal:['#04202A','#10596B','#3FA8B8','#D3F1F5'],
+    mint:['#0B2A26','#2E7F70','#7CCBB5','#EAFBF3'],
+    pine:['#03120C','#0B3D2A','#1F7A52','#9FD9BB'],
+    olive:['#141E08','#41591A','#8FB04D','#E3F0BC'],
+    gold:['#2A1F08','#7A6224','#CDB57B','#F7EDCB']
+  };
+  var fmt=function(p){return p.map(function(q){return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')};
+  var avg=function(p){var x=0,y=0;p.forEach(function(q){x+=q[0];y+=q[1]});return[x/p.length,y/p.length]};
+
+  function brilliant(o){
+    var n=o.n||10,rot=o.rot==null?-Math.PI/2:o.rot,ax=o.ax||1,ay=o.ay||1,pal=PAL[o.pal||'em'],R=rng(o.seed||1),light=-2.3;
+    var step=2*Math.PI/n,out=[],mid=[],tab=[];
+    var pt=function(a,s){return[100+88*s*ax*Math.cos(a),100+88*s*ay*Math.sin(a)]};
+    for(var i=0;i<n;i++){var a=rot+i*step;out.push(pt(a,1));mid.push(pt(a+step/2,.7));tab.push(pt(a+step/2,.4))}
+    var F=[];
+    var col=function(poly,bias,jit){var c=avg(poly),ang=Math.atan2((c[1]-100)/ay,(c[0]-100)/ax);var t=.5+.5*Math.cos(ang-light);return ramp(pal,t*.72+bias+(R()-.5)*jit)};
+    for(var i=0;i<n;i++){var j=(i+1)%n;
+      var A=[out[i],out[j],mid[i]],B=[mid[i],mid[j],out[j]],C=[mid[i],mid[j],tab[j],tab[i]];
+      F.push([A,col(A,0,.34)],[B,col(B,.08,.34)],[C,col(C,.16,.3)]);
+    }
+    F.push([tab,ramp(pal,.82)]);
+    return {f:F,o:out};
+  }
+  function stepCut(o){
+    var pal=PAL[o.pal||'em'],R=rng(o.seed||1),w=o.w||1,h=o.h||1.1,light=-2.3;
+    var base=[[-.6,-1],[.6,-1],[1,-.6],[1,.6],[.6,1],[-.6,1],[-1,.6],[-1,-.6]];
+    var sc=[1,.76,.54,.32],rings=sc.map(function(s){return base.map(function(b){return[100+88*s*b[0]*w,100+88*s*b[1]*h]})});
+    var F=[];
+    for(var k=0;k<3;k++)for(var i=0;i<8;i++){var j=(i+1)%8,q=[rings[k][i],rings[k][j],rings[k+1][j],rings[k+1][i]];
+      var c=avg(q),ang=Math.atan2(c[1]-100,c[0]-100),t=.5+.5*Math.cos(ang-light);
+      F.push([q,ramp(pal,t*.66+k*.07+(R()-.5)*.16)]);}
+    F.push([rings[3],ramp(pal,.86)]);
+    return {f:F,o:rings[0]};
+  }
+  var SPEC={
+    iskra:function(){return brilliant({n:12,pal:'em',seed:4})},
+    arch:function(){return stepCut({pal:'teal',seed:7,w:.82,h:1.08})},
+    dream:function(){return brilliant({n:14,pal:'mint',seed:11,ax:.8,ay:1})},
+    cmd:function(){return brilliant({n:4,rot:-Math.PI/4,pal:'pine',seed:3,ax:1.02,ay:1.02})},
+    rock:function(){return brilliant({n:8,rot:Math.PI/8,pal:'olive',seed:9,ax:1,ay:.92})}
+  };
+  var uid=0;
+  function svg(g,sheen){
+    var id=++uid,s='<svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">';
+    if(sheen)s+='<defs><clipPath id="c'+id+'"><polygon points="'+fmt(g.o)+'"/></clipPath><linearGradient id="l'+id+'" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>';
+    g.f.forEach(function(f){s+='<polygon points="'+fmt(f[0])+'" fill="'+f[1]+'" stroke="rgba(255,255,255,.17)" stroke-width=".5" stroke-linejoin="round"/>'});
+    s+='<polygon points="'+fmt(g.o)+'" fill="none" stroke="rgba(224,203,150,.6)" stroke-width=".9" stroke-linejoin="round"/>';
+    if(sheen)s+='<g clip-path="url(#c'+id+')"><g class="sheen"><rect x="-90" y="-10" width="70" height="220" fill="url(#l'+id+')" transform="skewX(-18)"/></g></g>';
+    return s+'</svg>';
+  }
+  document.querySelectorAll('[data-g]').forEach(function(el){el.innerHTML=svg(SPEC[el.dataset.g]())});
+  document.querySelectorAll('[data-mini]').forEach(function(el){el.innerHTML=svg(SPEC[el.dataset.mini]())});
+  var hg=document.getElementById('heroGem');
+  if(hg)hg.innerHTML=svg(brilliant({n:14,pal:'em',seed:21}),true);
+  var mini=document.getElementById('mini');
+  if(mini){
+    var pals=['em','teal','mint','pine','olive','gold','em','teal'],h='';
+    for(var i=0;i<16;i++){
+      var k=i%4,g=k===0?brilliant({n:[8,10,12,6][(i>>2)%4]+ (i%3)*0,pal:pals[i%8],seed:i+30}):
+        k===1?stepCut({pal:pals[(i+3)%8],seed:i+30,w:.8+(i%3)*.08,h:1.08}):
+        k===2?brilliant({n:[6,8,10,14][(i>>2)%4],pal:pals[(i+2)%8],seed:i+30,ax:.8,ay:1}):
+        brilliant({n:[4,5,6,8][(i>>2)%4],rot:-Math.PI/4,pal:pals[(i+5)%8],seed:i+30});
+      h+='<div class="gem">'+svg(g)+'</div>';
+    }
+    mini.innerHTML=h;
+  }
+})();
+</script>
