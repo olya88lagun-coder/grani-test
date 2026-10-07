@@ -85,6 +85,13 @@
       "when": 1791365918083,
       "tag": "0011_together_close_notice",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1791369227731,
+      "tag": "0012_users_last_login",
+      "breakpoints": true
     }
   ]
 }

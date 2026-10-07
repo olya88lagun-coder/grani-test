@@ -1,5 +1,5 @@
 import { getLibrary } from "@grani/content/data";
-import { NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, type GenerateJob, type NotifyJob } from "@grani/core";
+import { NOTIFY_JOB_OPTIONS, notifyJobKey, QUEUES, RETENTION_CRON, type GenerateJob, type NotifyJob } from "@grani/core";
 import { createDb, jobIdFor } from "@grani/db";
 import { PgBoss } from "pg-boss";
 import { createWriter } from "./ai";
@@ -7,6 +7,7 @@ import { readWorkerEnv } from "./env";
 import { runGenerate } from "./generate";
 import { log } from "./log";
 import { runNotify } from "./notify";
+import { runRetention } from "./retention";
 import { dryRunSender, type Senders } from "./senders";
 import { createVkSender } from "./vk";
 
@@ -26,6 +27,7 @@ boss.on("error", (error) => log("error", "pg-boss error", { error: String(error)
 await boss.start();
 await boss.createQueue(QUEUES.notify);
 await boss.createQueue(QUEUES.generate);
+await boss.createQueue(QUEUES.retention);
 
 const writer = createWriter(env.ai, fetch);
 const library = getLibrary();
@@ -51,6 +53,17 @@ await boss.work<NotifyJob>(QUEUES.notify, async ([job]) => {
     // pg-boss пометит задачу для повтора, но в лог контейнера без этого ничего не попадёт
     // У ошибок Drizzle в тексте только запрос, а причина (ECONNRESET, нарушение ограничения) лежит в cause
     log("warn", "notify job failed", { kind: job.data.kind, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
+    throw error;
+  }
+});
+
+// Расписание хранится в базе pg-boss и переживает перезапуск; повторная регистрация с тем же именем обновляет его
+await boss.schedule(QUEUES.retention, RETENTION_CRON);
+await boss.work(QUEUES.retention, async () => {
+  try {
+    await runRetention({ db, log });
+  } catch (error) {
+    log("warn", "retention job failed", { error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
   }
 });
