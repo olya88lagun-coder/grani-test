@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildTrack, CARE_READY_CARD_ID, CARE_SOURCES, toSnapshot, TOGETHER_MONTHS, TOGETHER_TRACK } from "./catalog";
+import { buildTrack, CARE_READY_CARD_ID, CARE_SOURCES, toSnapshot, TOGETHER_DATE_CARD_IDS, TOGETHER_MONTHS, TOGETHER_TRACK } from "./catalog";
 import intro from "./intro.json";
 import month01 from "./month-01.json";
 import month02 from "./month-02.json";
@@ -184,5 +184,14 @@ describe("care card sources", () => {
   test("the card is ready once the month reflection card is closed, and that card is in the track", () => {
     expect(CARE_READY_CARD_ID).toBe("m01-d26");
     expect(TOGETHER_TRACK.some((card) => card.id === CARE_READY_CARD_ID)).toBe(true);
+  });
+});
+
+describe("date cards", () => {
+  test("every month has four dates in the usual slots, 24 in the six months, and they are the cards with numbered steps", () => {
+    const expected = [1, 2, 3, 4, 5, 6].flatMap((month) => [7, 13, 20, 25].map((n) => `m0${month}-d${String(n).padStart(2, "0")}`));
+
+    expect([...TOGETHER_DATE_CARD_IDS].sort()).toEqual([...expected].sort());
+    for (const id of TOGETHER_DATE_CARD_IDS) expect(TOGETHER_TRACK.find((card) => card.id === id)!.title, id).toMatch(/^Свидание/);
   });
 });

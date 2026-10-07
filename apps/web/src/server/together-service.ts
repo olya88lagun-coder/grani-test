@@ -1,8 +1,9 @@
-import { TOGETHER_TRACK } from "@grani/content/together";
+import { TOGETHER_DATE_CARD_IDS, TOGETHER_TRACK } from "@grani/content/together";
 import { accessState, canRenew, providedPaidSeconds, stageOf } from "@grani/core";
 import {
   closeSpaceForUser,
   countClosedCards,
+  countRevealedCards,
   createSpace,
   ensureShareCode,
   getAccessSnapshot,
@@ -33,6 +34,8 @@ export type TogetherSpaceView = {
   pendingRequest: { displayName: string } | null;
   access: { active: boolean; accessUntil: string | null; stage: number; canRenew: boolean };
   progress: { done: number; total: number };
+  // Для блока «Вы уже вместе»: дни с подтверждения пары, пройденные вместе разговоры и свидания
+  stats: { days: number; conversations: number; dates: number };
 };
 
 const inviteUrl = (deps: TogetherDeps, token: string) => new URL(`/together/invite/${token}`, deps.appUrl).toString();
@@ -121,6 +124,15 @@ export async function leaveTogether(
   return outcome.ok ? { ok: true } : { ok: false, error: outcome.reason };
 }
 
+const DAY_MS = 86_400_000;
+
+// Дни считаются с подтверждения пары (когда вошёл второй участник); пока пара не собрана, их нет
+function daysTogether(snapshot: { space: { status: string }; members: { joinedAt: Date }[] }, now: Date): number {
+  if (snapshot.space.status !== "active" || snapshot.members.length < 2) return 0;
+  const since = Math.max(...snapshot.members.map((member) => member.joinedAt.getTime()));
+  return Math.max(0, Math.floor((now.getTime() - since) / DAY_MS));
+}
+
 export async function getTogetherSpaceView(deps: TogetherDeps, userId: string): Promise<TogetherSpaceView | null> {
   const snapshot = await getActiveSpaceForUser(deps.db, userId);
   const me = snapshot?.members.find((member) => member.userId === userId);
@@ -142,5 +154,6 @@ export async function getTogetherSpaceView(deps: TogetherDeps, userId: string): 
       canRenew: canRenew(periods, now, closedAt),
     },
     progress: { done: await countClosedCards(deps.db, snapshot.space.id), total: TOGETHER_TRACK.length },
+    stats: { days: daysTogether(snapshot, now), ...(await countRevealedCards(deps.db, { spaceId: snapshot.space.id, dateCardIds: TOGETHER_DATE_CARD_IDS })) },
   };
 }

@@ -150,4 +150,13 @@ describe("space view progress", () => {
 
     expect((await getTogetherSpaceView(deps, boris))?.progress).toEqual({ done: 1, total: 159 });
   });
+  test("reports the days together, finished conversations and dates for the 'You are already together' block", async () => {
+    expect((await getTogetherSpaceView(deps, anna))?.stats).toEqual({ days: 0, conversations: 0, dates: 0 });
+
+    await playCard();
+    await playCard();
+    clock = new Date(START.getTime() + 12 * DAY_MS + 3_600_000);
+
+    expect((await getTogetherSpaceView(deps, boris))?.stats).toEqual({ days: 12, conversations: 2, dates: 0 });
+  });
 });
