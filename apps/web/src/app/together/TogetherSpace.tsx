@@ -19,6 +19,7 @@ import { InviteNote } from "./InviteNote";
 import { PaymentForm } from "./PaymentForm";
 import { ShareFriends } from "./ShareFriends";
 import { TogetherCards } from "./TogetherCards";
+import { TogetherStats } from "./TogetherStats";
 
 const BUSY_RETRY_MS = 1000;
 const BUSY_RETRY_LIMIT = 3;
@@ -257,6 +258,8 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
           <p className="lead">{names(space)} подтвердили участие. Три вводные карточки доступны бесплатно, а доступ на 30 дней откроется, когда дойдёте до основного маршрута.</p>
         </section>
       )}
+
+      {space?.status === "active" && space.stats && <TogetherStats stats={space.stats} />}
 
       {space?.status === "active" && (
         <TogetherCards

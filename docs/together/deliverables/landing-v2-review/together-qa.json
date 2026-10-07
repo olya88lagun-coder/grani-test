@@ -1,0 +1,240 @@
+{
+  "scope": "Actual components rendered statically. Production auth, database, payments, Next.js request handling not exercised.",
+  "colors": [
+    {
+      "foreground": "625158",
+      "background": "fffaf5",
+      "ratio": 7.1354152310765375
+    },
+    {
+      "foreground": "625158",
+      "background": "f4ece3",
+      "ratio": 6.328024537470045
+    },
+    {
+      "foreground": "625158",
+      "background": "f5e7db",
+      "ratio": 6.1101159744292675
+    },
+    {
+      "foreground": "625158",
+      "background": "e9d4c7",
+      "ratio": 5.183529911120783
+    },
+    {
+      "foreground": "625158",
+      "background": "F6E8E1",
+      "ratio": 6.185085098136187
+    },
+    {
+      "foreground": "625158",
+      "background": "edddd2",
+      "ratio": 5.594949576934071
+    },
+    {
+      "foreground": "7d4e3e",
+      "background": "fffaf5",
+      "ratio": 6.678549308429522
+    },
+    {
+      "foreground": "7d4e3e",
+      "background": "f4ece3",
+      "ratio": 5.922854175939729
+    },
+    {
+      "foreground": "7d4e3e",
+      "background": "f5e7db",
+      "ratio": 5.7188978488210775
+    },
+    {
+      "foreground": "7d4e3e",
+      "background": "e9d4c7",
+      "ratio": 4.851639180347529
+    },
+    {
+      "foreground": "7d4e3e",
+      "background": "F6E8E1",
+      "ratio": 5.789066854137798
+    },
+    {
+      "foreground": "7d4e3e",
+      "background": "edddd2",
+      "ratio": 5.236716493385287
+    },
+    {
+      "foreground": "4A2230",
+      "background": "fffaf5",
+      "ratio": 12.955316160866753
+    },
+    {
+      "foreground": "4A2230",
+      "background": "f4ece3",
+      "ratio": 11.489388620244076
+    },
+    {
+      "foreground": "4A2230",
+      "background": "f5e7db",
+      "ratio": 11.093746007035215
+    },
+    {
+      "foreground": "4A2230",
+      "background": "e9d4c7",
+      "ratio": 9.411403072298507
+    },
+    {
+      "foreground": "4A2230",
+      "background": "F6E8E1",
+      "ratio": 11.229862640541874
+    },
+    {
+      "foreground": "4A2230",
+      "background": "edddd2",
+      "ratio": 10.158391393622187
+    },
+    {
+      "foreground": "FFFCFA",
+      "background": "4A2230",
+      "ratio": 13.15486667889641
+    }
+  ],
+  "minimumTokenContrast": 4.851639180347529,
+  "checks": [
+    {
+      "width": 320,
+      "height": 720,
+      "scrollWidth": 320,
+      "clientWidth": 320,
+      "ctaBottom": 547.375,
+      "ctaInFirstScreen": true,
+      "priceInFirstScreen": true,
+      "h1Count": 1,
+      "headingSkips": [],
+      "enterLinks": [
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx"
+      ],
+      "imageLoaded": true,
+      "selectedImage": 600,
+      "sampleCount": 5,
+      "faqWorks": true,
+      "focusVisible": true,
+      "reducedMotion": true,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "ctaBottom": 486.046875,
+      "ctaInFirstScreen": true,
+      "priceInFirstScreen": true,
+      "h1Count": 1,
+      "headingSkips": [],
+      "enterLinks": [
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx"
+      ],
+      "imageLoaded": true,
+      "selectedImage": 600,
+      "sampleCount": 5,
+      "faqWorks": true,
+      "focusVisible": true,
+      "reducedMotion": true,
+      "errors": []
+    },
+    {
+      "width": 768,
+      "height": 1024,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "ctaBottom": 546.75,
+      "ctaInFirstScreen": true,
+      "priceInFirstScreen": true,
+      "h1Count": 1,
+      "headingSkips": [],
+      "enterLinks": [
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx"
+      ],
+      "imageLoaded": true,
+      "selectedImage": 1600,
+      "sampleCount": 5,
+      "faqWorks": true,
+      "focusVisible": true,
+      "reducedMotion": true,
+      "errors": []
+    },
+    {
+      "width": 1024,
+      "height": 900,
+      "scrollWidth": 1024,
+      "clientWidth": 1024,
+      "ctaBottom": 533.984375,
+      "ctaInFirstScreen": true,
+      "priceInFirstScreen": true,
+      "h1Count": 1,
+      "headingSkips": [],
+      "enterLinks": [
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx"
+      ],
+      "imageLoaded": true,
+      "selectedImage": 1600,
+      "sampleCount": 5,
+      "faqWorks": true,
+      "focusVisible": true,
+      "reducedMotion": true,
+      "errors": []
+    },
+    {
+      "width": 1440,
+      "height": 900,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "ctaBottom": 551.9375,
+      "ctaInFirstScreen": true,
+      "priceInFirstScreen": true,
+      "h1Count": 1,
+      "headingSkips": [],
+      "enterLinks": [
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx",
+        "/api/together/enter?next=space&from=Abcdefghijklmnopqrstuvwx"
+      ],
+      "imageLoaded": true,
+      "selectedImage": 1600,
+      "sampleCount": 5,
+      "faqWorks": true,
+      "focusVisible": true,
+      "reducedMotion": true,
+      "errors": []
+    }
+  ],
+  "stats": [
+    {
+      "name": "zero",
+      "text": "ВАША ИСТОРИЯ\n\nВы уже вместе\n\nСегодня первый день: начните с первого вопроса.",
+      "overflow": false
+    },
+    {
+      "name": "populated",
+      "text": "ВАША ИСТОРИЯ\n\nВы уже вместе\n21\nдень в пространстве\n14\nразговоров\n2\nсвидания\n\nЗдесь разговоры и свидания, ответы на которые вы уже открыли вдвоём.",
+      "overflow": false
+    },
+    {
+      "name": "firstDay",
+      "text": "ВАША ИСТОРИЯ\n\nВы уже вместе\n0\nдней в пространстве\n1\nразговор\n0\nсвиданий\n\nЗдесь разговоры и свидания, ответы на которые вы уже открыли вдвоём.",
+      "overflow": false
+    },
+    {
+      "name": "quiet",
+      "text": "ВАША ИСТОРИЯ\n\nВы уже вместе\n3\nдня в пространстве\n0\nразговоров\n0\nсвиданий\n\nВаша история начинается с первого вопроса. Выберите время для него вдвоём.",
+      "overflow": false
+    }
+  ]
+}

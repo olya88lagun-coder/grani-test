@@ -1,0 +1,7 @@
+.stats { background: var(--surface); border-radius: var(--radius); padding: 28px; }
+.stats h2 { font-size: clamp(32px, 7vw, 42px); line-height: 1.1; margin: 12px 0 20px; }
+.stats ul { list-style: none; padding: 0; margin: 0 0 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.stats li { display: flex; flex-direction: column; gap: 4px; }
+.stats strong { font-family: var(--font-display); font-weight: 300; color: var(--accent); font-size: 46px; line-height: 1; }
+.stats span, .stats > p:last-child { font-size: 13px; color: #625158; }
+@media (max-width: 350px) { .stats { padding: 24px 20px; } .stats ul { gap: 12px; } .stats span { font-size: 12px; } }

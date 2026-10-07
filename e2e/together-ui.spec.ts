@@ -27,7 +27,7 @@ test("two people go from the sign-in to a paid space through the screens", async
   // Витрина: маршрут на полгода с вопросами из месяцев
   await expect(anna.getByRole("heading", { name: "Маршрут на полгода" })).toBeVisible();
   await expect(anna.getByText("Наша история")).toBeVisible();
-  await expect(anna.getByText("Свидание за 0 ₽ и 30 минут: какое?")).toBeVisible();
+  await expect(anna.getByRole("heading", { name: "Свидание за 0 ₽ и 30 минут: какое?", exact: true })).toBeVisible();
   await anna.getByRole("link", { name: "Создать пространство для двоих" }).click();
   await expect(anna).toHaveURL(/\/login/);
   await anna.goto(`/api/dev/login?name=${encodeURIComponent(annaName)}`);
@@ -228,4 +228,28 @@ test("the care card of month 1 shows each person's items under their name and st
   await expect(anna.getByText("Позвать погулять")).toBeVisible();
   await expect(anna.getByText("Чай по воскресеньям")).toBeVisible();
   await expect(anna.getByText(/В итог вошли только выбранные вами пункты/)).toBeVisible();
+});
+
+test("the public Together page leads with the promise and the price, labels its examples, and a phone loads only the narrow hero image", async ({ browser }) => {
+  const page = await newPage(browser);
+  const heroImages: string[] = [];
+  page.on("request", (request) => {
+    if (/\/together\/hero-still-life/.test(request.url())) heroImages.push(new URL(request.url()).pathname);
+  });
+  await page.goto("/together", { waitUntil: "networkidle" });
+
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Быть ближе\s*—\s*в обычные дни/);
+  await expect(page.getByText(/3 карточки бесплатно, дальше 399\s*₽ за 30 дней на двоих/)).toBeVisible();
+  await expect(page.getByRole("link", { name: /^Создать пространство для двоих/ })).toHaveCount(1);
+  // Примеры карточек помечены, и ни один из них не ведёт по ссылке
+  expect(await page.getByText("Пример", { exact: true }).count()).toBeGreaterThanOrEqual(5);
+  await expect(page.locator("article:has-text('Пример') a")).toHaveCount(0);
+  // Оферта, политика и согласие рядом с ценой
+  for (const name of ["Оферта", "Политика", "Согласие"]) await expect(page.getByRole("link", { name, exact: true }).first()).toBeVisible();
+
+  // Телефон скачивает узкую картинку и не предзагружает широкую
+  expect(heroImages.some((path) => path.includes("mobile"))).toBe(true);
+  expect(heroImages.some((path) => !path.includes("mobile"))).toBe(false);
+  expect(await page.locator('link[rel="preload"][as="image"]').count()).toBe(0);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
