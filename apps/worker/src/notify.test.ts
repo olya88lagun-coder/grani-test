@@ -2,11 +2,13 @@ import { compatibilityScore, type TraitScores } from "@grani/core";
 import {
   acceptPairInvite,
   addFriendResponse,
+  createPurchase,
   createTestDb,
   getNotifyTargets,
   getOrCreateInvite,
   getOrCreatePairInvite,
   leavePair,
+  markPurchaseSucceeded,
   saveReport,
   seedPair,
   seedUserWithResult,
@@ -138,5 +140,57 @@ describe("chapters_ready", () => {
     await runNotify({ kind: "chapters_ready", resultId: owner.resultId }, deps);
 
     expect(telegram).toHaveBeenCalledWith("400", `Готово: все четыре главы. Открыть: ${APP_URL}/report/${owner.resultId}`);
+  });
+});
+
+describe("receipts_pending", () => {
+  async function paid(buyer: { userId: string; resultId: string }, amountKopecks: number, email: string | null = "buyer@example.ru") {
+    const purchase = await createPurchase(db, { userId: buyer.userId, product: "full", target: { resultId: buyer.resultId }, amountKopecks, receiptEmail: email });
+    await markPurchaseSucceeded(db, purchase.id, new Date("2026-10-07T10:00:00Z"));
+  }
+
+  async function owner() {
+    const seeded = await seedUserWithResult(db, { externalId: "900", provider: "vk", displayName: "Владелица" });
+    await setCanNotify(db, { provider: "vk", externalId: "900", canNotify: true });
+    return seeded;
+  }
+
+  test("sends the owner one message with the count and the sum of receipts to send, and no buyer data", async () => {
+    const { userId: ownerUserId } = await owner();
+    const buyer = await seedUserWithResult(db, { externalId: "901" });
+    await paid(buyer, 39_900, "private-buyer@example.ru");
+    await paid(buyer, 39_900);
+
+    await runNotify({ kind: "receipts_pending", bucket: 1, ownerUserId }, deps);
+
+    expect(vk).toHaveBeenCalledTimes(1);
+    const text = vk.mock.calls[0]?.[1] ?? "";
+    expect(text).toContain("Чеков к отправке: 2");
+    expect(text).toContain("798");
+    expect(text).toContain(`${APP_URL}/admin/receipts`);
+    expect(text).not.toContain("private-buyer");
+  });
+
+  test("says nothing when there is nothing to send, and ignores free purchases", async () => {
+    const seededOwner = await owner();
+    const ownerUserId = seededOwner.userId;
+    await runNotify({ kind: "receipts_pending", bucket: 1, ownerUserId }, deps);
+    await paid(seededOwner, 0, null);
+
+    await runNotify({ kind: "receipts_pending", bucket: 2, ownerUserId }, deps);
+
+    expect(vk).not.toHaveBeenCalled();
+  });
+
+  test("does not fail when the owner has not allowed messages, and asks for a retry when delivery fails", async () => {
+    const buyer = await seedUserWithResult(db, { externalId: "902" });
+    await paid(buyer, 39_900);
+    const silent = await seedUserWithResult(db, { externalId: "903", provider: "vk" });
+
+    await expect(runNotify({ kind: "receipts_pending", bucket: 1, ownerUserId: silent.userId }, deps)).resolves.toBeUndefined();
+
+    const { userId: ownerUserId } = await owner();
+    vk.mockResolvedValue("failed");
+    await expect(runNotify({ kind: "receipts_pending", bucket: 1, ownerUserId }, deps)).rejects.toThrow(/not delivered/);
   });
 });

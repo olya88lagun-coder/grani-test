@@ -26,6 +26,7 @@ let store: Map<string, GatewayPayment>;
 let gateway: FakeGateway;
 let deps: PaymentsDeps;
 let enqueue: Mock<(job: GenerateJob) => Promise<void>>;
+let remind: Mock<(now: Date) => Promise<void>>;
 let anna: { userId: string; resultId: string };
 
 beforeEach(async () => {
@@ -33,7 +34,8 @@ beforeEach(async () => {
   store = new Map();
   gateway = createFakeGateway({ appUrl: APP_URL, store });
   enqueue = vi.fn<(job: GenerateJob) => Promise<void>>().mockResolvedValue(undefined);
-  deps = { db, gateway, appUrl: APP_URL, now: () => NOW, enqueueGenerate: enqueue, isOwner: async () => false };
+  remind = vi.fn<(now: Date) => Promise<void>>().mockResolvedValue(undefined);
+  deps = { db, gateway, appUrl: APP_URL, now: () => NOW, enqueueGenerate: enqueue, remindReceipts: remind, isOwner: async () => false };
   anna = await seedUserWithResult(db, { externalId: "anna" });
 });
 
@@ -120,6 +122,44 @@ describe("startPurchase", () => {
     deps.gateway = { ...gateway, createPayment: vi.fn().mockRejectedValue(new Error("503")) };
 
     expect(await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "payment_failed" });
+  });
+});
+
+describe("receipts reminder", () => {
+  test("a paid purchase reminds the owner once, however many times the payment is checked", async () => {
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
+    const paymentId = paymentOf(outcome.ok ? outcome.url : "");
+
+    await syncPayment(deps, paymentId);
+    expect(remind).not.toHaveBeenCalled();
+    gateway.complete(paymentId, "succeeded");
+    await syncPayment(deps, paymentId);
+    await syncPayment(deps, paymentId);
+
+    expect(remind).toHaveBeenCalledTimes(1);
+    expect(remind).toHaveBeenCalledWith(NOW);
+  });
+
+  test("a canceled payment and a free purchase of the owner need no receipt, so nobody is reminded", async () => {
+    const canceled = await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: EMAIL });
+    gateway.complete(paymentOf(canceled.ok ? canceled.url : ""), "canceled");
+    await syncPayment(deps, paymentOf(canceled.ok ? canceled.url : ""));
+    deps = { ...deps, isOwner: async (userId) => userId === anna.userId };
+    await startPurchase(deps, { userId: anna.userId, product: "full", targetId: anna.resultId, email: undefined });
+
+    expect(remind).not.toHaveBeenCalled();
+  });
+
+  test("a failed reminder never breaks the paid purchase: it still succeeds and generation still starts", async () => {
+    remind.mockRejectedValue(new Error("queue is down"));
+    const error = vi.spyOn(console, "error").mockImplementation(() => undefined);
+
+    const purchase = await buyAndPay("full");
+
+    expect(purchase?.status).toBe("succeeded");
+    expect(enqueue).toHaveBeenCalledWith({ kind: "full", resultId: anna.resultId });
+    expect(error).toHaveBeenCalled();
+    error.mockRestore();
   });
 });
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { authIdentities, createTestDb, getUser, hasIdentity, upsertUserFromIdentity, type Database, type IdentityInput } from "./testing";
+import { authIdentities, createTestDb, deleteUserData, findUserIdByIdentity, getUser, hasIdentity, upsertUserFromIdentity, type Database, type IdentityInput } from "./testing";
 
 const CONSENT = { version: "2026-09-v1", at: new Date("2026-09-17T10:00:00Z") };
 
@@ -82,5 +82,18 @@ describe("hasIdentity", () => {
     expect(await hasIdentity(db, userId, { provider: "vk", externalId: "43" })).toBe(false);
     expect(await hasIdentity(db, userId, { provider: "telegram", externalId: "42" })).toBe(false);
     expect(await hasIdentity(db, "not-a-uuid", { provider: "vk", externalId: "42" })).toBe(false);
+  });
+});
+
+describe("findUserIdByIdentity", () => {
+  test("finds the user by provider and id, and nobody for an unknown or removed identity", async () => {
+    const outcome = await upsertUserFromIdentity(db, identity({ provider: "vk", externalId: "77" }), CONSENT);
+    const userId = outcome.ok ? outcome.user.id : "";
+
+    expect(await findUserIdByIdentity(db, { provider: "vk", externalId: "77" })).toBe(userId);
+    expect(await findUserIdByIdentity(db, { provider: "vk", externalId: "78" })).toBeNull();
+    expect(await findUserIdByIdentity(db, { provider: "telegram", externalId: "77" })).toBeNull();
+    await deleteUserData(db, userId);
+    expect(await findUserIdByIdentity(db, { provider: "vk", externalId: "77" })).toBeNull();
   });
 });

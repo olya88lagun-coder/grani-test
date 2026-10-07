@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { chaptersReadyText, friendAnsweredText, pairCreatedText, reportReadyText } from "./texts";
+import { chaptersReadyText, friendAnsweredText, pairCreatedText, receiptsPendingText, reportReadyText } from "./texts";
 
 const URL = "https://grani-test.ru/result/1";
 
@@ -25,4 +25,11 @@ test("a ready report names what is ready without gender endings", () => {
 
 test("the chapter bundle has its own message", () => {
   expect(chaptersReadyText("u")).toBe("Готово: все четыре главы. Открыть: u");
+});
+
+test("the receipts reminder gives the count, the sum and a link, and nothing about the buyers", () => {
+  const text = receiptsPendingText(3, 119_700, "https://grani-test.ru/admin/receipts");
+
+  expect(text).toBe("Чеков к отправке: 3 на 1\u00a0197\u00a0₽. Открыть: https://grani-test.ru/admin/receipts");
+  expect(receiptsPendingText(1, 39_900, "u")).toContain("Чеков к отправке: 1 на 399");
 });

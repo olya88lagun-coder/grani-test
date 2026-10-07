@@ -138,3 +138,32 @@ test("the owner opens a report for free: no email, no payment page, nothing to s
   await owner.context.close();
 });
 
+test("the receipts page counts what is waiting, says for how long and copies the lines for the tax app", async ({ browser }) => {
+  test.setTimeout(120_000);
+  const buyer = await signedInWithResult(browser, uniqueName("Гоша"));
+  const email = `copy${Date.now()}@example.ru`;
+  await buyer.page.getByRole("button", { name: /^Открыть полный разбор за 299/ }).click();
+  await giveReceiptEmail(buyer.page, email);
+  await payOnFakePage(buyer.page);
+  await expect(buyer.page).toHaveURL(/\/purchases\/[0-9a-f-]{36}/);
+
+  const owner = await signedInWithResult(browser, "Владелица");
+  await owner.context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: BASE_URL });
+  await owner.page.goto("/admin/receipts");
+  await expect(owner.page.getByRole("status")).toContainText(/К отправке: \d+ (чек|чека|чеков) на/);
+  const receipt = owner.page.getByRole("listitem").filter({ hasText: email });
+  await expect(receipt).toContainText("оплачено сегодня");
+
+  await receipt.getByRole("button", { name: "Скопировать название" }).click();
+  expect(await owner.page.evaluate(() => navigator.clipboard.readText())).toBe("Полный разбор личности «Грани»");
+  await receipt.getByRole("button", { name: "Скопировать сумму" }).click();
+  expect(await owner.page.evaluate(() => navigator.clipboard.readText())).toBe("299");
+  await receipt.getByRole("button", { name: "Скопировать почту" }).click();
+  expect(await owner.page.evaluate(() => navigator.clipboard.readText())).toBe(email);
+
+  await receipt.getByRole("button", { name: "Чек отправлен" }).click();
+  await expect(owner.page.getByText(email)).toHaveCount(0);
+
+  await buyer.context.close();
+  await owner.context.close();
+});
