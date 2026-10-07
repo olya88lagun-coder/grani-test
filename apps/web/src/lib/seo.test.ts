@@ -53,13 +53,13 @@ describe("PUBLIC_PATHS", () => {
   it("lists only public canonical pages, including published articles and the Big Five landing", () => {
     const paths = PUBLIC_PATHS();
     expect(paths).toEqual(expect.arrayContaining(["/", "/big-five-test", "/types", "/types/vdokhnovitel", "/traits", "/traits/stability-low", "/compatibility"]));
-    expect(paths).toEqual(expect.arrayContaining(["/about", "/privacy", "/consent", "/offer", "/contacts"]));
+    expect(paths).toEqual(expect.arrayContaining(["/about", "/privacy", "/consent", "/offer", "/contacts", "/together"]));
     expect(paths.filter((p) => p.startsWith("/types/"))).toHaveLength(16);
     expect(paths.filter((p) => p.startsWith("/traits/"))).toHaveLength(10);
     // Статьи публикует автопилот: их число выводится из данных, а не записано в тест
     const articles = getArticles().length;
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(articles + 1);
-    expect(paths).toHaveLength(38 + articles);
+    expect(paths).toHaveLength(39 + articles);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).toEqual(expect.arrayContaining(getArticles().map((article) => article.canonical)));
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);

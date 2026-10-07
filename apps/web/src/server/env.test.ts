@@ -85,9 +85,10 @@ describe("owner account", () => {
 });
 
 describe("Together access mode", () => {
-  test("is open outside production and closed in production until it is set", () => {
+  test("is open for everyone by default, in production too, and can be closed or limited by the setting", () => {
     expect(readEnv({ ...VALID, NODE_ENV: "development" }).together).toEqual(OPEN);
-    expect(readEnv({ ...VALID, NODE_ENV: "production" }).together).toEqual({ mode: "off", pilotCode: null, pilotLimit: 40 });
+    expect(readEnv({ ...VALID, NODE_ENV: "production" }).together).toEqual(OPEN);
+    expect(readEnv({ ...VALID, NODE_ENV: "production", TOGETHER_MODE: "off" }).together.mode).toBe("off");
   });
 
   test("the pilot needs a code of at least twelve characters", () => {
