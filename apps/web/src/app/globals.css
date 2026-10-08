@@ -2296,3 +2296,11 @@ main[data-palette="friends"] ~ .footer[data-band="night"] {
 .about-contents a:hover { border-color: var(--accent); }
 .about-contents a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .inner-text h2[id] { scroll-margin-top: 96px; }
+
+/* /articles: главная статья журнала — ночная карточка, как остальные карточки статей */
+.journal-featured[data-band="night"] { background: var(--surface); box-shadow: none; border: 1px solid var(--line); color: var(--ink); }
+.journal-featured[data-band="night"]:hover { border-color: var(--gold); }
+.journal-featured[data-band="night"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.inner-page .journal-featured[data-band="night"] h2 { color: var(--ink); }
+.journal-featured[data-band="night"] .journal-featured__body > p:not(.article-tile__meta) { color: var(--ink-soft); }
+.journal-featured[data-band="night"] .article-tile__meta { color: var(--gold); }
