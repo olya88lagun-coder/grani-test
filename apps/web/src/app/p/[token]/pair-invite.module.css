@@ -1,0 +1,46 @@
+/* Приглашение в пару: ночная страница в палитре пары, два камня и золотая нить над заголовком */
+.invite.invite {
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  min-height: calc(100vh - 80px);
+  padding: 40px 16px 72px;
+  background:
+    radial-gradient(ellipse 340px 180px at 50% 100px, rgba(227, 179, 160, .1), transparent 75%),
+    radial-gradient(ellipse 620px 380px at 82% 240px, rgba(47, 163, 110, .12), transparent 75%),
+    linear-gradient(180deg, rgba(10, 31, 23, .72), rgba(10, 31, 23, .86) 380px, var(--bg) 720px),
+    url('/home/types-night-desktop.webp') center top / auto 720px no-repeat,
+    var(--bg);
+}
+.invite.invite::before,
+.invite.invite::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  left: 50%;
+  width: 760px;
+  height: 300px;
+  border: 1px solid rgba(227, 179, 160, .16);
+  border-radius: 50%;
+  mask-image: linear-gradient(90deg, transparent, #000 25%, #000 75%, transparent);
+}
+.invite.invite::before { top: 28px; transform: translateX(-50%) rotate(-17deg); }
+.invite.invite::after { top: 100px; width: 960px; height: 340px; border-color: rgba(227, 179, 160, .08); transform: translateX(-50%) rotate(14deg); }
+.invite.invite :global(.page) { position: relative; z-index: 1; padding-top: 0; }
+.gems { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; filter: drop-shadow(0 0 40px rgba(227, 179, 160, .2)); }
+.thread { width: 56px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.invite :global(.eyebrow) { color: var(--gold); text-align: center; }
+.invite h1 { color: var(--ink); text-align: center; text-wrap: balance; }
+.invite :global(.lead) { color: var(--ink-soft); }
+.invite :global(.card) { background: var(--surface); border: 1px solid var(--line); box-shadow: none; }
+.invite :global(.button--ghost) { background: transparent; color: var(--ink); border: 1px solid var(--gold); }
+.invite :global(.button:disabled) { background: rgba(239, 233, 218, .12); color: var(--ink-soft); opacity: 1; }
+.invite :global(.choice) { background: rgba(255, 255, 255, .03); border: 1px solid var(--line); color: var(--ink); }
+.invite :global(.choice:has(input:checked)) { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--surface)); }
+@media (max-width: 639px) {
+  .gems { zoom: .8; }
+  .invite.invite { background-image: radial-gradient(ellipse 240px 160px at 50% 100px, rgba(227, 179, 160, .1), transparent 75%), radial-gradient(ellipse 320px 300px at 90% 220px, rgba(47, 163, 110, .1), transparent 75%), linear-gradient(180deg, rgba(10, 31, 23, .78), rgba(10, 31, 23, .92) 440px, var(--bg) 720px), url('/home/types-night-mobile.webp'); }
+  .invite.invite::before { width: 560px; height: 240px; }
+  .invite.invite::after { width: 640px; height: 280px; }
+}
