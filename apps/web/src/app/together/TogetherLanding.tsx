@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { ReactNode } from "react";
 import { PAIR_PRODUCTS } from "@/lib/pair-products";
 import { TOGETHER_MONTHS, TOGETHER_TRACK } from "@grani/content/together";
@@ -54,6 +55,13 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
   return <main className={styles.landing} data-palette="pair" data-band="night" data-night-entry>
     {notice}
     <section className={styles.hero} aria-labelledby="together-title">
+      <div className={styles.art} aria-hidden="true">
+        {/* Art direction: picture выбирает один файл. Весь текст и карточки остаются HTML. */}
+        <picture>
+          <source media="(max-width: 900px)" srcSet="/together/hero-night-mobile.webp" />
+          <Image src="/together/hero-night-desktop.webp" alt="" width={2400} height={1200} sizes="100vw" loading="eager" fetchPriority="high" unoptimized />
+        </picture>
+      </div>
       <div className={styles.heroInner}>
         <div className={styles.intro}>
           <p className={styles.eyebrow}>Грани · Вдвоём</p>
@@ -63,19 +71,12 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
           <p className={styles.priceLine}>3 карточки бесплатно, дальше {price} за {TOGETHER_PERIOD_DAYS} дней на двоих</p>
           <ul className={styles.trust} aria-label="Условия участия"><li>Без обязательного теста</li><li>Два личных аккаунта</li><li>Без автопродления</li></ul>
         </div>
-        <div className={styles.scene}>
-          <div className={styles.art} aria-hidden="true">
-            {/* Временная замена фону от Codex: два шестиугольника, как знак «Граней». UI всегда остаётся HTML. */}
-            <svg className={styles.hexA} viewBox="0 0 100 114"><polygon points="50,2 98,30 98,84 50,112 2,84 2,30" /></svg>
-            <svg className={styles.hexB} viewBox="0 0 100 114"><polygon points="50,2 98,30 98,84 50,112 2,84 2,30" /></svg>
-          </div>
-          <h2 className={styles.visuallyHidden}>Примеры карточек</h2>
-          <div className={styles.heroCards}>
-            <Example kind="Разговор · месяц 1" title={question.prompt} text={question.hint} className={styles.questionCard} />
-            <Example kind="Идея для свидания · вопрос месяца 4" title={dateIdea.prompt} text={dateIdea.hint} className={styles.dateCard} />
-            <Example kind={`Месяц ${firstMonth.month}`} title={firstMonth.title} text={firstMonth.promise} className={styles.monthCard} />
-          </div>
-        </div>
+      </div>
+      <h2 className={styles.visuallyHidden}>Примеры карточек</h2>
+      <div className={styles.heroCards}>
+        <Example kind="Разговор · месяц 1" title={question.prompt} text={question.hint} className={styles.questionCard} />
+        <Example kind="Идея для свидания · вопрос месяца 4" title={dateIdea.prompt} text={dateIdea.hint} className={styles.dateCard} />
+        <Example kind={`Месяц ${firstMonth.month}`} title={firstMonth.title} text={firstMonth.promise} className={styles.monthCard} />
       </div>
       <ul className={styles.benefits}>
         {benefits.map(([icon, title, text]) => <li key={title}><span className={styles.icon}><Icon kind={icon} /></span><div><h2>{title}</h2><p>{text}</p></div></li>)}
