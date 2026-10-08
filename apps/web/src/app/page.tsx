@@ -1,8 +1,14 @@
 import { formatRub, PRODUCT_PRICES, type TypeCode } from "@grani/core";
+import { typeCodeToDir } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, useId } from "react";
+import { GemStone } from "@/components/GemStone";
+import { gemStone, type GemFamily } from "@/lib/gem-stone";
+import type { TypeShape } from "@/lib/gem-paths";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
 import { HomeHeader } from "@/components/PublicHeader";
 import { JsonLd } from "@/components/JsonLd";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
@@ -68,16 +74,49 @@ const TYPES: readonly { code: HomeTypeCode; title: string; tone: string; text: s
   { code: "-+++", title: "Опора", tone: "stone", text: "Надёжность. Стабильность. Забота." },
 ];
 
-// Иллюстрации карточек — ассеты главной из apps/web/public/home
-const TYPE_IMAGES = {
-  "+-++": "/home/type-iskra.webp",
-  "++--": "/home/type-architect.webp",
-  "+--+": "/home/type-dreamer.webp",
-  "-++-": "/home/type-commander.webp",
-  "-+++": "/home/type-support.webp",
-} as const satisfies Partial<Record<TypeCode, string>>;
+type HomeTypeCode = Extract<TypeCode, "+-++" | "++--" | "+--+" | "-++-" | "-+++">;
 
-type HomeTypeCode = keyof typeof TYPE_IMAGES;
+// Optical layers belong to the homepage; the shared GemStone geometry stays unchanged.
+function HomeGem({ shape, family, size }: { shape: TypeShape; family: GemFamily; size: number }) {
+  const id = useId();
+  const { outline, facets } = gemStone(shape, family);
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+      <defs>
+        {facets.map((facet, index) => {
+          const points = facet.points.split(" ").map((point) => point.split(",").map(Number));
+          const x = points.reduce((sum, point) => sum + point[0]!, 0) / points.length;
+          const y = points.reduce((sum, point) => sum + point[1]!, 0) / points.length;
+          const light = (1 + Math.cos(Math.atan2(y - 100, x - 100) + 2.3)) / 2;
+          return (
+            <linearGradient key={index} id={id + "-facet-" + index} x1="0" y1={index % 2 ? "1" : "0"} x2="1" y2={index % 2 ? "0" : "1"}>
+              <stop offset="0" stopColor="#fff" stopOpacity={0.12 + light * 0.3} />
+              <stop offset=".42" stopColor="#fff" stopOpacity="0" />
+              <stop offset="1" stopColor="#00140c" stopOpacity={0.18 + (1 - light) * 0.34} />
+            </linearGradient>
+          );
+        })}
+        <radialGradient id={id + "-reflection"} cx=".32" cy=".18" r=".85">
+          <stop offset="0" stopColor="#fff" stopOpacity=".24" />
+          <stop offset=".35" stopColor="#fff" stopOpacity="0" />
+          <stop offset="1" stopColor="#00140c" stopOpacity=".35" />
+        </radialGradient>
+      </defs>
+      <GemStone shape={shape} family={family} size={200} />
+      <g>
+        {facets.map((facet, index) => (
+          <polygon key={index} points={facet.points} fill={"url(#" + id + "-facet-" + index + ")"} />
+        ))}
+      </g>
+      <polygon points={outline} fill={"url(#" + id + "-reflection)"} />
+      <polygon points={outline} fill="none" stroke="var(--gold)" strokeOpacity=".6" strokeWidth="1" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function HomeTypeGem({ code, size = 180 }: { code: HomeTypeCode; size?: number }) {
+  return <GemPortrait dir={gemAssetDir(typeCodeToDir(code))} size={size} />;
+}
 
 const ARTICLE_CARDS = [
   { slug: "ekstravert-introvert", tag: "Личность", tone: "portrait", image: "/home/article-extrovert.webp" },
@@ -153,6 +192,8 @@ function HomeIcon({ name }: { name: IconName }) {
   );
 }
 
+const HERO_GEM_OUTLINE = gemStone("hexagon", 2).outline;
+
 function CrystalScene() {
   return (
     <div className="home-crystal" aria-label="Гранёная схема личности">
@@ -163,24 +204,26 @@ function CrystalScene() {
           ))}
         </span>
       ))}
-      <svg className="home-crystal__diagram" viewBox="0 0 520 420" aria-hidden="true">
-        <path d="M260 34 454 132 454 284 260 386 66 284 66 132Z" />
-        <path d="M66 132 260 210 454 132M66 284 260 210 454 284M260 34v352M66 132l194 254M454 132 260 386" />
-        <circle cx="66" cy="132" r="4" />
-        <circle cx="454" cy="132" r="4" />
-        <circle cx="454" cy="284" r="4" />
-        <circle cx="66" cy="284" r="4" />
+      <svg className="home-crystal__diagram" viewBox="0 0 520 520" aria-hidden="true" focusable="false">
+        <circle cx="260" cy="260" r="229" />
+        <circle cx="260" cy="260" r="202" />
       </svg>
-      <img
-        className="home-crystal__image"
-        src="/home/hero-crystal.webp"
-        srcSet="/home/hero-crystal-480.webp 480w, /home/hero-crystal.webp 908w"
-        sizes="(max-width: 720px) 64vw, 330px"
-        alt=""
-        width={908}
-        height={1062}
-        fetchPriority="high"
-      />
+      <div className={styles.heroGem}>
+        <HomeGem shape="hexagon" family={2} size={440} />
+        <svg className={styles.sheenLayer} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+          <defs>
+            <clipPath id="home-gem-cut"><polygon points={HERO_GEM_OUTLINE} /></clipPath>
+            <linearGradient id="home-gem-light" x1="0" x2="1">
+              <stop offset="0" stopColor="var(--ink)" stopOpacity="0" />
+              <stop offset=".5" stopColor="var(--ink)" stopOpacity=".35" />
+              <stop offset="1" stopColor="var(--ink)" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <g clipPath="url(#home-gem-cut)">
+            <rect className={styles.sheen} x="-90" y="-40" width="70" height="280" fill="url(#home-gem-light)" />
+          </g>
+        </svg>
+      </div>
     </div>
   );
 }
@@ -188,7 +231,7 @@ function CrystalScene() {
 export default function HomePage() {
   return (
     <main className={`home-page ${styles.page}`}>
-      <section className="home-hero" aria-labelledby="home-title">
+      <section className="home-hero" data-band="night" aria-labelledby="home-title">
         <HomeHeader />
 
         <div className="home-hero__grid">
@@ -199,7 +242,7 @@ export default function HomePage() {
             {/* Подпись над крупной фразой — часть заголовка; поисковый запрос про Big Five ведёт на /big-five-test */}
             <h1 id="home-title">
               <span className="home-kicker">Тест личности «Грани»</span>
-              <span className="home-title__main">Узнай себя глубже</span>
+              <span className="home-title__main">Узнай себя <em>глубже</em></span>
             </h1>
             <p className="home-lead">
               <span>50 утверждений — твой тип личности.</span>
@@ -209,16 +252,17 @@ export default function HomePage() {
               <Link className="button button--lg" href="/test">
                 Пройти тест <span aria-hidden="true">→</span>
               </Link>
-              <span className="home-time">
-                Бесплатно · ≈ 10 минут · <Link href="/big-five-test">о тесте Big Five</Link>
-              </span>
+              <Link className={styles.secondaryAction} href="/big-five-test">о тесте Big Five</Link>
+            </div>
+            <div className="home-time">
+              Бесплатно · ≈ 10 минут
             </div>
           </div>
           <CrystalScene />
         </div>
       </section>
 
-      <section className="home-feature-strip" aria-label="Что даёт тест">
+      <section className="home-feature-strip" data-band="night" aria-label="Что даёт тест">
         {FEATURES.map((feature) => (
           <div className="home-feature" key={`${feature.title}-${feature.text}`}>
             <span className="home-feature__icon">
@@ -248,7 +292,7 @@ export default function HomePage() {
         <article className="home-result-card" aria-label="Пример карточки результата">
           <div className="home-result-card__art">
             <span className="home-example">Пример</span>
-            <img src={TYPE_IMAGES["+-++"]} alt="" width={351} height={723} loading="lazy" decoding="async" />
+            <HomeTypeGem code="+-++" />
           </div>
           <p>Твой тип</p>
           <h3>Искра</h3>
@@ -281,7 +325,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-section home-types" aria-labelledby="types-title">
+      <section className="home-section home-types" data-band="night" aria-labelledby="types-title">
         <div className="home-section__copy">
           <p className="home-kicker">16 типов личности</p>
           <h2 id="types-title">Разные грани — одинаково ценные</h2>
@@ -294,7 +338,7 @@ export default function HomePage() {
           {TYPES.map((type) => (
             <article className={`home-type-card home-type-card--${type.tone}`} key={type.code}>
               <div className="home-type-card__art">
-                <img src={TYPE_IMAGES[type.code]} alt="" width={351} height={723} loading="lazy" decoding="async" />
+                <HomeTypeGem code={type.code} size={240} />
               </div>
               <h3>{type.title}</h3>
               <p>{type.text}</p>
@@ -319,7 +363,7 @@ export default function HomePage() {
         </div>
         <div className="home-pair__cards" aria-label="Пример совместимости">
           <article className="home-person-card home-person-card--leaf">
-            <img src={TYPE_IMAGES["+-++"]} alt="" width={351} height={723} loading="lazy" decoding="async" />
+            <div className={styles.personGem}><HomeTypeGem code="+-++" /></div>
             <h3>Искра</h3>
           </article>
           <div className="home-pair-score">
@@ -330,7 +374,7 @@ export default function HomePage() {
             <small>Вам легко вместе в развитии, общении и новых идеях.</small>
           </div>
           <article className="home-person-card home-person-card--glass">
-            <img src={TYPE_IMAGES["++--"]} alt="" width={350} height={723} loading="lazy" decoding="async" />
+            <div className={styles.personGem}><HomeTypeGem code="++--" /></div>
             <h3>Архитектор</h3>
           </article>
           <div className="home-pair-list">

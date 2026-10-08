@@ -107,7 +107,7 @@ test("pair chrome uses rose gold when it is outside the page palette wrapper", a
   }
 });
 
-test("page endpoint token updates the gradient and footer together", async ({ page }) => {
+test("page endpoint token updates the final page surface and footer together", async ({ page }) => {
   for (const [path, token] of [["/", "--home-page-end"], ["/articles", "--page-end"]]) {
     await page.goto(path);
     const main = page.locator("main");
@@ -118,7 +118,8 @@ test("page endpoint token updates the gradient and footer together", async ({ pa
     expect(next).not.toBe(before);
     await page.evaluate(({ token, next }) => document.documentElement.style.setProperty(token, next), { token, next });
     await expect(footer).toHaveCSS("background-color", next);
-    expect(await main.evaluate((node) => getComputedStyle(node).backgroundImage)).toContain(next);
+    if (path === "/") await expect(page.locator(".home-articles")).toHaveCSS("background-color", next);
+    else expect(await main.evaluate((node) => getComputedStyle(node).backgroundImage)).toContain(next);
     await page.evaluate((token) => document.documentElement.style.removeProperty(token), token);
   }
 });

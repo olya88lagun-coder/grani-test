@@ -1,0 +1,130 @@
+[
+  {
+    "dir": "pppp",
+    "title": "Вдохновитель",
+    "shape": "star",
+    "family": 1,
+    "bytes": 82364,
+    "sha256": "b420933dc779b249a3d00250b38c287f84ce416d63ae6f0d4dd62bb38489b319"
+  },
+  {
+    "dir": "pppm",
+    "title": "Реформатор",
+    "shape": "triangle",
+    "family": 1,
+    "bytes": 67302,
+    "sha256": "03b22acea72ab41e5da7e8b18f2740973c37160ed4b2e3ecabc627a0fca9a0c0"
+  },
+  {
+    "dir": "ppmp",
+    "title": "Созидатель",
+    "shape": "hexagon",
+    "family": 1,
+    "bytes": 89036,
+    "sha256": "41c5d5aa561ec5c3c604527e6c1de04c0a9b161b6d477c1c8e96dcb68a38c3c0"
+  },
+  {
+    "dir": "ppmm",
+    "title": "Архитектор",
+    "shape": "square",
+    "family": 1,
+    "bytes": 62236,
+    "sha256": "3f4d94b63c065cf11edbaf77c5984579aa075d30fc54b805afb2e95c839c66b5"
+  },
+  {
+    "dir": "pmpp",
+    "title": "Искра",
+    "shape": "star",
+    "family": 2,
+    "bytes": 85972,
+    "sha256": "7192fb47a8c61075b0e061b9844f52559c2c5cce47a987e11cfea4376636b027"
+  },
+  {
+    "dir": "pmpm",
+    "title": "Бунтарь",
+    "shape": "triangle",
+    "family": 2,
+    "bytes": 66680,
+    "sha256": "b18e5e4486ce198150e3bf4bc9c91d3e31f454cb8b19ac561ed2277905176927"
+  },
+  {
+    "dir": "pmmp",
+    "title": "Мечтатель",
+    "shape": "drop",
+    "family": 2,
+    "bytes": 72650,
+    "sha256": "1901abb0f94a927c5649ff8514b1e27a4e77b7d4cdaca9703f40720fe349e0bf"
+  },
+  {
+    "dir": "pmmm",
+    "title": "Изобретатель",
+    "shape": "diamond",
+    "family": 2,
+    "bytes": 64870,
+    "sha256": "8fbce17e4bd9495d0f25c51af182a3632b95a4fc22d30b5f859e9c1686b82d2e"
+  },
+  {
+    "dir": "mppp",
+    "title": "Опора",
+    "shape": "hexagon",
+    "family": 3,
+    "bytes": 69076,
+    "sha256": "67cff89db806d83fd0c32052b12e9ca2a44ce148279938535ef6f161a8bf23a9"
+  },
+  {
+    "dir": "mppm",
+    "title": "Командир",
+    "shape": "pentagon",
+    "family": 3,
+    "bytes": 74010,
+    "sha256": "032850f274e5161300c0e4b1ab90fca40c5c2f3e79045431f2c9554fa8414f03"
+  },
+  {
+    "dir": "mpmp",
+    "title": "Тихий хранитель",
+    "shape": "circle",
+    "family": 3,
+    "bytes": 80168,
+    "sha256": "1e08c989497c7ccd043959326506fbc4cae9e1ecf2bcbddc82c6868c38429adb"
+  },
+  {
+    "dir": "mpmm",
+    "title": "Мастер",
+    "shape": "square",
+    "family": 3,
+    "bytes": 61260,
+    "sha256": "ff43cdf8a6dfb8296dfe4c200c0ace116a7d26237f3a6ad26ac2547d0fa9e237"
+  },
+  {
+    "dir": "mmpp",
+    "title": "Душа компании",
+    "shape": "circle",
+    "family": 4,
+    "bytes": 80316,
+    "sha256": "1bd6e07c797114159e1ae2512c7c72ec8cb023871368315cefb0b1ebb7d1ea3a"
+  },
+  {
+    "dir": "mmpm",
+    "title": "Игрок",
+    "shape": "diamond",
+    "family": 4,
+    "bytes": 60684,
+    "sha256": "480a932358e425e278ebe2e32d0c31db56e72c7969a5ffdd0cfd5e492e327de5"
+  },
+  {
+    "dir": "mmmp",
+    "title": "Тихая гавань",
+    "shape": "drop",
+    "family": 4,
+    "bytes": 67692,
+    "sha256": "ca7a4b4bc0835be9dbc9688d797fbad2ac32a11b841a7318df0e25330dcec6f2"
+  },
+  {
+    "dir": "mmmm",
+    "title": "Наблюдатель",
+    "shape": "pentagon",
+    "family": 4,
+    "bytes": 76612,
+    "sha256": "181aecbb0c87dce60b57fb5f3adb71cc2ef2633a288a1d998fe0d3037c580e85"
+  }
+]

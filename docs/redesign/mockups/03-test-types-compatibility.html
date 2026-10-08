@@ -1,0 +1,440 @@
+<title>Макеты страниц Грани</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Layout: review page with three sections (test, 16 types, compatibility).
+   Each section = short list of changes + a fixed-dark "artwork" frame of the proposed page. */
+:root{
+  --bg:#08170f; --panel:#102a1f; --line:rgba(226,214,180,.16);
+  --ink:#EDE7D6; --muted:#A3B0A2; --gold:#CDB57B;
+  --display:'Cormorant Garamond',Georgia,'Times New Roman',serif;
+  --body:'Golos Text',system-ui,-apple-system,'Segoe UI',sans-serif;
+  /* mock artwork, fixed regardless of page theme */
+  --m-ink:#EFE9DA; --m-muted:#9FB1A3; --m-gold:#CDB57B; --m-line:rgba(205,181,123,.28); --m-rose:#E3B3A0;
+  --l-bg:#F3ECE0; --l-ink:#0E2A20; --l-muted:#51625A; --l-em:#1F6B49;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){--bg:#F2EEE2;--panel:#FBF8EF;--line:rgba(14,42,32,.16);--ink:#0E2A20;--muted:#4F6358;--gold:#7D6528;color-scheme:light}
+}
+:root[data-theme="light"]{--bg:#F2EEE2;--panel:#FBF8EF;--line:rgba(14,42,32,.16);--ink:#0E2A20;--muted:#4F6358;--gold:#7D6528;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--body);padding-inline:20px;padding-block:0 96px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin-inline:auto}
+h1,h2,h3{font-family:var(--display);font-weight:400;line-height:1.02;margin:0;text-wrap:balance}
+p{margin:0}
+.eyebrow{font:500 12px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:16px;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .brand{font:500 26px/1 var(--display)}
+.top nav{display:flex;gap:6px;flex-wrap:wrap}
+.top nav a{color:var(--muted);text-decoration:none;font-size:14px;padding:8px 14px;border:1px solid var(--line);border-radius:99px}
+.top nav a:hover,.top nav a:focus-visible{color:var(--ink);border-color:var(--gold);outline:none}
+.intro{padding-top:72px;max-width:760px}
+.intro h1{font-size:clamp(42px,6.4vw,80px);margin-top:20px}
+.intro h1 em{font-style:italic;font-weight:300;color:var(--gold)}
+.intro p{color:var(--muted);margin-top:22px;font-size:18px;max-width:54ch}
+.sec{padding-top:112px;scroll-margin-top:70px}
+.sec>h2{font-size:clamp(34px,5vw,56px);margin-top:18px}
+.chg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:36px}
+.chg div{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:15px}
+.chg b{display:block;color:var(--ink);font:400 24px/1.1 var(--display);margin-bottom:8px}
+.cap{margin-top:18px;font-size:14px;color:var(--muted);max-width:74ch}
+
+/* frames and shared page parts */
+.frame{margin-top:40px;border:1px solid var(--m-line);border-radius:18px;overflow:hidden;color:var(--m-ink);background:linear-gradient(165deg,#0B2319,#07140E 72%)}
+.bd{background:radial-gradient(760px 520px at 82% 24%,rgba(63,174,124,.26),transparent 62%),radial-gradient(520px 380px at 6% 100%,rgba(205,181,123,.09),transparent 70%),linear-gradient(165deg,#0B2319,#07140E 72%)}
+.bl{background:var(--l-bg);color:var(--l-ink)}
+.nav{display:flex;align-items:center;gap:26px;padding:22px 36px;border-bottom:1px solid rgba(205,181,123,.14);font-size:14px}
+.logo{margin-right:auto;font:500 28px/1 var(--display)}
+.nav a{color:var(--m-muted)}.nav a.on{color:var(--m-gold);border-bottom:1px solid var(--m-gold);padding-bottom:3px}
+.nav .cta-s{border:1px solid var(--m-line);padding:9px 20px;border-radius:99px;color:var(--m-ink)}
+.crumbs{font-size:13px;color:var(--m-muted);margin-bottom:26px}.crumbs span{margin-inline:8px;color:var(--m-gold)}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--m-ink);color:#0A1F17;font:600 16px/1 var(--body);padding:19px 30px;border-radius:99px}
+.btn::after{content:"→"}
+.btn.ghost{background:none;color:var(--m-ink);border:1px solid var(--m-line)}.btn.ghost::after{content:""}
+.lnk{color:var(--m-ink);font-size:15px;border-bottom:1px solid var(--m-gold);padding-bottom:3px}
+.g{filter:drop-shadow(0 16px 26px rgba(0,0,0,.45)) drop-shadow(0 0 30px rgba(63,174,124,.2))}
+.g.rose{filter:drop-shadow(0 16px 26px rgba(0,0,0,.45)) drop-shadow(0 0 30px rgba(177,58,92,.32))}
+.g svg{display:block;width:100%;height:auto;overflow:visible}
+.dm{display:inline-block;transform:rotate(45deg);border:1px solid var(--m-gold)}
+
+/* ---------- test ---------- */
+.tests{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start;margin-top:40px}
+.tests .frame{margin-top:0}
+.tbar{display:flex;align-items:center;gap:18px;padding:20px 36px}
+.tbar .pg{width:44px}
+.tbar .cnt{font:500 14px/1 var(--body);color:var(--m-ink);font-variant-numeric:tabular-nums}.tbar .cnt span{color:var(--m-muted)}
+.tbar .line{flex:1;height:2px;background:rgba(239,233,218,.14);position:relative}
+.tbar .line::before{content:"";position:absolute;inset:0 auto 0 0;width:28%;background:var(--m-gold)}
+.tbar .out{font-size:13px;color:var(--m-muted);border-bottom:1px solid rgba(205,181,123,.3)}
+.tmain{max-width:820px;margin:0 auto;padding:44px 36px 36px}
+.tmain h2{font-size:clamp(40px,6.4vw,76px);margin-top:20px;line-height:1}
+.tmain .sub{color:var(--m-muted);margin-top:18px;font-size:16px}
+.scale{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:44px}
+.opt{border:1px solid rgba(205,181,123,.22);border-radius:16px;min-height:118px;padding:16px 10px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;text-align:center;gap:14px;font-size:14px;color:var(--m-muted);background:rgba(255,255,255,.02)}
+.opt .k{font:500 11px/1 var(--body);color:var(--m-muted);opacity:.7}
+.opt .dm{background:transparent}
+.opt.sel{border-color:var(--m-gold);background:linear-gradient(170deg,rgba(205,181,123,.18),rgba(205,181,123,.04));color:var(--m-ink);box-shadow:0 0 28px rgba(205,181,123,.16)}
+.opt.sel .dm{background:var(--m-gold)}
+.tfoot{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:34px;padding-top:20px;border-top:1px solid rgba(205,181,123,.14);font-size:13px;color:var(--m-muted)}
+.tfoot a{color:var(--m-ink)}
+.phone{border:1px solid var(--m-line);border-radius:34px;padding:14px;background:#050F0A;box-shadow:0 24px 50px rgba(0,0,0,.35)}
+.phone .scr{border-radius:22px;overflow:hidden;background:radial-gradient(300px 260px at 80% 0%,rgba(63,174,124,.26),transparent 70%),linear-gradient(170deg,#0B2319,#07140E);padding:18px 16px 18px;color:var(--m-ink);min-height:560px;display:flex;flex-direction:column;gap:14px}
+.phone .hd{display:flex;align-items:center;gap:10px;font-size:12px;color:var(--m-muted)}
+.phone .hd .pg{width:28px}.phone .hd .line{flex:1;height:2px;background:rgba(239,233,218,.14);position:relative}
+.phone .hd .line::before{content:"";position:absolute;inset:0 auto 0 0;width:28%;background:var(--m-gold)}
+.phone h3{font-size:36px;line-height:1.02;margin-top:14px}
+.phone .sub{font-size:13px;color:var(--m-muted)}
+.phone .list{display:grid;gap:8px;margin-top:auto}
+.phone .opt{flex-direction:row;justify-content:flex-start;min-height:52px;padding:0 16px;gap:14px;text-align:left;font-size:15px;border-radius:14px}
+.phone .opt .dm{width:12px;height:12px}
+.phone .opt .k{margin-left:auto}
+
+/* ---------- types ---------- */
+.thero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.7fr);gap:32px;padding:56px 36px 44px;align-items:center}
+.thero h1{font-size:clamp(48px,7vw,92px);line-height:.96}
+.thero h1 em{font-style:italic;font-weight:300;color:var(--m-gold)}
+.thero p.t{color:var(--m-muted);margin-top:22px;max-width:56ch;font-size:16px}
+.thero .g{width:min(300px,100%);margin-inline:auto}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.chip{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--m-line);border-radius:99px;padding:8px 16px 8px 8px;font-size:14px;color:var(--m-ink)}
+.chip .g{width:26px;filter:none}
+.grp{padding:64px 36px 56px}
+.grp.l{background:var(--l-bg);color:var(--l-ink)}
+.gh{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;margin-bottom:34px}
+.gh h2{font-size:clamp(32px,4.2vw,50px)}
+.axes{display:flex;gap:8px;flex-wrap:wrap}
+.axes span{font:500 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;border-radius:99px;border:1px solid rgba(205,181,123,.3);color:var(--m-gold)}
+.grp.l .axes span{border-color:rgba(14,42,32,.25);color:var(--l-em)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}
+.card{border:1px solid var(--m-line);border-radius:18px;padding:22px 20px 18px;color:var(--m-ink);background:linear-gradient(172deg,#10301F,#08170F);display:flex;flex-direction:column}
+.card .g{width:66%;margin:2px auto 18px}
+.card h3{font-size:30px}
+.card .f{display:block;font:italic 400 15px/1.2 var(--display);color:var(--m-gold);margin-top:3px;min-height:1.2em}
+.card p{font-size:13px;color:var(--m-muted);margin-top:12px;flex:1}
+.card .more{margin-top:16px;padding-top:12px;border-top:1px solid rgba(205,181,123,.16);font-size:13px;color:var(--m-ink);display:flex;justify-content:space-between}
+.card .more::after{content:"→"}
+.card.ph p{opacity:.7}
+.tcta{padding:72px 36px;display:flex;justify-content:space-between;align-items:center;gap:28px;flex-wrap:wrap}
+.tcta h2{font-size:clamp(34px,4.6vw,56px);max-width:16ch}
+.tcta h2 em{font-style:italic;font-weight:300;color:var(--m-gold)}
+
+/* ---------- compatibility ---------- */
+.chero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;padding:56px 36px 52px;align-items:center}
+.chero h1{font-size:clamp(46px,6.8vw,92px);line-height:.96;max-width:11ch}
+.chero h1 em{font-style:italic;font-weight:300;color:var(--m-gold)}
+.chero p.t{color:var(--m-muted);margin-top:24px;max-width:44ch;font-size:17px}
+.chero .actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:32px}
+.trust{margin-top:22px;font-size:13px;color:var(--m-muted)}
+.trust::before{content:"";display:inline-block;width:6px;height:6px;transform:rotate(45deg);background:var(--m-gold);margin-right:10px;vertical-align:middle}
+.cstage{position:relative;aspect-ratio:1/.92;width:100%;max-width:540px;margin-inline:auto}
+.cstage .a{position:absolute;left:0;top:8%;width:46%}
+.cstage .b{position:absolute;right:0;top:8%;width:46%}
+.cstage .lab{position:absolute;top:calc(8% + 46%);font:500 11px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--m-muted)}
+.cstage .pct{position:absolute;left:0;right:0;bottom:0;text-align:center;font:300 clamp(72px,11vw,128px)/.9 var(--display);color:var(--m-gold)}
+.cstage .pct small{display:block;font:500 10px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--m-muted);margin-top:10px}
+.cstage svg.arc{position:absolute;inset:0;width:100%;height:100%}
+.how{padding:72px 36px}
+.how .eyebrow{color:var(--l-em)}
+.how h2{font-size:clamp(34px,4.6vw,56px);margin-top:16px}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));margin-top:40px;border-top:1px solid rgba(14,42,32,.18)}
+.steps div{padding:22px 22px 4px 0}.steps div+div{padding-left:22px;border-left:1px solid rgba(14,42,32,.12)}
+.steps b{display:block;font:300 50px/1 var(--display);color:var(--l-em)}
+.steps p{font-size:14px;color:var(--l-muted);margin-top:12px}
+.steps p strong{color:var(--l-ink);font-weight:500}
+.prod{padding:72px 36px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.pc{border:1px solid var(--m-line);border-radius:22px;padding:30px;background:linear-gradient(172deg,rgba(255,255,255,.04),rgba(255,255,255,.01))}
+.pc.pay{background:linear-gradient(172deg,rgba(205,181,123,.14),rgba(205,181,123,.03));border-color:rgba(205,181,123,.5)}
+.pc .eyebrow{display:block;margin-bottom:14px}
+.pc h3{font-size:34px}
+.pc .n{font:300 64px/1 var(--display);color:var(--m-gold);margin-top:12px}
+.pc .n small{font:400 13px/1.3 var(--body);color:var(--m-muted);margin-left:8px}
+.pc ul{list-style:none;margin:20px 0 0;padding:18px 0 0;border-top:1px solid rgba(205,181,123,.18);display:grid;gap:9px;font-size:14px;color:var(--m-muted)}
+.pc li::before{content:"";display:inline-block;width:5px;height:5px;transform:rotate(45deg);background:var(--m-gold);margin-right:10px;vertical-align:middle}
+
+@media (max-width:980px){
+  .tests{grid-template-columns:minmax(0,1fr)}.phone{max-width:320px}
+  .chg{grid-template-columns:minmax(0,1fr)}
+  .thero,.chero,.prod{grid-template-columns:minmax(0,1fr)}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps{grid-template-columns:repeat(2,minmax(0,1fr))}.steps div:nth-child(3){padding-left:0;border-left:0}
+  .nav{padding:18px 22px;gap:14px}.nav a:not(.cta-s){display:none}
+  .tbar{padding:18px 22px}.tmain,.grp,.thero,.chero,.how,.prod,.tcta{padding-inline:22px}
+  .scale{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.opt{font-size:12px;padding-inline:4px;min-height:104px}
+}
+@media (max-width:560px){
+  .cards,.steps{grid-template-columns:minmax(0,1fr)}.steps div,.steps div+div{padding:20px 0;border-left:0;border-bottom:1px solid rgba(14,42,32,.12)}
+  .scale{grid-template-columns:minmax(0,1fr)}.opt{flex-direction:row;justify-content:flex-start;min-height:56px;padding:0 16px;text-align:left}.opt .k{margin-left:auto}
+  .top nav a{padding:6px 10px;font-size:13px}.sec{padding-top:80px}
+}
+</style>
+
+<div class="wrap">
+  <header class="top"><span class="brand">грани</span><nav><a href="#test">Тест</a><a href="#types">16 типов</a><a href="#compat">Совместимость</a></nav></header>
+
+  <section class="intro">
+    <span class="eyebrow">Макеты в новом направлении</span>
+    <h1>Тест, типы и совместимость, <em>дороже</em></h1>
+    <p>Тексты и структура взяты с вашего сайта. Меняются фон, камни, иерархия кнопок и ритм страниц. Камни нарисованы кодом как образец, для сайта нужны финальные рендеры.</p>
+  </section>
+
+  <!-- ===================== ТЕСТ ===================== -->
+  <section class="sec" id="test">
+    <span class="eyebrow">Страница 1</span>
+    <h2>Тест</h2>
+    <div class="chg">
+      <div><b>Один вопрос на экран</b>Сейчас пять вопросов идут столбцом. Теперь внимание только на одном утверждении, крупно.</div>
+      <div><b>Камень огранивается по мере ответов</b>Вместо тонкой линии над страницей. Каждый ответ добавляет грань, это и есть индикатор прогресса.</div>
+      <div><b>Крупные цели и клавиши 1–5</b>Пять ответов в ряд, выбранный подсвечен золотом. На телефоне они становятся списком на всю ширину.</div>
+    </div>
+    <div class="tests">
+      <div class="frame bd" role="img" aria-label="Макет экрана теста на компьютере: вопрос 14 из 50, пять вариантов ответа, выбран четвёртый">
+        <div class="nav"><span class="logo">грани</span><a data-nav="test"></a></div>
+        <div class="tbar"><div class="g pg" data-prog="14"></div><span class="cnt">14 <span>из 50</span></span><div class="line"></div><a class="out">Выйти</a></div>
+        <div class="tmain">
+          <span class="eyebrow">Утверждение 14</span>
+          <h2>Я душа компании.</h2>
+          <p class="sub">Выбери ответ, который ближе к твоему обычному поведению.</p>
+          <div class="scale">
+            <div class="opt"><span class="dm" style="width:26px;height:26px"></span>Совсем не про меня<span class="k">1</span></div>
+            <div class="opt"><span class="dm" style="width:19px;height:19px"></span>Скорее не про меня<span class="k">2</span></div>
+            <div class="opt"><span class="dm" style="width:13px;height:13px"></span>Отчасти<span class="k">3</span></div>
+            <div class="opt sel"><span class="dm" style="width:19px;height:19px"></span>Скорее про меня<span class="k">4</span></div>
+            <div class="opt"><span class="dm" style="width:26px;height:26px"></span>Точно про меня<span class="k">5</span></div>
+          </div>
+          <div class="tfoot"><a>← Назад</a><span>Следующий вопрос откроется сразу после ответа</span></div>
+        </div>
+      </div>
+      <div class="phone" role="img" aria-label="Макет экрана теста на телефоне">
+        <div class="scr">
+          <div class="hd"><div class="g pg" data-prog="14"></div><span>14 из 50</span><div class="line"></div></div>
+          <h3>Я душа компании.</h3>
+          <p class="sub">Выбери ответ, который ближе к твоему обычному поведению.</p>
+          <div class="list">
+            <div class="opt"><span class="dm"></span>Совсем не про меня<span class="k">1</span></div>
+            <div class="opt"><span class="dm"></span>Скорее не про меня<span class="k">2</span></div>
+            <div class="opt"><span class="dm"></span>Отчасти<span class="k">3</span></div>
+            <div class="opt sel"><span class="dm"></span>Скорее про меня<span class="k">4</span></div>
+            <div class="opt"><span class="dm"></span>Точно про меня<span class="k">5</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="cap">Прогресс-камень на макете заполнен на 14 из 50. Форма и порядок граней взяты для примера. Сохраняет ли тест ответы при выходе, я не проверял, поэтому в макете этого обещания нет.</p>
+  </section>
+
+  <!-- ===================== 16 ТИПОВ ===================== -->
+  <section class="sec" id="types">
+    <span class="eyebrow">Страница 2</span>
+    <h2>16 типов личности</h2>
+    <div class="chg">
+      <div><b>Цвет задаёт группу</b>Четыре группы получили четыре оттенка камней: бирюзовый, изумрудный, оливковый, шампань. По цвету видно, где находится тип.</div>
+      <div><b>Одно имя в карточке</b>Женская форма уходит в тонкую курсивную строку под названием. Заголовки больше не прыгают с одной до трёх строк.</div>
+      <div><b>Те же карточки, что на главной</b>Вместо иконок на каждом типе камень. Страница выглядит как коллекция.</div>
+    </div>
+    <div class="frame" role="img" aria-label="Макет страницы 16 типов личности: четыре группы по четыре карточки с камнями">
+      <div class="bd">
+        <div class="nav"><span class="logo">грани</span><a data-nav="types"></a></div>
+        <div class="thero">
+          <div>
+            <div class="crumbs">Главная<span>→</span>Типы личности</div>
+            <span class="eyebrow">Большая пятёрка</span>
+            <h1 style="margin-top:18px">16 типов <em>личности</em></h1>
+            <p class="t">Тип складывается из четырёх черт: открытости опыту, добросовестности, экстраверсии и доброжелательности. Каждая бывает высокой или низкой, отсюда 16 сочетаний. Пятая черта, эмоциональная устойчивость, уточняет тип: спокойный он или чувствительный.</p>
+            <div class="chips">
+              <span class="chip"><span class="g" data-gem="g1a"></span>Открытые и собранные</span>
+              <span class="chip"><span class="g" data-gem="g2a"></span>Открытые и свободные</span>
+              <span class="chip"><span class="g" data-gem="g3a"></span>Практичные и собранные</span>
+              <span class="chip"><span class="g" data-gem="g4a"></span>Практичные и свободные</span>
+            </div>
+          </div>
+          <div class="g" data-gem="hero"></div>
+        </div>
+      </div>
+
+      <div class="grp bd">
+        <div class="gh"><h2>Открытые и собранные</h2><div class="axes"><span>Открытость ↑</span><span>Добросовестность ↑</span></div></div>
+        <div class="cards">
+          <div class="card"><div class="g" data-gem="g1a"></div><h3>Вдохновитель</h3><span class="f">Вдохновительница</span><p>Ты зажигаешь людей идеями…</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g1b"></div><h3>Реформатор</h3><span class="f">Реформаторка</span><p>Ты видишь, как сделать лучше…</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g1c"></div><h3>Созидатель</h3><span class="f">Созидательница</span><p>Ты создаёшь что-то ценное…</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g1d"></div><h3>Архитектор</h3><span class="f">&nbsp;</span><p>Ты мыслишь системами и строишь планы на годы вперёд.</p><div class="more">О типе</div></div>
+        </div>
+      </div>
+
+      <div class="grp bl l">
+        <div class="gh"><h2>Открытые и свободные</h2><div class="axes"><span>Открытость ↑</span><span>Добросовестность ↓</span></div></div>
+        <div class="cards">
+          <div class="card"><div class="g" data-gem="g2a"></div><h3>Искра</h3><span class="f">&nbsp;</span><p>Ты зажигаешь людей идеями и лёгкостью. Тебе интересно всё новое.</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g2b"></div><h3>Бунтарь</h3><span class="f">Бунтарка</span><p>Ты не принимаешь правила только потому, что так принято.</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g2c"></div><h3>Мечтатель</h3><span class="f">Мечтательница</span><p>Ты живёшь богатым внутренним миром и чутко относишься к людям.</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g2d"></div><h3>Изобретатель</h3><span class="f">Изобретательница</span><p>Ты идёшь своим путём и придумываешь то, до чего другие не додумались.</p><div class="more">О типе</div></div>
+        </div>
+      </div>
+
+      <div class="grp bd">
+        <div class="gh"><h2>Практичные и собранные</h2><div class="axes"><span>Открытость ↓</span><span>Добросовестность ↑</span></div></div>
+        <div class="cards">
+          <div class="card"><div class="g" data-gem="g3a"></div><h3>Опора</h3><span class="f">&nbsp;</span><p>На тебя можно положиться.</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g3b"></div><h3>Командир</h3><span class="f">&nbsp;</span><p>Ты берёшь ответственность и ведёшь за собой.</p><div class="more">О типе</div></div>
+          <div class="card ph"><div class="g" data-gem="g3c"></div><h3>Тихий хранитель</h3><span class="f">Тихая хранительница</span><p>Описание из вашей базы.</p><div class="more">О типе</div></div>
+          <div class="card"><div class="g" data-gem="g3d"></div><h3>Мастер</h3><span class="f">&nbsp;</span><p>Ты делаешь своё дело хорошо и без лишних слов.</p><div class="more">О типе</div></div>
+        </div>
+      </div>
+
+      <div class="grp bl l">
+        <div class="gh"><h2>Практичные и свободные</h2><div class="axes"><span>Открытость ↓</span><span>Добросовестность ↓</span></div></div>
+        <div class="cards">
+          <div class="card ph"><div class="g" data-gem="g4a"></div><h3>Название типа</h3><span class="f">&nbsp;</span><p>Описание из вашей базы.</p><div class="more">О типе</div></div>
+          <div class="card ph"><div class="g" data-gem="g4b"></div><h3>Название типа</h3><span class="f">&nbsp;</span><p>Описание из вашей базы.</p><div class="more">О типе</div></div>
+          <div class="card ph"><div class="g" data-gem="g4c"></div><h3>Название типа</h3><span class="f">&nbsp;</span><p>Описание из вашей базы.</p><div class="more">О типе</div></div>
+          <div class="card ph"><div class="g" data-gem="g4d"></div><h3>Название типа</h3><span class="f">&nbsp;</span><p>Описание из вашей базы.</p><div class="more">О типе</div></div>
+        </div>
+      </div>
+
+      <div class="tcta bd">
+        <h2>Не знаешь, <em>какой</em> ты тип?</h2>
+        <a class="btn">Пройти тест</a>
+      </div>
+    </div>
+    <p class="cap">Названия и описания взяты с вашей страницы, где я их видел. Четыре типа последней группы и текст «Тихого хранителя» я не видел, поэтому они помечены заглушками. Сочетания «открытость и добросовестность» в подписях групп выведены из их названий.</p>
+  </section>
+
+  <!-- ===================== СОВМЕСТИМОСТЬ ===================== -->
+  <section class="sec" id="compat">
+    <span class="eyebrow">Страница 3</span>
+    <h2>Совместимость</h2>
+    <div class="chg">
+      <div><b>Два камня и одно число</b>Изумрудный «Ты» и гранатовый «Партнёр» с крупным процентом. Та же пара цветов, что в разделе «Вдвоём».</div>
+      <div><b>Доверие на первом экране</b>Фраза про согласие партнёра идёт сразу под кнопками. Главный страх при приглашении в том, что результат кто-то увидит без спроса.</div>
+      <div><b>Бесплатное и платное рядом</b>Две карточки показывают, что вы получаете сразу и что открывается за 399 ₽. Сравнивать не нужно.</div>
+    </div>
+    <div class="frame" role="img" aria-label="Макет страницы Тест на совместимость пары: первый экран с двумя камнями и процентом, четыре шага, бесплатное и платное">
+      <div class="bd">
+        <div class="nav"><span class="logo">грани</span><a data-nav="compat"></a></div>
+        <div class="chero">
+          <div>
+            <div class="crumbs">Главная<span>→</span>Совместимость пары</div>
+            <span class="eyebrow">Для двоих</span>
+            <h1 style="margin-top:18px">Тест на совместимость <em>пары</em></h1>
+            <p class="t">Пройдите тест вдвоём и узнайте процент совместимости по Большой пятёрке. Бесплатно — типы обоих и процент, подробный разбор пары — по желанию.</p>
+            <div class="actions"><a class="btn">Пройти тест</a><a class="btn ghost">Уже прошли — позвать партнёра</a></div>
+            <p class="trust">Без согласия партнёра результат не откроется</p>
+          </div>
+          <div class="cstage">
+            <svg class="arc" viewBox="0 0 100 92" aria-hidden="true"><path d="M26 22 C 40 -2, 62 -2, 76 22" fill="none" stroke="rgba(205,181,123,.5)" stroke-width=".35" stroke-dasharray="1 1.4"/></svg>
+            <div class="a g" data-gem="you"></div>
+            <div class="b g rose" data-gem="partner"></div>
+            <span class="lab" style="left:8%">Ты</span><span class="lab" style="right:6%">Партнёр</span>
+            <div class="pct">78%<small>пример · совместимость</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bl how">
+        <span class="eyebrow">Как это работает</span>
+        <h2>Четыре шага</h2>
+        <div class="steps">
+          <div><b>1</b><p><strong>Вы проходите тест.</strong> 50 утверждений, около 10 минут.</p></div>
+          <div><b>2</b><p><strong>Зовёте партнёра.</strong> На странице результата, в блоке «Посмотреть, как вы сочетаетесь», нажмите «Позвать партнёра».</p></div>
+          <div><b>3</b><p><strong>Партнёр соглашается.</strong> Он проходит тест и соглашается показать результат вам. Без согласия пара не создаётся.</p></div>
+          <div><b>4</b><p><strong>Вы видите результат.</strong> Типы друг друга и процент совместимости, это бесплатно.</p></div>
+        </div>
+      </div>
+
+      <div class="bd prod">
+        <div class="pc">
+          <span class="eyebrow">Бесплатно</span>
+          <h3>Типы и процент</h3>
+          <div class="n">0 ₽</div>
+          <ul><li>Тип каждого из вас</li><li>Процент совместимости</li><li>Короткое описание: в чём вам легко и о чём стоит договориться</li></ul>
+        </div>
+        <div class="pc pay">
+          <span class="eyebrow">Разбор пары</span>
+          <h3>Подробный разбор</h3>
+          <div class="n">399 ₽<small>разбор совместимости пары</small></div>
+          <ul><li>В чём вы похожи</li><li>Где вы разные и как это использовать</li><li>Откуда будут конфликты и как договариваться</li><li>Быт и деньги</li><li>Как поддерживать друг друга</li></ul>
+        </div>
+      </div>
+    </div>
+    <p class="cap">Содержимое бесплатной карточки собрано из описания на странице. Продолжения третьего и четвёртого шага я видел обрезанными, их формулировки здесь только для макета. Пара в макете: изумруд для «Ты», гранат для «Партнёра». Тот же приём используется в разделе «Вдвоём».</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  var mix=function(a,b,t){var p=function(h){return[1,3,5].map(function(i){return parseInt(h.slice(i,i+2),16)})},A=p(a),B=p(b);return'rgb('+A.map(function(v,i){return Math.round(v+(B[i]-v)*t)}).join(',')+')'};
+  var ramp=function(s,t){t=Math.max(0,Math.min(.999,t));var x=t*(s.length-1),i=Math.floor(x);return mix(s[i],s[i+1],x-i)};
+  var rng=function(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}};
+  var PAL={
+    em:['#04180F','#0F5A3B','#2FA36E','#C6F0D9'],teal:['#04202A','#10596B','#3FA8B8','#D3F1F5'],
+    mint:['#0B2A26','#2E7F70','#7CCBB5','#EAFBF3'],pine:['#03120C','#0B3D2A','#1F7A52','#9FD9BB'],
+    olive:['#141E08','#41591A','#8FB04D','#E3F0BC'],gold:['#2A1F08','#7A6224','#CDB57B','#F7EDCB'],
+    garnet:['#1E0610','#7A1C3A','#C2506E','#F8D0DA']
+  };
+  var fmt=function(p){return p.map(function(q){return q[0].toFixed(1)+','+q[1].toFixed(1)}).join(' ')};
+  var avg=function(p){var x=0,y=0;p.forEach(function(q){x+=q[0];y+=q[1]});return[x/p.length,y/p.length]};
+  function brilliant(o){
+    var n=o.n,rot=o.rot==null?-Math.PI/2:o.rot,ax=o.ax||1,ay=o.ay||1,pal=PAL[o.pal],R=rng(o.seed||1),light=-2.3,step=2*Math.PI/n,out=[],mid=[],tab=[];
+    var pt=function(a,s){return[100+88*s*ax*Math.cos(a),100+88*s*ay*Math.sin(a)]};
+    for(var i=0;i<n;i++){var a=rot+i*step;out.push(pt(a,1));mid.push(pt(a+step/2,.7));tab.push(pt(a+step/2,.4))}
+    var F=[],col=function(poly,b,j){var c=avg(poly),ang=Math.atan2((c[1]-100)/ay,(c[0]-100)/ax);var t=.5+.5*Math.cos(ang-light);return ramp(pal,t*.72+b+(R()-.5)*j)};
+    for(var i=0;i<n;i++){var j=(i+1)%n,A=[out[i],out[j],mid[i]],B=[mid[i],mid[j],out[j]],C=[mid[i],mid[j],tab[j],tab[i]];
+      F.push([A,col(A,0,.34)],[B,col(B,.08,.34)],[C,col(C,.16,.3)])}
+    F.push([tab,ramp(pal,.82)]);return{f:F,o:out};
+  }
+  function stepCut(o){
+    var pal=PAL[o.pal],R=rng(o.seed||1),w=o.w||1,h=o.h||1.1,light=-2.3;
+    var base=[[-.6,-1],[.6,-1],[1,-.6],[1,.6],[.6,1],[-.6,1],[-1,.6],[-1,-.6]],sc=[1,.76,.54,.32];
+    var rings=sc.map(function(s){return base.map(function(b){return[100+88*s*b[0]*w,100+88*s*b[1]*h]})}),F=[];
+    for(var k=0;k<3;k++)for(var i=0;i<8;i++){var j=(i+1)%8,q=[rings[k][i],rings[k][j],rings[k+1][j],rings[k+1][i]],c=avg(q),ang=Math.atan2(c[1]-100,c[0]-100),t=.5+.5*Math.cos(ang-light);
+      F.push([q,ramp(pal,t*.66+k*.07+(R()-.5)*.16)])}
+    F.push([rings[3],ramp(pal,.86)]);return{f:F,o:rings[0]};
+  }
+  function svg(g,k){
+    var s='<svg viewBox="0 0 200 200" aria-hidden="true" focusable="false">';
+    g.f.forEach(function(f,i){
+      var on=k==null||i<k;
+      s+='<polygon points="'+fmt(f[0])+'" fill="'+(on?f[1]:'rgba(205,181,123,.05)')+'" stroke="'+(on?'rgba(255,255,255,.17)':'rgba(205,181,123,.22)')+'" stroke-width="'+(on?.5:1.4)+'" stroke-linejoin="round"/>'});
+    return s+'<polygon points="'+fmt(g.o)+'" fill="none" stroke="rgba(224,203,150,'+(k==null?.6:.45)+')" stroke-width="'+(k==null?.9:2)+'" stroke-linejoin="round"/></svg>';
+  }
+  var G={
+    hero:function(){return brilliant({n:14,pal:'em',seed:21})},
+    you:function(){return brilliant({n:12,pal:'em',seed:4})},
+    partner:function(){return brilliant({n:10,pal:'garnet',seed:8})},
+    g1a:function(){return brilliant({n:12,pal:'teal',seed:2})},
+    g1b:function(){return stepCut({pal:'teal',seed:5,w:.9,h:1.05})},
+    g1c:function(){return brilliant({n:8,pal:'teal',seed:6,rot:Math.PI/8})},
+    g1d:function(){return stepCut({pal:'teal',seed:7,w:.82,h:1.08})},
+    g2a:function(){return brilliant({n:12,pal:'em',seed:4})},
+    g2b:function(){return brilliant({n:5,pal:'em',seed:12})},
+    g2c:function(){return brilliant({n:14,pal:'mint',seed:11,ax:.8,ay:1})},
+    g2d:function(){return brilliant({n:6,pal:'mint',seed:13})},
+    g3a:function(){return brilliant({n:8,pal:'olive',seed:9,rot:Math.PI/8,ay:.92})},
+    g3b:function(){return brilliant({n:4,pal:'pine',seed:3,rot:-Math.PI/4,ax:1.02,ay:1.02})},
+    g3c:function(){return brilliant({n:14,pal:'pine',seed:15,ax:.8,ay:1})},
+    g3d:function(){return stepCut({pal:'olive',seed:17,w:.88,h:1})},
+    g4a:function(){return brilliant({n:12,pal:'gold',seed:19})},
+    g4b:function(){return stepCut({pal:'gold',seed:23,w:.85,h:1.05})},
+    g4c:function(){return brilliant({n:6,pal:'gold',seed:25})},
+    g4d:function(){return brilliant({n:4,pal:'gold',seed:27,rot:-Math.PI/4})}
+  };
+  document.querySelectorAll('[data-gem]').forEach(function(el){el.innerHTML=svg(G[el.dataset.gem]())});
+  document.querySelectorAll('[data-prog]').forEach(function(el){el.innerHTML=svg(brilliant({n:10,pal:'em',seed:4}),+el.dataset.prog*30/50|0)});
+  var items=[['test','Пройти тест'],['types','16 типов'],['compat','Совместимость'],['together','Вдвоём'],['art','Статьи'],['about','О проекте']];
+  document.querySelectorAll('[data-nav]').forEach(function(el){
+    var act=el.dataset.nav,h='';
+    items.forEach(function(i){h+='<span'+(i[0]===act?' class="on" style="color:#CDB57B;border-bottom:1px solid #CDB57B;padding-bottom:3px"':' style="color:#9FB1A3"')+'>'+i[1]+'</span>'});
+    var nav=el.parentNode;
+    var wrap=document.createElement('span');wrap.style.cssText='display:flex;gap:26px;align-items:center;flex-wrap:wrap';
+    wrap.className='navlinks';wrap.innerHTML=h+'<span class="cta-s" style="border:1px solid rgba(205,181,123,.28);padding:9px 20px;border-radius:99px;color:#EFE9DA">Войти</span>';
+    nav.replaceChild(wrap,el);
+  });
+  document.querySelectorAll('.navlinks').forEach(function(n){n.className='navlinks';});
+  var mq=window.matchMedia('(max-width:980px)');
+  function fit(){document.querySelectorAll('.navlinks').forEach(function(n){Array.prototype.forEach.call(n.children,function(c){if(!c.classList.contains('cta-s'))c.style.display=mq.matches?'none':''})})}
+  fit();mq.addEventListener?mq.addEventListener('change',fit):mq.addListener(fit);
+})();
+</script>
