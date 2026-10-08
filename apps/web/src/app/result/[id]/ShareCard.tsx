@@ -34,7 +34,9 @@ export function ShareCard({ cardUrl, fileName, typeName, eyebrow = "Для ст�
   // Превью рядом с текстом, кнопки — под текстом, а не поверх картинки
   return (
     <section className="share-card" aria-labelledby="share">
-      <img className="share-card__preview" src={cardUrl} alt={`Карточка типа «${typeName}»`} width={1080} height={1920} />
+      <div className="share-card__frame" data-band="night">
+        <img className="share-card__preview" src={cardUrl} alt={`Карточка типа «${typeName}»`} width={1080} height={1920} />
+      </div>
       <div className="share-card__body">
         <p className="eyebrow">{eyebrow}</p>
         <h2 id="share">{heading}</h2>

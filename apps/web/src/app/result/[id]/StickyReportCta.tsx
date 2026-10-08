@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { reachGoal } from "@/lib/analytics";
 
 // На телефоне кнопка первого экрана быстро уезжает вверх — плашка снизу держит путь к разбору на виду.
-// Прячется, пока видна кнопка первого экрана или сам блок покупки: две одинаковые кнопки рядом не нужны.
+// Прячется рядом с действиями и подвалом; запас снизу защищает кнопки до их появления в зоне плашки.
 export function StickyReportCta({ label }: { label: string }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const targets = [document.querySelector(".result-hero__actions"), document.getElementById("report")?.closest("section")].filter(
+    const targets = [document.querySelector(".result-hero__actions"), document.getElementById("report")?.closest("section"),
+      ...document.querySelectorAll(".page--result .row, .page--result .result-block, .page--result .share-card__body, .footer")].filter(
       (target): target is Element => target != null,
     );
     const onScreen = new Set<Element>();
@@ -19,7 +20,7 @@ export function StickyReportCta({ label }: { label: string }) {
         else onScreen.delete(entry.target);
       }
       setVisible(onScreen.size === 0);
-    });
+    }, { rootMargin: "0px 0px 96px 0px" });
     for (const target of targets) observer.observe(target);
     return () => observer.disconnect();
   }, []);
