@@ -54,7 +54,7 @@ test("inner pages have the site header, pages a link preview and the site an ico
   await expect(page).toHaveURL(/\/$/);
   // У главной своя навигация в первом экране — общей шапки там нет
   await expect(page.locator(".site-header")).toHaveCount(0);
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/og\/grani\.jpg$/);
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/og\/grani-night\.jpg$/);
 
   expect((await request.get("/favicon.ico")).status()).toBe(200);
   expect((await request.get("/og/grani-night.jpg")).headers()["content-type"]).toContain("image/jpeg");
