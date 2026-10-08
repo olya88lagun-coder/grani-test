@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 114" width="100" height="114">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F8DE7E"/>
+      <stop offset="1" stop-color="#D8A52A"/>
+    </linearGradient>
+    <linearGradient id="table" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0E5B39"/>
+      <stop offset="1" stop-color="#073B25"/>
+    </linearGradient>
+  </defs>
+  <!-- золотая рамка -->
+  <polygon points="50,2 98,30 98,84 50,112 2,84 2,30" fill="url(#gold)"/>
+  <!-- грани камня: внешнее кольцо и стол -->
+  <polygon points="50,6 94.5,32 94.5,82 50,108 5.5,82 5.5,32" fill="#0A7A48"/>
+  <polygon points="50,6 94.5,32 50,38 5.5,32" fill="#2EDC92"/>
+  <polygon points="94.5,32 94.5,82 76,70 76,44" fill="#12A566"/>
+  <polygon points="94.5,82 50,108 50,86 76,70" fill="#0B7C49"/>
+  <polygon points="50,108 5.5,82 24,70 50,86" fill="#1CC27B"/>
+  <polygon points="5.5,82 5.5,32 24,44 24,70" fill="#0A6A3F"/>
+  <!-- стол -->
+  <polygon points="50,38 76,44 76,70 50,86 24,70 24,44" fill="url(#table)"/>
+  <!-- золотая «Г» -->
+  <path d="M33 33H69V47H65L61 40H47V73L52 74.5V80H32V74.5L37 73V40H33Z" fill="url(#gold)"/>
+</svg>
