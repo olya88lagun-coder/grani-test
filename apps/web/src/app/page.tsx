@@ -361,7 +361,7 @@ export default function HomePage() {
         </div>
         <div className="home-article-grid">
           {homeArticles().map(({ slug, tag, tone, image, article, heading }) => (
-            <article className="home-article-card" key={slug}>
+            <article className="home-article-card" data-band="night" key={slug}>
               <div className={`home-article-card__image home-article-card__image--${tone}`}>
                 <img src={image} alt="" width={630} height={698} loading="lazy" decoding="async" />
                 <span>{tag}</span>

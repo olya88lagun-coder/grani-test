@@ -5,7 +5,7 @@ import type { ArticleCard } from "@/lib/article-visuals";
 export function ArticleTile({ article, date, level = 2 }: { article: ArticleCard; date: string; level?: 2 | 3 }) {
   const Heading = level === 2 ? "h2" : "h3";
   return (
-    <Link className="article-tile" href={`/articles/${article.slug}`}>
+    <Link className="article-tile" data-band="night" href={`/articles/${article.slug}`}>
       <img className="article-tile__image" src={article.image} alt="" loading="lazy" />
       <div className="article-tile__body">
         <span className="article-badge">{article.tag}</span>
