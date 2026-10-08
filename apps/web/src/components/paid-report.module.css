@@ -87,15 +87,19 @@
 .page.page :global(.share-card__frame) { justify-self: center; width: min(100%, 280px); padding: 8px; border: 1px solid var(--gold); border-radius: var(--radius); background: var(--bg); }
 .page.page :global(.share-card__preview) { display: block; width: 100%; height: auto; border-radius: 8px; box-shadow: none; }
 .page.page :global(.share-card__body) { min-width: 0; }
-.page.page :global(.pair-hero) { padding: 48px; background: var(--surface); }
-.page.page :global(.pair-people) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.page.page :global(.pair-hero) { position: relative; isolation: isolate; overflow: hidden; padding: 48px; background: radial-gradient(ellipse 600px 240px at 50% 160px, rgba(227,179,160,.1), transparent 80%), linear-gradient(180deg, rgba(16,41,31,.9), var(--surface) 480px), url('/compatibility/hero-night-desktop.webp') center top / cover, var(--surface); }
+.page.page :global(.pair-hero > .eyebrow) { color: var(--gold); text-align: center; }
+.page.page :global(.pair-hero__scene) { position: relative; max-width: 880px; margin-inline: auto; padding-block: 12px; }
+.page.page :global(.pair-hero__scene::before) { content: ''; position: absolute; pointer-events: none; left: 15%; right: 15%; top: 110px; height: 100px; border-top: 1px solid rgba(227,179,160,.5); border-bottom: 1px solid rgba(227,179,160,.16); border-radius: 50%; transform: rotate(-8deg); }
+.page.page :global(.pair-people) { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 160px; }
 .page.page :global(.pair-person) { display: grid; justify-items: center; align-content: start; gap: 16px; min-width: 0; text-align: center; }
 .page.page :global(.pair-person > div) { min-width: 0; }
 .page.page :global(.pair-person h2) { font-size: clamp(24px, 3.5vw, 44px); line-height: 1.1; overflow-wrap: anywhere; hyphens: auto; }
 .page.page :global(.pair-person .eyebrow) { color: var(--ink-soft); }
-.page.page :global(.pair-score) { color: var(--gold); font-family: var(--font-display); font-size: clamp(80px, 12vw, 128px); line-height: 1; }
-.page.page :global(.pair-hero .display) { font-size: clamp(40px, 5vw, 64px); line-height: 1.1; }
-.page.page :global(.pair-hero .lead) { max-width: 46em; line-height: 1.75; }
+.page.page :global(.pair-score) { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); margin: 0; padding: 16px; color: var(--gold); font-family: var(--font-display); font-size: 100px; line-height: 1; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.page.page :global(.pair-hero .display) { max-width: 850px; margin-inline: auto; font-size: clamp(40px, 5vw, 64px); line-height: 1.1; text-align: center; text-wrap: balance; }
+.page.page :global(.pair-hero .lead) { max-width: 46em; margin-inline: auto; line-height: 1.75; text-align: center; }
+.page.page :global(.pair-hero > .muted) { max-width: 70em; margin-inline: auto; text-align: center; }
 .page.page :global(.compare) { padding-top: 24px; border-top: 1px solid var(--line); }
 .page.page :global(.compare .scale__head > span) { min-width: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
 .page.page :global(.compare__bar) { grid-template-columns: minmax(56px, .55fr) minmax(0, 2fr) 32px; gap: 12px; }
@@ -128,6 +132,9 @@
   .page.page :global(.share-card) { grid-template-columns: minmax(0, 1fr); gap: 24px; }
   .page.page :global(.report-manual__column) { padding: 20px; }
   .page.page :global(.pair-people) { gap: 16px; }
+  .page.page :global(.pair-hero__scene) { padding: 0; }
+  .page.page :global(.pair-hero__scene::before) { left: 10%; right: 10%; top: 56px; height: 90px; }
+  .page.page :global(.pair-score) { position: relative; left: auto; top: auto; transform: none; margin-top: 24px; padding: 0; font-size: 88px; background: none; border: 0; }
   .page.page :global(.pair-person h2) { font-size: clamp(18px, 5vw, 28px); }
   .page.page :global(.pair-person [data-gem-dir]) { max-width: 140px; }
 }

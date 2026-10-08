@@ -15,7 +15,7 @@ export const metadata: Metadata = { title: "Пара" };
 function Person({ label, person }: { label: string; person: PairPerson }) {
   return (
     <div className="pair-person">
-      <GemPortrait dir={gemAssetDir(person.dir)} size={180} priority />
+      <GemPortrait dir={gemAssetDir(person.dir)} size={240} priority />
       <div>
         <p className="eyebrow">{label}</p>
         <h2>{person.typeName}</h2>
@@ -35,11 +35,13 @@ export default async function PairPage({ params }: { params: Promise<{ id: strin
       <div className="page page--pair stack">
         <section className="card stack pair-hero">
           <p className="eyebrow">Совместимость пары</p>
-          <div className="pair-people">
-            <Person label={`Вы · ${view.you.firstName}`} person={view.you} />
-            <Person label={view.partner.firstName} person={view.partner} />
+          <div className="pair-hero__scene">
+            <div className="pair-people">
+              <Person label={`Вы · ${view.you.firstName}`} person={view.you} />
+              <Person label={view.partner.firstName} person={view.partner} />
+            </div>
+            <p className="pair-score" aria-label={`Совместимость ${view.score} процентов`}>{view.score}%</p>
           </div>
-          <p className="pair-score" aria-label={`Совместимость ${view.score} процентов`}>{view.score}%</p>
           <h1 className="display">{view.phrase}</h1>
           <p className="lead">{view.text}</p>
           <p className="muted">Это не прогноз отношений: число показывает, насколько похожи ваши профили и сколько у пары ресурса на доброжелательность и спокойствие.</p>

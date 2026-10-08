@@ -4,6 +4,7 @@ import { PurchaseStatus } from "@/components/PurchaseStatus";
 import { paymentsDeps } from "@/server/payments-deps";
 import { getPurchaseView } from "@/server/payments-service";
 import { requireUser } from "@/server/viewer";
+import styles from "./purchase-night.module.css";
 
 export const metadata: Metadata = { title: "Оплата" };
 
@@ -13,7 +14,7 @@ export default async function PurchasePage({ params }: { params: Promise<{ id: s
   const view = deps ? await getPurchaseView(deps, { purchaseId: id, userId: user.id }) : null;
   if (!view) notFound();
   return (
-    <main className="inner-page inner-page--wait">
+    <main className={`inner-page inner-page--wait ${styles.page}`} data-band="night" data-night-entry data-palette={view.product === "pair" ? "pair" : undefined}>
       <div className="page page--wait">
         <PurchaseStatus initial={view} />
       </div>
