@@ -1,0 +1,29 @@
+
+.page.page { background: var(--chrome-bg); }
+.page::before { display: none; }
+.page :global(.pricing-page) { max-width: 1240px; padding: 32px 28px 80px; gap: 48px; }
+.page :global(.pricing-page > header) { max-width: 800px; }
+.page :global(.card) { min-width: 0; padding: 28px; background: var(--surface); border: 0; border-radius: var(--radius); box-shadow: none; backdrop-filter: none; }
+.page .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 21px; align-items: stretch; }
+.page .grid :global(.pricing-card) { display: flex; flex-direction: column; gap: 21px; padding: 32px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
+.page .grid h2 { min-height: 2.3em; font-size: clamp(32px, 3vw, 42px); line-height: 1.15; color: var(--ink); }
+.page .grid :global(.eyebrow) { min-height: 2.8em; color: var(--ink-soft); }
+.page .grid :global(.pricing-card__price) { font-family: var(--font-body); font-size: clamp(32px, 3.6vw, 48px); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; color: var(--gold); }
+.page .grid .priceUnit { display: inline-block; color: var(--ink-soft); font-size: 16px; font-weight: 400; letter-spacing: 0; white-space: nowrap; }
+.page .grid :global(.pricing-card__cta) { display: grid; gap: 14px; margin: 0 0 7px; }
+.page .grid :global(.pricing-card__cta .muted) { min-height: 3.1em; }
+.page .grid :global(.pricing-card__list) { padding-top: 21px; border-top: 1px solid var(--line); gap: 10px; }
+.page .grid :global(.pricing-card__bundle) { padding: 14px; background: var(--surface-2); color: var(--ink); border-radius: var(--radius); }
+.page :global(.button) { min-height: 52px; border-radius: var(--radius); box-shadow: none; white-space: normal; text-align: center; }
+.page :global(.button--ghost) { background: transparent; border: 1px solid var(--accent); }
+.page :global(.pricing-page > .inner-block .pricing-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.page :global(.inner-block) { padding: 0; }
+.page :global(.pricing-page__terms) { max-width: 800px; }
+@media (max-width: 759px) {
+  .page :global(.pricing-page) { padding: 24px 21px 56px; gap: 36px; }
+  .page .grid, .page :global(.pricing-page > .inner-block .pricing-grid) { grid-template-columns: minmax(0, 1fr); }
+  .page .grid :global(.pricing-card), .page :global(.card) { padding: 21px; }
+  .page .grid h2, .page .grid :global(.eyebrow), .page .grid :global(.pricing-card__cta .muted) { min-height: 0; }
+  .page .grid :global(.pricing-card__price) { font-size: 32px; }
+  .page :global(.button) { width: 100%; }
+}
