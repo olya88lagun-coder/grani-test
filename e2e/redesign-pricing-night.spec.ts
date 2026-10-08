@@ -39,12 +39,8 @@ for (const width of [320, 375, 390, 1024, 1440]) {
       await expect(gem).toHaveAttribute('data-loaded', 'true');
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-    const footerColor = await page.locator('main').evaluate(node => {
-      const probe = document.createElement('span');
-      probe.style.color = 'var(--chrome-bg)'; node.append(probe);
-      const color = getComputedStyle(probe).color; probe.remove(); return color;
-    });
-    await expect(page.getByRole('contentinfo')).toHaveCSS('background-color', footerColor);
+    // Подвал ночной на всех страницах
+    await expect(page.getByRole('contentinfo')).toHaveCSS('background-color', 'rgb(10, 31, 23)');
     // Audit actual foregrounds against the closest opaque CSS background. All text areas are opaque.
     const failures = await page.locator('main').evaluate(main => {
       const rgb = (v: string) => (v.match(/[\d.]+/g) ?? []).map(Number);

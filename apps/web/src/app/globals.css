@@ -189,12 +189,19 @@ details.card[open] > summary { margin-bottom: 21px; }
 .type-tile h3 a { text-decoration: none; }
 .display--article { font-size: clamp(36px, 8vw, 56px); }
 
-/* Общие компоненты продолжают тон страницы без отдельного белого листа. */
-.footer { max-width: none; padding: 0; background: var(--chrome-bg, var(--bg)); font-size: 14px; color: var(--ink-soft); }
-.footer__inner { max-width: 1240px; margin-inline: auto; padding: 28px 28px 42px; }
-.footer nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px 28px; padding-top: 21px; border-top: 1px solid var(--line); }
+/* Подвал ночной на всех страницах: data-band="night" ставит Footer.tsx. Исключение внизу файла блока: «Туман», у него ночной набор не выбран. */
+.footer { max-width: none; padding: 0; background: var(--bg); font-size: 14px; color: var(--ink-soft); }
+.footer__inner { max-width: 1240px; margin-inline: auto; padding: 48px 28px 44px; }
+.footer__brand { display: flex; align-items: center; gap: 14px; margin-bottom: 32px; }
+.footer__brand svg { flex: none; }
+.footer__word { display: block; font-family: var(--font-display); font-weight: 300; font-size: 34px; line-height: 1; color: var(--ink); }
+.footer__tagline { margin: 4px 0 0; color: var(--ink-soft); }
+.footer nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 28px; padding-top: 28px; border-top: 1px solid var(--line); }
+.footer__group { display: grid; align-content: start; gap: 2px; }
+.footer__title { margin: 0 0 6px; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); }
 .footer a, .footer .link-button { display: inline-flex; align-items: center; justify-self: start; min-height: 44px; color: var(--ink-soft); text-align: left; overflow-wrap: anywhere; }
-.footer a:hover, .footer .link-button:hover { color: var(--accent); }
+.footer a, .footer .link-button { text-decoration: none; }
+.footer a:hover, .footer .link-button:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
 /* main и общие компоненты — соседи. Один набор токенов задаёт конец градиента и подвал.
    :has() связывает страницу с body; подвал и баннер также имеют обычные sibling-селекторы. */
 :where(.home-page, .home-page ~ .footer, body:has(> .home-page)) { --chrome-bg: var(--home-page-end); }
@@ -211,7 +218,7 @@ details.card[open] > summary { margin-bottom: 21px; }
 body.has-cookie-banner .footer { padding-bottom: 220px; }
 @media (max-width: 759px) {
   .footer__inner { padding-inline: 20px; }
-  .footer nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 21px; }
+  .footer nav { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 21px; }
 }
 @media (max-width: 520px) {
   .cookie-banner { padding: 14px 16px; }
@@ -2663,3 +2670,11 @@ body.has-cookie-banner .sticky-cta { display: none; }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes meter-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Анкета друзей («Туман»): ночной набор для неё ещё не выбран, подвал остаётся в её светлых токенах */
+body:has(> main[data-palette="friends"]) .footer[data-band="night"],
+main[data-palette="friends"] ~ .footer[data-band="night"] {
+  --bg: #FCFDFE; --surface: #E3EDF2; --surface-2: #D3E2EA; --surface-3: #B9CFDB; --surface-4: #D9D6E8;
+  --accent: #1D3A4F; --accent-hover: #142B3B; --accent-ink: #FCFDFE;
+  --ink: #1F2328; --ink-soft: #5C6670; --line: #E8ECEF; --gold: #1D3A4F;
+}
