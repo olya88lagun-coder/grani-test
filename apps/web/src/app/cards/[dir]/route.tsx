@@ -1,7 +1,7 @@
 import { typeName } from "@grani/core";
 import { ImageResponse } from "next/og";
 import { type NextRequest, NextResponse } from "next/server";
-import { CARD_SIZE, cardElement, loadCardCrystal, loadCardFonts } from "@/lib/card";
+import { CARD_SIZE, cardElement, loadCardArt, loadCardFonts } from "@/lib/card";
 import { typeKeywords } from "@/lib/result-view";
 import { TYPE_VISUALS, dirToTypeCode } from "@/lib/type-visuals";
 
@@ -15,8 +15,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!code || !visual) return new NextResponse(null, { status: 404 });
   const feminine = request.nextUrl.searchParams.get("f") === "1";
   const name = typeName(code, feminine ? "female" : null);
-  const [fonts, crystal] = await Promise.all([loadCardFonts(), loadCardCrystal()]);
-  const image = new ImageResponse(cardElement({ name, keywords: typeKeywords(code), crystal }), { ...CARD_SIZE, fonts });
+  const [fonts, art] = await Promise.all([loadCardFonts(), loadCardArt(dir, visual.family)]);
+  const image = new ImageResponse(cardElement({ name, keywords: typeKeywords(code), ...art }), { ...CARD_SIZE, fonts });
   image.headers.set("cache-control", CACHE_CONTROL);
   image.headers.set("content-disposition", `inline; filename="grani-${dir}.png"`);
   return image;
