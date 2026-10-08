@@ -216,3 +216,9 @@
 @media (min-width: 761px) {
   .page :global(.home-pair[data-band="night"] .home-pair-list) { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; gap: 10px 32px; padding-top: 22px; }
 }
+
+/* Подписи черт: тёмная стеклянная плашка, чтобы текст читался на любом пятне фона. Метка «Добросовестность» стоит у нижней вершины камня */
+@media (min-width: 761px) {
+  .page :global(.home-crystal__label) { padding: 5px 12px; border-radius: 12px; background: rgba(5,20,14,.64); border: 1px solid rgba(205,181,123,.24); backdrop-filter: blur(3px); text-shadow: none; }
+  .page :global(.home-crystal__label--conscience) { left: 38%; bottom: 6%; }
+}
