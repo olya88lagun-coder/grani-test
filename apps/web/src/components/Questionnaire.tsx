@@ -3,7 +3,10 @@
 import type { Answer, Answers } from "@grani/core";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { GemStone } from "@/components/GemStone";
 import { type Goal, progressGoalsCrossed, reachGoal } from "@/lib/analytics";
+import type { TypeShape } from "@/lib/gem-paths";
+import { gemStone, type GemFamily } from "@/lib/gem-stone";
 import {
   ANSWER_LABELS,
   PAGE_SIZE,
@@ -31,6 +34,8 @@ export type QuestionnaireProps = {
   finishGoal?: Goal;
   // Цели 25/50/75% — только для своего теста, не для анкеты друзей
   trackProgress?: boolean;
+  // Камень рядом со счётчиком: грани закрашиваются по мере ответов. Без него остаётся только полоса
+  progressGem?: { shape: TypeShape; family: GemFamily };
 };
 
 const ANSWER_VALUES = [1, 2, 3, 4, 5] as const satisfies readonly Answer[];
@@ -54,7 +59,7 @@ function writeStorage(key: string, value: string | null): boolean {
   }
 }
 
-export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false }: QuestionnaireProps) {
+export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, progressGem }: QuestionnaireProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [page, setPage] = useState(0);
@@ -77,6 +82,7 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
   const pages = pageCount(items.length, pageSize);
   const isLastPage = page === pages - 1;
   const done = answeredCount(items, answers);
+  const facetCount = progressGem ? gemStone(progressGem.shape, progressGem.family).facets.length : 0;
 
   function choose(id: string, value: Answer) {
     // Начало — первый ответ в пустом тесте; восстановленный прогресс не считается новым началом
@@ -126,9 +132,12 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
   return (
     <div className="stack questionnaire" aria-busy={sending}>
       <div className="progress">
-        <span className="muted">
-          Ответов: {done} из {items.length}
-        </span>
+        <div className="progress__head">
+          {progressGem && <GemStone shape={progressGem.shape} family={progressGem.family} size={52} lit={Math.round((done / items.length) * facetCount)} />}
+          <span className="muted">
+            Ответов: {done} из {items.length}
+          </span>
+        </div>
         <div className="progress__bar" role="progressbar" aria-label="Прогресс ответов" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
           <span style={{ transform: `scaleX(${done / items.length})` }} />
         </div>
