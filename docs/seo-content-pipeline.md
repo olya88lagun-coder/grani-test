@@ -35,7 +35,7 @@ The rules are codified in `QUALITY_RULES` and covered by tests:
 
 ## How to use
 
-Since 2026-09-28 publication is automatic (owner's decision): a scheduled Claude agent writes one article on Tuesdays and Fridays and merges its own PR when every check is green. The full procedure the agent follows is `docs/seo-article-writer.md`.
+Since 2026-09-28 publication is automatic (owner's decision): a scheduled Claude agent writes articles on Tuesdays and Fridays and merges its own PR when every check is green. Since 2026-10-07 the quota is three articles per run (each its own branch, PR and merge), up from one. The full procedure the agent follows is `docs/seo-article-writer.md`.
 
 Automated gates that replace manual review:
 
