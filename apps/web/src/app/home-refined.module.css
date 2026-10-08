@@ -97,11 +97,13 @@
 .page :global(.home-note-card__icon) { background: transparent; box-shadow: none; }
 
 .page :global(.home-types), .page :global(.home-articles) { grid-template-columns: minmax(0, 1fr); }
-.page :global(.home-types[data-band="night"]) { background: var(--bg); }
+.page :global(.home-types[data-band="night"]) { background: var(--bg) url("/home/types-night-desktop.webp") 78% 0 / cover no-repeat; }
+/* Светлая фотография растений из прежнего дизайна не нужна на ночном фоне */
+.page :global(.home-types[data-band="night"]::after) { display: none; }
 .page :global(.home-type-carousel) { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; }
-.page :global(.home-type-card) { display: flex; flex-direction: column; min-width: 0; padding: 20px; min-height: 0; border-radius: var(--radius); box-shadow: none; border: 1px solid var(--line); background: var(--surface); backdrop-filter: none; }
+.page :global(.home-type-card) { display: flex; flex-direction: column; min-width: 0; padding: 20px; min-height: 0; border-radius: var(--radius); box-shadow: none; border: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 78%, transparent); backdrop-filter: none; }
 .page :global(.home-type-card__art) { display: grid; place-items: center; min-height: 0; height: 180px; background: transparent; border-radius: 0; overflow: visible; }
-.page :global(.home-type-card__art > svg) { display: block; width: min(100%, 180px); height: auto; filter: drop-shadow(0 0 14px rgba(47,163,110,.12)); }
+.page :global(.home-type-card__art > span) { filter: drop-shadow(0 0 14px rgba(47,163,110,.18)); }
 .page :global(.home-type-card h3) { font-family: var(--font-display); font-size: 30px; text-transform: none; letter-spacing: 0; font-weight: 300; line-height: 1.15; overflow-wrap: anywhere; color: var(--ink); }
 .page :global(.home-type-card p) { min-height: 0; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
 .page :global(.home-type-card > a), .page :global(.home-article-card > a) { position: static; width: 100%; min-height: 48px; height: auto; margin-top: auto; padding: 12px 0 0; display: flex; align-items: center; justify-content: space-between; border-radius: 0; border: 0; border-top: 1px solid var(--line); background: transparent; box-shadow: none; font-size: 14px; line-height: 1.4; gap: 12px; }
@@ -110,7 +112,7 @@
 .page :global(.home-pair) { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); }
 .page :global(.home-pair__cards) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .personGem { display: grid; place-items: center; min-width: 0; width: 100%; min-height: 170px; }
-.personGem > svg { display: block; width: min(100%, 180px); height: auto; }
+.personGem > span { filter: drop-shadow(0 0 14px rgba(47,163,110,.18)); }
 .page :global(.home-person-card) { min-width: 0; grid-template-columns: minmax(0, 1fr); min-height: 230px; padding: 21px; overflow: hidden; }
 .page :global(.home-person-card h3) { color: var(--ink); font-weight: 300; font-family: var(--font-display); font-size: clamp(24px, 2.1vw, 30px); line-height: 1.15; text-transform: none; overflow-wrap: anywhere; width: 100%; min-width: 0; text-align: center; }
 .page :global(.home-pair-score strong), .page :global(.home-pair-score p), .page :global(.home-pair-score small), .page :global(.home-pair-list) { color: var(--ink); }
@@ -174,4 +176,13 @@
 @media (prefers-reduced-motion: reduce) {
   .heroGem { animation: none; }
   .sheen { animation: none; opacity: 0; }
+}
+
+@media (max-width: 760px) {
+  .page :global(.home-types[data-band="night"]) { background: var(--bg) url("/home/types-night-mobile.webp") 50% 0 / cover no-repeat; }
+}
+
+/* Прозрачные поля вокруг фотокамня съедают часть кадра: на компьютере даём ему выйти за отступ карточки */
+@media (min-width: 761px) {
+  .page :global(.home-type-card__art) { height: 210px; margin: -4px -14px 0; }
 }

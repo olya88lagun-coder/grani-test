@@ -7,7 +7,8 @@ import { Suspense, useId } from "react";
 import { GemStone } from "@/components/GemStone";
 import { gemStone, type GemFamily } from "@/lib/gem-stone";
 import type { TypeShape } from "@/lib/gem-paths";
-import { TYPE_VISUALS } from "@/lib/type-visuals";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
 import { HomeHeader } from "@/components/PublicHeader";
 import { JsonLd } from "@/components/JsonLd";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
@@ -113,9 +114,8 @@ function HomeGem({ shape, family, size }: { shape: TypeShape; family: GemFamily;
   );
 }
 
-function HomeTypeGem({ code }: { code: HomeTypeCode }) {
-  const visual = TYPE_VISUALS[typeCodeToDir(code)]!;
-  return <HomeGem shape={visual.shape} family={visual.family} size={180} />;
+function HomeTypeGem({ code, size = 180 }: { code: HomeTypeCode; size?: number }) {
+  return <GemPortrait dir={gemAssetDir(typeCodeToDir(code))} size={size} />;
 }
 
 const ARTICLE_CARDS = [
@@ -338,7 +338,7 @@ export default function HomePage() {
           {TYPES.map((type) => (
             <article className={`home-type-card home-type-card--${type.tone}`} key={type.code}>
               <div className="home-type-card__art">
-                <HomeTypeGem code={type.code} />
+                <HomeTypeGem code={type.code} size={240} />
               </div>
               <h3>{type.title}</h3>
               <p>{type.text}</p>

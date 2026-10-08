@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ALL_TYPE_CODES } from "@grani/core";
 import { typeCodeToDir } from "@grani/content";
-import { GEM_ASSET_DIRS, gemAssetPath } from "./gem-assets";
+import { GEM_ASSET_DIRS, gemAssetDir, gemAssetPath } from "./gem-assets";
 import { TYPE_VISUALS } from "./type-visuals";
 
 function webpInfo(buffer: Buffer) {
@@ -42,5 +42,10 @@ describe("production gemstone assets", () => {
       const info = webpInfo(readFileSync(path));
       expect([info.width, info.height], file).toEqual([width, height]);
     }
+  });
+
+  it("maps every type code directory to an asset and fails loudly on an unknown one", () => {
+    for (const code of ALL_TYPE_CODES) expect(gemAssetDir(typeCodeToDir(code))).toBe(typeCodeToDir(code));
+    expect(() => gemAssetDir("xxxx")).toThrow("Unknown gem asset directory: xxxx");
   });
 });
