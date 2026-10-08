@@ -150,7 +150,7 @@
 @media (max-width: 560px) {
   .inner { gap: 8px; min-height: 68px; padding: 8px 16px; }
   .header a.brand { gap: 7px; font-size: 30px; }
-  .header .brand svg { width: 25px; height: 25px; }
+  .header .brand svg { width: 23px; height: 26px; }
   .header .account { max-width: 86px; padding: 8px 12px; font-size: 13px; }
   .menu summary { padding-inline: 8px; font-size: 13px; }
   .panel { inset-inline: 16px; }

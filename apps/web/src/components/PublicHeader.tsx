@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { AccountLink } from "./AccountLink";
-import { TypeGem } from "./TypeGem";
+import { BrandMark } from "./BrandMark";
 import styles from "./PublicHeader.module.css";
 
 const LINKS = [
@@ -67,7 +67,7 @@ export function PublicHeader({ pathname, home = false, focused = false }: Header
     <header className={`public-header ${home ? "" : "site-header "}${styles.header}${home ? ` ${styles.home}` : ""}`}>
       <div className={styles.inner}>
         <Link className={styles.brand} href="/" aria-label="Грани — на главную">
-          <TypeGem shape="hexagon" size={28} />
+          <BrandMark />
           <span>грани</span>
         </Link>
         {!focused && (
