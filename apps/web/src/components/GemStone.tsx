@@ -20,14 +20,14 @@ export function GemStone({ shape, family, size, lit }: Props) {
           <polygon
             key={index}
             points={facet.points}
-            fill={on ? facet.fill : "rgba(205, 181, 123, 0.05)"}
-            stroke={on ? "rgba(255, 255, 255, 0.17)" : "rgba(205, 181, 123, 0.22)"}
-            strokeWidth={on ? 0.5 : 1.4}
+            fill={on ? facet.fill : "rgba(205, 181, 123, 0.07)"}
+            stroke={on ? "rgba(255, 255, 255, 0.17)" : "rgba(205, 181, 123, 0.55)"}
+            strokeWidth={on ? 0.5 : 3}
             strokeLinejoin="round"
           />
         );
       })}
-      <polygon points={outline} fill="none" stroke="rgba(224, 203, 150, 0.6)" strokeWidth={all ? 0.9 : 2} strokeLinejoin="round" />
+      <polygon points={outline} fill="none" stroke="rgba(224, 203, 150, 0.6)" strokeWidth={all ? 0.9 : 4} strokeLinejoin="round" />
     </svg>
   );
 }
