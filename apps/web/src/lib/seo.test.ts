@@ -78,7 +78,7 @@ describe("metadata", () => {
     const meta = publicMetadata({ title: "Вдохновитель", description: "Описание типа", path: "/types/vdokhnovitel" });
     expect(meta.openGraph?.images).toEqual([OG_IMAGE]);
     expect(meta.twitter).toMatchObject({ card: "summary_large_image", images: [OG_IMAGE.url] });
-    expect(OG_IMAGE).toMatchObject({ url: "/og/grani.jpg", width: 1200, height: 630 });
+    expect(OG_IMAGE).toMatchObject({ url: "/og/grani-night.jpg", width: 1200, height: 630 });
   });
 
   it("builds a schema.org breadcrumb list with absolute urls", () => {

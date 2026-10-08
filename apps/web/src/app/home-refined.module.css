@@ -62,7 +62,7 @@
 }
 .page :global(.home-crystal__label) { font-size: clamp(16px, 1.4vw, 20px); color: var(--ink); font-weight: 400; background: transparent; text-shadow: 0 0 10px #000, 0 1px 14px rgba(0,0,0,.9); padding: 2px 4px; }
 .page :global(.home-crystal__label)::before { width: 28px; background: var(--gold); }
-.page :global(.home-crystal__label--openness) { top: 4%; left: 4%; }
+.page :global(.home-crystal__label--openness) { top: 14%; left: 8%; }
 .page :global(.home-crystal__label--extra) { top: 25%; right: 0; }
 .page :global(.home-crystal__label--agree) { right: 0; bottom: 20%; }
 .page :global(.home-crystal__label--conscience) { left: 30%; right: auto; bottom: 1%; }
@@ -220,5 +220,10 @@
 /* Подписи черт: тёмная стеклянная плашка, чтобы текст читался на любом пятне фона. Метка «Добросовестность» стоит у нижней вершины камня */
 @media (min-width: 761px) {
   .page :global(.home-crystal__label) { padding: 5px 12px; border-radius: 12px; background: rgba(5,20,14,.64); border: 1px solid rgba(205,181,123,.24); backdrop-filter: blur(3px); text-shadow: none; }
-  .page :global(.home-crystal__label--conscience) { left: 38%; bottom: 6%; }
+  .page :global(.home-crystal__label--conscience) { left: 12%; bottom: 13%; }
+}
+
+/* Метка «Добросовестность» стоит слева внизу от камня: указатель идёт вправо к нижней вершине, а не влево от плашки */
+@media (min-width: 761px) {
+  .page :global(.home-crystal__label--conscience)::before { left: 100%; right: auto; width: 56px; transform: rotate(-13deg); transform-origin: left; }
 }
