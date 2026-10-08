@@ -105,7 +105,7 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
 function WaitCard({ busy = false, children }: { busy?: boolean; children: ReactNode }) {
   return (
     <div className="wait-card stack" role="status">
-      <img className={busy ? "wait-card__gem wait-card__gem--busy" : "wait-card__gem"} src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+      <img className={busy ? "wait-card__gem wait-card__gem--busy" : "wait-card__gem"} src="/home/hero-gem.webp" alt="" width={640} height={640} />
       {children}
     </div>
   );

@@ -1,0 +1,28 @@
+.page.page {
+  --chrome-bg: var(--bg);
+  --inner-ink: var(--ink);
+  background: radial-gradient(ellipse 560px 280px at 50% 160px, rgba(205,181,123,.06), transparent 80%), var(--bg);
+  color: var(--ink);
+}
+.page.page::before { display: none; }
+.page.page :global(.page--wait) { display: grid; place-items: center; max-width: 760px; min-height: 78vh; padding: 40px 24px 72px; }
+.page.page :global(.wait-card) { position: relative; isolation: isolate; width: 100%; padding: 48px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(180deg, rgba(16,41,31,.94), var(--surface) 300px), url('/home/types-night-desktop.webp') center top / cover; box-shadow: none; text-align: center; }
+.page.page :global(.wait-card__gem) { display: block; width: 160px; height: 160px; object-fit: contain; margin-inline: auto; filter: none; }
+.page.page :global(.wait-card__gem--busy) { animation: breathe 2.4s ease-in-out infinite; }
+.page.page :global(.wait-card .display) { color: var(--ink); font-size: clamp(36px, 7vw, 60px); line-height: 1.1; overflow-wrap: anywhere; }
+.page.page :global(.wait-card .lead) { color: var(--ink-soft); font-size: 17px; line-height: 1.7; }
+.page.page :global(.wait-steps) { display: grid; gap: 18px; width: fit-content; max-width: 100%; margin: 28px auto 0; padding: 24px 0 0; border-top: 1px solid var(--line); list-style: none; text-align: left; }
+.page.page :global(.wait-steps li) { display: flex; align-items: center; gap: 12px; color: var(--ink-soft); line-height: 1.6; }
+.page.page :global(.wait-steps li::before) { content: ''; flex: none; width: 22px; height: 22px; border: 1px solid var(--gold); border-radius: 50%; opacity: .5; }
+.page.page :global(.wait-steps .wait-steps__done), .page.page :global(.wait-steps .wait-steps__active) { color: var(--ink); }
+.page.page :global(.wait-steps .wait-steps__active) { font-weight: 600; }
+.page.page :global(.wait-steps .wait-steps__done::before) { opacity: 1; background: var(--gold) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M6 12.5l4 4 8-9' fill='none' stroke='%230a1f17' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / 14px no-repeat; }
+.page.page :global(.wait-steps .wait-steps__active::before) { opacity: 1; background: radial-gradient(circle, var(--gold) 0 4px, transparent 5px); }
+.page.page :global(.button) { box-shadow: none; white-space: normal; }
+@keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.045); } }
+@media (max-width: 759px) {
+  .page.page :global(.page--wait) { padding: 24px 16px 56px; min-height: 72vh; }
+  .page.page :global(.wait-card) { padding: 28px 20px; }
+  .page.page :global(.wait-card__gem) { width: 136px; height: 136px; }
+}
+@media (prefers-reduced-motion: reduce) { .page.page :global(.wait-card__gem--busy) { animation: none; } }
