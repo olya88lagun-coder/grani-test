@@ -1,43 +1,43 @@
-.landing { --landing-soft: #625158; --landing-clay: #7d4e3e; --landing-paper: #fffaf5; --landing-sand: #f4ece3; width: 100%; }
+.landing { --landing-soft: var(--ink-soft); --landing-clay: #E3B3A0; --landing-gold: #CDB57B; --landing-rose-line: rgba(227, 179, 160, .34); --landing-paper: #10291F; --landing-sand: #0A1F17; width: 100%; }
 .landing p { margin: 0; }
 .visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .landing h1, .landing h2, .landing h3 { color: var(--accent); }
 .landing a:focus-visible, .landing summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 5px; }
-.hero { background: var(--landing-sand); padding: 32px 24px 24px; overflow: clip; isolation: isolate; }
+.hero { background: radial-gradient(48% 70% at 78% 40%, rgba(227, 179, 160, .16), transparent 70%), radial-gradient(40% 55% at 96% 100%, rgba(63, 174, 124, .14), transparent 70%), var(--landing-sand); padding: 32px 24px 24px; overflow: clip; isolation: isolate; }
 .heroInner { max-width: 1320px; margin: auto; display: grid; grid-template-columns: 0.9fr 1.1fr; align-items: center; min-height: 590px; }
 .intro { position: relative; z-index: 2; padding: 24px 0 40px; }
-.eyebrow { color: var(--landing-clay); font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+.eyebrow { color: var(--landing-gold); font-size: 13px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
 .intro h1 { font-size: clamp(54px, 5.5vw, 84px); line-height: .98; letter-spacing: -.04em; margin: 20px 0 24px; }
 .lead { font-size: clamp(17px, 1.5vw, 20px); line-height: 1.6; max-width: 470px; margin-bottom: 28px !important; }
-.cta { display: inline-flex; justify-content: center; align-items: center; gap: 14px; min-height: 56px; padding: 16px 24px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-size: 16px; font-weight: 600; line-height: 1.4; text-decoration: none; transition: background .2s ease; }
-.cta:hover { background: var(--accent-hover); }
+.cta { display: inline-flex; justify-content: center; align-items: center; gap: 14px; min-height: 56px; padding: 16px 24px; border-radius: 999px; background: linear-gradient(135deg, #F6DCCD, #E3B3A0); color: #2A1318; font-size: 16px; font-weight: 600; line-height: 1.4; text-decoration: none; transition: filter .2s ease; }
+.cta:hover { filter: brightness(1.07); }
 .cta span { font-size: 22px; font-weight: 400; }
 .priceLine { margin-top: 18px !important; max-width: 450px; font-size: 14px; }
 .trust { display: flex; flex-wrap: wrap; gap: 8px 16px; padding: 0; margin: 28px 0 0; list-style: none; color: var(--landing-soft); font-size: 12px; }
 .trust li + li::before { content: '·'; margin-right: 16px; }
 .scene { position: relative; min-width: 0; height: 580px; }
 .art { position: absolute; top: -32px; bottom: 0; left: calc(-81.81818% - max(24px, (100vw - 1320px) / 2)); right: calc(-1 * max(24px, (100vw - 1320px) / 2)); overflow: hidden; pointer-events: none; z-index: 0; }
-.art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, #f4ece3 0%, #f4ece3f2 38%, #f4ece300 60%); }
-.art img { width: 100%; height: 100%; object-fit: cover; }
-.art picture { display: block; width: 100%; height: 100%; }
+.hexA, .hexB { position: absolute; z-index: 0; width: 440px; height: 502px; fill: none; stroke-width: .5; pointer-events: none; filter: drop-shadow(0 0 40px rgba(227, 179, 160, .12)); }
+.hexA { left: 2%; top: 20px; stroke: rgba(227, 179, 160, .6); }
+.hexB { left: 34%; top: 60px; stroke: rgba(205, 181, 123, .6); }
 .heroCards { position: absolute; inset: 0; z-index: 1; }
-.example { background: var(--landing-paper); border: 1px solid #e3d2c5; border-radius: 18px; padding: 24px; color: var(--ink); min-width: 0; }
-.badge { display: inline-block; background: #efd3d5; color: var(--accent); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
-.cardKind { font-size: 12px; color: var(--landing-clay); margin: 22px 0 12px !important; }
+.example { background: var(--landing-paper); border: 1px solid var(--landing-rose-line); border-radius: 18px; padding: 24px; color: var(--ink); min-width: 0; }
+.badge { display: inline-block; background: #4B1A2B; border: 1px solid rgba(227, 179, 160, .5); color: var(--accent); border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
+.cardKind { font-size: 12px; color: var(--landing-clay); letter-spacing: .04em; margin: 22px 0 12px !important; }
 .example h3 { font-size: 31px; line-height: 1.08; letter-spacing: -.015em; margin-bottom: 16px; }
 .hint { color: var(--landing-soft); font-size: 13px; line-height: 1.6; }
-.heroCards .example { position: absolute; box-shadow: 0 20px 35px -22px #73513f80; }
+.heroCards .example { position: absolute; box-shadow: 0 24px 40px -24px rgba(0, 0, 0, .7); }
 .questionCard { z-index: 3; width: 45%; left: 0; top: 42px; transform: rotate(-6deg); padding-top: 28px; min-height: 380px; }
-.dateCard { z-index: 2; width: 44%; left: 50%; top: 94px; transform: rotate(5deg); min-height: 326px; background: #f5e7db; }
+.dateCard { z-index: 2; width: 44%; left: 50%; top: 94px; transform: rotate(5deg); min-height: 326px; background: #123226; }
 .dateCard h3 { font-size: 30px; }
-.monthCard { z-index: 4; width: 45%; right: 0; top: 350px; transform: rotate(-3deg); background: #e9d4c7; padding: 20px; }
+.monthCard { z-index: 4; width: 45%; right: 0; top: 350px; transform: rotate(-3deg); background: #163A2C; padding: 20px; }
 .monthCard h3 { font-size: 29px; }
 .monthCard .cardKind { margin-top: 15px !important; }
-.benefits { position: relative; z-index: 3; list-style: none; padding: 32px; margin: 0 auto; max-width: 1320px; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--landing-paper); border-radius: 24px; }
-.benefits li { display: flex; gap: 18px; padding: 0 22px; border-right: 1px solid #eaded4; }
+.benefits { position: relative; z-index: 3; list-style: none; padding: 32px; margin: 0 auto; max-width: 1320px; display: grid; grid-template-columns: repeat(4, 1fr); background: var(--landing-paper); border: 1px solid var(--landing-rose-line); border-radius: 24px; }
+.benefits li { display: flex; gap: 18px; padding: 0 22px; border-right: 1px solid var(--landing-rose-line); }
 .benefits li:first-child { padding-left: 0; }
 .benefits li:last-child { padding-right: 0; border: 0; }
-.icon { display: grid; place-items: center; background: #f0dcd6; color: var(--landing-clay); width: 56px; height: 56px; border-radius: 50%; flex: none; }
+.icon { display: grid; place-items: center; background: rgba(227, 179, 160, .08); border: 1px solid var(--landing-rose-line); color: var(--landing-clay); width: 56px; height: 56px; border-radius: 50%; flex: none; }
 .icon svg { width: 30px; height: 30px; }
 .benefits h2 { font-size: 27px; line-height: 1.1; margin-bottom: 10px; }
 .benefits p { color: var(--landing-soft); font-size: 13px; line-height: 1.6; }
@@ -45,43 +45,43 @@
 .section > h2, .offer h2 { font-size: clamp(38px, 4.5vw, 60px); line-height: 1.07; letter-spacing: -.03em; margin: 14px 0 24px; }
 .sectionLead { max-width: 680px; color: var(--landing-soft); font-size: 17px; }
 .steps { list-style: none; padding: 0; margin: 40px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-.steps li { border-top: 1px solid #dbc7bd; padding-top: 24px; }
-.steps span { color: var(--landing-clay); font-size: 13px; }
+.steps li { border-top: 1px solid var(--landing-gold); padding-top: 24px; }
+.steps span { color: var(--landing-gold); font-size: 13px; letter-spacing: .08em; }
 .steps h3 { font-size: 30px; margin: 16px 0 12px; line-height: 1.1; }
 .steps p { color: var(--landing-soft); font-size: 15px; }
 .inside { background: var(--surface); }
 .samples { display: grid; grid-template-columns: .9fr 1.1fr; gap: 32px; margin-top: 36px; }
-.samples .example { padding: 32px; }
+.samples .example { padding: 32px; background: var(--bg); }
 .samples .example h3 { font-size: 36px; }
 .samples .hint, .samples .dateSteps { font-size: 15px; }
 .dateSteps { white-space: pre-line; color: var(--landing-soft); line-height: 1.75; margin-top: 16px !important; }
 .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0; list-style: none; margin: 36px 0 0; }
-.roadmap > li { display: flex; flex-direction: column; background: var(--landing-sand); border-radius: 18px; padding: 28px; }
+.roadmap > li { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
 .roadmap h3 { font-size: 32px; line-height: 1.1; margin: 14px 0; }
 .roadmap p, .teasers { font-size: 14px; }
 .planLabel { font-weight: 600; }
 .teasers { list-style: none; padding: 0; margin: 20px 0 24px; color: var(--landing-soft); }
 .teasers li + li { margin-top: 12px; }
-.result { margin-top: auto !important; padding-top: 20px; border-top: 1px solid #dbc7bd; color: var(--landing-soft); }
-.result strong { color: var(--accent); font-size: 12px; }
-.offer { max-width: 1136px; margin: 0 auto; background: var(--surface); border-radius: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; padding: 48px; }
+.result { margin-top: auto !important; padding-top: 20px; border-top: 1px solid var(--landing-rose-line); color: var(--landing-soft); }
+.result strong { color: var(--landing-gold); font-size: 12px; }
+.offer { max-width: 1136px; margin: 0 auto; background: var(--surface); border: 1px solid var(--landing-rose-line); border-radius: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; padding: 48px; }
 .offer > div > p:not(.eyebrow) { max-width: 430px; }
-.pricePanel { padding-left: 40px; border-left: 1px solid #dcc1b5; }
-.amount { font-family: var(--font-display); color: var(--accent); font-size: 76px; line-height: 1; }
+.pricePanel { padding-left: 40px; border-left: 1px solid var(--landing-rose-line); }
+.amount { font-family: var(--font-display); color: var(--landing-clay); font-size: 76px; line-height: 1; }
 .pricePanel .cta { margin: 24px 0 20px; }
 .small { color: var(--landing-soft); font-size: 13px; }
 .legal { display: flex; flex-wrap: wrap; gap: 20px; font-size: 13px; margin-top: 16px !important; }
 .faq { max-width: 850px; }
-.faq details { border-bottom: 1px solid #dfd0c6; }
+.faq details { border-bottom: 1px solid var(--landing-rose-line); }
 .faq summary { position: relative; cursor: pointer; padding: 22px 32px 22px 0; font-size: 17px; color: var(--accent); }
 .faq details p { padding: 0 0 24px; color: var(--landing-soft); font-size: 15px; }
-.final { text-align: center; padding: 64px 24px 80px; background: var(--landing-sand); }
+.final { text-align: center; padding: 64px 24px 80px; background: radial-gradient(50% 80% at 50% 100%, rgba(227, 179, 160, .14), transparent 72%), var(--landing-sand); border-top: 1px solid var(--landing-rose-line); }
 .final h2 { font-size: clamp(42px, 5vw, 68px); line-height: 1.05; letter-spacing: -.03em; margin: 20px 0; }
 .final .cta { margin: 28px 0 16px; }
 @media (max-width: 1150px) and (min-width: 901px) { .hero { padding-inline: 32px; } .heroInner { grid-template-columns: .95fr 1.05fr; } .scene { height: 640px; } .art { left: calc(-90.47619% - 32px); right: -32px; } .heroCards .example { padding: 20px; } .heroCards h3 { font-size: 26px; } .dateCard { top: 70px; } .monthCard { top: 400px; } .benefits { padding: 24px; } .benefits li { padding-inline: 16px; gap: 12px; } .icon { width: 42px; height: 42px; } .benefits h2 { font-size: 24px; } }
-@media (max-width: 900px) { .heroInner { grid-template-columns: 1fr; } .intro { padding: 20px 8px 12px; max-width: 600px; } .intro h1 { font-size: 68px; } .scene { height: 580px; width: 80%; max-width: 660px; margin: auto; } .art { inset: 0 -12.5% -8px; } .art::after { background: linear-gradient(180deg, #f4ece3 0%, #f4ece300 20%); } .art img { object-position: right center; } .questionCard { top: 28px; } .dateCard { top: 70px; } .monthCard { top: 350px; } .benefits { grid-template-columns: repeat(2, 1fr); gap: 28px; } .benefits li { padding: 0; border: 0; } .section { padding-block: 64px; } .steps { gap: 24px; } .steps h3 { font-size: 27px; } .roadmap { grid-template-columns: repeat(2, 1fr); } .offer { margin-inline: 24px; padding: 32px; gap: 32px; } .pricePanel { padding-left: 24px; } }
+@media (max-width: 900px) { .heroInner { grid-template-columns: 1fr; } .intro { padding: 20px 8px 12px; max-width: 600px; } .intro h1 { font-size: 68px; } .scene { height: 580px; width: 80%; max-width: 660px; margin: auto; } .art { inset: 0 -12.5% -8px; } .hexA { width: 360px; height: 410px; left: -4%; } .hexB { width: 360px; height: 410px; left: 34%; } .questionCard { top: 28px; } .dateCard { top: 70px; } .monthCard { top: 350px; } .benefits { grid-template-columns: repeat(2, 1fr); gap: 28px; } .benefits li { padding: 0; border: 0; } .section { padding-block: 64px; } .steps { gap: 24px; } .steps h3 { font-size: 27px; } .roadmap { grid-template-columns: repeat(2, 1fr); } .offer { margin-inline: 24px; padding: 32px; gap: 32px; } .pricePanel { padding-left: 24px; } }
 /* Существующая шапка переходит к переносу на 760px; на этой витрине длинное меню переносим раньше. */
 @media (min-width: 761px) and (max-width: 900px) { :global(body):has(.landing) :global(.site-header__inner) { flex-wrap: wrap; gap: 8px 16px; } :global(body):has(.landing) :global(.site-nav) { order: 3; flex-wrap: wrap; width: 100%; margin-inline: 0; } :global(body):has(.landing) :global(.site-login) { margin-left: auto; } }
-@media (max-width: 600px) { .hero { padding: 24px 16px 16px; } .intro { padding: 0; } .intro h1 { font-size: clamp(43px, 12vw, 60px); margin: 16px 0; } .lead { font-size: 16px; line-height: 1.55; margin-bottom: 20px !important; } .intro .cta { width: 100%; font-size: 14px; padding: 14px 16px; gap: 8px; } .priceLine { font-size: 13px; margin-top: 14px !important; } .trust { font-size: 11px; gap: 4px 10px; margin-top: 16px; } .trust li + li::before { margin-right: 10px; } .scene { width: 100%; height: 390px; margin-top: 20px; } .art { inset: 0 -16px -6px; border-radius: 0; } .heroCards .example { padding: 20px; } .questionCard { width: 72%; left: 6%; top: 22px; min-height: 280px; transform: rotate(-5deg); } .questionCard h3 { font-size: 28px; } .heroCards .cardKind { margin-top: 14px !important; } .heroCards .hint { font-size: 12px; } .dateCard { width: 50%; left: auto; right: 0; top: 65px; min-height: 240px; transform: rotate(5deg); } .dateCard h3 { font-size: 24px; } .dateCard .hint { display: none; } .monthCard { display: none; } .benefits { gap: 24px 16px; padding: 24px 20px; border-radius: 18px; } .benefits li { display: block; } .icon { width: 40px; height: 40px; margin-bottom: 12px; } .icon svg { width: 24px; height: 24px; } .benefits h2 { font-size: 25px; } .benefits p { font-size: 12px; } .section { padding: 48px 20px; } .section > h2 { margin-bottom: 20px; } .sectionLead { font-size: 15px; } .steps, .samples, .roadmap { grid-template-columns: 1fr; gap: 24px; margin-top: 28px; } .steps h3 { font-size: 30px; } .samples .example { padding: 24px; } .samples .example h3 { font-size: 32px; } .roadmap > li { padding: 24px; } .offer { margin-inline: 16px; padding: 28px 24px; grid-template-columns: 1fr; gap: 28px; } .pricePanel { padding: 24px 0 0; border-left: 0; border-top: 1px solid #dcc1b5; } .pricePanel .cta { width: 100%; } .faq summary { font-size: 16px; } .final { padding: 48px 20px; } .final .cta { font-size: 14px; } }
+@media (max-width: 600px) { .hero { padding: 24px 16px 16px; } .intro { padding: 0; } .intro h1 { font-size: clamp(43px, 12vw, 60px); margin: 16px 0; } .lead { font-size: 16px; line-height: 1.55; margin-bottom: 20px !important; } .intro .cta { width: 100%; font-size: 14px; padding: 14px 16px; gap: 8px; } .priceLine { font-size: 13px; margin-top: 14px !important; } .trust { font-size: 11px; gap: 4px 10px; margin-top: 16px; } .trust li + li::before { margin-right: 10px; } .scene { width: 100%; height: 390px; margin-top: 20px; } .art { inset: 0 -16px -6px; border-radius: 0; } .hexA { width: 230px; height: 262px; left: 2%; top: 20px; } .hexB { width: 230px; height: 262px; left: 36%; top: 60px; } .heroCards .example { padding: 20px; } .questionCard { width: 72%; left: 6%; top: 22px; min-height: 280px; transform: rotate(-5deg); } .questionCard h3 { font-size: 28px; } .heroCards .cardKind { margin-top: 14px !important; } .heroCards .hint { font-size: 12px; } .dateCard { width: 50%; left: auto; right: 0; top: 65px; min-height: 240px; transform: rotate(5deg); } .dateCard h3 { font-size: 24px; } .dateCard .hint { display: none; } .monthCard { display: none; } .benefits { gap: 24px 16px; padding: 24px 20px; border-radius: 18px; } .benefits li { display: block; } .icon { width: 40px; height: 40px; margin-bottom: 12px; } .icon svg { width: 24px; height: 24px; } .benefits h2 { font-size: 25px; } .benefits p { font-size: 12px; } .section { padding: 48px 20px; } .section > h2 { margin-bottom: 20px; } .sectionLead { font-size: 15px; } .steps, .samples, .roadmap { grid-template-columns: 1fr; gap: 24px; margin-top: 28px; } .steps h3 { font-size: 30px; } .samples .example { padding: 24px; } .samples .example h3 { font-size: 32px; } .roadmap > li { padding: 24px; } .offer { margin-inline: 16px; padding: 28px 24px; grid-template-columns: 1fr; gap: 28px; } .pricePanel { padding: 24px 0 0; border-left: 0; border-top: 1px solid var(--landing-rose-line); } .pricePanel .cta { width: 100%; } .faq summary { font-size: 16px; } .final { padding: 48px 20px; } .final .cta { font-size: 14px; } }
 @media (max-width: 350px) { .intro h1 { font-size: 43px; } .intro .cta { padding-inline: 10px; font-size: 13px; } .trust { font-size: 11px; } .scene { height: 370px; } .questionCard { left: 5%; width: 90%; top: 22px; } .questionCard h3 { font-size: 27px; } .dateCard { display: none; } .benefits { padding-inline: 16px; gap: 24px 12px; } }
 @media (prefers-reduced-motion: reduce) { .landing *, .landing *::before, .landing *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; } }

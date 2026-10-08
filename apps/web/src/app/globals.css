@@ -50,7 +50,8 @@
 
 /* Набор переключается целой секцией. Туман пока остаётся светлым. */
 [data-band="night"],
-body:has(> main[data-night-entry]) .public-header {
+:where(main[data-night-entry] ~ .cookie-banner),
+body:has(> main[data-night-entry]) :is(.public-header, .cookie-banner) {
   --bg: #0A1F17;
   --surface: #10291F;
   --surface-2: #123226;
@@ -70,6 +71,8 @@ body:has(> main[data-night-entry]) .public-header {
   color: var(--ink);
 }
 
+body:has(> main[data-night-entry][data-palette="pair"]) .cookie-banner,
+:where(main[data-night-entry][data-palette="pair"] ~ .cookie-banner),
 [data-palette="pair"][data-band="night"],
 [data-palette="pair"] [data-band="night"],
 :where(main[data-palette="pair"] ~ :is(.footer, .cookie-banner))[data-band="night"],

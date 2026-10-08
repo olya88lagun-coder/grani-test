@@ -1,4 +1,3 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 import { PAIR_PRODUCTS } from "@/lib/pair-products";
 import { TOGETHER_MONTHS, TOGETHER_TRACK } from "@grani/content/together";
@@ -52,7 +51,7 @@ type Props = {
 export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }: Props) {
   const enterHref = member ? "/together" : (ctaHref ?? `/api/together/enter?next=space${enterQuery}`);
   const cta = (label = "Создать пространство для двоих") => <a className={styles.cta} href={enterHref}>{member ? "Открыть моё пространство" : label}<span aria-hidden="true">↗</span></a>;
-  return <main className={styles.landing} data-palette="pair">
+  return <main className={styles.landing} data-palette="pair" data-band="night" data-night-entry>
     {notice}
     <section className={styles.hero} aria-labelledby="together-title">
       <div className={styles.heroInner}>
@@ -66,11 +65,9 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
         </div>
         <div className={styles.scene}>
           <div className={styles.art} aria-hidden="true">
-            {/* Art direction: picture выбирает один файл, включая предзагрузку. UI всегда остаётся HTML. */}
-            <picture>
-              <source media="(max-width: 600px)" srcSet="/together/hero-still-life-mobile-v3.webp" />
-              <Image src="/together/hero-still-life-v3.webp" alt="" width={1600} height={800} sizes="100vw" loading="eager" fetchPriority="high" unoptimized />
-            </picture>
+            {/* Временная замена фону от Codex: два шестиугольника, как знак «Граней». UI всегда остаётся HTML. */}
+            <svg className={styles.hexA} viewBox="0 0 100 114"><polygon points="50,2 98,30 98,84 50,112 2,84 2,30" /></svg>
+            <svg className={styles.hexB} viewBox="0 0 100 114"><polygon points="50,2 98,30 98,84 50,112 2,84 2,30" /></svg>
           </div>
           <h2 className={styles.visuallyHidden}>Примеры карточек</h2>
           <div className={styles.heroCards}>
