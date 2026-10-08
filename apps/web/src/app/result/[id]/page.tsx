@@ -4,7 +4,6 @@ import { getResultForOwner, listOwnedProducts } from "@grani/db";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { RichText } from "@/components/RichText";
 import { GoalLink } from "@/components/GoalLink";
 import { GoalOnView } from "@/components/GoalOnView";
 import { GemPortrait } from "@/components/GemPortrait";
@@ -20,6 +19,7 @@ import { FriendsBlock } from "./FriendsBlock";
 import { NotificationsBlock } from "./NotificationsBlock";
 import { PairsBlock } from "./PairsBlock";
 import { ReportOffer } from "./ReportOffer";
+import { ScaleDetails } from "./ScaleDetails";
 import { ShareCard } from "./ShareCard";
 import { StickyReportCta } from "./StickyReportCta";
 
@@ -108,11 +108,8 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           <h2 id="scale-texts">Что значат твои шкалы</h2>
           <p className="result-scales__intro">{view.stabilityText}</p>
           <div className="result-scales__grid">
-            {view.scales.map((scale) => (
-              <article key={scale.trait} className="result-scale">
-                <h3>{scale.label}</h3>
-                <RichText text={scale.text} />
-              </article>
+            {view.scales.map((scale, index) => (
+              <ScaleDetails key={scale.trait} scale={scale} open={index === 0} />
             ))}
           </div>
         </section>
