@@ -249,10 +249,10 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <article className="home-result-card" aria-label="Пример карточки результата">
+        <article className="home-result-card" data-band="night" aria-label="Пример карточки результата">
           <div className="home-result-card__art">
             <span className="home-example">Пример</span>
-            <HomeTypeGem code="+-++" />
+            <HomeTypeGem code="+-++" size={220} />
           </div>
           <p>Твой тип</p>
           <h3>Искра</h3>
@@ -310,7 +310,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-section home-pair" aria-labelledby="pair-title">
+      <section className="home-section home-pair" data-band="night" aria-labelledby="pair-title">
         <div className="home-section__copy">
           <p className="home-kicker">Совместимость</p>
           <h2 id="pair-title">Как ваши грани сочетаются</h2>
@@ -323,7 +323,7 @@ export default function HomePage() {
         </div>
         <div className="home-pair__cards" aria-label="Пример совместимости">
           <article className="home-person-card home-person-card--leaf">
-            <div className={styles.personGem}><HomeTypeGem code="+-++" /></div>
+            <div className={styles.personGem}><HomeTypeGem code="+-++" size={230} /></div>
             <h3>Искра</h3>
           </article>
           <div className="home-pair-score">
@@ -334,7 +334,7 @@ export default function HomePage() {
             <small>Вам легко вместе в развитии, общении и новых идеях.</small>
           </div>
           <article className="home-person-card home-person-card--glass">
-            <div className={styles.personGem}><HomeTypeGem code="++--" /></div>
+            <div className={styles.personGem}><HomeTypeGem code="++--" size={230} /></div>
             <h3>Архитектор</h3>
           </article>
           <div className="home-pair-list">

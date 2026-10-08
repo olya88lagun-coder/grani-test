@@ -192,3 +192,33 @@
 @media (max-width: 760px) {
   .page :global(.home-hero[data-band="night"]) { background: var(--bg) url("/home/hero-night-mobile.webp") 50% 0 / cover no-repeat; }
 }
+
+/* Результат: тёмная карточка на светлом блоке. Набор токенов приходит от data-band="night" на самой карточке */
+.page :global(.home-result-card[data-band="night"]) { border: 1px solid var(--line); background: radial-gradient(70% 55% at 50% 16%, rgba(63,174,124,.3), transparent 70%), var(--bg); box-shadow: none; }
+.page :global(.home-result-card[data-band="night"] .home-result-card__art) { height: 230px; background: transparent; }
+.page :global(.home-result-card[data-band="night"] .home-result-card__art > span:not(.home-example)) { filter: drop-shadow(0 0 24px rgba(47,163,110,.4)); }
+.page :global(.home-result-card[data-band="night"] .home-example),
+.page :global(.home-pair[data-band="night"] .home-example) { background: transparent; border: 1px solid var(--line); color: var(--gold); }
+.page :global(.home-result-card[data-band="night"] .home-scale i) { background: rgba(239,233,218,.14); }
+.page :global(.home-result-card[data-band="night"] .home-scale i span) { background: var(--gold); }
+.page :global(.home-result-card[data-band="night"] .home-scale b) { color: var(--gold); }
+
+/* Совместимость: ночной блок, два камня и крупный золотой процент */
+.page :global(.home-pair[data-band="night"]) { background: radial-gradient(60% 70% at 78% 26%, rgba(63,174,124,.2), transparent 70%), radial-gradient(45% 55% at 94% 96%, rgba(177,58,92,.22), transparent 72%), linear-gradient(165deg, #0B2319, #07140E); }
+.page :global(.home-pair[data-band="night"] .home-person-card) { background: color-mix(in srgb, var(--surface) 72%, transparent); border: 1px solid var(--line); box-shadow: none; }
+.page :global(.home-pair[data-band="night"]) .personGem { min-height: 210px; }
+.page :global(.home-pair[data-band="night"] .home-pair-score) { background: transparent; border: 0; box-shadow: none; }
+.page :global(.home-pair[data-band="night"] .home-pair-score strong) { font-family: var(--font-display); font-weight: 300; font-size: clamp(76px, 9vw, 124px); line-height: .9; letter-spacing: -.02em; color: var(--gold); }
+.page :global(.home-pair[data-band="night"] .home-pair-score > span[aria-hidden]) { background: transparent; border: 1px solid var(--line); color: #E3B3A0; }
+.page :global(.home-pair[data-band="night"] .home-pair-list) { border-top: 1px solid var(--line); }
+
+/* Два списка рядом под карточками, а не столбцом под левой карточкой */
+@media (min-width: 761px) {
+  .page :global(.home-pair[data-band="night"] .home-pair-list) { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(4, auto); grid-auto-flow: column; gap: 10px 32px; padding-top: 22px; }
+}
+
+/* Подписи черт: тёмная стеклянная плашка, чтобы текст читался на любом пятне фона. Метка «Добросовестность» стоит у нижней вершины камня */
+@media (min-width: 761px) {
+  .page :global(.home-crystal__label) { padding: 5px 12px; border-radius: 12px; background: rgba(5,20,14,.64); border: 1px solid rgba(205,181,123,.24); backdrop-filter: blur(3px); text-shadow: none; }
+  .page :global(.home-crystal__label--conscience) { left: 38%; bottom: 6%; }
+}
