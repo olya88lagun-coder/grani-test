@@ -69,7 +69,29 @@
 .page.page :global(.result-scales__intro) { color: var(--ink-soft); line-height: 1.75; }
 .page.page :global(.result-scale) { background: var(--surface); padding: 24px; }
 .page.page :global(.result-scale h3) { color: var(--ink); }
-.page.page :global(.result-block--pair .eyebrow) { color: var(--accent); }
+/* Совместимость: ночная панель в розовом золоте, справа два камня и найденные пары */
+.page.page :global(.result-block--pair) { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .75fr); gap: 40px; align-items: center; padding: 44px; border-color: color-mix(in srgb, var(--gold) 38%, transparent); background: radial-gradient(60% 90% at 100% 0%, rgba(227, 179, 160, .16), transparent 70%), var(--surface); }
+.page.page :global(.result-block--pair h2) { color: var(--ink); }
+.page.page :global(.result-block--pair .eyebrow) { color: var(--gold); }
+.page.page :global(.result-block--pair .lead),
+.page.page :global(.result-block--pair .muted) { color: var(--ink-soft); }
+.page.page :global(.pair-block__copy) { display: grid; gap: 20px; min-width: 0; justify-items: start; }
+.page.page :global(.pair-block__copy > *) { margin: 0; }
+.page.page :global(.pair-gains li) { padding: 8px 16px; border: 1px solid var(--line); background: rgba(10, 31, 23, .45); color: var(--ink); font-size: 14px; line-height: 1.5; }
+.page.page :global(.pair-gains li::before) { content: "◆"; margin-right: 8px; font-size: 9px; vertical-align: 2px; color: var(--gold); }
+.page.page :global(.pair-block__side) { min-width: 0; display: grid; justify-items: center; gap: 24px; padding: 28px 20px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(10, 31, 23, .45); }
+.page.page :global(.pair-block__gems) { display: flex; align-items: center; justify-content: center; gap: 4px; filter: drop-shadow(0 0 32px rgba(227, 179, 160, .25)); }
+.page.page :global(.pair-block__thread) { flex: none; width: 40px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.page.page :global(.pair-block__list) { width: 100%; display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.page.page :global(.pair-block__list > li) { margin: 0; padding: 0; background: none; border-radius: 0; }
+.page.page :global(.pair-block__item) { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--gold); border-radius: var(--radius); background: color-mix(in srgb, var(--gold) 8%, transparent); color: var(--ink); text-decoration: none; }
+.page.page :global(.pair-block__item:hover) { background: color-mix(in srgb, var(--gold) 16%, transparent); }
+.page.page :global(.pair-block__item:focus-visible) { outline: 2px solid var(--gold); outline-offset: 3px; }
+.page.page :global(.pair-block__avatar) { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: var(--bg); font-family: var(--font-display); font-size: 22px; line-height: 1; }
+.page.page :global(.pair-block__text) { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.page.page :global(.pair-block__text strong) { font-size: 16px; font-weight: 600; line-height: 1.4; color: var(--ink); }
+.page.page :global(.pair-block__text span) { font-size: 13px; line-height: 1.4; color: var(--ink-soft); }
+.page.page :global(.pair-block__arrow) { flex: none; color: var(--gold); font-size: 20px; }
 .page.page :global(.share-card) { padding: 32px; gap: 40px; }
 .page.page :global(.share-card__frame) { justify-self: center; width: min(100%,280px); padding: 8px; border: 1px solid var(--gold); border-radius: var(--radius); background: var(--bg); }
 .page.page :global(.share-card__preview) { display: block; width: 100%; border-radius: 8px; box-shadow: none; }
@@ -126,7 +148,6 @@
 .page.page :global(.page--result .card) { background: var(--surface); border: 1px solid var(--line); box-shadow: none; }
 .page.page :global(.page--result .card .button:not(.button--ghost)) { background: var(--accent); color: var(--accent-ink); }
 .page.page :global(.page--result .muted) { color: var(--ink-soft); }
-.page.page :global(.result-block--pair ul li) { background: rgba(227, 179, 160, .1); border: 1px solid rgba(227, 179, 160, .4); color: var(--ink); }
 .page.page :global(.share-card) { background: var(--surface); }
 
 /* «Что значат твои шкалы»: пять строк со счётом и полосой, первый пункт виден сразу, остальные раскрываются */
@@ -158,3 +179,10 @@
   .page.page :global(.result-scale__more) { padding: 0 0 20px 0; }
 }
 @media (prefers-reduced-motion: reduce) { .page.page :global(.result-scale__toggle) { transition: none; } }
+@media (max-width: 899px) {
+  .page.page :global(.result-block--pair) { grid-template-columns: minmax(0, 1fr); gap: 28px; padding: 32px; }
+}
+@media (max-width: 759px) {
+  .page.page :global(.result-block--pair) { padding: 28px 20px; }
+  .page.page :global(.pair-block__gems) { zoom: .8; }
+}
