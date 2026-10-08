@@ -2,9 +2,6 @@ import { COMPATIBILITY_LEVELS, formatRub, PRODUCT_PRICES, RESOURCE_TRAITS, SIMIL
 import { compatibilityTexts, TRAIT_LABELS } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
-import { GemPortrait } from "@/components/GemPortrait";
-import { gemAssetDir } from "@/lib/gem-assets";
-import { typeCodeToDir } from "@grani/content";
 import styles from "./compatibility.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
@@ -39,6 +36,12 @@ export default function CompatibilityPage() {
     <main className={`inner-page ${styles.page}`} data-night-entry>
       <article>
         <section className={styles.hero} data-band="night">
+        <div className={styles.art} aria-hidden="true">
+          <picture>
+            <source media="(max-width: 759px)" srcSet="/compatibility/hero-night-mobile.webp" />
+            <img src="/compatibility/hero-night-desktop.webp" alt="" width={2400} height={1200} fetchPriority="high" />
+          </picture>
+        </div>
         <div className={styles.wrap}>
         <Breadcrumbs items={[{ name: "Совместимость пары", path: "/compatibility" }]} />
         <header className={styles.intro}>
@@ -48,14 +51,7 @@ export default function CompatibilityPage() {
             <p className="lead">{DESCRIPTION}</p>
             <PairActions />
           </div>
-          <div className={styles.scene}>
-            <div className={styles.stones} aria-hidden="true">
-              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={190} priority /><span>Ты</span></div>
-              <span className={styles.connector}>+</span>
-              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={190} priority /><span>Партнёр</span></div>
-            </div>
-            <p className={styles.percent}>78%<span>пример · совместимость</span></p>
-          </div>
+          <p className={styles.percent}>78%<span>пример · совместимость пары</span></p>
         </header>
         </div>
         </section>
