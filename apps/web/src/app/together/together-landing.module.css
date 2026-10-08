@@ -42,14 +42,8 @@
 .samples .example h3 { font-size: 36px; }
 .samples .hint, .samples .dateSteps { font-size: 15px; }
 .dateSteps { white-space: pre-line; color: var(--landing-soft); line-height: 1.75; margin-top: 16px !important; }
-.roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0; list-style: none; margin: 36px 0 0; }
-.roadmap > li { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px; }
-.roadmap h3 { font-size: 32px; line-height: 1.1; margin: 14px 0; }
-.roadmap p, .teasers { font-size: 14px; }
 .planLabel { font-weight: 600; }
-.teasers { list-style: none; padding: 0; margin: 20px 0 24px; color: var(--landing-soft); }
 .teasers li + li { margin-top: 12px; }
-.result { margin-top: auto !important; padding-top: 20px; border-top: 1px solid var(--landing-rose-line); color: var(--landing-soft); }
 .result strong { color: var(--landing-gold); font-size: 12px; }
 .offer { max-width: 1136px; margin: 0 auto; background: var(--surface); border: 1px solid var(--landing-rose-line); border-radius: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 56px; padding: 48px; }
 .offer > div > p:not(.eyebrow) { max-width: 430px; }
@@ -100,3 +94,27 @@
   .heroCards .example h3 { font-size: 26px; }
   .dateCard .hint { display: none; }
 }
+
+/* Маршрут: шесть строк-месяцев, подробности раскрываются */
+.roadmap { list-style: none; padding: 0; margin: 36px 0 0; border-top: 1px solid var(--landing-gold); }
+.roadmap > li { border-bottom: 1px solid var(--landing-rose-line); }
+.roadmap summary { display: grid; grid-template-columns: 72px minmax(0, 1fr) 28px; align-items: center; column-gap: 24px; padding: 24px 4px; cursor: pointer; list-style: none; }
+.roadmap summary::-webkit-details-marker { display: none; }
+.roadmap summary:focus-visible { outline: 2px solid var(--landing-gold); outline-offset: 2px; }
+.monthNo { font-family: var(--font-display); font-size: 48px; line-height: 1; color: var(--landing-gold); }
+.monthMain { display: grid; gap: 4px; min-width: 0; }
+.monthMain h3 { margin: 0; font-size: 30px; line-height: 1.12; }
+.monthMain p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--landing-soft); }
+.toggle { width: 12px; height: 12px; border-right: 1.5px solid var(--landing-gold); border-bottom: 1.5px solid var(--landing-gold); transform: rotate(45deg); justify-self: center; transition: transform .2s ease; }
+.roadmap details[open] .toggle { transform: rotate(-135deg); }
+.monthMore { display: grid; gap: 20px; padding: 0 4px 28px 96px; }
+.teasers { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; font-size: 15px; color: var(--landing-soft); }
+.result { margin: 0; padding-top: 16px; border-top: 1px solid var(--landing-rose-line); font-size: 14px; line-height: 1.65; color: var(--landing-soft); }
+.result strong { color: var(--landing-gold); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+@media (max-width: 600px) {
+  .roadmap summary { grid-template-columns: 44px minmax(0, 1fr) 20px; column-gap: 14px; padding: 20px 0; }
+  .monthNo { font-size: 34px; }
+  .monthMain h3 { font-size: 26px; }
+  .monthMore { padding: 0 0 24px 0; }
+}
+@media (prefers-reduced-motion: reduce) { .toggle { transition: none; } }

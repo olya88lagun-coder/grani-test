@@ -108,11 +108,22 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
       <p className={styles.eyebrow}>Шесть тем для двоих</p><h2 id="route-title">Маршрут на полгода</h2>
       <p className={styles.sectionLead}>Новые месяцы открываются по очереди: каждый следующий — после {TOGETHER_PERIOD_DAYS} дней накопленного оплаченного доступа.</p>
       <ol className={styles.roadmap}>{TOGETHER_SEASON.map((month) => <li key={month.month}>
-        <p className={styles.eyebrow}>Месяц {month.month}</p><h3>{month.title}</h3>
-        {/* Promise месяцев 2–3 упоминает ещё не готовые награды: это тоже помечаем как план. */}
-        <p>{!month.resultReady && <span className={styles.planLabel}>План месяца: </span>}{month.promise}</p>
-        <ul className={styles.teasers}>{month.teasers.map((teaser) => <li key={teaser}>«{teaser}»</li>)}</ul>
-        <p className={styles.result}><strong>{month.resultReady ? "Уже доступно" : "Мы готовим"}</strong><br />{month.result}</p>
+        <details>
+          <summary>
+            <span className={styles.monthNo} aria-hidden="true">{String(month.month).padStart(2, "0")}</span>
+            <span className={styles.monthMain}>
+              <span className={styles.eyebrow}>Месяц {month.month}</span>
+              <h3>{month.title}</h3>
+              {/* Promise месяцев 2–3 упоминает ещё не готовые награды: это тоже помечаем как план. */}
+              <p>{!month.resultReady && <span className={styles.planLabel}>План месяца: </span>}{month.promise}</p>
+            </span>
+            <span className={styles.toggle} aria-hidden="true" />
+          </summary>
+          <div className={styles.monthMore}>
+            <ul className={styles.teasers}>{month.teasers.map((teaser) => <li key={teaser}>«{teaser}»</li>)}</ul>
+            <p className={styles.result}><strong>{month.resultReady ? "Уже доступно" : "Мы готовим"}</strong><br />{month.result}</p>
+          </div>
+        </details>
       </li>)}</ol>
     </section>
 
