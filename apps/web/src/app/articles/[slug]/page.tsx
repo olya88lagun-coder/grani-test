@@ -14,6 +14,8 @@ import { splitForInlineCta } from "@/lib/article-layout";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, articleJsonLd, faqJsonLd, publicMetadata, traitPath } from "@/lib/seo";
 
+const RELATED_ARTICLES = 3;
+
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -76,8 +78,10 @@ export default async function ArticlePage({ params }: Props) {
   const card = articleCard(article);
   const sources = ARTICLE_SOURCES[article.slug] ?? [];
   const parts = splitForInlineCta(article.body);
-  const others = getArticles()
-    .filter((other) => other.slug !== article.slug)
+  // Три статьи: сначала из той же рубрики, затем самые свежие; остальные доступны через «Все статьи»
+  const rest = getArticles().filter((other) => other.slug !== article.slug);
+  const others = [...rest.filter((other) => other.tag === article.tag), ...rest.filter((other) => other.tag !== article.tag)]
+    .slice(0, RELATED_ARTICLES)
     .map(articleCard);
 
   return (
@@ -133,6 +137,7 @@ export default async function ArticlePage({ params }: Props) {
               </li>
             ))}
           </ul>
+          <p><Link href="/articles">Все статьи →</Link></p>
         </section>
         <JsonLd data={articleJsonLd({ title: article.title, description: article.description, path, datePublished: article.date, sources, image: card.image })} />
       </article>
