@@ -2289,3 +2289,10 @@ main[data-palette="friends"] ~ .footer[data-band="night"] {
 .article-tile[data-band="night"] .article-tile__title { color: var(--ink); }
 .article-tile[data-band="night"] .article-tile__text { color: var(--ink-soft); }
 .article-tile[data-band="night"] .article-tile__meta { color: var(--gold); }
+
+/* /about: быстрые ссылки на разделы длинного текста */
+.about-contents ul { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; margin: 0 0 40px; padding: 0; }
+.about-contents a { display: inline-flex; align-items: center; min-height: 40px; padding: 6px 16px; border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); border-radius: 999px; color: var(--ink); font-size: 14px; text-decoration: none; }
+.about-contents a:hover { border-color: var(--accent); }
+.about-contents a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.inner-text h2[id] { scroll-margin-top: 96px; }
