@@ -49,7 +49,8 @@
 }
 
 /* Набор переключается целой секцией. Туман пока остаётся светлым. */
-[data-band="night"] {
+[data-band="night"],
+body:has(> main[data-night-entry]) .public-header {
   --bg: #0A1F17;
   --surface: #10291F;
   --surface-2: #123226;
@@ -64,6 +65,7 @@
   --gold: #CDB57B;
   --danger: #FFB4A8;
   --chrome-bg: var(--bg);
+  --header-rule: var(--gold);
   background: var(--bg);
   color: var(--ink);
 }
@@ -1291,88 +1293,6 @@ body.has-cookie-banner .footer { padding-bottom: 220px; }
 }
 
 /* /compatibility: палитра главной, розовый — только акцент */
-/* Тёплый пыльно-розовый — только акцент к теме пары: сердце, проценты, значки и лёгкие пятна света */
-.inner-page--pair {
-  --blush: #d4a39c;
-  --blush-ink: #9a5860;
-  --blush-soft: rgba(236, 204, 196, 0.5);
-}
-
-.inner-page--pair::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 30% 18% at 8% 14%, rgba(240, 210, 200, 0.45), transparent 70%),
-    radial-gradient(ellipse 28% 16% at 92% 62%, rgba(240, 210, 200, 0.35), transparent 70%);
-  pointer-events: none;
-}
-
-.inner-page--pair .eyebrow { color: var(--blush-ink); }
-
-/* Первый экран пары: два стеклянных кристалла и сердце между ними */
-.pair-hero {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 0;
-}
-
-.pair-hero__card {
-  display: grid;
-  justify-items: center;
-  gap: 12px;
-  width: 124px;
-  padding: 24px 14px 18px;
-  border-radius: 28px 28px 20px 20px;
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(236, 243, 228, 0.62));
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 24px 44px rgba(20, 47, 23, 0.14);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  transform: rotate(-4deg);
-}
-
-.pair-hero__card--blush {
-  background: linear-gradient(160deg, rgba(255, 255, 255, 0.88), rgba(244, 222, 214, 0.72));
-  transform: rotate(4deg);
-}
-
-.pair-hero__card img {
-  width: 72px;
-  height: auto;
-  filter: drop-shadow(0 12px 14px rgba(13, 51, 22, 0.25));
-}
-
-/* Второй кристалл — тот же, перекрашенный в тёплый румянец */
-.pair-hero__card--blush img { filter: hue-rotate(245deg) saturate(0.55) brightness(1.08) drop-shadow(0 12px 14px rgba(120, 60, 60, 0.2)); }
-
-.pair-hero__card span {
-  color: var(--inner-ink);
-  font-family: var(--font-display);
-  font-size: 22px;
-}
-
-.pair-hero__heart {
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  margin-inline: -12px;
-  border-radius: 50%;
-  background: #fffdf6;
-  box-shadow: 0 10px 24px rgba(120, 60, 60, 0.18);
-}
-
-.pair-hero__heart svg { width: 22px; height: 22px; fill: var(--blush); }
-
-@media (min-width: 900px) {
-  .inner-page--pair .inner-intro { grid-template-columns: minmax(0, 1fr) 340px; }
-  .pair-hero__card { width: 140px; padding-top: 30px; }
-  .pair-hero__card img { width: 88px; }
-}
-.inner-page--pair .inner-block > p { max-width: 720px; }
 
 .steps,
 .formula {
@@ -1463,43 +1383,6 @@ body .pair-sections > .card { margin-top: 0; }
   font-family: var(--font-display);
   font-size: 44px;
   line-height: 1;
-}
-
-.inner-page--pair .level-card {
-  background:
-    radial-gradient(ellipse 60% 45% at 100% 0%, var(--blush-soft), transparent 70%),
-    var(--paper);
-}
-
-.inner-page--pair .level-card--excellent {
-  background:
-    radial-gradient(ellipse 60% 45% at 100% 0%, rgba(240, 200, 190, 0.28), transparent 70%),
-    linear-gradient(150deg, #1b5324, #0c3313);
-  box-shadow: 0 30px 60px rgba(15, 62, 23, 0.28);
-  color: rgba(246, 242, 226, 0.88);
-}
-
-.inner-page--pair .level-card--excellent h3 { color: #fffdf4; }
-.level-card--excellent .level-card__percent { color: #f1c9c0; }
-
-@media (min-width: 760px) {
-  .inner-page--pair .level-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .inner-page--pair .level-card--excellent { grid-column: 1 / -1; }
-}
-
-/* Высокий уровень на широком экране — разворот: процент и фраза слева, пояснение справа */
-@media (min-width: 900px) {
-  .inner-page--pair .level-card--excellent {
-    display: grid;
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    align-content: start;
-    column-gap: 56px;
-    padding: 44px 48px;
-  }
-
-  .inner-page--pair .level-card--excellent > * { margin-top: 0; }
-  .inner-page--pair .level-card--excellent > h3 { margin-top: 14px; font-size: 32px; }
-  .inner-page--pair .level-card--excellent > p:last-child { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
 }
 
 @media (min-width: 900px) {
