@@ -25,7 +25,9 @@ for (const width of [320, 390, 1024, 1440]) {
       const header = page.locator(".public-header");
       const footer = page.getByRole("contentinfo");
       await expect(header).toBeVisible();
-      await expect(footer).toHaveCSS("background-color", await tokenColor(page.locator("main"), "--chrome-bg"));
+      // Подвал ночной на всех страницах, кроме «Тумана» (анкета друзей), которого здесь нет
+      await expect(footer).toHaveAttribute("data-band", "night");
+      await expect(footer).toHaveCSS("background-color", "rgb(10, 31, 23)");
       for (const [name, href] of [["Оферта", "/offer"], ["Политика обработки данных", "/privacy"], ["Мой результат", "/me"]]) {
         await expect(footer.getByRole("link", { name, exact: true })).toHaveAttribute("href", href);
       }
@@ -107,24 +109,22 @@ test("pair chrome uses rose gold when it is outside the page palette wrapper", a
   }
 });
 
-test("page endpoint token updates the final page surface and footer together", async ({ page }) => {
+test("page endpoint token updates the final page surface", async ({ page }) => {
   for (const [path, token] of [["/", "--home-page-end"], ["/articles", "--page-end"]]) {
     await page.goto(path);
     const main = page.locator("main");
-    const footer = page.getByRole("contentinfo");
     const before = await tokenColor(main, "--chrome-bg");
     // Другой существующий тон: проверяем связь, не фиксируем RGB палитры.
     const next = await tokenColor(main, "--surface-2");
     expect(next).not.toBe(before);
     await page.evaluate(({ token, next }) => document.documentElement.style.setProperty(token, next), { token, next });
-    await expect(footer).toHaveCSS("background-color", next);
     if (path === "/") await expect(page.locator(".home-articles")).toHaveCSS("background-color", next);
     else expect(await main.evaluate((node) => getComputedStyle(node).backgroundImage)).toContain(next);
     await page.evaluate((token) => document.documentElement.style.removeProperty(token), token);
   }
 });
 
-test("footer and cookie keep page tokens without the body has bridge", async ({ page }) => {
+test("cookie keeps page tokens without the body has bridge", async ({ page }) => {
   await page.route("**/api/session", (route) => route.fulfill({ json: { signedIn: true } }));
   for (const path of ["/", "/articles", "/together"]) {
     await page.goto(path);
@@ -139,7 +139,6 @@ test("footer and cookie keep page tokens without the body has bridge", async ({ 
       for (const node of document.querySelectorAll("body > main, body > .footer, body > .cookie-banner")) wrapper.append(node);
     });
     const main = page.locator("main");
-    await expect(page.getByRole("contentinfo")).toHaveCSS("background-color", await tokenColor(main, "--chrome-bg"));
     await expect(banner).toHaveCSS("background-color", await tokenColor(main, path === "/together" ? "--bg" : "--page-start"));
   }
 });
