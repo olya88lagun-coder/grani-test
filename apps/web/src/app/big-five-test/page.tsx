@@ -78,8 +78,9 @@ const FAQ = [
 
 export default function BigFiveTestPage() {
   return (
-    <main className={`inner-page ${styles.page}`}>
-      <div className={`page page--wide ${styles.container}`}>
+    <main className={`inner-page ${styles.page}`} data-night-entry>
+      <section className={styles.night} data-band="night">
+      <div className={`page page--wide ${styles.nightInner}`}>
         <Breadcrumbs items={[{ name: "Тест Big Five", path: PATH }]} />
         <section className={styles.hero} aria-labelledby="big-five-title">
           <div className={styles.copy}>
@@ -121,6 +122,9 @@ export default function BigFiveTestPage() {
         <ul className={styles.facts} aria-label="Кратко о тесте">
           {FACTS.map((fact) => <li key={fact}>{fact}</li>)}
         </ul>
+      </div>
+      </section>
+      <div className={`page page--wide ${styles.container}`}>
 
         <section className={styles.reading} aria-labelledby="what-shows">
           <h2 id="what-shows">Что измеряет тест: пять черт Big Five</h2>
