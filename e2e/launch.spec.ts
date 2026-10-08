@@ -57,7 +57,7 @@ test("inner pages have the site header, pages a link preview and the site an ico
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/og\/grani\.jpg$/);
 
   expect((await request.get("/favicon.ico")).status()).toBe(200);
-  expect((await request.get("/og/grani.jpg")).headers()["content-type"]).toContain("image/jpeg");
+  expect((await request.get("/og/grani-night.jpg")).headers()["content-type"]).toContain("image/jpeg");
 });
 
 test.describe("cookie banner", () => {
