@@ -3,6 +3,7 @@ import { FRIEND_ITEMS, METHOD_SOURCES, SELF_ITEMS } from "@grani/content";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
+import { NightClosing, NightHero } from "@/components/NightHero";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
 import { publicMetadata, webPageJsonLd } from "@/lib/seo";
@@ -19,14 +20,15 @@ const FRIEND_PER_TRAIT = FRIEND_ITEMS.length / TRAITS.length;
 
 export default function AboutPage() {
   return (
-    <main className="page inner-text">
-      <article className="stack">
-        <Breadcrumbs items={[{ name: TITLE, path: "/about" }]} />
-        <h1 className="display">{TITLE}</h1>
-        <p className="lead">
+    <main data-night-entry>
+      <NightHero title={TITLE} eyebrow="Методика" breadcrumbs={<Breadcrumbs items={[{ name: TITLE, path: "/about" }]} />}>
+        <p>
           «Грани» — бесплатный тест личности по модели «Большая пятёрка». Здесь описано, откуда взяты вопросы, как считаются баллы, тип,
           оценка друзьями и совместимость, и где у теста границы. Кто отвечает за сайт — на странице <Link href="/contacts">контактов</Link>.
         </p>
+      </NightHero>
+      <div className="page inner-text">
+      <article className="stack">
 
         <h2>Опросник</h2>
         <p>
@@ -105,9 +107,10 @@ export default function AboutPage() {
         </ul>
 
         <SourceList sources={METHOD_SOURCES} />
-        <TestCta />
         <JsonLd data={webPageJsonLd({ title: TITLE, description: DESCRIPTION, path: "/about", type: "AboutPage" })} />
       </article>
+      </div>
+      <NightClosing><TestCta /></NightClosing>
     </main>
   );
 }

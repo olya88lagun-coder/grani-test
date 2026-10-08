@@ -1,6 +1,7 @@
 import { formatRub, PRODUCT_PRICES, type Product } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { NightHero } from "@/components/NightHero";
 import { OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
 import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
@@ -15,9 +16,14 @@ const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
 
 export default function ContactsPage() {
   return (
-    <main className="page inner-text">
+    <main data-night-entry>
+      <NightHero title="Контакты и услуги" eyebrow="Грани">
+        <p>
+          Исполнитель сайта, способ связаться и платные услуги с ценами.
+        </p>
+      </NightHero>
+      <div className="page inner-text">
       <article className="stack">
-        <h1 className="display">Контакты и услуги</h1>
         <h2>Исполнитель</h2>
         <p>
           {OPERATOR.name}, самозанятая (плательщик налога на профессиональный доход). ИНН {OPERATOR.inn}.
@@ -46,6 +52,7 @@ export default function ContactsPage() {
           обработка данных — в <Link href="/privacy">политике</Link>.
         </p>
       </article>
+      </div>
     </main>
   );
 }
