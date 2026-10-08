@@ -7,16 +7,14 @@ export type ArticleVisual = { tag: string; image: string };
 
 // Несколько обложек на рубрику: вариант выбирается по slug, поэтому карточки в одном ряду не повторяются
 // и каждая статья всегда получает одну и ту же картинку.
-// Временно: для «Наука» и «Работа» и запасных пока используются три готовые обложки; когда будут нарисованы
-// cover-science, cover-work и cover-default (см. docs/seo-article-writer.md), их нужно поставить сюда первыми.
 export const COVERS_BY_TAG: Readonly<Record<string, readonly string[]>> = {
   Личность: ["/home/article-extrovert.webp"],
   Психология: ["/home/article-friends.webp"],
   Отношения: ["/home/article-relationship.webp"],
-  Наука: ["/home/article-friends.webp", "/home/article-extrovert.webp"],
-  Работа: ["/home/article-extrovert.webp"],
+  Наука: ["/home/cover-science.webp", "/home/article-friends.webp"],
+  Работа: ["/home/cover-work.webp"],
 };
-export const DEFAULT_COVERS: readonly string[] = ["/home/article-friends.webp", "/home/article-extrovert.webp"];
+export const DEFAULT_COVERS: readonly string[] = ["/home/cover-default.webp"];
 
 const NIGHT_COVERS: ReadonlySet<string> = new Set([...Object.values(COVERS_BY_TAG).flat(), ...DEFAULT_COVERS]);
 

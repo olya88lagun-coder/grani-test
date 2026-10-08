@@ -56,7 +56,7 @@ faq: Вопрос 1? => Ответ 1. || Вопрос 2? => Ответ 2. || В�
 
 `reviewed: true` означает «прошла автоматическую самопроверку по этому документу», а не ручную вычитку.
 
-Обложка. Поле `image` обязательно (его проверяют тесты), но обложку на сайте подставляет сам сайт по рубрике (`tag`), так что выбирать её по смыслу не нужно. Пиши в `image` картинку своей рубрики: Личность → `/home/article-extrovert.webp`, Психология → `/home/article-friends.webp`, Отношения → `/home/article-relationship.webp`, Наука → `/home/article-friends.webp`, Работа → `/home/article-extrovert.webp`, другая рубрика → `/home/article-friends.webp`. Старые светлые картинки (`/home/type-*.webp`, `/home/hero-atrium.webp`) не использовать: сайт их игнорирует. Список обложек живёт в `apps/web/src/lib/article-visuals.ts`; когда там появятся новые, эту таблицу обновит владелица, а не агент.
+Обложка. Поле `image` обязательно (его проверяют тесты), но обложку на сайте подставляет сам сайт по рубрике (`tag`), так что выбирать её по смыслу не нужно. Пиши в `image` картинку своей рубрики: Личность → `/home/article-extrovert.webp`, Психология → `/home/article-friends.webp`, Отношения → `/home/article-relationship.webp`, Наука → `/home/cover-science.webp`, Работа → `/home/cover-work.webp`, другая рубрика → `/home/cover-default.webp`. Старые светлые картинки (`/home/type-*.webp`, `/home/hero-atrium.webp`) не использовать: сайт их игнорирует. Список обложек живёт в `apps/web/src/lib/article-visuals.ts`; когда там появятся новые, эту таблицу обновит владелица, а не агент.
 
 ## 4. План и сборка
 
