@@ -50,9 +50,9 @@ export default function CompatibilityPage() {
           </div>
           <div className={styles.scene}>
             <div className={styles.stones} aria-hidden="true">
-              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={220} priority /><span>Ты</span></div>
+              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={190} priority /><span>Ты</span></div>
               <span className={styles.connector}>+</span>
-              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={220} priority /><span>Партнёр</span></div>
+              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={190} priority /><span>Партнёр</span></div>
             </div>
             <p className={styles.percent}>78%<span>пример · совместимость</span></p>
           </div>
@@ -61,101 +61,78 @@ export default function CompatibilityPage() {
         </section>
         <div className={styles.content}>
 
-        <section className="inner-block stack">
-          <h2>Как это работает</h2>
-          <ol className="steps">
-            <li>Вы проходите тест — 50 утверждений, около 10 минут.</li>
-            <li>На странице своего результата, в блоке «Посмотреть, как вы сочетаетесь», нажимаете «Позвать партнёра» и отправляете ссылку.</li>
-            <li>Партнёр проходит тест и соглашается показать результат вам — без согласия пара не создаётся.</li>
-            <li>Вы оба видите типы друг друга и процент совместимости, это бесплатно. Захотите разобраться глубже — откроете разбор пары: одна оплата, доступ обоим.</li>
+        <section className={styles.how} aria-labelledby="pair-how">
+          <h2 id="pair-how">Как это работает</h2>
+          <ol className={styles.steps}>
+            <li><span aria-hidden="true">01</span><h3>Пройдите тест</h3><p>50 утверждений, около 10 минут.</p></li>
+            <li><span aria-hidden="true">02</span><h3>Позовите партнёра</h3><p>Отправьте ссылку из блока «Посмотреть, как вы сочетаетесь» на странице результата.</p></li>
+            <li><span aria-hidden="true">03</span><h3>Увидьте процент</h3><p>Партнёр проходит тест и соглашается показать результат. Типы обоих и процент — бесплатно.</p></li>
           </ol>
-          <p>Выйти из пары можно в любой момент — страница пары и разбор скроются у обоих.</p>
-          <PairActions />
-        </section>
-
-        <section className="inner-block stack" aria-labelledby="pair-familiar">
-          <h2 id="pair-familiar">Знакомо?</h2>
-          <ul className="stack">
-            <li>Один планирует на месяц вперёд, другой решает по настроению.</li>
-            <li>Один хочет обсудить сразу, другому нужно время побыть с мыслями.</li>
-            <li>По-разному смотрите на порядок дома и на деньги.</li>
-            <li>Хочется поддержать, но не всегда понятно, как именно.</li>
-          </ul>
-          <p>Это не поломка, а разные характеры. Разбор пары называет эти различия словами и подсказывает, о чём договориться.</p>
+          <p className={styles.note}>Без согласия партнёра пара не создаётся. Выйти можно в любой момент: страница пары и разбор скроются у обоих.</p>
         </section>
 
         </div>
         <section className={`${styles.report} stack`} data-band="night" aria-labelledby="pair-report-inside">
-        <div className={`${styles.wrap} stack`}>
-          <p className="eyebrow">Платный разбор · {price}</p>
+        <div className={styles.wrap}>
+          <p className="eyebrow">Разбор пары</p>
           <h2 id="pair-report-inside">Процент — это начало. Разбор объясняет, что за ним</h2>
-          <p className="lead">
-            Это не общий текст для всех пар: разбор собран из результатов вас обоих — как ваши пять черт сочетаются в каждой теме. Он говорит о вас как о паре, без «кто прав»
-            и «кто виноват».
-          </p>
-          <div className="pair-sections" role="list" aria-label="Пять разделов разбора пары">
-            {(Object.keys(PAIR_SECTION_TITLES) as (keyof typeof PAIR_SECTION_TITLES)[]).map((key, index) => (
-              <section key={key} role="listitem" className="card stack">
-                <p className="eyebrow">Раздел {index + 1}</p>
-                <h3>{PAIR_SECTION_TITLES[key]}</h3>
-                <p>{PAIR_SECTION_PITCH[key]}</p>
-              </section>
-            ))}
+          <p className={styles.hook}>Один планирует на месяц вперёд, другой решает по настроению. Это не поломка, а разные характеры. Разбор называет различия словами и подсказывает, о чём договориться.</p>
+          <div className={styles.offer}>
+            <div className={styles.panel}>
+              <h3>Бесплатно</h3>
+              <ul className={styles.checks}>
+                <li>Типы обоих</li>
+                <li>Процент совместимости</li>
+                <li>Из чего сложился процент</li>
+              </ul>
+            </div>
+            <div className={`${styles.panel} ${styles.panelPaid}`}>
+              <div className={styles.paidHead}><h3>Разбор пары</h3><p className={styles.priceTag}>{price}</p></div>
+              <ol className={styles.sections} aria-label="Пять разделов разбора пары">
+                {(Object.keys(PAIR_SECTION_TITLES) as (keyof typeof PAIR_SECTION_TITLES)[]).map((key, index) => (
+                  <li key={key}><span aria-hidden="true">{index + 1}</span><div><h4>{PAIR_SECTION_TITLES[key]}</h4><p>{PAIR_SECTION_PITCH[key]}</p></div></li>
+                ))}
+              </ol>
+            </div>
           </div>
-          <div className={`${styles.price} stack`} aria-labelledby="pair-price-title">
-            <h3 id="pair-price-title">Что бесплатно, а что за {price}</h3>
-            <ul className="stack">
-              <li>
-                <strong>Бесплатно:</strong> типы обоих, процент совместимости, пояснение вашего уровня и из чего сложился процент.
-              </li>
-              <li>
-                <strong>За {price}:</strong> пять разделов разбора, развёрнутым текстом по вашим результатам.
-              </li>
-              <li>Одна оплата открывает разбор обоим, платит один. Это разовая покупка, без подписки.</li>
-              <li>Разбор появляется примерно через минуту после оплаты, чек самозанятого приходит на указанную почту.</li>
-              <li>
-                Условия возврата — в <Link href="/offer">оферте</Link>.
-              </li>
-            </ul>
-            <PairActions />
-          </div>
+          <PairActions />
+          <p className={styles.facts}>Одна оплата открывает разбор обоим, платит один. Разовая покупка без подписки. Разбор появляется примерно через минуту, чек самозанятого приходит на почту. Условия возврата — в <Link href="/offer">оферте</Link>.</p>
         </div>
         </section>
         <div className={styles.content}>
 
-        <section className="inner-block stack">
-          <h2>Из чего складывается процент</h2>
-          <p>Процент складывается из двух равных частей:</p>
-          <ul className="formula">
-            <li>
-              <img className="formula__icon" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
-              <strong>Ресурс пары</strong> — {labels(RESOURCE_TRAITS)} обоих. Чем они выше, тем легче договариваться и переживать трудности.
-            </li>
-            <li>
-              <svg className="formula__icon formula__icon--venn" viewBox="0 0 64 40" aria-hidden="true">
-                <circle cx="24" cy="20" r="16" />
-                <circle cx="40" cy="20" r="16" />
-              </svg>
-              <strong>Похожесть</strong> — насколько близки ваши {labels(SIMILARITY_TRAITS)}. В этих чертах похожие люди обычно понимают
-              друг друга без объяснений.
-            </li>
-          </ul>
-        </section>
-
-        <section className="inner-block stack">
-          <h2>Пять уровней совместимости</h2>
-          <div className="level-grid">
-            {COMPATIBILITY_LEVELS.map(({ min, level }) => {
-              const texts = compatibilityTexts(library, level);
-              return (
-                <section key={level} className={`card stack level-card level-card--${level}`}>
-                  <p className="level-card__percent">от {min}%</p>
-                  <h3>{texts.phrase}</h3>
-                  <p>{texts.text}</p>
-                </section>
-              );
-            })}
-          </div>
+        <section className={styles.more} aria-label="Как считается совместимость">
+          <details>
+            <summary>Из чего складывается процент</summary>
+            <ul className="formula">
+              <li>
+                <img className="formula__icon" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+                <strong>Ресурс пары</strong> — {labels(RESOURCE_TRAITS)} обоих. Чем они выше, тем легче договариваться и переживать трудности.
+              </li>
+              <li>
+                <svg className="formula__icon formula__icon--venn" viewBox="0 0 64 40" aria-hidden="true">
+                  <circle cx="24" cy="20" r="16" />
+                  <circle cx="40" cy="20" r="16" />
+                </svg>
+                <strong>Похожесть</strong> — насколько близки ваши {labels(SIMILARITY_TRAITS)}. В этих чертах похожие люди обычно понимают
+                друг друга без объяснений.
+              </li>
+            </ul>
+          </details>
+          <details>
+            <summary>Пять уровней совместимости</summary>
+            <ol className={styles.levels}>
+              {COMPATIBILITY_LEVELS.map(({ min, level }) => {
+                const texts = compatibilityTexts(library, level);
+                return (
+                  <li key={level}>
+                    <p className={styles.levelPercent}>от {min}%</p>
+                    <div><h4>{texts.phrase}</h4><p>{texts.text}</p></div>
+                  </li>
+                );
+              })}
+            </ol>
+          </details>
         </section>
 
         <PairProductsCompare
