@@ -21,6 +21,7 @@
 }
 
 .page :global(.home-hero) { padding: 12px max(24px, calc((100vw - 1240px) / 2)) 64px; min-height: auto; }
+.page :global(.home-hero[data-band="night"]) { background: var(--bg) url("/home/hero-night-desktop.webp") 70% 40% / cover no-repeat; }
 .page :global(.home-hero)::after,
 .page :global(.home-feature-strip)::before,
 .page :global(.home-section)::before,
@@ -41,10 +42,11 @@
 .page .secondaryAction:hover { color: var(--accent-hover); }
 
 .page :global(.home-crystal) { min-width: 0; min-height: 0; width: 100%; max-width: 540px; aspect-ratio: 1; justify-self: center; }
-.page :global(.home-crystal__diagram) { inset: 0; width: 100%; height: 100%; stroke: var(--line); animation: none; }
+/* Орбиту рисует сам фон, схема с кругами ему мешала бы */
+.page :global(.home-crystal__diagram) { display: none; }
 .page :global(.home-crystal__diagram circle) { vector-effect: non-scaling-stroke; }
-.heroGem { position: relative; width: 82%; max-width: 440px; animation: gem-float 9s ease-in-out infinite; }
-.heroGem > svg:first-child { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 28px rgba(47,163,110,.25)); }
+.heroGem { position: relative; width: 66%; max-width: 380px; animation: gem-float 9s ease-in-out infinite; }
+.heroGem > img { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 44px rgba(47,163,110,.4)); }
 .page :global([data-band="night"] svg > polygon:last-child) { vector-effect: non-scaling-stroke; stroke-width: 1px; }
 .sheenLayer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
 .sheen { opacity: 0; animation: gem-sheen 8s var(--ease-out) infinite; }
@@ -58,13 +60,13 @@
   91% { transform: translateX(330px) skewX(-18deg); opacity: 1; }
   94%, 100% { transform: translateX(330px) skewX(-18deg); opacity: 0; }
 }
-.page :global(.home-crystal__label) { font-size: clamp(16px, 1.4vw, 20px); color: var(--ink-soft); text-shadow: none; font-weight: 300; background: var(--bg); padding: 2px 4px; }
+.page :global(.home-crystal__label) { font-size: clamp(16px, 1.4vw, 20px); color: var(--ink); font-weight: 400; background: transparent; text-shadow: 0 0 10px #000, 0 1px 14px rgba(0,0,0,.9); padding: 2px 4px; }
 .page :global(.home-crystal__label)::before { width: 28px; background: var(--gold); }
 .page :global(.home-crystal__label--openness) { top: 4%; left: 4%; }
 .page :global(.home-crystal__label--extra) { top: 25%; right: 0; }
 .page :global(.home-crystal__label--agree) { right: 0; bottom: 20%; }
 .page :global(.home-crystal__label--conscience) { left: 30%; right: auto; bottom: 1%; }
-.page :global(.home-crystal__label--stable) { left: 0; bottom: 35%; }
+.page :global(.home-crystal__label--stable) { left: -5%; bottom: 35%; }
 
 .page :global(.home-feature-strip) { padding: 28px max(24px, calc((100vw - 1240px) / 2)); gap: 24px; border-top: 1px solid var(--line); border-bottom: 0; box-shadow: none; }
 .page :global(.home-feature) { gap: 12px; min-width: 0; }
@@ -185,4 +187,8 @@
 /* Прозрачные поля вокруг фотокамня съедают часть кадра: на компьютере даём ему выйти за отступ карточки */
 @media (min-width: 761px) {
   .page :global(.home-type-card__art) { height: 210px; margin: -4px -14px 0; }
+}
+
+@media (max-width: 760px) {
+  .page :global(.home-hero[data-band="night"]) { background: var(--bg) url("/home/hero-night-mobile.webp") 50% 0 / cover no-repeat; }
 }

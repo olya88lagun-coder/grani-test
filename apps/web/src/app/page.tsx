@@ -3,10 +3,7 @@ import { typeCodeToDir } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense, useId } from "react";
-import { GemStone } from "@/components/GemStone";
-import { gemStone, type GemFamily } from "@/lib/gem-stone";
-import type { TypeShape } from "@/lib/gem-paths";
+import { Suspense } from "react";
 import { GemPortrait } from "@/components/GemPortrait";
 import { gemAssetDir } from "@/lib/gem-assets";
 import { HomeHeader } from "@/components/PublicHeader";
@@ -75,44 +72,6 @@ const TYPES: readonly { code: HomeTypeCode; title: string; tone: string; text: s
 ];
 
 type HomeTypeCode = Extract<TypeCode, "+-++" | "++--" | "+--+" | "-++-" | "-+++">;
-
-// Optical layers belong to the homepage; the shared GemStone geometry stays unchanged.
-function HomeGem({ shape, family, size }: { shape: TypeShape; family: GemFamily; size: number }) {
-  const id = useId();
-  const { outline, facets } = gemStone(shape, family);
-  return (
-    <svg width={size} height={size} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
-      <defs>
-        {facets.map((facet, index) => {
-          const points = facet.points.split(" ").map((point) => point.split(",").map(Number));
-          const x = points.reduce((sum, point) => sum + point[0]!, 0) / points.length;
-          const y = points.reduce((sum, point) => sum + point[1]!, 0) / points.length;
-          const light = (1 + Math.cos(Math.atan2(y - 100, x - 100) + 2.3)) / 2;
-          return (
-            <linearGradient key={index} id={id + "-facet-" + index} x1="0" y1={index % 2 ? "1" : "0"} x2="1" y2={index % 2 ? "0" : "1"}>
-              <stop offset="0" stopColor="#fff" stopOpacity={0.12 + light * 0.3} />
-              <stop offset=".42" stopColor="#fff" stopOpacity="0" />
-              <stop offset="1" stopColor="#00140c" stopOpacity={0.18 + (1 - light) * 0.34} />
-            </linearGradient>
-          );
-        })}
-        <radialGradient id={id + "-reflection"} cx=".32" cy=".18" r=".85">
-          <stop offset="0" stopColor="#fff" stopOpacity=".24" />
-          <stop offset=".35" stopColor="#fff" stopOpacity="0" />
-          <stop offset="1" stopColor="#00140c" stopOpacity=".35" />
-        </radialGradient>
-      </defs>
-      <GemStone shape={shape} family={family} size={200} />
-      <g>
-        {facets.map((facet, index) => (
-          <polygon key={index} points={facet.points} fill={"url(#" + id + "-facet-" + index + ")"} />
-        ))}
-      </g>
-      <polygon points={outline} fill={"url(#" + id + "-reflection)"} />
-      <polygon points={outline} fill="none" stroke="var(--gold)" strokeOpacity=".6" strokeWidth="1" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 function HomeTypeGem({ code, size = 180 }: { code: HomeTypeCode; size?: number }) {
   return <GemPortrait dir={gemAssetDir(typeCodeToDir(code))} size={size} />;
@@ -192,7 +151,8 @@ function HomeIcon({ name }: { name: IconName }) {
   );
 }
 
-const HERO_GEM_OUTLINE = gemStone("hexagon", 2).outline;
+// Контур фотокамня hero-gem.webp в системе 200×200: по нему обрезается блик
+const HERO_GEM_OUTLINE = "100,3 183,53 183,142 100,197 17,142 17,53";
 
 function CrystalScene() {
   return (
@@ -209,7 +169,7 @@ function CrystalScene() {
         <circle cx="260" cy="260" r="202" />
       </svg>
       <div className={styles.heroGem}>
-        <HomeGem shape="hexagon" family={2} size={440} />
+        <img src="/home/hero-gem.webp" width={900} height={900} alt="" fetchPriority="high" decoding="async" />
         <svg className={styles.sheenLayer} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id="home-gem-cut"><polygon points={HERO_GEM_OUTLINE} /></clipPath>
