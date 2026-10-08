@@ -9,7 +9,7 @@ import { SITE_NAME, SITE_URL } from "./site";
 export { SITE_NAME, SITE_URL } from "./site";
 
 // Обложка для превью ссылок во ВКонтакте и мессенджерах; относительный адрес дополняется metadataBase.
-export const OG_IMAGE = { url: "/og/grani.jpg", width: 1200, height: 630, alt: "Грани — тест личности: узнай себя глубже" } as const;
+export const OG_IMAGE = { url: "/og/grani-night.jpg", width: 1200, height: 630, alt: "Грани — тест личности: узнай себя глубже" } as const;
 
 // Транслитерация названия типа: Яндекс учитывает слова в адресе, а ссылка читается в мессенджере.
 export const TYPE_SLUGS: Readonly<Record<TypeCode, string>> = {
