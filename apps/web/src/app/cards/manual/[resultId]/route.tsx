@@ -4,7 +4,7 @@ import { typeName } from "@grani/core";
 import { getReport, getResultForOwner } from "@grani/db";
 import { ImageResponse } from "next/og";
 import { NextResponse } from "next/server";
-import { CARD_SIZE, loadCardFonts, manualCardElement } from "@/lib/card";
+import { CARD_SIZE, loadCardArt, loadCardFonts, manualCardElement } from "@/lib/card";
 import { buildManualCardModel } from "@/lib/manual-card";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 import { getDb } from "@/server/db";
@@ -25,7 +25,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ res
   if (!result || !full || !visual) return new NextResponse(null, { status: 404 });
 
   const model = buildManualCardModel(full, typeName(result.typeCode, user.gender), visual);
-  const image = new ImageResponse(manualCardElement(model), { ...CARD_SIZE, fonts: await loadCardFonts() });
+  const art = await loadCardArt(typeCodeToDir(result.typeCode), visual.family);
+  const image = new ImageResponse(manualCardElement({ ...model, ...art }), { ...CARD_SIZE, fonts: await loadCardFonts() });
   image.headers.set("cache-control", CACHE_CONTROL);
   image.headers.set("content-disposition", `inline; filename="grani-manual.png"`);
   return image;

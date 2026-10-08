@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import type { ReactElement } from "react";
 import type { ManualCardModel } from "./manual-card";
-import { gemPaths, type TypeFamily } from "./type-visuals";
+import type { TypeFamily } from "./type-visuals";
 
 export const CARD_SIZE = { width: 1080, height: 1920 } as const;
 
@@ -87,40 +87,6 @@ export async function loadCardArt(dir: string, family: TypeFamily): Promise<{ ge
 export function loadCardFonts(): Promise<CardFont[]> {
   fontsPromise ??= readCardFonts();
   return fontsPromise;
-}
-
-// Палитра главной: молочный свет сверху, шалфей снизу, глубокий хвойный — текст и грани
-const CARD_INK = "#0a130b";
-const CARD_GREEN = "#0f3e17";
-const CARD_MUTED = "#5d685c";
-// Самый светлый и самый тёмный тон фона — для проверки контраста текста
-export const CARD_COLORS = { ink: CARD_INK, green: CARD_GREEN, muted: CARD_MUTED, backgroundTop: "#f8f4e7", backgroundBottom: "#e1eada" } as const;
-const CARD_BACKGROUND = [
-  "radial-gradient(circle at 84% 10%, rgba(255, 244, 212, 0.95) 0%, rgba(255, 244, 212, 0) 42%)",
-  "radial-gradient(circle at 8% 62%, rgba(214, 226, 199, 0.75) 0%, rgba(214, 226, 199, 0) 46%)",
-  "linear-gradient(180deg, #f8f4e7 0%, #f0f3e6 52%, #e1eada 100%)",
-].join(", ");
-// Диагональные лучи света поверх фона — как солнце через окно атриума на главной
-const CARD_RAYS = [
-  "linear-gradient(118deg, rgba(255, 255, 255, 0) 24%, rgba(255, 251, 232, 0.6) 34%, rgba(255, 255, 255, 0) 44%)",
-  "linear-gradient(118deg, rgba(255, 255, 255, 0) 50%, rgba(255, 251, 232, 0.4) 57%, rgba(255, 255, 255, 0) 64%)",
-].join(", ");
-
-function CardLogo() {
-  const { outline, facets } = gemPaths("hexagon", 44);
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-      <svg width={44} height={44} viewBox="-3 -3 50 50">
-        <path d={outline} fill="none" stroke={CARD_GREEN} strokeWidth={2.2} strokeLinejoin="round" />
-        <path d={facets} fill="none" stroke={CARD_GREEN} strokeWidth={2.2} strokeLinejoin="round" opacity={0.45} />
-      </svg>
-      <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 50, color: CARD_INK }}>грани</div>
-    </div>
-  );
-}
-
-function CardFooter({ text }: { text: string }) {
-  return <div style={{ display: "flex", justifyContent: "center", fontSize: 30, letterSpacing: 1, color: CARD_MUTED }}>{text}</div>;
 }
 
 const nameSize = (name: string, sizes: readonly [number, number, number]) => (name.length > 16 ? sizes[2] : name.length > 11 ? sizes[1] : sizes[0]);
@@ -221,31 +187,39 @@ export function cardElement({ name, keywords, gem, background }: CardModel): Rea
   );
 }
 
-// Разделы инструкции — почти белые панели с номером: крупный тёмный текст без лишних деталей
-export function manualCardElement({ typeName, lists }: ManualCardModel): ReactElement {
+export const MANUAL_CARD_PANEL = "#10291F";
+
+// Ночная инструкция: фон семьи, камень типа и непрозрачные панели под текст.
+export function manualCardElement({ typeName, lists, gem, background }: ManualCardModel & Pick<CardModel, "gem" | "background">): ReactElement {
   return (
     <div
       style={{
+        position: "relative",
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        padding: "100px 72px 76px",
-        backgroundImage: `${CARD_RAYS}, ${CARD_BACKGROUND}`,
-        color: CARD_INK,
+        padding: "80px 72px 76px",
+        background: NIGHT_CARD.base,
+        color: NIGHT_CARD.ink,
         fontFamily: "Golos",
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 30, marginBottom: 36 }}>
-        <CardLogo />
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 52, lineHeight: 1.05, color: CARD_GREEN }}>
-            Инструкция по применению меня
+      <img src={background} width={CARD_SIZE.width} height={CARD_SIZE.height} alt="" style={{ position: "absolute", left: 0, top: 0 }} />
+      <div style={{ display: "flex", position: "absolute", left: 0, top: 0, width: "100%", height: "100%", background: "rgba(7,20,14,.86)" }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 28, marginBottom: 28 }}>
+        <NightLogo />
+        <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
+          <div style={{ display: "flex", flexDirection: "column", flex: 1, gap: 16 }}>
+            <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 52, lineHeight: 1.05, color: NIGHT_CARD.ink }}>
+              Инструкция по применению меня
+            </div>
+            <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: nameSize(typeName, [104, 90, 80]), lineHeight: 1.05, letterSpacing: -2 }}>
+              {typeName}
+            </div>
           </div>
-          <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: nameSize(typeName, [120, 100, 86]), lineHeight: 1, letterSpacing: -2 }}>
-            {typeName}
-          </div>
+          <img src={gem} width={200} height={200} alt="" />
         </div>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -257,25 +231,25 @@ export function manualCardElement({ typeName, lists }: ManualCardModel): ReactEl
               flexDirection: "column",
               gap: 10,
               padding: "28px 40px",
-              borderRadius: 32,
-              background: "rgba(255, 255, 255, 0.92)",
-              boxShadow: "0 16px 40px rgba(20, 47, 23, 0.08)",
+              borderRadius: 24,
+              background: MANUAL_CARD_PANEL,
+              border: "1px solid rgba(205,181,123,.42)",
             }}
           >
             <div style={{ display: "flex", alignItems: "baseline", gap: 18 }}>
-              <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 2, color: "#7a9a70" }}>{`0${index + 1}`}</div>
-              <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 60, color: CARD_GREEN }}>{list.title}</div>
+              <div style={{ display: "flex", fontSize: 26, fontWeight: 600, letterSpacing: 2, color: NIGHT_CARD.gold }}>{`0${index + 1}`}</div>
+              <div style={{ display: "flex", fontFamily: "Cormorant", fontWeight: 300, fontSize: 60, color: NIGHT_CARD.ink }}>{list.title}</div>
             </div>
             {list.items.map((item) => (
-              <div key={item} style={{ display: "flex", gap: 16, fontSize: 39, lineHeight: 1.32, color: CARD_INK }}>
-                <div style={{ display: "flex", color: CARD_GREEN }}>—</div>
+              <div key={item} style={{ display: "flex", gap: 16, fontSize: 36, lineHeight: 1.4, color: NIGHT_CARD.ink }}>
+                <div style={{ display: "flex", color: NIGHT_CARD.gold }}>—</div>
                 <div style={{ display: "flex", flex: 1 }}>{item}</div>
               </div>
             ))}
           </div>
         ))}
       </div>
-      <CardFooter text="узнай свой тип · grani-test.ru" />
+      <div style={{ display: "flex", justifyContent: "center", marginTop: 28, fontSize: 30, letterSpacing: 1, color: NIGHT_CARD.muted }}>узнай свой тип · grani-test.ru</div>
     </div>
   );
 }

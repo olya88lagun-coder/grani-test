@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 import { expect, test } from "vitest";
-import { CARD_COLORS, CARD_SIZE, cardElement, loadCardArt, loadCardFonts, manualCardElement, NIGHT_CARD } from "./card";
+import { CARD_SIZE, cardElement, loadCardArt, loadCardFonts, manualCardElement, MANUAL_CARD_PANEL, NIGHT_CARD } from "./card";
 import { buildManualCardModel } from "./manual-card";
 import { typeKeywords } from "./result-view";
 import { contrastRatio, TYPE_VISUALS } from "./type-visuals";
@@ -9,7 +9,7 @@ async function pngBytes(response: ImageResponse): Promise<Uint8Array> {
   return new Uint8Array(await response.arrayBuffer());
 }
 
-// Карточка типа несёт фотографию кристалла, инструкция — только текст и градиенты
+// Обе карточки используют ночные фотофоны и PNG камня типа.
 const TYPE_CARD_MAX_BYTES = 2_000_000;
 const MANUAL_CARD_MAX_BYTES = 1_000_000;
 
@@ -37,15 +37,15 @@ test("renders the manual card with the longest items", async () => {
   if (!visual) throw new Error("no visual for mpmp");
   const long = "Давай мне время подумать перед важным решением и не торопи, даже если кажется, что ответ очевиден";
   const full = { portrait: "п", strengths: [], blind_spots: [], manual: { work: [long, long], fight: [long, long], annoys: [long, long] } };
-  const element = manualCardElement(buildManualCardModel(full, "Тихая хранительница", visual));
+  const element = manualCardElement({ ...buildManualCardModel(full, "Тихая хранительница", visual), ...(await loadCardArt("mpmp", visual.family)) });
   expectStoryPng(await pngBytes(new ImageResponse(element, { ...CARD_SIZE, fonts: await loadCardFonts() })), MANUAL_CARD_MAX_BYTES);
 }, 30_000);
 
-test("card text is readable on the whole background", () => {
-  for (const background of [CARD_COLORS.backgroundTop, CARD_COLORS.backgroundBottom]) {
-    expect(contrastRatio(CARD_COLORS.ink, background)).toBeGreaterThanOrEqual(7);
-    expect(contrastRatio(CARD_COLORS.green, background)).toBeGreaterThanOrEqual(7);
-    expect(contrastRatio(CARD_COLORS.muted, background)).toBeGreaterThanOrEqual(4.5);
+test("manual card text and numbers are readable on the panels", () => {
+  for (const background of [NIGHT_CARD.base, MANUAL_CARD_PANEL]) {
+    expect(contrastRatio(NIGHT_CARD.ink, background)).toBeGreaterThanOrEqual(7);
+    expect(contrastRatio(NIGHT_CARD.muted, background)).toBeGreaterThanOrEqual(4.5);
+    expect(contrastRatio(NIGHT_CARD.gold, background)).toBeGreaterThanOrEqual(4.5);
   }
 });
 
