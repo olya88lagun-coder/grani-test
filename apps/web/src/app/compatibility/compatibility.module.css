@@ -1,20 +1,12 @@
 
-.page.page { padding: 0; background: var(--chrome-bg); overflow: visible; }
+.page.page { padding: 0; background: #F4EFE4 url('/compatibility/texture-light.webp') center top / 720px repeat; overflow: visible; }
 .page::before, .page::after { display: none; }
 .wrap { max-width: 1240px; margin-inline: auto; padding-inline: 28px; }
-.page .hero { padding: 32px 0 64px; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 45%, color-mix(in srgb, var(--bg) 92%, transparent)), var(--bg) url('/home/hero-night-desktop.webp') 65% center / cover no-repeat; }
-.page .intro { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: center; gap: 56px; padding-top: 36px; }
-.page .hero h1 { color: var(--ink); font-size: clamp(48px, 5.2vw, 74px); line-height: 1.05; }
+.page .hero { position: relative; isolation: isolate; overflow: clip; padding: 32px 0 64px; min-height: clamp(560px, 46vw, 700px); background: var(--bg); }
+.page .intro { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr); align-items: end; gap: 32px; padding-top: 36px; }
+.page .hero h1 { color: var(--ink); font-size: clamp(44px, 4.6vw, 74px); line-height: 1.05; }
 .page .hero :global(.lead) { font-size: 17px; color: var(--ink-soft); line-height: 1.7; }
 .page .hero :global(.eyebrow), .page .report :global(.eyebrow) { color: var(--ink-soft); }
-.page .scene { display: grid; justify-items: center; gap: 28px; padding-block: 21px; }
-.page .stones { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr); align-items: center; width: 100%; }
-.page .stones > div { display: grid; min-width: 0; justify-items: center; gap: 14px; }
-.page .stones > div > span:first-child { filter: drop-shadow(0 0 24px rgba(47,163,110,.28)); }
-.page .stones > div > span:last-child { color: var(--ink-soft); font-size: 14px; }
-.page .connector { text-align: center; color: var(--ink-soft); font-size: 24px; }
-.page .percent { display: grid; justify-items: center; gap: 14px; margin: 0; color: var(--gold); font-family: var(--font-display); font-size: clamp(72px, 8vw, 112px); line-height: 1; }
-.page .percent > span { font-family: var(--font-body); font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
 .page .content { display: grid; gap: 64px; max-width: 1240px; margin-inline: auto; padding: 64px 28px; }
 .page :global(.inner-block) { padding: 0; }
 .page :global(.card), .page :global(.test-cta) { padding: 28px; background: var(--surface); border: 0; border-radius: var(--radius); box-shadow: none; backdrop-filter: none; }
@@ -33,8 +25,7 @@
 .page.page :global(.formula__icon--venn circle) { fill: none; stroke: var(--accent); }
 @media (max-width: 899px) {
   .page .intro { grid-template-columns: minmax(0, 1fr); gap: 21px; }
-  .page .scene { max-width: 440px; width: 100%; justify-self: center; }
-}
+  }
 @media (max-width: 759px) {
   .page .wrap { padding-inline: 21px; }
   .page .hero { padding: 24px 0 40px; background-image: linear-gradient(var(--bg), color-mix(in srgb, var(--bg) 92%, transparent)), url('/home/hero-night-mobile.webp'); }
@@ -112,8 +103,25 @@
   .page .sections h4 { font-size: 21px; }
   .page .how { gap: 20px; }
   .page .how h2 { font-size: 32px; }
-  .page .scene { gap: 14px; padding-block: 8px; }
-  .page .stones :global(span[class*="GemPortrait"]) { max-width: 120px; }
-  .page .percent { font-size: 64px; gap: 8px; }
-}
+      }
 .page .panel:not(.panelPaid) { align-self: start; }
+
+.art { position: absolute; z-index: 0; inset: 0; pointer-events: none; }
+.art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--bg) 0%, rgba(10, 31, 23, .72) 30%, rgba(10, 31, 23, 0) 54%), linear-gradient(180deg, rgba(10, 31, 23, 0) 78%, var(--bg) 100%); }
+.art picture { display: block; width: 100%; height: 100%; }
+.art img { width: 100%; height: 100%; object-fit: cover; object-position: right 28%; }
+.page .percent { grid-column: 2; margin-right: 6%; justify-self: center; display: grid; justify-items: center; gap: 10px; margin: 0; padding-bottom: 8px; color: var(--gold); font-family: var(--font-display); font-size: clamp(64px, 7vw, 104px); line-height: 1; }
+.page .percent > span { font-family: var(--font-body); font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.page .intro > :global(.inner-intro__copy) { grid-column: 1; grid-row: 1; align-self: center; }
+.page .percent { grid-row: 1; }
+@media (max-width: 899px) {
+  .page .percent { grid-column: 1; grid-row: auto; justify-self: start; justify-items: start; padding: 0; }
+}
+@media (max-width: 759px) {
+  .page .hero { min-height: 0; padding-bottom: 32px; }
+  .art { inset: 0 0 auto 0; height: min(112vw, 640px); }
+  .art::after { background: linear-gradient(180deg, rgba(10, 31, 23, 0) 40%, var(--bg) 96%); }
+  .art img { object-position: center top; }
+  .page .intro { padding-top: min(54vw, 280px); }
+  .page .percent { font-size: 64px; }
+}
