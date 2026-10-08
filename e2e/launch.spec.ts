@@ -116,7 +116,8 @@ test("the compatibility page spells out what the paid pair report contains and w
   const sections = page.getByRole("list", { name: "Пять разделов разбора пары" }).getByRole("listitem");
   await expect(sections).toHaveCount(5);
   await expect(sections.filter({ hasText: "Откуда будут конфликты и как договариваться" })).toHaveCount(1);
-  await expect(page.getByRole("heading", { name: /Что бесплатно, а что за 399/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Бесплатно", exact: true })).toBeVisible();
+  await expect(page.getByText("399 ₽", { exact: true })).toBeVisible();
   await expect(page.getByText(/Одна оплата открывает разбор обоим, платит один/)).toBeVisible();
   await expect(page.getByRole("link", { name: "оферте" })).toHaveAttribute("href", "/offer");
 });
