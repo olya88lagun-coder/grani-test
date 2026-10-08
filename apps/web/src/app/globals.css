@@ -2499,3 +2499,10 @@ main[data-palette="friends"] ~ .footer[data-band="night"] {
   --accent: #1D3A4F; --accent-hover: #142B3B; --accent-ink: #FCFDFE;
   --ink: #1F2328; --ink-soft: #5C6670; --line: #E8ECEF; --gold: #1D3A4F;
 }
+
+/* Карточки статей: тёмные стеклянные на светлом фоне, как карточка результата. Токены приходят от data-band="night" на самой карточке */
+.article-tile[data-band="night"] { background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); color: var(--ink); }
+.article-tile[data-band="night"]:hover { transform: translateY(-3px); box-shadow: inset 0 0 0 1px var(--gold); }
+.article-tile[data-band="night"] .article-tile__title { color: var(--ink); }
+.article-tile[data-band="night"] .article-tile__text { color: var(--ink-soft); }
+.article-tile[data-band="night"] .article-tile__meta { color: var(--gold); }
