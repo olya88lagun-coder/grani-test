@@ -743,17 +743,6 @@ body.has-cookie-banner .footer { padding-bottom: 220px; }
   background: linear-gradient(135deg, rgba(255, 253, 244, 0.72), rgba(206, 223, 202, 0.66));
 }
 
-.home-type-card--cloud .home-type-card__art {
-  background:
-    radial-gradient(circle at 42% 62%, rgba(255, 255, 255, 0.95) 0 18%, transparent 19%),
-    radial-gradient(circle at 62% 48%, rgba(255, 255, 255, 0.88) 0 16%, transparent 17%),
-    linear-gradient(160deg, #dfeaf4, #f8f0d9);
-}
-
-.home-type-card--stone .home-type-card__art {
-  background: linear-gradient(140deg, #ecede2, #ccd9dc);
-}
-
 .home-type-card h3 {
   color: #050906;
   font-family: var(--font-body);
