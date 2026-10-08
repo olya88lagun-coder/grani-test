@@ -22,14 +22,18 @@ export default function PricingPage() {
   const chapterPrice = PRODUCT_PRICES.chapter_money;
   const chaptersSeparately = chapterPrice * CHAPTER_KINDS.length;
   return (
-    <main className={`inner-page ${styles.page}`}>
+    <main className={`inner-page ${styles.page}`} data-night-entry data-band="night">
+      <section className={styles.hero}>
+        <div className={styles.wrap}>
+          <Breadcrumbs items={[{ name: "Разборы и цены", path: "/pricing" }]} />
+          <header className={styles.intro}>
+            <p className={styles.eyebrow}>Платные разборы</p>
+            <h1>Разборы и цены</h1>
+            <p className={styles.lead}>{DESCRIPTION}</p>
+          </header>
+        </div>
+      </section>
       <article className="page page--wide stack pricing-page">
-        <Breadcrumbs items={[{ name: "Разборы и цены", path: "/pricing" }]} />
-        <header className="inner-intro__copy">
-          <p className="eyebrow">Платные разборы</p>
-          <h1 className="display">Разборы и цены</h1>
-          <p className="lead">{DESCRIPTION}</p>
-        </header>
 
         <PairProductsCompare headingId="pair-products" prices={{ compatibility: formatRub(PRODUCT_PRICES.pair), together: `${formatRub(TOGETHER_PRICE_KOPECKS)} за ${TOGETHER_PERIOD_DAYS} дней` }} />
 

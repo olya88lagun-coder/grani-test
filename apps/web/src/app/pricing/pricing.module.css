@@ -1,11 +1,11 @@
 
-.page.page { background: var(--chrome-bg); }
+.page.page { background: var(--bg); }
 .page::before { display: none; }
-.page :global(.pricing-page) { max-width: 1240px; padding: 32px 28px 80px; gap: 48px; }
+.page :global(.pricing-page) { max-width: 1240px; padding: 48px 28px 80px; gap: 48px; }
 .page :global(.pricing-page > header) { max-width: 800px; }
 .page :global(.card) { min-width: 0; padding: 28px; background: var(--surface); border: 0; border-radius: var(--radius); box-shadow: none; backdrop-filter: none; }
 .page .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 21px; align-items: stretch; }
-.page .grid :global(.pricing-card) { display: flex; flex-direction: column; gap: 21px; padding: 32px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
+.page .grid :global(.pricing-card) { display: flex; flex-direction: column; gap: 21px; padding: 32px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
 .page .grid h2 { min-height: 2.3em; font-size: clamp(32px, 3vw, 42px); line-height: 1.15; color: var(--ink); }
 .page .grid :global(.eyebrow) { min-height: 2.8em; color: var(--ink-soft); }
 .page .grid :global(.pricing-card__price) { font-family: var(--font-body); font-size: clamp(32px, 3.6vw, 48px); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; color: var(--gold); }
@@ -27,3 +27,25 @@
   .page .grid :global(.pricing-card__price) { font-size: 32px; }
   .page :global(.button) { width: 100%; }
 }
+
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: 28px; }
+.page .hero { padding: 28px 0 56px; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 58%, transparent 88%), var(--bg) url("/home/types-night-desktop.webp") 78% 0 / cover no-repeat; }
+.page .hero :global(.crumbs) { margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+.page .hero :global(.crumbs a) { color: var(--ink-soft); }
+.intro { max-width: 700px; padding: 24px 0 8px; }
+.eyebrow { margin: 0 0 16px; color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.page .intro h1 { margin: 0; color: var(--ink); font-size: clamp(44px, 5.4vw, 76px); line-height: 1.05; letter-spacing: -.03em; text-wrap: balance; }
+.lead { margin: 24px 0 0; font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
+.page :global(.card) { border: 1px solid var(--line); }
+.page :global(.pricing-card--featured) { border-color: var(--gold); }
+@media (max-width: 899px) {
+  .page .hero { background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 70%, transparent 100%), var(--bg) url("/home/types-night-mobile.webp") 50% 0 / cover no-repeat; }
+}
+@media (max-width: 759px) {
+  .wrap { padding-inline: 21px; }
+  .page .hero { padding: 20px 0 32px; }
+  .lead { font-size: 16px; }
+  .page :global(.pricing-page) { padding-top: 32px; }
+}
+.page :global(.pricing-page) :is(h2, h3), .page :global(.pricing-page .inner-block) :is(h2, h3, p, li) { color: var(--ink); }
+.page :global(.pricing-page .muted), .page :global(.pricing-page .inner-block .muted) { color: var(--ink-soft); }
