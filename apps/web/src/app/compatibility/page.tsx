@@ -2,6 +2,10 @@ import { COMPATIBILITY_LEVELS, formatRub, PRODUCT_PRICES, RESOURCE_TRAITS, SIMIL
 import { compatibilityTexts, TRAIT_LABELS } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
+import { typeCodeToDir } from "@grani/content";
+import styles from "./compatibility.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
 import { TestCta } from "@/components/TestCta";
@@ -13,14 +17,6 @@ const DESCRIPTION = "Пройдите тест вдвоём и узнайте п
 export const metadata = publicMetadata({ title: "Тест на совместимость пары", description: DESCRIPTION, path: "/compatibility" });
 
 const labels = (traits: readonly (keyof typeof TRAIT_LABELS)[]) => traits.map((trait) => TRAIT_LABELS[trait].toLowerCase()).join(", ");
-
-function HeartIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 20.5s-7.5-4.6-9.2-9.4C1.6 7.7 3.8 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.9 1.3-1.8 2.9-2.9 4.9-2.9 3.3 0 5.5 3.2 4.3 6.6-1.7 4.8-9.2 9.4-9.2 9.4z" />
-    </svg>
-  );
-}
 
 // Новому человеку — начать с теста; тому, кто уже прошёл, — сразу к блоку приглашения на своём результате
 function PairActions() {
@@ -36,35 +32,34 @@ function PairActions() {
   );
 }
 
-// Палитра главной вместо «Глины»: розовый остаётся только акцентом — надзаголовок, сердце, проценты уровней
 export default function CompatibilityPage() {
   const library = getLibrary();
   const price = formatRub(PRODUCT_PRICES.pair);
   return (
-    <main className="inner-page inner-page--pair">
-      <article className="page page--wide stack">
+    <main className={`inner-page ${styles.page}`} data-night-entry>
+      <article>
+        <section className={styles.hero} data-band="night">
+        <div className={styles.wrap}>
         <Breadcrumbs items={[{ name: "Совместимость пары", path: "/compatibility" }]} />
-        <header className="inner-intro">
+        <header className={styles.intro}>
           <div className="inner-intro__copy">
             <p className="eyebrow">Для двоих</p>
             <h1 className="display">Тест на совместимость пары</h1>
             <p className="lead">{DESCRIPTION}</p>
             <PairActions />
           </div>
-          <div className="pair-hero" aria-hidden="true">
-            <div className="pair-hero__card">
-              <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
-              <span>Ты</span>
+          <div className={styles.scene}>
+            <div className={styles.stones} aria-hidden="true">
+              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={220} priority /><span>Ты</span></div>
+              <span className={styles.connector}>+</span>
+              <div><GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={220} priority /><span>Партнёр</span></div>
             </div>
-            <span className="pair-hero__heart">
-              <HeartIcon />
-            </span>
-            <div className="pair-hero__card pair-hero__card--blush">
-              <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
-              <span>Партнёр</span>
-            </div>
+            <p className={styles.percent}>78%<span>пример · совместимость</span></p>
           </div>
         </header>
+        </div>
+        </section>
+        <div className={styles.content}>
 
         <section className="inner-block stack">
           <h2>Как это работает</h2>
@@ -89,7 +84,9 @@ export default function CompatibilityPage() {
           <p>Это не поломка, а разные характеры. Разбор пары называет эти различия словами и подсказывает, о чём договориться.</p>
         </section>
 
-        <section className="inner-block stack" aria-labelledby="pair-report-inside">
+        </div>
+        <section className={`${styles.report} stack`} data-band="night" aria-labelledby="pair-report-inside">
+        <div className={`${styles.wrap} stack`}>
           <p className="eyebrow">Платный разбор · {price}</p>
           <h2 id="pair-report-inside">Процент — это начало. Разбор объясняет, что за ним</h2>
           <p className="lead">
@@ -105,7 +102,7 @@ export default function CompatibilityPage() {
               </section>
             ))}
           </div>
-          <div className="card card--paper stack" aria-labelledby="pair-price-title">
+          <div className={`${styles.price} stack`} aria-labelledby="pair-price-title">
             <h3 id="pair-price-title">Что бесплатно, а что за {price}</h3>
             <ul className="stack">
               <li>
@@ -122,7 +119,9 @@ export default function CompatibilityPage() {
             </ul>
             <PairActions />
           </div>
+        </div>
         </section>
+        <div className={styles.content}>
 
         <section className="inner-block stack">
           <h2>Из чего складывается процент</h2>
@@ -167,6 +166,7 @@ export default function CompatibilityPage() {
 
         <p className="muted">Процент — повод поговорить о том, как вы устроены, а не приговор отношениям.</p>
         <TestCta title="Начните с себя" />
+        </div>
       </article>
     </main>
   );
