@@ -50,7 +50,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   const reportOpen = unlockedKinds(await listOwnedProducts(getDb(), { resultId: result.id })).has("full");
 
   return (
-    <main className={`inner-page inner-page--result ${styles.page}`} data-night-entry>
+    <main className={`inner-page inner-page--result ${styles.page}`} data-night-entry data-band="night">
       <GoalOnView goal="result_view" />
       <div className="page page--result stack">
         <section data-band="night" className="result-hero" aria-labelledby="result-name">

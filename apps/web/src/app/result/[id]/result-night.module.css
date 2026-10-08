@@ -1,8 +1,8 @@
 .page.page {
-  --chrome-bg: var(--page-end);
+  --chrome-bg: var(--bg);
   color: var(--ink);
   padding-top: 24px;
-  background: linear-gradient(var(--page-start), var(--page-end));
+  background: radial-gradient(60% 30% at 80% 0%, rgba(63, 174, 124, .16), transparent 70%), linear-gradient(180deg, #0B2319, var(--bg) 40%);
 }
 .page.page :global(.page--result) { padding-inline: 24px; }
 .page.page :global(.page--result.stack > * + *) { margin-top: 56px; }
@@ -114,3 +114,17 @@
   .page.page :global(.share-card__body .row) { display: grid; grid-template-columns: minmax(0,1fr); }
   .page.page :global(.share-card__body .button) { width: 100%; }
 }
+
+/* Страница целиком ночная: заголовки и подписи берут цвет из токенов, а не из светлой палитры внутренних страниц */
+.page.page :global(.page--result) :is(h2, h3) { color: var(--ink); }
+.page.page :global(.page--result .eyebrow) { color: var(--gold); }
+.page.page :global(.page--result) :is(p, li) { color: var(--ink-soft); }
+.page.page :global(.page--result) :is(.result-hero, .result-card) :is(p, li) { color: inherit; }
+.page.page :global(.page--result a:not(.button)) { color: var(--ink); text-decoration-color: var(--gold); }
+.page.page :global(.page--result .button--ghost) { background: transparent; color: var(--ink); border: 1px solid var(--gold); }
+.page.page :global(.page--result .button--ghost:hover) { background: var(--surface-3); }
+.page.page :global(.page--result .card) { background: var(--surface); border: 1px solid var(--line); box-shadow: none; }
+.page.page :global(.page--result .card .button:not(.button--ghost)) { background: var(--accent); color: var(--accent-ink); }
+.page.page :global(.page--result .muted) { color: var(--ink-soft); }
+.page.page :global(.result-block--pair ul li) { background: rgba(227, 179, 160, .1); border: 1px solid rgba(227, 179, 160, .4); color: var(--ink); }
+.page.page :global(.share-card) { background: var(--surface); }
