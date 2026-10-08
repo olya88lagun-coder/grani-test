@@ -2412,10 +2412,8 @@ body.has-cookie-banner .sticky-cta { display: none; }
   .journal-featured__image { order: 0; height: 100%; min-height: 380px; }
   .journal-featured__body { padding: 48px 52px; }
   body .page--article.stack > * + * { margin-top: 40px; }
-  /* Все остальные статьи остаются в ссылках — сетка два на два вместо одинокой четвёртой карточки */
-  .article-grid--more { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .article-grid--more .article-tile { flex-direction: row; }
-  .article-grid--more .article-tile__image { width: 38%; height: auto; min-height: 100%; }
+  /* Три связанные статьи в ряд: карточка с картинкой сверху */
+  .article-grid--more { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 /* Встроенный браузер приложения: заметная плашка с просьбой открыть сайт в Safari или Chrome */
