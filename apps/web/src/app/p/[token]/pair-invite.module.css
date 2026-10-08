@@ -1,0 +1,14 @@
+/* Приглашение в пару: ночная страница в палитре пары, два камня и золотая нить над заголовком */
+.invite { min-height: calc(100vh - 80px); padding: 40px 16px 72px; background: radial-gradient(55% 40% at 50% 12%, rgba(227, 179, 160, .16), transparent 72%), radial-gradient(45% 35% at 90% 80%, rgba(63, 174, 124, .12), transparent 72%), linear-gradient(180deg, #0B2319, var(--bg) 50%); }
+.invite :global(.page) { padding-top: 0; }
+.gems { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; filter: drop-shadow(0 0 40px rgba(227, 179, 160, .2)); }
+.thread { width: 56px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.invite :global(.eyebrow) { color: var(--gold); text-align: center; }
+.invite h1 { color: var(--ink); text-align: center; text-wrap: balance; }
+.invite :global(.lead) { color: var(--ink-soft); }
+.invite :global(.card) { background: var(--surface); border: 1px solid var(--line); box-shadow: none; }
+.invite :global(.button--ghost) { background: transparent; color: var(--ink); border: 1px solid var(--gold); }
+.invite :global(.button:disabled) { background: rgba(239, 233, 218, .12); color: var(--ink-soft); opacity: 1; }
+.invite :global(.choice) { background: rgba(255, 255, 255, .03); border: 1px solid var(--line); color: var(--ink); }
+.invite :global(.choice:has(input:checked)) { border-color: var(--gold); background: color-mix(in srgb, var(--gold) 14%, var(--surface)); }
+@media (max-width: 639px) { .gems { zoom: .8; } }

@@ -6,7 +6,11 @@ import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
 import { getPairInvitePage } from "@/server/pairs-service";
 import { currentUser } from "@/server/viewer";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
+import { typeCodeToDir } from "@grani/content";
 import { AcceptPairForm } from "./AcceptPairForm";
+import styles from "./pair-invite.module.css";
 
 export const metadata: Metadata = { title: "Совместимость" };
 
@@ -15,9 +19,18 @@ const joinUrl = (token: string, next: "test" | "login") => `/api/pairs/join?toke
 export default async function PairInvitePage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   const page = await getPairInvitePage(getDb(), token, await currentUser());
+  const invited = page.state === "needs_login" || page.state === "needs_result" || page.state === "ready";
 
   return (
-    <main className="page stack" data-palette="pair">
+    <main className={styles.invite} data-palette="pair" data-band="night" data-night-entry>
+      <div className="page stack">
+      {invited && (
+        <div className={styles.gems} aria-hidden="true">
+          <GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={150} priority />
+          <span className={styles.thread} />
+          <GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={150} priority />
+        </div>
+      )}
       <p className="eyebrow">Грани · совместимость пары</p>
       {page.state === "not_found" && (
         <>
@@ -61,6 +74,7 @@ export default async function PairInvitePage({ params }: { params: Promise<{ tok
           <AcceptPairForm token={page.token} consentLabel={pairConsentLabel(page.inviterFirstName, page.inviterGender)} />
         </section>
       )}
+      </div>
     </main>
   );
 }
