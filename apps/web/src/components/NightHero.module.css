@@ -1,0 +1,26 @@
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: 28px; }
+.hero { padding: 28px 0 56px; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 58%, transparent 88%), var(--bg) url("/home/types-night-desktop.webp") 78% 0 / cover no-repeat; }
+.hero :global(.crumbs) { margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+.hero :global(.crumbs a) { color: var(--ink-soft); }
+.intro { max-width: 700px; padding: 24px 0 8px; }
+.eyebrow { margin: 0 0 16px; color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.hero h1 { margin: 0; color: var(--ink); font-size: clamp(42px, 5vw, 70px); line-height: 1.06; letter-spacing: -.03em; text-wrap: balance; overflow-wrap: break-word; }
+.lead { margin-top: 24px; font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
+.lead :global(p) { margin: 0; }
+.lead a { color: var(--ink); }
+.closing { padding: 56px 0 72px; background: radial-gradient(60% 70% at 15% 100%, rgba(63, 174, 124, .16), transparent 70%), var(--bg); }
+.closing :global(.test-cta) { padding: 32px 40px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: none; backdrop-filter: none; }
+.closing :global(.test-cta h2) { margin: 0; color: var(--ink); }
+.closing :global(.test-cta .button) { box-shadow: none; }
+
+@media (max-width: 899px) {
+  .hero { background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 70%, transparent 100%), var(--bg) url("/home/types-night-mobile.webp") 50% 0 / cover no-repeat; }
+}
+@media (max-width: 759px) {
+  .wrap { padding-inline: 21px; }
+  .hero { padding: 20px 0 36px; }
+  .lead { font-size: 16px; }
+  .closing { padding: 40px 0 56px; }
+  .closing :global(.test-cta) { padding: 28px 21px; }
+  .closing :global(.test-cta .button) { width: 100%; text-align: center; }
+}

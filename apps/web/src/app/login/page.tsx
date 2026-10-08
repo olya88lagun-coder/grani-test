@@ -8,6 +8,9 @@ import { PAIR_COOKIE, PENDING_COOKIE, TOGETHER_COOKIE } from "@/server/http";
 import { confirmPendingResult, resolveLoginContext } from "@/server/login-context";
 import { currentUser } from "@/server/viewer";
 import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
+import { typeCodeToDir } from "@grani/content";
 import { LoginPanel } from "./LoginPanel";
 import styles from "./login.module.css";
 
@@ -23,10 +26,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const [context, hasPendingResult] = await Promise.all([resolveLoginContext(cookieValues, secret), confirmPendingResult(cookieValues.pending, secret)]);
   const intro = LOGIN_INTRO[context];
   return (
-    <main className={`inner-page ${styles.page}`}>
+    <main className={`inner-page ${styles.page}`} data-night-entry data-band="night">
       <div className={styles.container}>
         <InAppBrowserNotice place="login" hasPendingResult={hasPendingResult} />
         <section className={styles.panel} aria-labelledby="login-title">
+          <div className={styles.gem} aria-hidden="true"><GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={132} priority /></div>
           <h1 className={styles.title} id="login-title">{intro.title}</h1>
           {message && (
             <p className={`error ${styles.error}`} role="alert">
