@@ -1,6 +1,7 @@
 import { getArticles } from "@grani/content/data";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { NightClosing, NightHero } from "@/components/NightHero";
 import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, publicMetadata } from "@/lib/seo";
@@ -22,17 +23,13 @@ export default function ArticlesPage() {
   const dates = Object.fromEntries(cards.map((card) => [card.slug, articleDate(card.date)]));
 
   return (
-    <main className="inner-page inner-page--articles">
+    <main className="inner-page inner-page--articles" data-night-entry>
+      <NightHero title="Статьи" eyebrow="Журнал «Граней»" breadcrumbs={<Breadcrumbs items={[{ name: "Статьи", path: "/articles" }]} />}>
+        <p>О личности, отношениях и том, как нас видят другие. Психология — просто, глубоко и по делу.</p>
+      </NightHero>
       <div className="page page--wide stack">
-        <Breadcrumbs items={[{ name: "Статьи", path: "/articles" }]} />
-        <header className="journal-hero">
-          <p className="eyebrow">Журнал «Граней»</p>
-          <h1 className="display">Статьи</h1>
-          <p className="lead">О личности, отношениях и том, как нас видят другие. Психология — просто, глубоко и по делу.</p>
-        </header>
-
         {featured && (
-          <Link className="journal-featured" href={`/articles/${featured.slug}`}>
+          <Link className="journal-featured" data-band="night" href={`/articles/${featured.slug}`}>
             <div className="journal-featured__body">
               <span className="article-badge">{featured.tag}</span>
               <h2>{featured.title}</h2>
@@ -49,9 +46,8 @@ export default function ArticlesPage() {
           <h2 id="all-articles">Все статьи</h2>
           <ArticleGrid articles={rest} dates={dates} />
         </section>
-
-        <TestCta />
       </div>
+      <NightClosing><TestCta /></NightClosing>
     </main>
   );
 }
