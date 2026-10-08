@@ -202,7 +202,7 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
       {purchaseId && <PurchaseResult outcome={outcome} exhausted={pollExhausted} onCheck={() => setPollRound((round) => round + 1)} />}
 
       {screen === "start" && (
-        <section className="card stack">
+        <section className="card stack together-flow-card">
           <h1 className="display">{firstName}, начнём с двоих</h1>
           <p className="lead">Вы создадите пространство, а затем отправите партнёру личную ссылку. Оплату мы не предлагаем, пока оба не подтверждены.</p>
           <ConsentCheckbox id="together-consent" checked={consent} onChange={setConsent} />
@@ -213,7 +213,7 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
       )}
 
       {screen === "invite" && space && (
-        <section className="card stack">
+        <section className="card stack together-flow-card">
           <h1 className="display">{inviteUrl ? "Ваше приглашение готово" : "Ждём запрос партнёра"}</h1>
           {inviteUrl ? (
             <>
@@ -250,7 +250,7 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
       )}
 
       {screen === "confirm" && space?.pendingRequest && (
-        <section className="card stack">
+        <section className="card stack together-flow-card">
           <h1 className="display">Это ваш человек?</h1>
           <p className="lead">Проверьте имя аккаунта, который отправил запрос. Подтверждайте только того, кого пригласили.</p>
           <p className="eyebrow">Отображаемое имя аккаунта</p>

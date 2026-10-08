@@ -48,7 +48,7 @@ export function InviteJoin({ token }: { token: string }) {
 
   if (phase === "requested") {
     return (
-      <section className="card stack">
+      <section className="card stack together-flow-card">
         <h1 className="display">Осталось подтверждение</h1>
         <p className="lead">Вы отправили запрос. Инициатор увидит ваше имя и подтвердит, что приглашение предназначено вам.</p>
         <p className="muted">Можно закрыть страницу и вернуться по этой же ссылке. Уведомления пока не подключены, поэтому написать партнёру лучше самим.</p>
@@ -59,7 +59,7 @@ export function InviteJoin({ token }: { token: string }) {
   }
 
   return (
-    <section className="card stack">
+    <section className="card stack together-flow-card">
       <h1 className="display">Время для вас двоих</h1>
       <p className="lead">Вас пригласили создать общее пространство. После запроса инициатор проверит ваше имя и подтвердит участие.</p>
       <ConsentCheckbox id="invite-consent" checked={consent} onChange={setConsent} />
