@@ -1,0 +1,133 @@
+.page.page {
+  --chrome-bg: var(--bg);
+  --inner-ink: var(--ink);
+  --paper: var(--surface);
+  --paper-line: var(--line);
+  --paper-shadow: none;
+  color: var(--ink);
+  background: var(--bg);
+  overflow: visible;
+}
+.page.page::before { display: none; }
+.page.page :global(.page) { max-width: 1180px; padding: 32px 24px 96px; }
+.page.page :global(.page--report.stack > * + *),
+.page.page :global(.page--pair.stack > * + *) { margin-top: 40px; }
+.page.page :global(h1), .page.page :global(h2), .page.page :global(h3) { color: var(--ink); }
+.page.page :global(.card),
+.page.page :global(.report-portrait),
+.page.page :global(.report-section),
+.page.page :global(.report-manual),
+.page.page :global(.report-chapters),
+.page.page :global(.share-card) {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 36px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.page.page :global(.button) {
+  min-height: 48px;
+  padding: 14px 21px;
+  border-radius: var(--radius);
+  box-shadow: none;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.5;
+}
+.page.page :global(.button--ghost) { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+.page.page :global(.button--ghost:hover) { background: var(--surface-3); }
+.page.page :global(.buy-form__input) { background: var(--bg); color: var(--ink); border-color: var(--accent); }
+.page.page :global(.buy-form__hint),
+.page.page :global(.result-offer__note),
+.page.page :global(.result-offer__legal) { color: var(--ink-soft); }
+.page.page :global(.report-hero) {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(220px, .7fr);
+  align-items: center;
+  gap: 40px;
+  padding: 48px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--surface) 0%, rgba(16,41,31,.97) 60%, rgba(16,41,31,.93)), url('/home/types-night-desktop.webp') center / cover;
+  box-shadow: none;
+}
+.page.page :global(.report-hero__copy) { display: grid; gap: 24px; min-width: 0; }
+.page.page :global(.report-hero h1) { font-size: clamp(44px, 6vw, 88px); line-height: 1.05; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.page.page :global(.report-hero .lead) { max-width: 34em; color: var(--ink-soft); line-height: 1.7; }
+.page.page :global(.report-hero__gem) { display: grid; justify-items: center; min-width: 0; }
+.page.page :global(.report-portrait) { display: grid; grid-template-columns: minmax(0, .6fr) minmax(0, 1.4fr); gap: 40px; }
+.page.page :global(.report-portrait__head) { display: grid; align-content: start; gap: 16px; }
+.page.page :global(.report-portrait h2) { font-size: clamp(40px, 5vw, 64px); line-height: 1.05; }
+.page.page :global(.report-portrait__text p) { max-width: 40em; font-size: 17px; line-height: 1.8; }
+.page.page :global(.report-portrait__text > * + *) { margin-top: 20px; }
+.page.page :global(.report-duo) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.page.page :global(.report-section > * + *) { margin-top: 24px; }
+.page.page :global(.report-section__number) { margin: 0; color: var(--gold); font-family: var(--font-display); font-size: 32px; line-height: 1; }
+.page.page :global(.report-list) { display: grid; gap: 24px; margin: 0; padding: 0; list-style: none; }
+.page.page :global(.report-list li) { padding: 20px 0 0; border-top: 1px solid var(--line); line-height: 1.75; }
+.page.page :global(.report-list .tip) { display: block; margin-top: 12px; padding: 16px; border-radius: var(--radius); background: var(--surface-2); color: var(--ink-soft); }
+.page.page :global(.report-manual) { display: grid; gap: 20px; }
+.page.page :global(.report-manual .eyebrow) { color: var(--ink-soft); }
+.page.page :global(.report-manual__grid) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.page.page :global(.report-manual__column) { min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2); }
+.page.page :global(.report-manual__column h3) { font-size: 30px; line-height: 1.15; }
+.page.page :global(.report-manual__column ul) { display: grid; gap: 16px; margin: 20px 0 0; padding-left: 18px; line-height: 1.75; }
+.page.page :global(.report-chapters) { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 32px; }
+.page.page :global(.report-chapters__intro) { display: grid; gap: 20px; align-content: start; justify-items: start; min-width: 0; padding: 0; background: transparent; }
+.page.page :global(.report-chapters__intro p:not(.eyebrow)) { margin: 0; color: var(--ink-soft); }
+.page.page :global(.report-chapters__grid) { display: grid; gap: 16px; align-content: start; min-width: 0; }
+.page.page :global(.report-chapters__grid .report-chapter) { padding: 24px; background: var(--surface-2); }
+.page.page :global(.report-chapter--available) { display: grid; justify-items: start; gap: 16px; }
+.page.page :global(.report-chapter--available > * + *) { margin-top: 0; }
+.page.page :global(.report-preparing) { margin: 0; }
+.page.page :global(.share-card) { display: grid; grid-template-columns: 280px minmax(0, 1fr); align-items: center; gap: 40px; }
+.page.page :global(.share-card__frame) { justify-self: center; width: min(100%, 280px); padding: 8px; border: 1px solid var(--gold); border-radius: var(--radius); background: var(--bg); }
+.page.page :global(.share-card__preview) { display: block; width: 100%; height: auto; border-radius: 8px; box-shadow: none; }
+.page.page :global(.share-card__body) { min-width: 0; }
+.page.page :global(.pair-hero) { padding: 48px; background: var(--surface); }
+.page.page :global(.pair-people) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.page.page :global(.pair-person) { display: grid; justify-items: center; align-content: start; gap: 16px; min-width: 0; text-align: center; }
+.page.page :global(.pair-person > div) { min-width: 0; }
+.page.page :global(.pair-person h2) { font-size: clamp(24px, 3.5vw, 44px); line-height: 1.1; overflow-wrap: anywhere; hyphens: auto; }
+.page.page :global(.pair-person .eyebrow) { color: var(--ink-soft); }
+.page.page :global(.pair-score) { color: var(--gold); font-family: var(--font-display); font-size: clamp(80px, 12vw, 128px); line-height: 1; }
+.page.page :global(.pair-hero .display) { font-size: clamp(40px, 5vw, 64px); line-height: 1.1; }
+.page.page :global(.pair-hero .lead) { max-width: 46em; line-height: 1.75; }
+.page.page :global(.compare) { padding-top: 24px; border-top: 1px solid var(--line); }
+.page.page :global(.compare .scale__head > span) { min-width: 0; font-family: var(--font-body); font-size: 16px; line-height: 1.5; color: var(--ink); overflow-wrap: anywhere; }
+.page.page :global(.compare__bar) { grid-template-columns: minmax(56px, .55fr) minmax(0, 2fr) 32px; gap: 12px; }
+.page.page :global(.compare__bar > span:first-child) { min-width: 0; overflow-wrap: anywhere; }
+.page.page :global(.compare__bar b) { color: var(--gold); }
+.page.page :global(.compare__bar .scale__track) { background: var(--surface-3); }
+.page.page :global(.scale__fill) { background: var(--gold); }
+.page.page :global(.report > .stack) { padding: 28px 0 0; border-top: 1px solid var(--line); }
+.page.page :global(.report > .stack h3) { margin-top: 0; font-size: 34px; }
+.page.page :global(.report p) { line-height: 1.8; }
+.page.page :global(.pair-offer__sections) { grid-template-columns: minmax(0, 1fr); }
+.page.page :global(.pair-offer__sections li) { display: block; min-width: 0; overflow-wrap: anywhere; padding: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface-2); line-height: 1.75; }
+.page.page :global(.pair-offer__sections li::before) { color: var(--gold); margin-right: 14px; }
+.page.page :global(details.card summary) { cursor: pointer; padding-block: 4px; }
+@media (max-width: 979px) {
+  .page.page :global(.report-manual__grid),
+  .page.page :global(.report-chapters) { grid-template-columns: minmax(0, 1fr); }
+  .page.page :global(.report-hero) { padding: 32px; grid-template-columns: minmax(0, 1fr) minmax(180px, .6fr); gap: 24px; }
+}
+@media (max-width: 759px) {
+  .page.page :global(.page) { padding: 20px 16px 64px; }
+  .page.page :global(.page--report.stack > * + *),
+  .page.page :global(.page--pair.stack > * + *) { margin-top: 28px; }
+  .page.page :global(.card), .page.page :global(.report-portrait), .page.page :global(.report-section),
+  .page.page :global(.report-manual), .page.page :global(.report-chapters), .page.page :global(.share-card) { padding: 24px; }
+  .page.page :global(.report-hero) { grid-template-columns: minmax(0, 1fr); padding: 24px; gap: 24px; background: var(--surface); }
+  .page.page :global(.report-hero h1) { font-size: clamp(36px, 11vw, 64px); }
+  .page.page :global(.report-hero__gem [data-gem-dir]) { max-width: 240px; }
+  .page.page :global(.report-portrait), .page.page :global(.report-duo),
+  .page.page :global(.share-card) { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .page.page :global(.report-manual__column) { padding: 20px; }
+  .page.page :global(.pair-people) { gap: 16px; }
+  .page.page :global(.pair-person h2) { font-size: clamp(18px, 5vw, 28px); }
+  .page.page :global(.pair-person [data-gem-dir]) { max-width: 140px; }
+}

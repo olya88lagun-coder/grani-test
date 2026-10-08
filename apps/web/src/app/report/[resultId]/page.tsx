@@ -1,5 +1,6 @@
 import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedProducts, listReports } from "@grani/db";
 import { typeName, unlockedKinds } from "@grani/core";
+import { typeCodeToDir } from "@grani/content";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -7,9 +8,12 @@ import { ShareCard } from "@/app/result/[id]/ShareCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
 import { Paragraphs } from "@/components/Paragraphs";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
 import { buildReportPageView, REPORT_DISCLAIMER } from "@/lib/report-view";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
+import styles from "@/components/paid-report.module.css";
 
 export const metadata: Metadata = { title: "Полный разбор" };
 
@@ -39,7 +43,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
   const name = typeName(result.typeCode, user.gender);
 
   return (
-    <main className="inner-page inner-page--report">
+    <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
       {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
       <div className="page page--report stack">
         <header className="report-hero">
@@ -48,7 +52,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
             <h1 className="display">{name}</h1>
             <p className="lead">Портрет, сильные стороны, слепые зоны и инструкция по применению — по твоим ответам.</p>
           </div>
-          <img className="report-hero__crystal" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+          <div className="report-hero__gem"><GemPortrait dir={gemAssetDir(typeCodeToDir(result.typeCode))} size={340} priority /></div>
         </header>
 
         {view.full ? (
@@ -57,7 +61,6 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
               <div className="report-portrait__head">
                 <p className="report-section__number">01</p>
                 <h2 id="portrait">Портрет</h2>
-                <img className="report-portrait__art" src="/home/article-friends.webp" alt="" width={630} height={698} loading="lazy" />
               </div>
               <div className="report-portrait__text">
                 <Paragraphs text={view.full.portrait} />
@@ -65,8 +68,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
             </section>
 
             <div className="report-duo">
-              <section className="report-section report-section--art" aria-labelledby="strengths">
-                <img className="report-section__art" src="/home/type-iskra.webp" alt="" width={351} height={723} loading="lazy" />
+              <section className="report-section" aria-labelledby="strengths">
                 <p className="report-section__number">02</p>
                 <h2 id="strengths">Сильные стороны</h2>
                 <ul className="report-list">
@@ -75,8 +77,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
                   ))}
                 </ul>
               </section>
-              <section className="report-section report-section--art" aria-labelledby="blind-spots">
-                <img className="report-section__art" src="/home/article-relationship.webp" alt="" width={630} height={698} loading="lazy" />
+              <section className="report-section" aria-labelledby="blind-spots">
                 <p className="report-section__number">03</p>
                 <h2 id="blind-spots">Слепые зоны</h2>
                 <ul className="report-list">
