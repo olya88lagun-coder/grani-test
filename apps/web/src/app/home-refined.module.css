@@ -62,7 +62,7 @@
 }
 .page :global(.home-crystal__label) { font-size: clamp(16px, 1.4vw, 20px); color: var(--ink); font-weight: 400; background: transparent; text-shadow: 0 0 10px #000, 0 1px 14px rgba(0,0,0,.9); padding: 2px 4px; }
 .page :global(.home-crystal__label)::before { width: 28px; background: var(--gold); }
-.page :global(.home-crystal__label--openness) { top: 4%; left: 4%; }
+.page :global(.home-crystal__label--openness) { top: 14%; left: 8%; }
 .page :global(.home-crystal__label--extra) { top: 25%; right: 0; }
 .page :global(.home-crystal__label--agree) { right: 0; bottom: 20%; }
 .page :global(.home-crystal__label--conscience) { left: 30%; right: auto; bottom: 1%; }
