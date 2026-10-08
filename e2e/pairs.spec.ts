@@ -26,7 +26,8 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
   await expect(accept).toBeDisabled();
   await boris.getByRole("checkbox").check();
   await accept.click();
-  await expect(boris).toHaveURL(/\/pair\/[0-9a-f-]{36}$/);
+  // На первом заходе next dev компилирует создание пары и её страницу.
+  await expect(boris).toHaveURL(/\/pair\/[0-9a-f-]{36}$/, { timeout: 60_000 });
   const pairUrl = boris.url();
   await expect(boris.locator(".pair-score")).toHaveText(/^\d{1,3}%$/);
   // Та же мысль есть в тексте уровня совместимости, поэтому ищем дисклеймер по его продолжению

@@ -28,7 +28,8 @@ test("three friends answer anonymously and the owner sees the comparison", async
     await page.goto(inviteUrl);
     await expect(page.getByText("просит")).toBeVisible();
     await answerFriendForm(page);
-    await expect(page.getByRole("heading", { name: "Спасибо! А какой тип у тебя?" })).toBeVisible();
+    // Первый dev-запуск компилирует POST и конечную страницу; сохраняем проверку результата.
+    await expect(page.getByRole("heading", { name: "Спасибо! А какой тип у тебя?" })).toBeVisible({ timeout: 60_000 });
     friendContexts.push({ context, page });
   }
 

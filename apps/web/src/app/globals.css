@@ -49,7 +49,8 @@
 }
 
 /* Набор переключается целой секцией. Туман пока остаётся светлым. */
-[data-band="night"] {
+[data-band="night"],
+body:has(> main[data-night-entry]) .public-header {
   --bg: #0A1F17;
   --surface: #10291F;
   --surface-2: #123226;
@@ -64,6 +65,7 @@
   --gold: #CDB57B;
   --danger: #FFB4A8;
   --chrome-bg: var(--bg);
+  --header-rule: var(--gold);
   background: var(--bg);
   color: var(--ink);
 }

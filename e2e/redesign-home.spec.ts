@@ -18,12 +18,15 @@ for (const width of [320, 390, 1024, 1440]) {
     await expect(actions.getByRole("link", { name: "Пройти тест" })).toHaveAttribute("href", "/test");
     await expect(actions.getByRole("link", { name: "о тесте Big Five" })).toHaveAttribute("href", "/big-five-test");
     await expect(actions.locator(".button")).toHaveCount(1);
-    await expect(page.locator(".home-type-card__art > svg")).toHaveCount(5);
-    await expect(page.locator(".home-type-card__art img")).toHaveCount(0);
+    await expect(page.locator(".home-type-card__art [data-gem-dir]")).toHaveCount(5);
+    await expect(page.locator(".home-type-card__art img")).toHaveCount(5);
     await expect(page.locator(".home-article-card img")).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-    const gemBox = await hero.locator(".home-crystal > div > svg").first().boundingBox();
-    expect(gemBox!.width).toBeGreaterThan(width < 760 ? 215 : 330);
+    const gemBox = await hero.locator(".home-crystal > div > img").boundingBox();
+    const sceneBox = await hero.locator(".home-crystal").boundingBox();
+    expect(gemBox!.width).toBeGreaterThan(150);
+    expect(gemBox!.width / sceneBox!.width).toBeGreaterThan(.6);
+    expect(gemBox!.width / sceneBox!.width).toBeLessThan(.8);
     for (const card of await page.locator(".home-type-card").all()) {
       const description = await card.locator("p").boundingBox();
       const action = await card.getByRole("link").boundingBox();
@@ -38,27 +41,53 @@ for (const width of [320, 390, 1024, 1440]) {
       const bounds = await card.evaluate((node) => {
         const range = document.createRange();
         range.selectNodeContents(node.querySelector("h3")!);
-        return { card: node.getBoundingClientRect().toJSON(), text: range.getBoundingClientRect().toJSON(), gem: node.querySelector("svg")!.getBoundingClientRect().toJSON() };
+        return { card: node.getBoundingClientRect().toJSON(), text: range.getBoundingClientRect().toJSON(), gem: node.querySelector("[data-gem-dir]")!.getBoundingClientRect().toJSON() };
       });
       expect(bounds.text.left).toBeGreaterThanOrEqual(bounds.card.left);
       expect(bounds.text.right).toBeLessThanOrEqual(bounds.card.right);
       expect(bounds.gem.left).toBeGreaterThanOrEqual(bounds.card.left);
       expect(bounds.gem.right).toBeLessThanOrEqual(bounds.card.right);
-      const outline = card.locator("svg > polygon").last();
-      await expect(outline).toHaveCSS("stroke", await page.locator(".home-result .button").evaluate((node) => getComputedStyle(node).backgroundColor));
-      await expect(card.locator("div > svg")).toHaveCSS("filter", "none");
+      const outline = card.locator("[data-gem-dir] > span > svg > polygon").last();
+      await expect(outline).toHaveCSS("stroke", await card.evaluate((node) => getComputedStyle(node).color));
+      await expect(card.locator("[data-gem-dir] > span > svg")).toHaveCSS("filter", "none");
     }
     const samples = await page.locator(".home-kicker, .home-hero h1, .home-lead, .home-time, .home-crystal__label, .home-section__copy h2, .home-section__copy > p, .home-type-card h3, .home-type-card p, .home-type-card > a").evaluateAll((elements) => {
-      function opaqueBackground(node: Element | null): string {
-        if (!node) throw new Error("No opaque background");
-        const color = getComputedStyle(node).backgroundColor;
-        return color === "rgba(0, 0, 0, 0)" ? opaqueBackground(node.parentElement) : color;
+      // CSS color-mix may compute to oklab(). Let the browser convert to sRGB.
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 1;
+      const context = canvas.getContext("2d")!;
+      function channels(color: string): number[] {
+        context.clearRect(0, 0, 1, 1);
+        context.fillStyle = color;
+        context.fillRect(0, 0, 1, 1);
+        return Array.from(context.getImageData(0, 0, 1, 1).data);
       }
-      function hex(color: string): string {
-        const channels = color.match(/\d+/g)!.slice(0, 3).map(Number);
-        return "#" + channels.map((channel) => channel.toString(16).padStart(2, "0")).join("");
+      function background(node: Element | null): number[] {
+        if (!node) return [255, 255, 255];
+        const color = channels(getComputedStyle(node).backgroundColor);
+        const image = getComputedStyle(node).backgroundImage;
+        if (color[3] === 0 && image.includes("linear-gradient")) {
+          const stops = [...image.matchAll(/(?:rgba?|oklab|oklch|color)\([^)]*\)/g)].map(match => channels(match[0]));
+          const opaque = stops.filter(stop => stop[3] === 255);
+          if (opaque.length) {
+            // Upper bound: brightest base channels, then every translucent highlight at its maximum.
+            const bound = [0, 1, 2].map(i => Math.max(...opaque.map(stop => stop[i]!)));
+            for (const stop of stops.filter(stop => stop[3]! > 0 && stop[3]! < 255)) {
+              const alpha = stop[3]! / 255;
+              for (let i = 0; i < 3; i++) bound[i] = Math.max(bound[i]!, Math.round(stop[i]! * alpha + bound[i]! * (1 - alpha)));
+            }
+            return bound;
+          }
+        }
+        const alpha = color[3]! / 255;
+        if (alpha === 1) return color.slice(0, 3);
+        const parent = background(node.parentElement);
+        return parent.map((channel, i) => Math.round(color[i]! * alpha + channel * (1 - alpha)));
       }
-      return elements.map((element) => ({ text: element.textContent, foreground: hex(getComputedStyle(element).color), background: hex(opaqueBackground(element)), fontSize: parseFloat(getComputedStyle(element).fontSize) }));
+      function hex(color: number[]): string {
+        return "#" + color.slice(0, 3).map((channel) => channel.toString(16).padStart(2, "0")).join("");
+      }
+      return elements.map((element) => ({ text: element.textContent, foreground: hex(channels(getComputedStyle(element).color)), background: hex(background(element)), fontSize: parseFloat(getComputedStyle(element).fontSize) }));
     });
     for (const sample of samples) expect(contrastRatio(sample.foreground, sample.background), `${sample.text}: foreground/background contrast`).toBeGreaterThanOrEqual(sample.fontSize >= 24 ? 3 : 4.5);
     await actions.getByRole("link", { name: "о тесте Big Five" }).focus();

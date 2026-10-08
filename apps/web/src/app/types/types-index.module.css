@@ -1,0 +1,68 @@
+/* Страница «16 типов»: ночная шапка и семьи, которые чередуются со светлыми блоками. Карточки всегда ночные. */
+.main.main { max-width: none; margin: 0; padding: 0; }
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: 28px; }
+
+.hero { padding: 32px 0 56px; background: var(--bg) url("/home/types-night-desktop.webp") 78% 0 / cover no-repeat; }
+.intro { max-width: 780px; padding: 36px 0 40px; }
+
+.familyNav { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; }
+.familyNav a { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 20px 6px 8px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 72%, transparent); color: var(--ink); font-size: 14px; text-decoration: none; }
+.familyNav a:hover { border-color: var(--gold); }
+.familyNav a:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+.family { padding: 72px 0 80px; scroll-margin-top: 0; }
+.family[data-band="night"] { background: radial-gradient(60% 55% at 85% 12%, rgba(63, 174, 124, .18), transparent 70%), var(--bg); }
+.family h2 { margin: 0 0 32px; scroll-margin-top: 112px; }
+
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; list-style: none; margin: 0; padding: 0; }
+.card { display: flex; flex-direction: column; height: 100%; padding: 22px 20px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: radial-gradient(75% 42% at 50% 22%, rgba(63, 174, 124, .24), transparent 72%), var(--bg); color: var(--ink); text-decoration: none; }
+.family[data-band="night"] .card { background: radial-gradient(75% 42% at 50% 22%, rgba(63, 174, 124, .24), transparent 72%), var(--surface); }
+.card:hover { border-color: var(--gold); }
+.card:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.family:not([data-band="night"]) .card:focus-visible { outline-color: #0F3E17; }
+.card > span:first-child { align-self: center; margin-bottom: 6px; filter: drop-shadow(0 0 20px rgba(47, 163, 110, .3)); }
+.card h3 { margin: 0; font-size: 30px; line-height: 1.15; letter-spacing: -.01em; color: var(--ink); }
+.feminine { display: block; min-height: 1.3em; margin-top: 2px; font-family: var(--font-display); font-style: italic; font-size: 17px; line-height: 1.3; color: var(--ink-soft); }
+.card p { flex: 1; margin: 12px 0 0; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.more { display: flex; align-items: center; justify-content: space-between; min-height: 44px; margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink); }
+
+.closing { padding: 72px 0 96px; }
+
+@media (max-width: 1099px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 759px) {
+  .wrap { padding-inline: 21px; }
+  .hero { padding: 24px 0 40px; background-image: url("/home/types-night-mobile.webp"); background-position: 50% 0; }
+  .intro { padding: 20px 0 28px; }
+  .family { padding: 52px 0 56px; }
+  .closing { padding: 48px 0 64px; }
+}
+@media (max-width: 559px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The page scope wins over personality.module.css in production CSS chunks. */
+.main .card { min-width: 0; }
+.main .card h3 { color: var(--ink); }
+.main .card p { line-height: 1.6; }
+.main .card:focus-visible, .main .familyNav a:focus-visible { outline-color: var(--accent); }
+.main .familyNav a { max-width: 100%; }
+.main .familyNav a > span { flex-shrink: 0; }
+.main .closing { background: var(--chrome-bg); }
+.main .hero { background-image: linear-gradient(90deg, var(--bg) 0%, var(--bg) 62%, transparent 88%), url("/home/types-night-desktop.webp"); }
+.main .intro { max-width: 62%; }
+@media (max-width: 759px) {
+  .main .hero { background-image: linear-gradient(180deg, var(--bg) 0%, var(--bg) 82%, transparent 100%), url("/home/types-night-mobile.webp"); }
+  .main .intro { max-width: 100%; }
+  .main .intro h1 { font-size: clamp(42px, 10vw, 64px); }
+  .main .intro p { font-size: 16px; }
+  .main .familyNav { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .main .familyNav a { padding: 6px 14px 6px 8px; font-size: 13px; line-height: 1.5; }
+  .main .family h2 { font-size: clamp(32px, 8vw, 40px); }
+  .main .card { padding: 21px; }
+  .main .card > span:first-child { width: min(100%, 160px); }
+  .main .feminine { color: var(--ink-soft); }
+  .main .closing :global(.test-cta) { padding: 28px 21px; }
+  .main .closing :global(.button) { width: 100%; text-align: center; }
+}
