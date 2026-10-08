@@ -7,6 +7,9 @@ import { notFound } from "next/navigation";
 import { RichText } from "@/components/RichText";
 import { GoalLink } from "@/components/GoalLink";
 import { GoalOnView } from "@/components/GoalOnView";
+import { GemPortrait } from "@/components/GemPortrait";
+import { gemAssetDir } from "@/lib/gem-assets";
+import styles from "./result-night.module.css";
 import { ScaleMeter } from "@/components/ScaleMeter";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { buildResultView } from "@/lib/result-view";
@@ -47,10 +50,10 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   const reportOpen = unlockedKinds(await listOwnedProducts(getDb(), { resultId: result.id })).has("full");
 
   return (
-    <main className="inner-page inner-page--result">
+    <main className={`inner-page inner-page--result ${styles.page}`} data-night-entry>
       <GoalOnView goal="result_view" />
       <div className="page page--result stack">
-        <section className="result-hero" aria-labelledby="result-name">
+        <section data-band="night" className="result-hero" aria-labelledby="result-name">
           <div className="result-hero__copy">
             <p className="eyebrow">Твой результат</p>
             <h1 id="result-name" className={`display ${nameSizeClass(view.name)}`}>
@@ -83,7 +86,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
           <aside className="result-card" aria-labelledby="scales">
             <div className="result-card__head">
-              <img className="result-card__crystal" src="/home/hero-crystal.webp" alt="" width={908} height={1062} />
+              <GemPortrait dir={gemAssetDir(view.dir)} size={180} priority />
               <p className="eyebrow">Твой тип</p>
               <p className="result-card__name">{view.name}</p>
             </div>

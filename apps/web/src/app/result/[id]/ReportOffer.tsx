@@ -14,7 +14,7 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
     // Куплено и готово — разные состояния: оплаченный разбор может ещё готовиться
     const ready = (await listReports(getDb(), { resultId: result.id })).some((report) => report.kind === "full");
     return (
-      <section className="card stack result-block result-block--report" aria-labelledby="report">
+      <section data-band="night" className="card stack result-block result-block--report" aria-labelledby="report">
         <p className="eyebrow">Полный разбор</p>
         <h2 id="report">{ready ? "Разбор открыт" : "Разбор готовится"}</h2>
         {!ready && <p className="lead">Оплата получена. Обычно это занимает около минуты, страница разбора откроется, когда он будет готов.</p>}
@@ -29,9 +29,9 @@ export async function ReportOffer({ result }: { result: ResultRecord }) {
   const price = formatRub(PRODUCT_PRICES.full);
   const preview = buildReportPreview(getLibrary(), result);
   return (
-    <section className="card stack result-block result-block--report result-block--offer result-offer" aria-labelledby="report">
+    <section data-band="night" className="card stack result-block result-block--report result-block--offer result-offer" aria-labelledby="report">
       <div className="result-offer__hero">
-        <p className="eyebrow">Полный разбор · {price}</p>
+        <p className="eyebrow">Полный разбор · <span className="result-offer__price">{price}</span></p>
         <h2 id="report">Разверни свой результат в личный портрет</h2>
         <p className="lead">
           Тип и шкалы показывают основу. Полный разбор превращает их в понятную инструкцию: сильные стороны, слепые зоны и что с ними делать, как
