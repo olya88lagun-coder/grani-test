@@ -14,6 +14,7 @@ import { articleCard } from "@/lib/article-visuals";
 import { articleDate, faqJsonLd, firstSentences, publicMetadata, TRAIT_PAGES, traitPageBySlug, traitPath, typePath, webPageJsonLd } from "@/lib/seo";
 import { oppositePole, traitPageTitle, typeDisplayName, typesWithPole } from "@/lib/seo-pages";
 import styles from "../../personality.module.css";
+import trait from "../traits.module.css";
 
 export const dynamicParams = false;
 
@@ -62,75 +63,81 @@ export default async function TraitPage({ params }: Props) {
   const sources = TRAIT_SOURCES[page.trait] ?? [];
 
   return (
-    <main className={`${styles.page} ${styles.detail}`}>
+    <main className={trait.main} data-night-entry>
       <article>
-        <Breadcrumbs items={[{ name: "Черты личности", path: "/traits" }, { name: page.title, path }]} />
-        <header className={styles.traitHero}>
-          <p className="eyebrow">Черта личности · Большая пятёрка</p>
-          <h1>{page.title}</h1>
-          <nav aria-label="Полюса этой черты">
-            <ul className={styles.endpoints}>
-              {PAGE_POLES.map((pole) => (
-                <li key={pole}>
-                  <Link href={traitPath(page.trait, pole)} aria-current={pole === page.pole ? "page" : undefined}>
-                    {traitPageTitle(page.trait, pole)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </header>
-        <div className={`${styles.prose} ${styles.traitIntro}`}>
-          <Paragraphs text={page.intro} />
+        <section className={trait.hero} data-band="night">
+          <div className={trait.wrap}>
+            <Breadcrumbs items={[{ name: "Черты личности", path: "/traits" }, { name: page.title, path }]} />
+            <header className={trait.intro}>
+              <p className={trait.eyebrow}>Черта личности · Большая пятёрка</p>
+              <h1>{page.title}</h1>
+              <div className={trait.lead}><Paragraphs text={page.intro} /></div>
+              <nav aria-label="Полюса этой черты">
+                <ul className={trait.poles}>
+                  {PAGE_POLES.map((pole) => (
+                    <li key={pole}>
+                      <Link href={traitPath(page.trait, pole)} aria-current={pole === page.pole ? "page" : undefined}>
+                        {traitPageTitle(page.trait, pole)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </header>
+          </div>
+        </section>
+        <div className={trait.body}>
+          <div className={`${styles.page} ${styles.detail}`}>
+            {page.guide && <PersonalityReading text={page.guide.body} />}
+            {types.length > 0 ? (
+              <section className={styles.section} aria-labelledby="types">
+                <h2 id="types">Типы, у которых {page.title.toLowerCase()}</h2>
+                <ul className={styles.links}>
+                  {types.map((code) => (
+                    <li key={code}>
+                      <Link href={typePath(code)}>{typeDisplayName(code)}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : (
+              <p className={styles.note}>
+                Эмоциональная устойчивость не входит в код типа, а уточняет его: у каждого из <Link href="/types">16 типов</Link> есть спокойный и
+                чувствительный вариант.
+              </p>
+            )}
+            <p className={styles.note}>
+              <Link href={traitPath(page.trait, opposite)}>{traitPageTitle(page.trait, opposite)}</Link> — противоположный полюс этой черты.
+            </p>
+            {page.guide && (
+              <section className={styles.faq} aria-labelledby="faq">
+                <h2 id="faq">Частые вопросы</h2>
+                {page.guide.faq.map((item) => (
+                  <details key={item.question}>
+                    <summary><h3>{item.question}</h3></summary>
+                    <p>{item.answer}</p>
+                  </details>
+                ))}
+              </section>
+            )}
+            {articles.length > 0 && (
+              <section className={`${styles.section} ${styles.related}`} aria-labelledby="related">
+                <h2 id="related">Почитать по теме</h2>
+                <ul>
+                  {articles.map((article) => (
+                    <li key={article.slug}>
+                      <ArticleTile article={article} date={articleDate(article.date)} level={3} />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+            <div className={styles.sources}><SourceList sources={sources} /></div>
+          </div>
         </div>
-        {page.guide && (
-          <PersonalityReading text={page.guide.body} />
-        )}
-        <div className={styles.cta}><TestCta title="Узнать свой показатель" /></div>
-        {types.length > 0 ? (
-          <section className={styles.section} aria-labelledby="types">
-            <h2 id="types">Типы, у которых {page.title.toLowerCase()}</h2>
-            <ul className={styles.links}>
-              {types.map((code) => (
-                <li key={code}>
-                  <Link href={typePath(code)}>{typeDisplayName(code)}</Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : (
-          <p className={styles.note}>
-            Эмоциональная устойчивость не входит в код типа, а уточняет его: у каждого из <Link href="/types">16 типов</Link> есть спокойный и
-            чувствительный вариант.
-          </p>
-        )}
-        <p className={styles.note}>
-          <Link href={traitPath(page.trait, opposite)}>{traitPageTitle(page.trait, opposite)}</Link> — противоположный полюс этой черты.
-        </p>
-        {page.guide && (
-          <section className={styles.faq} aria-labelledby="faq">
-            <h2 id="faq">Частые вопросы</h2>
-            {page.guide.faq.map((item) => (
-              <details key={item.question}>
-                <summary><h3>{item.question}</h3></summary>
-                <p>{item.answer}</p>
-              </details>
-            ))}
-          </section>
-        )}
-        {articles.length > 0 && (
-          <section className={`${styles.section} ${styles.related}`} aria-labelledby="related">
-            <h2 id="related">Почитать по теме</h2>
-            <ul>
-              {articles.map((article) => (
-                <li key={article.slug}>
-                  <ArticleTile article={article} date={articleDate(article.date)} level={3} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-        <div className={styles.sources}><SourceList sources={sources} /></div>
+        <section className={trait.closing} data-band="night" aria-label="Продолжение">
+          <div className={trait.wrap}><TestCta title="Узнать свой показатель" /></div>
+        </section>
         <JsonLd data={webPageJsonLd({ title: page.title, description: page.description, path })} />
         {page.guide && <JsonLd data={faqJsonLd(page.guide.faq)} />}
       </article>
