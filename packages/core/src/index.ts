@@ -9,3 +9,4 @@ export * from "./reports";
 export * from "./together-access";
 export * from "./together-cards";
 export * from "./together-care";
+export * from "./pair-map";

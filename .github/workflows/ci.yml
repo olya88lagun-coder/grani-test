@@ -5,6 +5,22 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: pair_map_qa
+          POSTGRES_PASSWORD: pair_map_qa
+          POSTGRES_DB: pair_map_qa
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      PAIR_MAP_PG_QA_DATABASE_URL: postgres://pair_map_qa:pair_map_qa@localhost:5432/pair_map_qa
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

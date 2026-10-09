@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable, text, timestamp, unique, uniqueIndex, uuid, type AnyPgColumn } from "drizzle-orm/pg-core";
-import { REPORT_KINDS, type AnswerFields, type CardSnapshot } from "@grani/core";
+import { REPORT_KINDS, type AnswerFields, type CardSnapshot, type SurveyAnswers } from "@grani/core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["telegram", "vk"]);
 export const genderEnum = pgEnum("gender", ["female", "male"]);
@@ -397,3 +397,51 @@ export const pendingHandoffs = pgTable(
   },
   (t) => [index("pending_handoffs_expires_idx").on(t.expiresAt)],
 );
+
+export const pairMapConsents = pgTable("pair_map_consents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  pairId: uuid("pair_id").notNull().references(() => pairs.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  version: text("version").notNull(),
+  acceptedAt: timestamp("accepted_at", { withTimezone: true }).notNull(),
+}, t => [unique("pair_map_consents_author").on(t.pairId, t.userId)]);
+
+export const pairMapSurveys = pgTable("pair_map_surveys", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  pairId: uuid("pair_id").notNull().references(() => pairs.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  draft: jsonb("draft").$type<SurveyAnswers>().notNull(),
+  revision: integer("revision").notNull().default(1),
+  published: jsonb("published").$type<SurveyAnswers>(),
+  publishedRevision: integer("published_revision").notNull().default(0),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+  publishedAt: timestamp("published_at", { withTimezone: true }),
+}, t => [unique("pair_map_surveys_author").on(t.pairId, t.userId), check("pair_map_surveys_revisions", sql`${t.revision} > 0 AND ${t.publishedRevision} >= 0`)]);
+
+export const pairMapAgreements = pgTable("pair_map_agreements", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  pairId: uuid("pair_id").notNull().references(() => pairs.id, { onDelete: "cascade" }),
+  slot: integer("slot").notNull(),
+  text: text("text").notNull(),
+  revision: integer("revision").notNull().default(1),
+  proposerUserId: uuid("proposer_user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+}, t => [unique("pair_map_agreements_slot").on(t.pairId, t.slot), check("pair_map_agreements_valid", sql`${t.slot} BETWEEN 0 AND 2 AND ${t.revision} > 0 AND char_length(${t.text}) BETWEEN 1 AND 600`)]);
+
+export const pairMapAgreementDrafts = pgTable("pair_map_agreement_drafts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  pairId: uuid("pair_id").notNull().references(() => pairs.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  slot: integer("slot").notNull(),
+  text: text("text").notNull(),
+  revision: integer("revision").notNull().default(1),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull(),
+}, t => [unique("pair_map_agreement_drafts_author_slot").on(t.pairId, t.userId, t.slot), check("pair_map_agreement_drafts_valid", sql`${t.slot} BETWEEN 0 AND 2 AND ${t.revision} > 0 AND char_length(${t.text}) <= 600`)]);
+
+export const pairMapAgreementConfirmations = pgTable("pair_map_agreement_confirmations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  agreementId: uuid("agreement_id").notNull().references(() => pairMapAgreements.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  revision: integer("revision").notNull(),
+  confirmedAt: timestamp("confirmed_at", { withTimezone: true }).notNull(),
+}, t => [unique("pair_map_agreement_confirmations_author").on(t.agreementId, t.userId), check("pair_map_agreement_confirmations_revision", sql`${t.revision} > 0`)]);
