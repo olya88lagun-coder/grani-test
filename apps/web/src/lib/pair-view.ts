@@ -65,6 +65,7 @@ export type PairReportView =
   | { state: "ready"; sections: readonly { key: keyof PairSections; title: string; text: string }[] };
 
 export function buildPairReportView(p: { owned: readonly Product[]; report: ReportRecord | null }): PairReportView {
+  if (!unlockedKinds(p.owned).has("pair")) return { state: "available", price: formatRub(PRODUCT_PRICES.pair) };
   const sections = p.report ? parseSections("pair", p.report.sections) : null;
   if (sections) {
     const keys = Object.keys(PAIR_SECTION_TITLES) as (keyof PairSections)[];

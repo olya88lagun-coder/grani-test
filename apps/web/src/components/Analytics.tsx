@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
+  ANALYTICS_READY_EVENT,
   COOKIE_SETTINGS_EVENT,
   isOwnerDevice,
   LOGIN_MARK,
@@ -73,6 +74,7 @@ export function Analytics() {
     if (choice !== "all" || !isProductionHost() || isOwnerDevice(window.localStorage)) return;
     loadMetrika();
     loaded.current = true;
+    window.dispatchEvent(new Event(ANALYTICS_READY_EVENT));
   }, [choice]);
 
   useEffect(() => {

@@ -39,7 +39,7 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
   await anna.page.goto(resultUrl);
   await anna.page.getByRole("link", { name: /^Пара: вы и Борис/ }).click();
   await expect(anna.page).toHaveURL(pairUrl);
-  await expect(anna.page.getByText(/^Вы · Аня/)).toBeVisible();
+  await expect(anna.page.locator(".pair-person").getByText(/^Вы · Аня/)).toBeVisible();
 
   // Выход любого из двоих скрывает пару у обоих
   await boris.getByText("Выйти из пары", { exact: true }).first().click();
