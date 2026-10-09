@@ -39,6 +39,7 @@ export function progressGoalsCrossed(before: number, after: number, total: numbe
 
 export const CONSENT_KEY = "grani-cookie-consent";
 export const COOKIE_SETTINGS_EVENT = "grani:cookie-settings";
+export const ANALYTICS_READY_EVENT = "grani:analytics-ready";
 export type CookieChoice = "all" | "necessary";
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 

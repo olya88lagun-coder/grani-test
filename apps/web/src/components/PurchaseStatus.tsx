@@ -3,24 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
-import { PRODUCT_PRICES } from "@grani/core";
-import { goalForProduct, reachGoal } from "@/lib/analytics";
+import { markPurchase } from "@/lib/purchase-analytics";
 import { OPERATOR } from "@/lib/legal";
 import { pollDelayMs, purchaseStage, STAGE_TEXT } from "@/lib/purchase-view";
 import type { PurchaseView } from "@/server/payments-service";
-
-// Страницу ожидания можно открыть повторно — цель покупки отправляется один раз на покупку
-function markPurchase(view: PurchaseView): void {
-  if (view.free) return;
-  const key = `grani-goal-${view.id}`;
-  try {
-    if (window.sessionStorage.getItem(key)) return;
-    window.sessionStorage.setItem(key, "1");
-  } catch {
-    // без sessionStorage цель может уйти дважды — это не страшнее, чем потерять её
-  }
-  reachGoal(goalForProduct(view.product), { order_price: PRODUCT_PRICES[view.product] / 100, currency: "RUB" });
-}
 
 export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
   const router = useRouter();
@@ -33,8 +19,8 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
   const finished = stage === "ready" || stage === "not_paid" || stage === "refunded";
 
   useEffect(() => {
+    if (stage === "ready" || (view.product === "pair" && view.status === "succeeded")) markPurchase(view);
     if (stage === "ready") {
-      markPurchase(view);
       router.replace(view.reportUrl);
       return;
     }
