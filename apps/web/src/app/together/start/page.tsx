@@ -12,6 +12,7 @@ import { ClosedNotice } from "../ClosedNotice";
 import { PilotClosed } from "../PilotClosed";
 import { TogetherSpace } from "../TogetherSpace";
 import "../together-cards.css";
+import flowStyles from "../together-flow.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -32,10 +33,12 @@ export default async function TogetherStartPage({ searchParams }: { searchParams
   if (space !== null) redirect("/together");
   const closed = await getTogetherClosedNotice(deps, { userId: user.id });
   return (
-    <main className="page stack" data-palette="pair">
-      <p className="eyebrow">Грани · Вдвоём</p>
-      {closed && <ClosedNotice reason={closed.reason} />}
-      <TogetherSpace initial={null} referral={referral} firstName={firstName(user.displayName)} purchaseId={null} />
+    <main className={flowStyles.flow} data-palette="pair" data-band="night" data-night-entry>
+      <div className="page stack">
+        <p className="eyebrow">Грани · Вдвоём</p>
+        {closed && <ClosedNotice reason={closed.reason} />}
+        <TogetherSpace initial={null} referral={referral} firstName={firstName(user.displayName)} purchaseId={null} />
+      </div>
     </main>
   );
 }

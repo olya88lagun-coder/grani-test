@@ -8,6 +8,7 @@ import { currentUser } from "@/server/viewer";
 import { InviteJoin } from "../../InviteJoin";
 import { InvitePreview } from "../../InvitePreview";
 import "../../together-cards.css";
+import flowStyles from "../../together-flow.module.css";
 
 export const dynamic = "force-dynamic";
 
@@ -22,29 +23,31 @@ export default async function TogetherInvitePage({ params }: { params: Promise<{
   const valid = preview.valid;
 
   return (
-    <main className="page stack" data-palette="pair">
-      <p className="eyebrow">Грани · Вдвоём</p>
-      {!valid && (
-        <section className="card stack">
-          <h1 className="display">Эта ссылка сейчас недоступна</h1>
-          <p className="lead">Она могла истечь, быть заменена или уже использована. Попросите партнёра отправить новое приглашение.</p>
-          <Link className="button button--block" href="/together">Вернуться во Вдвоём</Link>
-        </section>
-      )}
-      {preview.valid && (
-        <InvitePreview inviterName={preview.inviterName} note={preview.note} prompt={preview.firstQuestion.prompt} />
-      )}
-      {valid && !user && (
-        <section className="card stack">
-          <h1 className="display">Время для вас двоих</h1>
-          <p className="lead">Вас пригласили создать общее пространство. Войдите в свой аккаунт: после входа вернём вас к приглашению.</p>
-          <a className="button button--block" href={`/api/together/enter?next=invite&token=${encodeURIComponent(token)}`}>
-            Войти и продолжить
-          </a>
-          <p className="muted">До подтверждения вы не получаете доступа к общим материалам. Личные данные пары по ссылке не раскрываются.</p>
-        </section>
-      )}
-      {valid && user && <InviteJoin token={token} />}
+    <main className={flowStyles.flow} data-palette="pair" data-band="night" data-night-entry>
+      <div className="page stack">
+        <p className="eyebrow">Грани · Вдвоём</p>
+        {!valid && (
+          <section className="card stack together-flow-card">
+            <h1 className="display">Эта ссылка сейчас недоступна</h1>
+            <p className="lead">Она могла истечь, быть заменена или уже использована. Попросите партнёра отправить новое приглашение.</p>
+            <Link className="button button--block" href="/together">Вернуться во Вдвоём</Link>
+          </section>
+        )}
+        {preview.valid && (
+          <InvitePreview inviterName={preview.inviterName} note={preview.note} prompt={preview.firstQuestion.prompt} />
+        )}
+        {valid && !user && (
+          <section className="card stack together-flow-card">
+            <h1 className="display">Время для вас двоих</h1>
+            <p className="lead">Вас пригласили создать общее пространство. Войдите в свой аккаунт: после входа вернём вас к приглашению.</p>
+            <a className="button button--block" href={`/api/together/enter?next=invite&token=${encodeURIComponent(token)}`}>
+              Войти и продолжить
+            </a>
+            <p className="muted">До подтверждения вы не получаете доступа к общим материалам. Личные данные пары по ссылке не раскрываются.</p>
+          </section>
+        )}
+        {valid && user && <InviteJoin token={token} />}
+      </div>
     </main>
   );
 }

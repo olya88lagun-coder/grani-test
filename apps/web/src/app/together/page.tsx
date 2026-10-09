@@ -12,6 +12,7 @@ import { currentUser } from "@/server/viewer";
 import { ClosedNotice } from "./ClosedNotice";
 import { PilotClosed } from "./PilotClosed";
 import styles from "./together-space.module.css";
+import flowStyles from "./together-flow.module.css";
 import { TogetherLanding } from "./TogetherLanding";
 import { TogetherSpace } from "./TogetherSpace";
 import "./together-cards.css";
@@ -54,7 +55,7 @@ export default async function TogetherPage({ searchParams }: { searchParams: Pro
     return <TogetherLanding enterQuery={enterQuery} ctaHref={`/together/start${referral ? `?from=${referral}` : ""}`} notice={closed ? <ClosedNotice reason={closed.reason} /> : undefined} />;
   }
   return (
-    <main className={styles.space} data-palette="pair" data-band="night" data-night-entry>
+    <main className={`${styles.space} ${space?.status === "pending" ? flowStyles.flow : ""}`} data-palette="pair" data-band="night" data-night-entry>
       <div className="page stack">
         <p className="eyebrow">Грани · Вдвоём</p>
         <TogetherSpace initial={space} referral={referral} firstName={firstName(user.displayName)} purchaseId={purchase && PURCHASE_ID.test(purchase) ? purchase : null} />

@@ -1,0 +1,46 @@
+/* Только создание пространства, приглашение и подтверждение партнёра. */
+.flow.flow {
+  --chrome-bg: var(--bg);
+  min-height: 100vh;
+  padding: 24px 0 72px;
+  background: linear-gradient(180deg, rgba(10,31,23,.92), var(--bg) 740px), url('/together/hero-night-desktop.webp') center top / auto 740px no-repeat, var(--bg);
+  color: var(--ink);
+}
+.flow.flow :global(.page) { max-width: 800px; padding: 24px; }
+.flow.flow :global(.page > .eyebrow) { text-align: center; color: var(--gold); letter-spacing: .12em; }
+.flow.flow :global(.together-flow-card),
+.flow.flow :global([aria-labelledby="invite-question-title"]) {
+  padding: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(16,41,31,.92), var(--surface) 70%), url('/together/hero-night-desktop.webp') right top / cover, var(--surface);
+  box-shadow: none;
+  color: var(--ink);
+}
+.flow.flow :global(.display) { font-size: clamp(42px, 6vw, 72px); line-height: 1.08; text-wrap: balance; overflow-wrap: anywhere; color: var(--ink); }
+.flow.flow :global(h2) { color: var(--ink); font-size: clamp(30px, 3.5vw, 40px); line-height: 1.15; }
+.flow.flow :global(.lead) { color: var(--ink-soft); font-size: 17px; line-height: 1.8; }
+.flow.flow :global(.muted) { color: var(--ink-soft); line-height: 1.75; }
+.flow.flow :global(.eyebrow) { color: var(--gold); }
+.flow.flow :global(.choice) { padding: 20px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); line-height: 1.65; }
+.flow.flow :global(.choice:has(input:checked)) { border-color: var(--gold); background: var(--surface-2); }
+.flow.flow :global(input[type="checkbox"]) { accent-color: var(--gold); }
+.flow.flow :global(.button) { min-height: 52px; padding: 14px 20px; border-radius: var(--radius); border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); box-shadow: none; white-space: normal; line-height: 1.5; }
+.flow.flow :global(.button--ghost) { background: transparent; color: var(--ink); border-color: var(--gold); }
+.flow.flow :global(.button:disabled) { background: var(--surface-3); color: var(--ink-soft); border-color: var(--line); opacity: 1; }
+.flow.flow :global(.button:not(:disabled):hover) { background: var(--accent-hover); color: var(--accent-ink); }
+.flow.flow :global(.button--ghost:not(:disabled):hover) { background: var(--surface-3); color: var(--ink); }
+.flow.flow :global(.buy-form__input), .flow.flow :global(textarea) { background: var(--bg); color: var(--ink); border: 1px solid var(--line); box-shadow: none; padding: 16px; border-radius: var(--radius); font-size: 16px; line-height: 1.6; }
+.flow.flow :global(textarea::placeholder) { color: var(--ink-soft); opacity: 1; }
+.flow.flow :global(a:not(.button)) { color: var(--ink); text-decoration-color: var(--gold); }
+.flow.flow :global([aria-labelledby="invite-note-title"]) { padding-top: 28px; border-top: 1px solid var(--line); }
+.flow.flow :global([aria-labelledby="invite-note-title"] > div:has(> textarea)) { padding: 20px; border: 1px solid var(--line); background: var(--bg); }
+.flow.flow :global([aria-labelledby="invite-question-title"] h2 + p) { font-family: var(--font-display); font-size: clamp(26px, 3vw, 34px); line-height: 1.4; color: var(--ink); }
+.flow.flow :global(svg) { color: var(--gold); }
+.flow.flow :global(:focus-visible) { outline: 2px solid var(--gold); outline-offset: 4px; }
+@media (max-width: 759px) {
+  .flow.flow { padding-top: 12px; background-image: linear-gradient(180deg, rgba(10,31,23,.94), var(--bg) 740px), url('/together/hero-night-mobile.webp'); }
+  .flow.flow :global(.page) { padding: 16px; }
+  .flow.flow :global(.together-flow-card), .flow.flow :global([aria-labelledby="invite-question-title"]) { padding: 28px 20px; }
+  .flow.flow :global(.choice) { padding: 16px; }
+}
