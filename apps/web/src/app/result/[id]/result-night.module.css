@@ -14,14 +14,15 @@
   padding: 48px;
   border-radius: var(--radius);
   color: var(--ink);
-  background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 55%, rgba(10,31,23,.9) 100%), url('/home/types-night-desktop.webp') center / cover;
+  background: linear-gradient(100deg, rgba(10,31,23,.97) 5%, rgba(10,31,23,.89) 45%, rgba(10,31,23,.82)), url('/home/types-night-desktop.webp') center / cover, var(--bg);
+  border: 1px solid var(--line);
   box-shadow: none;
 }
 .page.page :global(.result-hero__copy) { display: grid; gap: 24px; min-width: 0; }
-.page.page :global(.result-hero h1) { margin: 0; font-size: clamp(64px, 6.8vw, 96px); line-height: 1.05; letter-spacing: -.03em; color: var(--ink); font-weight: 300; }
+.page.page :global(.result-hero h1) { margin: 0; font-size: clamp(76px, 8vw, 120px); line-height: 1.05; letter-spacing: -.03em; color: var(--ink); font-weight: 300; }
 .page.page :global(.result-hero h1.result-hero__name--m) { font-size: clamp(44px, 4.8vw, 68px); letter-spacing: -.01em; }
 .page.page :global(.result-hero h1.result-hero__name--l) { font-size: clamp(38px, 4.3vw, 60px); letter-spacing: -.01em; }
-.page.page :global(.result-hero .lead) { margin: 0; max-width: 34em; color: var(--ink-soft); font-size: 17px; line-height: 1.75; }
+.page.page :global(.result-hero .lead) { margin: 0; max-width: 30em; color: var(--ink-soft); font-size: 18px; line-height: 1.8; }
 .page.page :global(.result-hero .eyebrow) { margin: 0; color: var(--ink-soft); }
 .page.page :global(.result-hero__actions) { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 4px; }
 .page.page :global(.button) { min-height: 48px; border-radius: var(--radius); box-shadow: none; white-space: normal; text-align: center; line-height: 1.5; padding: 14px 21px; }
@@ -31,9 +32,10 @@
 .page.page :global([data-band="night"] .button--ghost:hover) { background: var(--surface-3); color: var(--ink); }
 .page.page :global(.result-tags) { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
 .page.page :global(.result-tags li) { padding: 8px 14px; border-radius: 999px; background: rgba(22,58,44,.85); border: 1px solid var(--line); color: var(--ink); font-size: 13px; line-height: 1.5; box-shadow: none; backdrop-filter: blur(12px); }
-.page.page :global(.result-card) { min-width: 0; display: grid; gap: 20px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); background: rgba(16,41,31,.95); backdrop-filter: blur(16px); box-shadow: none; }
-.page.page :global(.result-card__head) { display: grid; justify-items: center; gap: 8px; padding-bottom: 20px; border-bottom: 1px solid var(--gold); text-align: center; }
-.page.page :global(.result-card__head [data-gem-dir]) { margin-bottom: 4px; }
+.page.page :global(.result-card) { min-width: 0; display: grid; gap: 20px; padding: 28px; border: 1px solid var(--line); border-radius: var(--radius); color: var(--ink); background: rgba(16,41,31,.97); backdrop-filter: blur(16px); box-shadow: none; }
+.page.page :global(.result-card__head) { position: relative; isolation: isolate; display: grid; justify-items: center; gap: 8px; padding-bottom: 20px; border-bottom: 1px solid var(--gold); text-align: center; }
+.page.page :global(.result-card__head [data-gem-dir]) { position: relative; margin-bottom: 4px; }
+.page.page :global(.result-card__head::before) { content: ''; position: absolute; z-index: -1; top: 32px; left: 50%; width: min(100%, 260px); height: 150px; border: 1px solid rgba(205,181,123,.28); border-radius: 50%; transform: translateX(-50%) rotate(-19deg); background: radial-gradient(ellipse, rgba(47,163,110,.13), transparent 70%); }
 .page.page :global(.result-card__name) { margin: 0; color: var(--ink); font-family: var(--font-display); font-size: clamp(30px, 3vw, 38px); font-weight: 300; line-height: 1.12; }
 .page.page :global(.result-card__title) { margin: 0; color: var(--ink-soft); font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
 .page.page :global(.result-card__scales) { display: grid; gap: 16px; }
@@ -148,7 +150,18 @@
 .page.page :global(.page--result .card) { background: var(--surface); border: 1px solid var(--line); box-shadow: none; }
 .page.page :global(.page--result .card .button:not(.button--ghost)) { background: var(--accent); color: var(--accent-ink); }
 .page.page :global(.page--result .muted) { color: var(--ink-soft); }
-.page.page :global(.share-card) { background: var(--surface); }
+.page.page :global(.share-card) { position: relative; overflow: hidden; padding: 48px; background: linear-gradient(100deg, rgba(16,41,31,.9), var(--surface) 65%), url('/home/types-night-desktop.webp') left center / cover, var(--surface); }
+.page.page :global(.share-card__body h2) { font-size: clamp(36px, 4vw, 56px); line-height: 1.1; }
+.page.page :global(.share-card__frame) { transform: rotate(-2deg); }
+.page.page :global(.result-block:has(#friends)) { padding: 44px; border-left: 1px solid var(--gold); background: linear-gradient(110deg, rgba(16,41,31,.96), rgba(16,41,31,.92)), url('/home/types-night-desktop.webp') right center / cover, var(--surface); }
+.page.page :global(.result-block:has(#friends) h2) { max-width: 20em; font-size: clamp(36px, 4vw, 52px); line-height: 1.1; }
+.page.page :global(.result-block:has(#friends) .lead) { max-width: 44em; line-height: 1.75; }
+.page.page :global(.result-block--pair) { background: linear-gradient(110deg, rgba(16,41,31,.97), rgba(16,41,31,.92)), url('/compatibility/hero-night-desktop.webp') center / cover, var(--surface); }
+.page.page :global(.pair-block__side) { background: rgba(10,31,23,.75); }
+
+/* Светлая пауза между ночными секциями: зелёные числа и линии, без золота и теней. */
+.page.page :global(.result-scales) { --bg: #F3F1E9; --ink: #10291F; --ink-soft: #4F6055; --gold: #244B36; --accent: #244B36; --surface-3: #D8E1D7; --line: rgba(16,41,31,.16); padding: 44px 48px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); color: var(--ink); }
+.page.page :global(.result-scales > h2) { margin: 0; font-size: clamp(38px, 4vw, 56px); line-height: 1.1; }
 
 /* «Что значат твои шкалы»: пять строк со счётом и полосой, первый пункт виден сразу, остальные раскрываются */
 .page.page :global(.result-scales__grid) { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--gold); }
@@ -185,4 +198,27 @@
 @media (max-width: 759px) {
   .page.page :global(.result-block--pair) { padding: 28px 20px; }
   .page.page :global(.pair-block__gems) { zoom: .8; }
+}
+
+@media (max-width: 899px) {
+  .page.page :global(.result-hero) { background: linear-gradient(180deg, rgba(10,31,23,.93), rgba(10,31,23,.86)), url('/home/types-night-mobile.webp') center / cover, var(--bg); }
+  .page.page :global(.share-card__frame) { transform: none; }
+}
+@media (max-width: 759px) {
+  .page.page :global(.result-scales) { padding: 28px 20px; }
+  .page.page :global(.share-card), .page.page :global(.result-block:has(#friends)) { padding: 28px 24px; }
+  .page.page :global(.result-card__head [data-gem-dir]) { max-width: 220px; }
+}
+
+@media (min-width: 900px) {
+  .page.page :global(.result-block--report:not(.result-offer):not(:has(.lead))) { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 32px; padding: 32px 40px; }
+  .page.page :global(.result-block--report:not(.result-offer):not(:has(.lead)) > *) { margin: 0; }
+  .page.page :global(.result-block--report:not(.result-offer):not(:has(.lead)) > div) { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+}
+@media (max-width: 759px) {
+  .page.page :global(.result-scale__main) { grid-column: 1 / -1; grid-row: 1; }
+  .page.page :global(.result-scale__main h3) { font-size: 24px; overflow-wrap: anywhere; }
+  .page.page :global(.result-scale__score) { grid-column: 1; grid-row: 2; }
+  .page.page :global(.result-scale__meter) { grid-column: 2; grid-row: 2; }
+  .page.page :global(.result-scale__toggle) { grid-column: 3; grid-row: 2; }
 }

@@ -86,7 +86,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
           <aside className="result-card" aria-labelledby="scales">
             <div className="result-card__head">
-              <GemPortrait dir={gemAssetDir(view.dir)} size={180} priority />
+              <GemPortrait dir={gemAssetDir(view.dir)} size={260} priority />
               <p className="eyebrow">Твой тип</p>
               <p className="result-card__name">{view.name}</p>
             </div>
