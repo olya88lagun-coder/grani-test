@@ -193,6 +193,7 @@ const GRANT_2013: Source = {
 
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "big-five": [GOLDBERG_1992, MCCRAE_COSTA_1997, ROBERTS_2006, SOTO_2019, IPIP_2006],
+  "otkrytost-opytu": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
   "rezultaty-big-five": [ROBERTS_DELVECCHIO_2000, ROBERTS_2006, SOTO_2019],
   "ekstravert-introvert": [LUCAS_2000, DEYOUNG_2007, CHEEK_BUSS_1981],
   "kak-menya-vidyat": [VAZIRE_2010, CONNELLY_ONES_2010],
