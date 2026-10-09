@@ -4,80 +4,39 @@ import Link from "next/link";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
 import { Paragraphs } from "@/components/Paragraphs";
-import { buildPairReportView, PAIR_SECTION_PITCH, PAIR_SECTION_TITLES } from "@/lib/pair-view";
-import { REPORT_DISCLAIMER } from "@/lib/report-view";
+import { buildPairReportView, type PairView } from "@/lib/pair-view";
+import { PAIR_GUIDE_CONTENTS } from "@/lib/pair-guide";
 import { getDb } from "@/server/db";
+import { PairGuide } from "./PairGuide";
+import { PairProfiles } from "./PairProfiles";
+import styles from "./pair-map.module.css";
 
-const REFRESH_SECONDS = 5;
-
-export async function PairReport({ pairId, viewerResultId }: { pairId: string; viewerResultId: string }) {
+export async function PairReport({ pairId, viewerResultId, pairView }: { pairId: string; viewerResultId: string; pairView: PairView }) {
   const db = getDb();
   const [owned, report, ownProducts] = await Promise.all([
-    listOwnedProducts(db, { pairId }),
-    getReport(db, { pairId }, "pair"),
-    listOwnedProducts(db, { resultId: viewerResultId }),
+    listOwnedProducts(db, { pairId }), getReport(db, { pairId }, "pair"), listOwnedProducts(db, { resultId: viewerResultId }),
   ]);
   const view = buildPairReportView({ owned, report });
   const offerPersonal = !unlockedKinds(ownProducts).has("full");
-
-  return (
-    <>
-      <section className={view.state === "available" ? "card stack report pair-offer" : "card stack report"} aria-labelledby="pair-report">
-        {view.state === "available" ? (
-          <>
-            <p className="eyebrow">Разбор пары · {view.price}</p>
-            <h2 id="pair-report">Разговор, к которому у вас уже есть карта</h2>
-            <p className="lead">
-              Пять разделов помогут увидеть, где вам легко и где вы по-разному смотрите на быт, деньги и споры. Одна оплата открывает разбор обоим.
-            </p>
-            <ol className="pair-offer__sections" aria-label="Что внутри разбора пары">
-              {(Object.keys(PAIR_SECTION_TITLES) as (keyof typeof PAIR_SECTION_TITLES)[]).map((key) => (
-                <li key={key}>
-                  <strong>{PAIR_SECTION_TITLES[key]}</strong> {PAIR_SECTION_PITCH[key]}
-                </li>
-              ))}
-            </ol>
-            <div className="pair-offer__buy">
-              <BuyButton product="pair" targetId={pairId} label={`Открыть разбор пары за ${view.price}`} />
-              <p className="result-offer__note">Откроется обоим участникам пары. Платит один.</p>
-            </div>
-            <p className="result-offer__legal">
-              Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих; условия возврата — в оферте.
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="eyebrow">Разбор пары</p>
-            <h2 id="pair-report">Как вам быть вместе</h2>
-          </>
-        )}
-        {view.state === "preparing" && (
-          <>
-            <AutoRefresh seconds={REFRESH_SECONDS} />
-            <p className="muted" role="status">Готовим разбор пары… Страница обновится сама.</p>
-          </>
-        )}
-        {view.state === "ready" && (
-          <>
-            {view.sections.map((section) => (
-              <div key={section.key} className="stack">
-                <h3>{section.title}</h3>
-                <Paragraphs text={section.text} />
-              </div>
-            ))}
-            <p className="muted">{REPORT_DISCLAIMER}</p>
-          </>
-        )}
+  return <>
+    {view.state === "available" ? <>
+      <PairProfiles view={pairView} />
+      <section className={styles.offer} aria-labelledby="pair-report">
+        <p className={styles.kicker}>Разбор пары · {view.price}</p><h2 id="pair-report">Разговор, к которому у вас уже есть карта</h2>
+        <p>Интерактивная инструкция по двум профилям: от различий в повседневных ситуациях до первых договорённостей. Одна оплата открывает разбор обоим.</p>
+        <ul className={styles.offerList}>{PAIR_GUIDE_CONTENTS.filter(item => item.id !== "profiles").map(item => <li key={item.id}>{item.title}</li>)}</ul>
+        <BuyButton product="pair" targetId={pairId} label={`Открыть разбор пары за ${view.price}`} />
+        <p className={styles.note}>Разовая покупка без подписки. Откроется обоим участникам пары. Платит один. PDF и совместное подтверждение договорённостей пока недоступны.</p>
+        <p className={styles.note}>Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих; условия возврата — в оферте.</p>
       </section>
-
-      {offerPersonal && (
-        <section className="card card--paper stack" aria-labelledby="personal-offer">
-          <p className="eyebrow">Для себя</p>
-          <h2 id="personal-offer">Личный разбор</h2>
-          <p className="lead">Портрет, сильные стороны, слепые зоны и «инструкция по применению меня» — по твоему результату.</p>
-          <BuyButton product="full" targetId={viewerResultId} label={`Личный разбор — ${formatRub(PRODUCT_PRICES.full)}`} ghost />
-        </section>
-      )}
-    </>
-  );
+    </> : <PairGuide view={pairView} storageKey={`grani-pair-drafts-v1:${pairId}:${viewerResultId}`}>
+      <section className={styles.section} aria-labelledby="pair-report">
+        <p className={styles.kicker}>Дополнительные главы</p><h2>Ещё о вашем сочетании</h2>
+        <details className={styles.extras}><summary id="pair-report">Подробный текстовый разбор</summary><div className={styles.extrasBody}>
+          {view.state === "preparing" ? <><AutoRefresh seconds={5} /><p role="status">Готовим дополнительный текстовый разбор. Интерактивная карта уже доступна; страница обновится сама.</p></> : view.sections.map(section => <article key={section.key}><h3>{section.title}</h3><Paragraphs text={section.text} /></article>)}
+        </div></details>
+      </section>
+    </PairGuide>}
+    {offerPersonal && <section className={styles.offer} aria-labelledby="personal-offer"><p className={styles.kicker}>Для себя</p><h2 id="personal-offer">Личный разбор</h2><p>Портрет, сильные стороны, слепые зоны и «инструкция по применению меня» — по твоему результату.</p><BuyButton product="full" targetId={viewerResultId} label={`Личный разбор — ${formatRub(PRODUCT_PRICES.full)}`} ghost /></section>}
+  </>;
 }

@@ -90,6 +90,12 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
           Напишите на <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>, если разбор не появится.
         </p>
       )}
+      {view.product === "pair" && view.status === "succeeded" && !ready && (
+        <div className="stack">
+          <p className="muted">Интерактивная карта уже доступна. Дополнительный текстовый разбор ещё готовится.</p>
+          <Link className="button" href={view.reportUrl}>Открыть интерактивную карту пары</Link>
+        </div>
+      )}
       {ready && (
         <div>
           <Link className="button" href={view.reportUrl}>

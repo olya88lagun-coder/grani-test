@@ -6,7 +6,7 @@ import styles from "./compatibility.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
 import { TestCta } from "@/components/TestCta";
-import { PAIR_SECTION_PITCH, PAIR_SECTION_TITLES } from "@/lib/pair-view";
+import { PAIR_GUIDE_CONTENTS } from "@/lib/pair-guide";
 import { publicMetadata } from "@/lib/seo";
 
 const DESCRIPTION = "Пройдите тест вдвоём и узнайте процент совместимости по Большой пятёрке. Бесплатно — типы обоих и процент, подробный разбор пары — по желанию.";
@@ -71,7 +71,7 @@ export default function CompatibilityPage() {
         <section className={`${styles.report} stack`} data-band="night" aria-labelledby="pair-report-inside">
         <div className={styles.wrap}>
           <p className="eyebrow">Разбор пары</p>
-          <h2 id="pair-report-inside">Процент — это начало. Разбор объясняет, что за ним</h2>
+          <h2 id="pair-report-inside">Карта вашей пары — инструкция друг к другу</h2>
           <p className={styles.hook}>Один планирует на месяц вперёд, другой решает по настроению. Это не поломка, а разные характеры. Разбор называет различия словами и подсказывает, о чём договориться.</p>
           <div className={styles.offer}>
             <div className={styles.panel}>
@@ -84,15 +84,24 @@ export default function CompatibilityPage() {
             </div>
             <div className={`${styles.panel} ${styles.panelPaid}`}>
               <div className={styles.paidHead}><h3>Разбор пары</h3><p className={styles.priceTag}>{price}</p></div>
-              <ol className={styles.sections} aria-label="Пять разделов разбора пары">
-                {(Object.keys(PAIR_SECTION_TITLES) as (keyof typeof PAIR_SECTION_TITLES)[]).map((key, index) => (
-                  <li key={key}><span aria-hidden="true">{index + 1}</span><div><h4>{PAIR_SECTION_TITLES[key]}</h4><p>{PAIR_SECTION_PITCH[key]}</p></div></li>
+              <ol className={styles.sections} aria-label="Разделы интерактивной карты пары">
+                {PAIR_GUIDE_CONTENTS.map((item, index) => (
+                  <li key={item.id}><span aria-hidden="true">{index + 1}</span><div><h4>{item.title}</h4><p>{[
+                    "Близкие черты и различия, с которых можно начать разговор.",
+                    "Пять настоящих шкал обоих партнёров. Профили доступны и бесплатно.",
+                    "Быт, деньги, отдых, близость и поддержка. Переключайте перспективу и проверяйте гипотезы друг с другом.",
+                    "Возможная потребность и пример бережной формулировки для выбранной ситуации.",
+                    "Четыре шага: выбрать время, назвать факт, услышать друг друга и договориться о маленьком действии.",
+                    "Редактируемые заготовки, которые можно сохранить как личные черновики в текущей вкладке.",
+                    "Один небольшой шаг для вашей пары и дополнительный текстовый разбор в пяти разделах.",
+                  ][index]}</p></div></li>
                 ))}
               </ol>
             </div>
           </div>
           <PairActions />
-          <p className={styles.facts}>Одна оплата открывает разбор обоим, платит один. Разовая покупка без подписки. Разбор появляется примерно через минуту, чек самозанятого приходит на почту. Условия возврата — в <Link href="/offer">оферте</Link>.</p>
+          <p className={styles.facts}>Одна оплата открывает разбор обоим, платит один. Разовая покупка без подписки. Интерактивная карта доступна после подтверждения оплаты; дополнительный текст готовится отдельно. Чек самозанятого приходит на почту. Условия возврата — в <Link href="/offer">оферте</Link>.</p>
+          <p className={styles.facts}>PDF, общий опрос и совместное подтверждение договорённостей пока недоступны. Подсказки по Big Five — гипотезы для обсуждения, а не прогноз успеха пары.</p>
         </div>
         </section>
         <div className={styles.content}>
