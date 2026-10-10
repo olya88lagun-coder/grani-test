@@ -27,3 +27,4 @@ export * from "./together-card-actions";
 export * from "./pair-map-context";
 export * from "./pair-map-survey";
 export * from "./pair-map-agreements";
+export * from "./personality-atlas";
