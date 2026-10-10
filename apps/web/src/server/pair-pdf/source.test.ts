@@ -15,7 +15,7 @@ test("paid PDF works without consent or extras and excludes private and unconfir
   const m=await subject();expect(await m.loadPairPdfSource(db,{...actor(),includeAnswers:false})).toEqual({ok:false,error:"access_required"});await paid();
   const source=await m.loadPairPdfSource(db,{...actor(),includeAnswers:false});expect(source).not.toHaveProperty("error");if("error" in source)return;
   expect(source.view.rows).toHaveLength(5);expect(source.view.you.firstName).toBe("Аня");expect(source.guides[0]!.situations).toHaveLength(8);expect(source.extras.state).toBe("preparing");expect(source.confirmedAgreements).toEqual([]);
-  await saveReport(db,{target:{pairId:pair.pairId},kind:"pair",sections:{similar:"Готовая глава о сходстве.",differences:"Готовая глава о различиях.",conflicts:"Готовая глава о разговоре.",home_money:"Готовая глава о быте.",support:"Готовая глава о поддержке."},source:"fallback"});
+  await saveReport(db,{target:{pairId:pair.pairId},kind:"pair",sections:{similar:"Готовая глава о сходстве.".repeat(20),differences:"Готовая глава о различиях.".repeat(20),conflicts:"Готовая глава о разговоре.".repeat(20),home_money:"Готовая глава о быте.".repeat(20),support:"Готовая глава о поддержке.".repeat(20)},source:"fallback"});
   const ready=await m.loadPairPdfSource(db,{...actor(),includeAnswers:false});if("error" in ready)throw Error("No ready local source");expect(ready.extras.state).toBe("ready");expect(JSON.stringify(ready.extras)).toContain("Готовая глава о сходстве.");
   await acceptPairMapConsent(db,{...actor(),version:PAIR_MAP_CONSENT_VERSION});await acceptPairMapConsent(db,{...actor(pair.b.userId),version:PAIR_MAP_CONSENT_VERSION});
   await savePairSurvey(db,{...actor(),answers:answers("SECRET-A"),expectedRevision:0,publish:true});
