@@ -1,9 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { seedReportNightFixtures } from "./report-night-fixtures";
+import { randomUUID } from "node:crypto";
 
 test.skip(!process.env.RESULT_QA_DATABASE_URL || !process.env.RESULT_QA_SESSION_SECRET, "Explicit local QA configuration required");
 let fixtures: Awaited<ReturnType<typeof seedReportNightFixtures>>;
 test.beforeAll(async () => { fixtures = await seedReportNightFixtures(); });
+test.beforeEach(async({context})=>context.setExtraHTTPHeaders({"x-forwarded-for":`2001:db8::${randomUUID().slice(0,4)}`}));
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
 
 test("paid map uses both real perspectives, edits drafts, and survives reload", async ({ page, context }) => {
@@ -24,12 +26,14 @@ test("paid map uses both real perspectives, edits drafts, and survives reload", 
   await expect(page.locator("#translator [data-translation-need]")).toContainText("время в тишине");
   await page.getByRole("button", { name: /04.*Выберите маленький шаг/ }).click();
   await expect(page.locator("#conversation")).toContainText("Шаг 4 из 4");
+  await page.getByLabel("Я согласен(на) на хранение и раскрытие ответов карты пары").check();
+  await page.getByRole("button", { name: "Принять отдельное согласие" }).click();
   await page.getByLabel("01 Как мы спорим").fill("Тестовый черновик: пауза 20 минут.");
-  await page.getByRole("button", { name: "Сохранить черновики", exact: true }).click();
-  await expect(page.getByText("Черновики сохранены в этой вкладке.", { exact: false })).toBeVisible();
+  await page.locator("[data-agreement-slot='0']").getByRole("button", { name: "Сохранить личный черновик", exact: true }).click();
+  await expect(page.getByText("Личный черновик договорённости сохранён.", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByLabel("01 Как мы спорим")).toHaveValue("Тестовый черновик: пауза 20 минут.");
-  await expect(page.getByText("Скачивание пока недоступно.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button",{name:"Скачать карту пары в PDF"})).toBeVisible();
   expect(errors).toEqual([]);
 });
 

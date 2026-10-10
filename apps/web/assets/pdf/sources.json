@@ -1,0 +1,32 @@
+[
+  {
+    "file": "GolosText-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/37f2be10a78866be564594309611ec9db1d84e97/ofl/golostext/GolosText[wght].ttf",
+    "sha256": "17bb58fb69aec2dfb047a2ebf52534023e9b688c97a6b7ac795b0a72912c2063"
+  },
+  {
+    "file": "Golos-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/37f2be10a78866be564594309611ec9db1d84e97/ofl/golostext/OFL.txt",
+    "sha256": "ff532f9e8789f09a9fdffc3c0954eedfb0a48be77b2e2eb90f5f82e4f347f50c"
+  },
+  {
+    "file": "CormorantGaramond-Light.ttf",
+    "url": "https://raw.githubusercontent.com/CatharsisFonts/Cormorant/016784836d2ad47bc4c62b7f504a0a5875d85aeb/fonts/ttf/CormorantGaramond-Light.ttf",
+    "sha256": "222c1ce8a9fd74a7e3eee17c16bead630d9b7aa92df106936cdd128804a633ed"
+  },
+  {
+    "file": "Cormorant-OFL.txt",
+    "url": "https://raw.githubusercontent.com/CatharsisFonts/Cormorant/d1f2da8db82d2803eb8582ae4acf58549cd69cea/OFL.txt",
+    "sha256": "60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956"
+  },
+  {
+    "file": "NotoEmoji-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/b979dba422e445492b0eb9951ac52ee0b4d648c3/ofl/notoemoji/NotoEmoji[wght].ttf",
+    "sha256": "de6c18832938afc99caf132b39d6a30a19bac7f2e812e28db2535b4608d27551"
+  },
+  {
+    "file": "NotoEmoji-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/a73b9ab0a5df191bcfed817159a903911ea7958a/ofl/notoemoji/OFL.txt",
+    "sha256": "500bb1ccf43df7bbb522112f9133a52b16e1c35e809632f5d8609b179152de5b"
+  }
+]

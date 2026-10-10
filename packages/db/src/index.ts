@@ -24,3 +24,6 @@ export * from "./together-consent";
 export * from "./together-card-context";
 export * from "./together-cards";
 export * from "./together-card-actions";
+export * from "./pair-map-context";
+export * from "./pair-map-survey";
+export * from "./pair-map-agreements";

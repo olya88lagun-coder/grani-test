@@ -40,7 +40,7 @@ export default async function PairPage({ params }: { params: Promise<{ id: strin
         </div>
       </header>
       <details className={styles.heroMethod}><summary>Что означает индекс {view.score}%</summary><div className={styles.heroText}><strong>{view.phrase}</strong><p>{view.text}</p></div></details><p className={styles.methodNote}>Это не прогноз отношений: число показывает сочетание профилей, а не вероятность успеха пары.</p>
-      <PairReport pairId={view.pairId} viewerResultId={viewerResultId} pairView={view} />
+      <PairReport pairId={view.pairId} viewerId={user.id} viewerResultId={viewerResultId} pairView={view} />
       <details className={styles.leave}><summary>Выйти из пары</summary><div>
         <p>Страница пары скроется у обоих, и вы больше не будете видеть результаты друг друга. Чтобы снова сравниться, понадобится новое приглашение.</p>
         <form action={`/api/pairs/${view.pairId}/leave`} method="post"><button type="submit" className="button button--ghost">Выйти из пары</button></form>

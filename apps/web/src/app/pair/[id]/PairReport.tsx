@@ -7,17 +7,19 @@ import { Paragraphs } from "@/components/Paragraphs";
 import { buildPairReportView, type PairView } from "@/lib/pair-view";
 import { PAIR_GUIDE_CONTENTS } from "@/lib/pair-guide";
 import { getDb } from "@/server/db";
+import { getPairMap } from "@/server/pair-map-service";
 import { PairGuide } from "./PairGuide";
 import { PairProfiles } from "./PairProfiles";
 import styles from "./pair-map.module.css";
 
-export async function PairReport({ pairId, viewerResultId, pairView }: { pairId: string; viewerResultId: string; pairView: PairView }) {
+export async function PairReport({ pairId, viewerId, viewerResultId, pairView }: { pairId: string; viewerId: string; viewerResultId: string; pairView: PairView }) {
   const db = getDb();
   const [owned, report, ownProducts] = await Promise.all([
     listOwnedProducts(db, { pairId }), getReport(db, { pairId }, "pair"), listOwnedProducts(db, { resultId: viewerResultId }),
   ]);
   const view = buildPairReportView({ owned, report });
   const offerPersonal = !unlockedKinds(ownProducts).has("full");
+  const shared = view.state === "available" ? null : await getPairMap({ db, now: () => new Date() }, { pairId, userId: viewerId });
   return <>
     {view.state === "available" ? <>
       <PairProfiles view={pairView} />
@@ -26,10 +28,10 @@ export async function PairReport({ pairId, viewerResultId, pairView }: { pairId:
         <p>Интерактивная инструкция по двум профилям: от различий в повседневных ситуациях до первых договорённостей. Одна оплата открывает разбор обоим.</p>
         <ul className={styles.offerList}>{PAIR_GUIDE_CONTENTS.filter(item => item.id !== "profiles").map(item => <li key={item.id}>{item.title}</li>)}</ul>
         <BuyButton product="pair" targetId={pairId} label={`Открыть разбор пары за ${view.price}`} />
-        <p className={styles.note}>Разовая покупка без подписки. Откроется обоим участникам пары. Платит один. PDF и совместное подтверждение договорённостей пока недоступны.</p>
+        <p className={styles.note}>Разовая покупка без подписки. Откроется обоим участникам пары. Платит один. Персональный PDF доступен сразу; ответы раскрываются после публикации обоими, договорённости подтверждаются по одной версии.</p>
         <p className={styles.note}>Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих; условия возврата — в оферте.</p>
       </section>
-    </> : <PairGuide view={pairView} storageKey={`grani-pair-drafts-v1:${pairId}:${viewerResultId}`}>
+    </> : <PairGuide view={pairView} sharedSnapshot={shared?.ok ? shared.snapshot : null} storageKey={`grani-pair-drafts-v1:${pairId}:${viewerResultId}`}>
       <section className={styles.section} aria-labelledby="pair-report">
         <p className={styles.kicker}>Дополнительные главы</p><h2>Ещё о вашем сочетании</h2>
         <details className={styles.extras}><summary id="pair-report">Подробный текстовый разбор</summary><div className={styles.extrasBody}>
