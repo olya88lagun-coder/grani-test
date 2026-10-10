@@ -18,5 +18,15 @@
     "file": "Cormorant-OFL.txt",
     "url": "https://raw.githubusercontent.com/CatharsisFonts/Cormorant/d1f2da8db82d2803eb8582ae4acf58549cd69cea/OFL.txt",
     "sha256": "60700d351cac4650c51f3f9db318d2a420f8b45052dba2715eb5fec41f0f6956"
+  },
+  {
+    "file": "NotoEmoji-Variable.ttf",
+    "url": "https://raw.githubusercontent.com/google/fonts/b979dba422e445492b0eb9951ac52ee0b4d648c3/ofl/notoemoji/NotoEmoji[wght].ttf",
+    "sha256": "de6c18832938afc99caf132b39d6a30a19bac7f2e812e28db2535b4608d27551"
+  },
+  {
+    "file": "NotoEmoji-OFL.txt",
+    "url": "https://raw.githubusercontent.com/google/fonts/a73b9ab0a5df191bcfed817159a903911ea7958a/ofl/notoemoji/OFL.txt",
+    "sha256": "500bb1ccf43df7bbb522112f9133a52b16e1c35e809632f5d8609b179152de5b"
   }
 ]

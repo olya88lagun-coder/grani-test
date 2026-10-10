@@ -30,3 +30,10 @@ test("renders Cyrillic as selectable PDF text without external requests", async 
     if (process.env.PAIR_PDF_QA_OUTPUT) await writeFile(process.env.PAIR_PDF_QA_OUTPUT, bytes);
   } finally { outbound.mockRestore(); }
 });
+test("repeated and concurrent exports keep independent selectable glyph mappings",async()=>{
+  const renderer=await import("./render");const {Document,Page,Text}=await import("@react-pdf/renderer");const {extractPdfText}=await import("./testing");
+  const doc=(text:string)=>createElement(Document,{},createElement(Page,{style:{fontFamily:["PairGolos","PairEmoji"],fontSize:12}},createElement(Text,{},text)));
+  const values=["АБВГД · Ёж · 399 ₽","SECRET-PDF · ответ","SECOND-MAP · Борис · 🙂","Другие буквы: жюяцщ"];
+  const files=await Promise.all(values.map(value=>renderer.renderPairPdf(doc(value))));
+  for(let i=0;i<values.length;i++)expect((await extractPdfText(files[i]!)).replace(/\s+/g," ")).toContain(values[i]!);
+});

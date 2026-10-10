@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState, ty
 import type { PairMapCommand, PairMapSnapshot } from "@grani/core";
 import { PAIR_CLIENT_MESSAGES, pairAccessClosed, requestPairMap, type PairClientOutcome } from "@/lib/pair-map-client";
 import styles from "./pair-map.module.css";
-type SharedContext = { snapshot: PairMapSnapshot | null; busy: boolean; status: string; storageKey: string; dispatch: (command: PairMapCommand, message: string) => Promise<PairClientOutcome | null> };
+type SharedContext = { snapshot: PairMapSnapshot | null; busy: boolean; status: string; storageKey: string; refresh: () => Promise<PairClientOutcome | null>; dispatch: (command: PairMapCommand, message: string) => Promise<PairClientOutcome | null> };
 const Shared = createContext<SharedContext | null>(null);
 export function usePairShared() { const value = useContext(Shared); if (!value) throw new Error("Missing pair state"); return value; }
 export function PairSharedState({ pairId, initialSnapshot, storageKey, children }: { pairId: string; initialSnapshot: PairMapSnapshot | null; storageKey: string; children: ReactNode }) {
@@ -41,7 +41,7 @@ export function PairSharedState({ pairId, initialSnapshot, storageKey, children 
     const timer = waiting ? window.setInterval(update, 20_000) : null;
     return () => { window.removeEventListener("focus", update); document.removeEventListener("visibilitychange", update); if (timer !== null) window.clearInterval(timer); };
   }, [run, waiting]);
-  return <Shared.Provider value={{ snapshot, busy, status, storageKey, dispatch: (command, message) => run(command, message) }}>
+  return <Shared.Provider value={{ snapshot, busy, status, storageKey, refresh: () => run(), dispatch: (command, message) => run(command, message) }}>
     <div className={styles.sharedToolbar}><button className="button button--ghost" type="button" disabled={busy} onClick={() => void run(undefined, "Общие данные обновлены.")}>Обновить общие данные</button><p role="status" aria-live="polite">{status || "Черновики личные. Публикация и подтверждение — отдельные действия."}</p></div>{children}
   </Shared.Provider>;
 }

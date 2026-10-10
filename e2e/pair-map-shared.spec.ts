@@ -24,6 +24,7 @@ test("private drafts, mutual answers, versioned agreements and dirty refresh in 
     await expect(pa.getByText("Личный черновик сохранён. Партнёр его не видит.",{exact:true})).toBeVisible();
     let response=await b.request.get(`/api/pairs/${pair.pairId}/map`);
     expect(await response.text()).not.toContain("SECRET-A");
+    expect(await (await b.request.get(`/pair/${pair.pairId}`)).text()).not.toContain("SECRET-A");
     for(const page of [pa,pb]){
       for(const id of ["home","money","social","closeness","support","plans","decisions"])await page.locator(`#skip-${id}`).check();
     }
@@ -55,6 +56,7 @@ test("private drafts, mutual answers, versioned agreements and dirty refresh in 
     await pa.getByRole("button",{name:"Удалить ответы окончательно"}).click();
     response=await b.request.get(`/api/pairs/${pair.pairId}/map`);
     expect(await response.text()).not.toContain("SECRET-A");
+    expect(await (await b.request.get(`/pair/${pair.pairId}`)).text()).not.toContain("SECRET-A");
     await pb.getByRole("button",{name:"Обновить общие данные"}).click();
     await expect(pb.locator("[data-shared-answers]")).toHaveCount(0);
   }finally{await a.close();await b.close();}

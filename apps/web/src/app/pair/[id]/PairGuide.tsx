@@ -9,15 +9,12 @@ import { PairSituations } from "./PairSituations";
 import { PairIcon } from "./PairIcon";
 import { PairSharedState } from "./PairSharedState";
 import { PairSurvey } from "./PairSurvey";
+import { PairPdfDownload } from "./PairPdfDownload";
+import { PAIR_CONVERSATION_STEPS } from "@/lib/pair-conversation";
 import styles from "./pair-map.module.css";
 
 const NAV_ICONS = ["heart","profile","life","translate","talk","agreement","summary"] as const;
-const STEPS = [
-  { title: "Проверьте готовность", text: "Выберите спокойное время и одну тему. Спросите, готов ли партнёр сейчас обсуждать её.", phrase: "Мне важно обсудить одну вещь. Сейчас подходящее время?" },
-  { title: "Назовите факт и чувство", text: "Опишите конкретный эпизод без «ты всегда». Скажите, что вы почувствовали, не объясняя за партнёра его мотивы.", phrase: "Когда наш план изменился без обсуждения, я растерялся(ась). Мне важно знать о переменах заранее." },
-  { title: "Услышьте другую сторону", text: "Спросите, как ситуацию видит партнёр. Перескажите услышанное и уточните, правильно ли поняли.", phrase: "Я слышу, что тебе важна свобода менять планы. Верно? Что я ещё не учёл(ла)?" },
-  { title: "Выберите маленький шаг", text: "Предложите один конкретный опыт на неделю. Назовите, когда обсудите, подошёл ли он вам обоим.", phrase: "Попробуем предупреждать об изменениях заранее и через неделю обсудим, стало ли нам удобнее?" },
-];
+const STEPS = PAIR_CONVERSATION_STEPS;
 
 export function PairGuide({ view, storageKey, sharedSnapshot = null, children }: { view: PairView; sharedSnapshot?: PairMapSnapshot | null; storageKey: string; children: ReactNode }) {
   const [perspective,setPerspective] = useState<Perspective>("you");
@@ -63,7 +60,7 @@ export function PairGuide({ view, storageKey, sharedSnapshot = null, children }:
 
     <div className={styles.bottomGrid}>
       <PairAgreements key={storageKey} />
-      <section id="summary" className={`${styles.section} ${styles.summary}`} aria-labelledby="summary-title"><p className={styles.kicker}>07 / Ваш персональный итог</p><h2 id="summary-title">Вам не нужно становиться одинаковыми.</h2><p>Начните с одной ситуации. Проверьте гипотезу и выберите маленький шаг, который подходит обоим.</p><a className="button" href="#agreements">Вернуться к договорённостям <span aria-hidden="true">↗</span></a><div className={styles.pdf}><h3>Карта в PDF</h3><p>Скачивание пока недоступно. Сейчас разбор можно читать и использовать на этой странице.</p><span className={styles.badge}>Следующий этап</span></div></section>
+      <section id="summary" className={`${styles.section} ${styles.summary}`} aria-labelledby="summary-title"><p className={styles.kicker}>07 / Ваш персональный итог</p><h2 id="summary-title">Вам не нужно становиться одинаковыми.</h2><p>Начните с одной ситуации. Проверьте гипотезу и выберите маленький шаг, который подходит обоим.</p><a className="button" href="#agreements">Вернуться к договорённостям <span aria-hidden="true">↗</span></a><PairPdfDownload pairId={view.pairId} /></section>
     </div>
     {children}
     <p className={styles.reportNote}>Материалы для самопознания, не психологическая и не медицинская диагностика.</p>

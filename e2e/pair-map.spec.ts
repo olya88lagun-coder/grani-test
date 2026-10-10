@@ -33,7 +33,7 @@ test("paid map uses both real perspectives, edits drafts, and survives reload", 
   await expect(page.getByText("Личный черновик договорённости сохранён.", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByLabel("01 Как мы спорим")).toHaveValue("Тестовый черновик: пауза 20 минут.");
-  await expect(page.getByText("Скачивание пока недоступно.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button",{name:"Скачать карту пары в PDF"})).toBeVisible();
   expect(errors).toEqual([]);
 });
 

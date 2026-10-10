@@ -28,7 +28,7 @@ export async function PairReport({ pairId, viewerId, viewerResultId, pairView }:
         <p>Интерактивная инструкция по двум профилям: от различий в повседневных ситуациях до первых договорённостей. Одна оплата открывает разбор обоим.</p>
         <ul className={styles.offerList}>{PAIR_GUIDE_CONTENTS.filter(item => item.id !== "profiles").map(item => <li key={item.id}>{item.title}</li>)}</ul>
         <BuyButton product="pair" targetId={pairId} label={`Открыть разбор пары за ${view.price}`} />
-        <p className={styles.note}>Разовая покупка без подписки. Откроется обоим участникам пары. Платит один. PDF и совместное подтверждение договорённостей пока недоступны.</p>
+        <p className={styles.note}>Разовая покупка без подписки. Откроется обоим участникам пары. Платит один. Персональный PDF доступен сразу; ответы раскрываются после публикации обоими, договорённости подтверждаются по одной версии.</p>
         <p className={styles.note}>Нажимая кнопку, вы принимаете условия <Link href="/offer">оферты</Link> и подтверждаете, что вам есть 18 лет. Если кто-то из вас выйдет из пары, разбор скроется у обоих; условия возврата — в оферте.</p>
       </section>
     </> : <PairGuide view={pairView} sharedSnapshot={shared?.ok ? shared.snapshot : null} storageKey={`grani-pair-drafts-v1:${pairId}:${viewerResultId}`}>

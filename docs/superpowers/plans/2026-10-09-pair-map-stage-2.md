@@ -8,7 +8,7 @@
 
 **Tech Stack:** Существующие Next.js 16.3.5, React 19.3.0, TypeScript, Drizzle/PostgreSQL, Vitest/PGlite, Playwright; новая точная зависимость `@react-pdf/renderer@4.9.0`; `pdfjs-dist@6.4.299` только как dev dependency для извлечения текста в тестах PDF. Версии, React peerDependencies и Node engines парсера проверены через npm 9 октября 2026; Node 24 и standalone renderer проверяются на собственном минимальном документе.
 
-**Spec:** [Утверждённый проект](./План-второго-этапа.md), принят пользователем 9 октября 2026 сообщением «утверждаю».
+**Spec:** [Утверждённый проект](../specs/2026-10-09-pair-map-stage-2-design.md), принят пользователем 9 октября 2026 сообщением «утверждаю».
 
 ## Global Constraints
 

@@ -20,6 +20,7 @@ const PUBLIC_IMAGE_CACHE = [{ key: "Cache-Control", value: "public, max-age=8640
 const nextConfig: NextConfig = {
   output: "standalone",
   outputFileTracingRoot: path.resolve(process.cwd(), "../.."),
+  outputFileTracingIncludes: { "/api/pairs/*/map/pdf": ["./assets/pdf/**/*"] },
   transpilePackages: ["@grani/core", "@grani/content", "@grani/db"],
   poweredByHeader: false,
   async headers() {
