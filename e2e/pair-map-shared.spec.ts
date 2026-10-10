@@ -17,7 +17,7 @@ test("private drafts, mutual answers, versioned agreements and dirty refresh in 
       const checkbox=page.getByLabel("Я согласен(на) на хранение и раскрытие ответов карты пары");
       await checkbox.focus();await page.keyboard.press("Space");await expect(checkbox).toBeChecked();
       await page.keyboard.press("Tab");await expect(page.getByRole("link",{name:"Отдельное согласие",exact:true})).toBeFocused();
-      await page.keyboard.press("Tab");await expect(page.getByRole("link",{name:"Политика обработки данных",exact:true})).toBeFocused();
+      await page.keyboard.press("Tab");await expect(page.locator("#pair-survey").getByRole("link",{name:"Политика обработки данных",exact:true})).toBeFocused();
       await page.keyboard.press("Tab");await expect(page.getByRole("button",{name:"Принять отдельное согласие"})).toBeFocused();
       await page.keyboard.press("Enter");
       await expect(page.getByText("Отдельное согласие принято.",{exact:true})).toBeVisible();
