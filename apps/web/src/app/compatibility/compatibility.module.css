@@ -98,7 +98,7 @@
 .page :global([aria-labelledby="pair-products"] h2) { font-size: clamp(30px, 3vw, 40px); }
 @media (max-width: 759px) {
   .page .hook { font-size: 21px; }
-  .page .sections p { display: none; }
+  .page .sections p { font-size: 14px; line-height: 1.6; }
   .page .sections li { padding: 12px 0; }
   .page .sections h4 { font-size: 21px; }
   .page .how { gap: 20px; }
@@ -114,8 +114,12 @@
 .page .percent > span { font-family: var(--font-body); font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
 .page .intro > :global(.inner-intro__copy) { grid-column: 1; grid-row: 1; align-self: center; }
 .page .percent { grid-row: 1; }
+.page .percent { max-width: 100%; padding: 20px 24px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); }
+.page .percent > span { max-width: 32ch; text-align: center; text-wrap: balance; }
 @media (max-width: 899px) {
   .page .percent { grid-column: 1; grid-row: auto; justify-self: start; justify-items: start; padding: 0; }
+  .page .percent { padding: 20px 24px; }
+  .page .percent > span { text-align: left; }
 }
 @media (max-width: 759px) {
   .page .hero { min-height: 0; padding-bottom: 32px; }

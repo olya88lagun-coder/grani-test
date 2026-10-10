@@ -36,6 +36,13 @@
 .eyebrow { margin: 0 0 16px; color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
 .page .intro h1 { margin: 0; color: var(--ink); font-size: clamp(44px, 5.4vw, 76px); line-height: 1.05; letter-spacing: -.03em; text-wrap: balance; }
 .lead { margin: 24px 0 0; font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
+.productNav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 32px; border-block: 1px solid var(--line); }
+.productNav a { display: flex; flex-direction: column; justify-content: center; gap: 6px; min-width: 0; min-height: 92px; padding: 16px 14px; color: var(--ink); text-decoration: none; }
+.productNav span { font-size: 14px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; }
+.productNav strong { color: var(--gold); font-size: 17px; font-weight: 500; line-height: 1.5; }
+.productNav a:hover { background: var(--surface); }
+.productNav a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.page .grid h2[id] { scroll-margin-top: 104px; }
 .page :global(.card) { border: 1px solid var(--line); }
 .page :global(.pricing-card--featured) { border-color: var(--gold); }
 @media (max-width: 899px) {
@@ -46,6 +53,8 @@
   .page .hero { padding: 20px 0 32px; }
   .lead { font-size: 16px; }
   .page :global(.pricing-page) { padding-top: 32px; }
+  .productNav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .productNav a { padding-inline: 8px; }
 }
 .page :global(.pricing-page) :is(h2, h3), .page :global(.pricing-page .inner-block) :is(h2, h3, p, li) { color: var(--ink); }
 .page :global(.pricing-page .muted), .page :global(.pricing-page .inner-block .muted) { color: var(--ink-soft); }

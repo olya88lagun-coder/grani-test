@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { GemPortrait } from "@/components/GemPortrait";
 import { gemAssetDir } from "@/lib/gem-assets";
 import { HomeHeader } from "@/components/PublicHeader";
+import { TestAccessNote } from "@/components/TestAccessNote";
 import { JsonLd } from "@/components/JsonLd";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
@@ -217,6 +218,7 @@ export default function HomePage() {
             <div className="home-time">
               Бесплатно · ≈ 10 минут
             </div>
+            <TestAccessNote />
           </div>
           <CrystalScene />
         </div>
@@ -279,7 +281,9 @@ export default function HomePage() {
                 <HomeIcon name={note.icon} />
               </span>
               <h3>{note.title}</h3>
+              <small className={styles.exampleNote}>Пример</small>
               <p>{note.text}</p>
+              {note.icon === "eye" && <small className={styles.exampleNote}>Появится бесплатно после ответов трёх друзей.</small>}
             </article>
           ))}
         </div>
@@ -330,8 +334,8 @@ export default function HomePage() {
             <span className="home-example">Пример</span>
             <span aria-hidden="true">♥</span>
             <strong>78%</strong>
-            <p>Совместимость</p>
-            <small>Вам легко вместе в развитии, общении и новых идеях.</small>
+            <p>Индекс сочетания профилей</p>
+            <small>Сочетание профилей, не прогноз отношений.</small>
           </div>
           <article className="home-person-card home-person-card--glass">
             <div className={styles.personGem}><HomeTypeGem code="++--" size={230} /></div>

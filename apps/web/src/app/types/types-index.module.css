@@ -4,6 +4,8 @@
 
 .hero { padding: 32px 0 56px; background: var(--bg) url("/home/types-night-desktop.webp") 78% 0 / cover no-repeat; }
 .intro { max-width: 780px; padding: 36px 0 40px; }
+.testAction { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 24px; }
+.testAction span { color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
 
 .familyNav { display: flex; flex-wrap: wrap; gap: 10px; margin: 0; padding: 0; }
 .familyNav a { display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 6px 20px 6px 8px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface) 72%, transparent); color: var(--ink); font-size: 14px; text-decoration: none; }

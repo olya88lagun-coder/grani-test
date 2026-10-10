@@ -4,7 +4,6 @@ import Link from "next/link";
 import styles from "./pricing.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
-import { PAIR_SECTION_TITLES } from "@/lib/pair-view";
 import { publicMetadata } from "@/lib/seo";
 
 const DESCRIPTION = "Тест, тип и пять шкал — бесплатно. Платно — подробные разборы по результату: личный портрет, главы о деньгах, конфликтах, стрессе и отношениях, разбор пары, пространство «Вдвоём».";
@@ -16,6 +15,15 @@ const FULL_SECTIONS = [
   "Сильные стороны",
   "Слепые зоны и что с ними делать",
   "Инструкция по применению меня: как с тобой работать, спорить и что тебя бесит",
+] as const;
+
+const PAIR_FEATURES = [
+  "Обзор пары и пять шкал обоих партнёров",
+  "8 жизненных ситуаций и переключение взгляда: о себе или о партнёре",
+  "«Переводчик друг друга» и четыре шага сложного разговора",
+  "8 вопросов обоим: ответы раскрываются после публикации каждым",
+  "3 договорённости: личные черновики, общие предложения и подтверждение одной версии обоими",
+  "Персональная карта в PDF; раскрытые ответы можно включить по желанию",
 ] as const;
 
 export default function PricingPage() {
@@ -31,11 +39,15 @@ export default function PricingPage() {
             <h1>Разборы и цены</h1>
             <p className={styles.lead}>{DESCRIPTION}</p>
           </header>
+          <nav className={styles.productNav} aria-label="Выбрать разбор">
+            <a href="#price-full"><span>Для себя</span><strong>{formatRub(PRODUCT_PRICES.full)}</strong></a>
+            <a href="#price-pair"><span>Карта пары</span><strong>{formatRub(PRODUCT_PRICES.pair)}</strong></a>
+            <a href="#price-together"><span>Вдвоём</span><strong>{formatRub(TOGETHER_PRICE_KOPECKS)} / {TOGETHER_PERIOD_DAYS} дней</strong></a>
+            <a href="#price-chapters"><span>Дополнительные главы</span><strong>{formatRub(chapterPrice)} за главу</strong></a>
+          </nav>
         </div>
       </section>
       <article className="page page--wide stack pricing-page">
-
-        <PairProductsCompare headingId="pair-products" prices={{ compatibility: formatRub(PRODUCT_PRICES.pair), together: `${formatRub(TOGETHER_PRICE_KOPECKS)} за ${TOGETHER_PERIOD_DAYS} дней` }} />
 
         <div className={`pricing-grid ${styles.grid}`}>
           <section className="card stack pricing-card pricing-card--featured" data-band="night" aria-labelledby="price-full">
@@ -70,11 +82,11 @@ export default function PricingPage() {
               <p className="muted">Открывается обоим, платит один. Партнёр проходит тест по вашей ссылке.</p>
             </div>
             <ul className="pricing-card__list">
-              {Object.values(PAIR_SECTION_TITLES).map((title) => (
+              {PAIR_FEATURES.map((title) => (
                 <li key={title}>{title}</li>
               ))}
             </ul>
-
+            <p className="muted">Разовая покупка без подписки. Совместная анкета и общие договорённости — по отдельному согласию обоих; базовый PDF доступен без них.</p>
           </section>
 
           <section className="card stack pricing-card pricing-card--pair" data-band="night" aria-labelledby="price-together">
@@ -110,6 +122,8 @@ export default function PricingPage() {
             <p className="muted">Открываются после покупки полного разбора, на его странице.</p>
           </section>
         </div>
+
+        <PairProductsCompare headingId="pair-products" prices={{ compatibility: formatRub(PRODUCT_PRICES.pair), together: `${formatRub(TOGETHER_PRICE_KOPECKS)} за ${TOGETHER_PERIOD_DAYS} дней` }} />
 
         <p className="muted pricing-page__terms">
           Оплата картой через ЮKassa, чек самозанятого из «Мой налог» оформляется после оплаты. Разбор появляется на сайте через пару минут после оплаты. Условия и возвраты — в{" "}
