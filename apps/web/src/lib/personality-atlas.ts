@@ -1,4 +1,5 @@
 import { traitLevel, type Trait, type TraitLevel, type TraitScores } from "@grani/core";
+import {ATLAS_INTERACTION_STARTERS,ATLAS_MEMO_EXPERIMENTS} from "./personality-atlas-profile-copy";
 
 export type AtlasInsight = {
   id: string; group: string; title: string; explanation: string; application: string;
@@ -30,7 +31,7 @@ export const ATLAS_BASE_RULES: readonly BaseRule[] = [
   base("agreeableness","high","Учитывать другие позиции","Внимание к чужой позиции может помогать находить общую цель.","Отодвигать собственные приоритеты ради согласия.","До обсуждения запиши, что важно лично тебе."),
   base("agreeableness","borderline","Согласовывать критерии","Можно проверить баланс сотрудничества и независимой оценки.","Не обозначить свою позицию достаточно ясно.","Назови общий критерий и свою точку зрения отдельно."),
   base("agreeableness","low","Сохранять независимую оценку","Можно проверить пользу прямого обсуждения идей и критериев.","Сосредоточиться на недостатках и потерять общий контекст.","Отделяй оценку решения от оценки человека."),
-  base("stability","high","Сверяться с фактами","Можно проверить, помогает ли опора на наблюдения при изменении условий.","Не заметить значимость ситуации для другого человека.","Уточни, что изменилось и что важно участникам."),
+  base("stability","high","Сверяться с фактами","Можно проверить, помогает ли опора на наблюдения при изменении условий.","Не перепроверить предположения, когда задача кажется понятной.","Проверь, какие факты подтверждены и что ещё нужно уточнить."),
   base("stability","borderline","Замечать условия реакции","Полезно наблюдать, какие условия делают неопределённую задачу понятнее.","Приписывать всё одному баллу вместо контекста.","Запиши ситуацию, свою реакцию и то, что помогло."),
   base("stability","low","Готовить опоры заранее","Можно проверить пользу ясных шагов в ситуациях неопределённости.","Задерживать действие, пытаясь предусмотреть всё.","Отдели известные факты от предположений и выбери малый обратимый шаг."),
 ];
@@ -68,7 +69,12 @@ export function buildPersonalityAtlas(scores:TraitScores):PersonalityAtlas {
   const grouped=new Map<string,AtlasInsight>();
   for(const rule of matched){
     const existing=grouped.get(rule.group);
-    if(existing){existing.ruleIds.push(rule.id);existing.basis=[...new Set([...existing.basis,...basis(rule.signals.map(s=>s[0]))])];existing.weight=Math.max(existing.weight,rule.weight);}
+    if(existing){
+      const ruleIds=[...existing.ruleIds,rule.id],combinedBasis=[...new Set([...existing.basis,...basis(rule.signals.map(s=>s[0]))])];
+      // Preserve the approved order on ties; otherwise the stronger signal supplies the copy.
+      if(rule.weight>existing.weight)grouped.set(rule.group,{...rule,ruleIds,basis:combinedBasis,limit:LIMIT});
+      else {existing.ruleIds=ruleIds;existing.basis=combinedBasis;}
+    }
     else grouped.set(rule.group,{...rule,ruleIds:[rule.id],basis:basis(rule.signals.map(s=>s[0])),limit:LIMIT});
   }
   const strengths=[...grouped.values()].sort((a,b)=>b.weight-a.weight).slice(0,3);
@@ -81,7 +87,7 @@ export function buildPersonalityAtlas(scores:TraitScores):PersonalityAtlas {
     "Мне помогает конкретная обратная связь: что получилось, что стоит изменить и почему.",
     "Если наши мнения расходятся, давай обсуждать идеи и критерии, а не личные качества друг друга.",
   ]:[
-    `Мне помогает такой подход: ${first.practice.charAt(0).toLowerCase()+first.practice.slice(1)}`,
+    ATLAS_INTERACTION_STARTERS[first.id] ?? "Мне удобно сначала договориться о цели и следующем шаге.",
     "Мне удобно, когда понятна цель обсуждения и остаётся место для моей позиции.",
     "Мне помогает конкретная обратная связь: что получилось, что стоит изменить и почему.",
   ];
@@ -96,7 +102,7 @@ export function buildPersonalityAtlas(scores:TraitScores):PersonalityAtlas {
       {label:"Мой возможный перегиб",text:isSofiaTheme?"Слишком долго готовиться к практической проверке.":first.risk},
       {label:"Как мне выбирать",text:"Сравнивать варианты по критериям и назначать момент решения."},
       {label:"Что важно в общении",text:"Конкретная обратная связь и понятная цель обсуждения."},
-      {label:"Что хочу попробовать",text:isSofiaTheme?"Раньше показывать промежуточные результаты.":first.practice},
+      {label:"Что хочу попробовать",text:isSofiaTheme?"Раньше показывать промежуточные результаты.":ATLAS_MEMO_EXPERIMENTS[first.id] ?? "Выбрать небольшой следующий шаг и проверить его пользу."},
     ]},
   };
 }
