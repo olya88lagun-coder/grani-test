@@ -62,6 +62,36 @@ export type PairMapSnapshot = {
     proposal: { text: string; revision: number; proposedByYou: boolean; confirmedByYou: boolean; confirmedByPartner: boolean; updatedAt: string } | null;
   }[];
 };
-export type PairMapError = "not_found" | "access_required" | "consent_required" | "invalid" | "stale_version";
+export type PairMapError = "not_found" | "access_required" | "consent_required" | "invalid" | "stale_version" | "unavailable";
 export type PairMapFailure = { ok: false; error: PairMapError };
 export type PairMapOutcome = { ok: true; snapshot: PairMapSnapshot } | PairMapFailure;
+
+export type PairMapCommand =
+  | { kind: "consent"; accepted: true; version: string }
+  | { kind: "survey_draft" | "survey_submit"; answers: SurveyAnswers; expectedRevision: number }
+  | { kind: "survey_delete"; expectedRevision: number }
+  | { kind: "agreement_draft" | "agreement_propose"; slot: AgreementSlot; text: string; expectedRevision: number }
+  | { kind: "agreement_confirm" | "agreement_retract"; slot: AgreementSlot; expectedRevision: number };
+
+export function parsePairMapCommand(raw: unknown): PairMapCommand | null {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const p = raw as Record<string, unknown>;
+  const exact = (...keys: string[]) => Object.keys(p).length === keys.length && keys.every(key => Object.hasOwn(p, key));
+  if (p.kind === "consent") return exact("kind", "accepted", "version") && p.accepted === true && p.version === PAIR_MAP_CONSENT_VERSION
+    ? { kind: p.kind, accepted: true, version: p.version } : null;
+  if (!isPairMapRevision(p.expectedRevision)) return null;
+  const expectedRevision = p.expectedRevision;
+  if (p.kind === "survey_delete") return exact("kind", "expectedRevision") ? { kind: p.kind, expectedRevision } : null;
+  if (p.kind === "survey_draft" || p.kind === "survey_submit") {
+    const answers = parseSurveyAnswers(p.answers, p.kind === "survey_submit");
+    return exact("kind", "answers", "expectedRevision") && answers ? { kind: p.kind, answers, expectedRevision } : null;
+  }
+  if (!isAgreementSlot(p.slot)) return null;
+  const slot = p.slot;
+  if (p.kind === "agreement_confirm" || p.kind === "agreement_retract") return exact("kind", "slot", "expectedRevision") ? { kind: p.kind, slot, expectedRevision } : null;
+  if (p.kind === "agreement_draft" || p.kind === "agreement_propose") {
+    const text = parsePairMapText(p.text, p.kind === "agreement_draft");
+    return exact("kind", "slot", "text", "expectedRevision") && text !== null ? { kind: p.kind, slot, text, expectedRevision } : null;
+  }
+  return null;
+}

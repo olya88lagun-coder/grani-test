@@ -36,3 +36,13 @@ test("counts Unicode code points, normalizes newlines and rejects controls", asy
   answers.home.text = "А\u0000Б";
   expect(model.parseSurveyAnswers(answers, false)).toBeNull();
 });
+test("accepts only known commands and never accepts an author supplied by a client", async () => {
+  const model=await subject();
+  expect(typeof model.parsePairMapCommand).toBe("function");
+  expect(model.parsePairMapCommand({kind:"survey_submit",answers:values(),expectedRevision:0})).toMatchObject({kind:"survey_submit",expectedRevision:0});
+  expect(model.parsePairMapCommand({kind:"survey_submit",answers:values(),expectedRevision:0,userId:"someone"})).toBeNull();
+  expect(model.parsePairMapCommand({kind:"consent",accepted:false,version:"2026-10-09-v1"})).toBeNull();
+  expect(model.parsePairMapCommand({kind:"agreement_confirm",slot:3,expectedRevision:1})).toBeNull();
+  expect(model.parsePairMapCommand({kind:"agreement_propose",slot:0,text:" ",expectedRevision:0})).toBeNull();
+  expect(model.parsePairMapCommand({kind:"agreement_confirm",slot:0,expectedRevision:-1})).toBeNull();
+});

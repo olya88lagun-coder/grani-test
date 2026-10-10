@@ -50,3 +50,6 @@ export const togetherLimiter = createRateLimiter({ limit: TOGETHER_PER_MINUTE, w
 const PILOT_CODE_ATTEMPTS_PER_MINUTE = 6;
 
 export const pilotCodeLimiter = createRateLimiter({ limit: PILOT_CODE_ATTEMPTS_PER_MINUTE, windowMs: MINUTE_MS });
+
+export const pairMapLimiter = createRateLimiter({ limit: 30, windowMs: MINUTE_MS });
+export const pairPdfLimiter = createRateLimiter({ limit: 3, windowMs: MINUTE_MS });

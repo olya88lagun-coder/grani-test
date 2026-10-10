@@ -1,5 +1,6 @@
 "use client";
 import { useState, type ReactNode } from "react";
+import type { PairMapSnapshot } from "@grani/core";
 import { buildPairGuide, PAIR_GUIDE_CONTENTS, pairGap, type Perspective } from "@/lib/pair-guide";
 import type { PairView } from "@/lib/pair-view";
 import { PairAgreements } from "./PairAgreements";
@@ -16,7 +17,7 @@ const STEPS = [
   { title: "Выберите маленький шаг", text: "Предложите один конкретный опыт на неделю. Назовите, когда обсудите, подошёл ли он вам обоим.", phrase: "Попробуем предупреждать об изменениях заранее и через неделю обсудим, стало ли нам удобнее?" },
 ];
 
-export function PairGuide({ view, storageKey, children }: { view: PairView; storageKey: string; children: ReactNode }) {
+export function PairGuide({ view, storageKey, children }: { view: PairView; sharedSnapshot?: PairMapSnapshot | null; storageKey: string; children: ReactNode }) {
   const [perspective,setPerspective] = useState<Perspective>("you");
   const [translation,setTranslation] = useState("conflict");
   const [step,setStep] = useState(0);
