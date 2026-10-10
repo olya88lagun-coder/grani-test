@@ -3,6 +3,7 @@ import { writeFile } from "node:fs/promises";
 import { buildPairGuide } from "@/lib/pair-guide";
 import type { PairView } from "@/lib/pair-view";
 import { renderPairPdf } from "./render";
+import { buildPairPdfDocument } from "./document";
 import { extractPdfText, inspectPdfPages } from "./testing";
 afterEach(()=>vi.restoreAllMocks());
 const view:PairView={pairId:"qa",score:63,phrase:"Ваши грани",text:"Описание сочетания",you:{firstName:"Ёж",typeName:"Искра",dir:"pmpp"},partner:{firstName:"Тестовый партнёр",typeName:"Тихая хранительница",dir:"mpmp"},rows:[{trait:"openness",label:"Открытость",you:78,partner:38},{trait:"conscientiousness",label:"Добросовестность",you:25,partner:75},{trait:"extraversion",label:"Экстраверсия",you:75,partner:25},{trait:"agreeableness",label:"Доброжелательность",you:48,partner:53},{trait:"stability",label:"Эмоциональная устойчивость",you:88,partner:40}]};
@@ -21,4 +22,25 @@ test("complete selectable PDF includes all actual sections and long Unicode answ
   for(const page of pages.slice(1)){expect(page.text).toContain("Грани · Карта вашей пары");expect(page.text).toContain(`${page.number} / ${pages.length}`);}
   expect(fetcher.mock.calls.filter(([input])=>!String(input).startsWith("data:"))).toEqual([]);
   if(process.env.PAIR_PDF_FULL_QA_OUTPUT)await writeFile(process.env.PAIR_PDF_FULL_QA_OUTPUT,bytes);
+},30_000);
+
+test("confirmed multiline agreement preserves its last line inside page bounds",async()=>{
+  // Exactly 600 code points; unsupported glyph labels expand the PDF text further.
+  const text="中\n".repeat(298)+"TAIL";
+  expect(Array.from(text)).toHaveLength(600);
+  const source={view,generatedAt:"2026-10-09T12:00:00Z",guides:[buildPairGuide(view,"you"),buildPairGuide(view,"partner")],confirmedAgreements:[{slot:0,text,revision:2}],sharedAnswers:null,extras:{state:"preparing"},sharedRevisionToken:"qa",includeAnswers:false};
+  const bytes=await renderPairPdf(buildPairPdfDocument(source as never));
+  const pages=await inspectPdfPages(bytes), contents=pages.map(page=>page.text).join("\n");
+  expect(contents).toContain("TAIL");
+  expect(contents.match(/U\+4E2D/g)).toHaveLength(298);
+  const agreementPages=pages.filter(page=>page.text.includes("U+4E2D")||page.text.includes("TAIL"));
+  expect(agreementPages.length).toBeGreaterThan(1);
+  for(const page of agreementPages){
+    for(const item of page.textBounds.filter(item=>item.text.includes("U+4E2D")||item.text.includes("TAIL"))){
+      expect(item.y).toBeGreaterThanOrEqual(56);
+      // PDF.js reports nominal font height, including rounding around the ascender.
+      expect(item.y+item.height).toBeLessThanOrEqual(page.height-44+0.5);
+    }
+  }
+  if(process.env.PAIR_PDF_MULTILINE_QA_OUTPUT)await writeFile(process.env.PAIR_PDF_MULTILINE_QA_OUTPUT,bytes);
 },30_000);

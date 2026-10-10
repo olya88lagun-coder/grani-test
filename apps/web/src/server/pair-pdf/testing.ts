@@ -29,7 +29,7 @@ export async function inspectPdfPages(buffer: Buffer) {
       const page=await pdf.getPage(number), content=await page.getTextContent(), operations=await page.getOperatorList();
       const imageKeys=operations.fnArray.flatMap((op,i)=>op===OPS.paintImageXObject?[String(operations.argsArray[i]?.[0])]:[]);
       const imageHashes=await Promise.all(imageKeys.map(async key=>{const image=await new Promise<{data:Uint8Array}>(resolve=>page.objs.get(key,resolve));return createHash("sha256").update(image.data).digest("hex")}));
-      pages.push({number,text:content.items.map(item=>"str" in item?item.str:"").join(" "),images:operations.fnArray.filter(op=>[OPS.paintImageXObject,OPS.paintInlineImageXObject].includes(op)).length,distinctImages:new Set(imageHashes).size});
+      pages.push({number,text:content.items.map(item=>"str" in item?item.str:"").join(" "),height:page.view[3]!-page.view[1]!,textBounds:content.items.flatMap(item=>"str" in item&&item.str?[{text:item.str,y:item.transform[5]!,height:item.height}]:[]),images:operations.fnArray.filter(op=>[OPS.paintImageXObject,OPS.paintInlineImageXObject].includes(op)).length,distinctImages:new Set(imageHashes).size});
     }
     return pages;
   } finally { await loading.destroy(); }
