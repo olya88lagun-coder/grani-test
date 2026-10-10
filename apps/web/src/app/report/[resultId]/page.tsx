@@ -1,6 +1,11 @@
-import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedProducts, listReports } from "@grani/db";
+import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedProducts, listReports, loadAtlasDraft } from "@grani/db";
 import { typeName, unlockedKinds } from "@grani/core";
 import { typeCodeToDir } from "@grani/content";
+import { Fragment, type ReactNode } from "react";
+import { PersonalityAtlas } from "@/components/personality-atlas/PersonalityAtlas";
+import { buildPersonalityAtlas } from "@/lib/personality-atlas";
+import { initialAtlasData } from "@/server/personality-atlas-service";
+import { personalityAtlasEnabled } from "@/server/personality-atlas-feature";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -18,6 +23,8 @@ import styles from "@/components/paid-report.module.css";
 export const metadata: Metadata = { title: "Полный разбор" };
 
 const REFRESH_SECONDS = 5;
+
+function LegacyDisclosure({children}:{children:ReactNode}) {return <details className="card"><summary>Текст готового разбора</summary><div className="stack">{children}</div></details>;}
 
 function Preparing({ what }: { what: string }) {
   return (
@@ -41,22 +48,26 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
     friendsCount: invite ? await countFriendResponses(db, invite.id) : 0,
   });
   const name = typeName(result.typeCode, user.gender);
+  const model = personalityAtlasEnabled() && view.full ? buildPersonalityAtlas(result.scores) : null;
+  const stored = model ? await loadAtlasDraft(db, resultId) : null;
+  const FullContent = model ? LegacyDisclosure : Fragment;
 
   return (
     <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
       {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
+      {model && <PersonalityAtlas key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} typeCode={result.typeCode} gemDir={gemAssetDir(typeCodeToDir(result.typeCode))} model={model} initialDraft={{revision:stored?.revision ?? 0, data:stored?.data ?? initialAtlasData(model), updatedAt:stored?.updatedAt?.toISOString() ?? null}} />}
       <div className="page page--report stack">
-        <header className="report-hero">
+        {!model && <header className="report-hero">
           <div className="report-hero__copy">
             <p className="eyebrow">Твой полный разбор</p>
             <h1 className="display">{name}</h1>
             <p className="lead">Портрет, сильные стороны, слепые зоны и инструкция по применению — по твоим ответам.</p>
           </div>
           <div className="report-hero__gem"><GemPortrait dir={gemAssetDir(typeCodeToDir(result.typeCode))} size={340} priority /></div>
-        </header>
+        </header>}
 
         {view.full ? (
-          <>
+          <FullContent>
             <section className="report-portrait" aria-labelledby="portrait">
               <div className="report-portrait__head">
                 <p className="report-section__number">01</p>
@@ -116,7 +127,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
               heading="Карточка «инструкция по применению меня»"
               shareTitle="Инструкция по применению меня"
             />
-          </>
+          </FullContent>
         ) : (
           <section className="report-section">
             <Preparing what="разбор" />
