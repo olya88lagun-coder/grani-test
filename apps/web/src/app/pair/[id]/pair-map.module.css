@@ -233,3 +233,27 @@
   .middleGrid .sectionHead { flex-direction: column; }
 }
 @media (prefers-reduced-motion: reduce) { .situationTrack { scroll-behavior: auto; } }
+.sharedToolbar { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; padding:1rem 0; font-size:.85rem; color:#b8c6be; }
+.sharedToolbar p { flex:1 1 16rem; margin:0; }
+.consent,.conflict { margin:1.2rem 0; padding:1.2rem; border:1px solid #baa57866; border-radius:12px; background:#102a21; }
+.consent p,.conflict p { font-size:.88rem; line-height:1.6; }
+.check { display:flex; align-items:flex-start; gap:.7rem; font-size:.88rem; line-height:1.5; margin:.8rem 0; }
+.check input { flex:0 0 auto; width:18px; height:18px; margin-top:2px; accent-color:#e8c9a7; }
+.surveyGrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1rem; margin:1.5rem 0; }
+.surveyQuestion { min-width:0; border:1px solid #617c684d; padding:1rem; border-radius:12px; background:#0b251c; }
+.surveyQuestion legend { color:#e4cba5; padding:0 .35rem; font-weight:600; font-size:.9rem; }
+.surveyQuestion p { min-height:2.8rem; font-size:.88rem; line-height:1.5; }
+.surveyQuestion > label:not(.check) { font-size:.8rem; display:block; margin-bottom:.5rem; color:#b8c6be; }
+.surveyQuestion textarea { display:block; box-sizing:border-box; width:100%; min-height:100px; resize:vertical; padding:.8rem; color:#f0e7d8; background:#061b13; border:1px solid #617c6899; border-radius:8px; font:inherit; font-size:.9rem; }
+.surveyQuestion textarea:focus { outline:2px solid #e4cba5; outline-offset:3px; }
+.surveyQuestion textarea:disabled { opacity:.55; }
+.surveyQuestion small { display:block; margin-top:.4rem; color:#b8c6be; font-size:.78rem; }
+.proposal { border-top:1px solid #617c6866; margin-top:1rem; padding-top:1rem; }
+.proposal p,.sharedAnswers p,.conflict p { white-space:pre-wrap; overflow-wrap:anywhere; }
+.sharedAnswers { border-top:1px solid #617c6866; margin-top:2rem; padding-top:1rem; }
+.sharedAnswers article { border-top:1px solid #617c6833; padding:1rem 0; }
+.answerColumns { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:1.5rem; font-size:.9rem; line-height:1.6; }
+.answerColumns > div { min-width:0; }
+.agreement .actions { gap:.5rem; }
+.agreement .actions button { font-size:.78rem; min-height:44px; white-space:normal; }
+@media(max-width:640px) { .surveyGrid,.answerColumns { grid-template-columns:1fr; } .surveyQuestion p { min-height:0; } .consent,.conflict { padding:1rem; } }

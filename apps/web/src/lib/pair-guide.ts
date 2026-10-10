@@ -1,4 +1,4 @@
-import type { Trait } from "@grani/core";
+import { PAIR_MAP_QUESTIONS, type Trait } from "@grani/core";
 import type { PairRow, PairView } from "./pair-view";
 
 export type Perspective = "you" | "partner";
@@ -70,7 +70,7 @@ export function buildPairGuide(view: PairView, perspective: Perspective) {
     const score = perspective === "you" ? row.you : row.partner;
     const otherScore = perspective === "you" ? row.partner : row.you;
     const need = template.needs[pole(score)];
-    return { ...template, score, otherScore, label: row.label, need,
+    return { ...template, question: PAIR_MAP_QUESTIONS.find(q => q.id === template.id)!.question, score, otherScore, label: row.label, need,
       partnerNeed: template.needs[pole(otherScore)],
       hypothesis: `Возможно, ${subject.firstName}: вам ближе ${need}. Это предположение по шкале «${row.label}», которое стоит проверить в разговоре.` };
   });

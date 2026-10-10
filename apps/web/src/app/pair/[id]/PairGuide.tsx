@@ -7,6 +7,8 @@ import { PairAgreements } from "./PairAgreements";
 import { PairProfiles } from "./PairProfiles";
 import { PairSituations } from "./PairSituations";
 import { PairIcon } from "./PairIcon";
+import { PairSharedState } from "./PairSharedState";
+import { PairSurvey } from "./PairSurvey";
 import styles from "./pair-map.module.css";
 
 const NAV_ICONS = ["heart","profile","life","translate","talk","agreement","summary"] as const;
@@ -17,7 +19,7 @@ const STEPS = [
   { title: "Выберите маленький шаг", text: "Предложите один конкретный опыт на неделю. Назовите, когда обсудите, подошёл ли он вам обоим.", phrase: "Попробуем предупреждать об изменениях заранее и через неделю обсудим, стало ли нам удобнее?" },
 ];
 
-export function PairGuide({ view, storageKey, children }: { view: PairView; sharedSnapshot?: PairMapSnapshot | null; storageKey: string; children: ReactNode }) {
+export function PairGuide({ view, storageKey, sharedSnapshot = null, children }: { view: PairView; sharedSnapshot?: PairMapSnapshot | null; storageKey: string; children: ReactNode }) {
   const [perspective,setPerspective] = useState<Perspective>("you");
   const [translation,setTranslation] = useState("conflict");
   const [step,setStep] = useState(0);
@@ -28,7 +30,7 @@ export function PairGuide({ view, storageKey, children }: { view: PairView; shar
     const index = guide.situations.findIndex(s => s.id === translation);
     setTranslation(guide.situations[(index + direction + 8) % 8]!.id);
   }
-  return <div className={styles.guide}>
+  return <PairSharedState pairId={view.pairId} initialSnapshot={sharedSnapshot} storageKey={storageKey}><div className={styles.guide}>
     <nav className={styles.contents} aria-label="Разделы карты пары">{PAIR_GUIDE_CONTENTS.map((item,i) => <a key={item.id} href={`#${item.id}`} aria-current={activeSection === item.id ? "location" : undefined} onClick={() => setActiveSection(item.id)}><PairIcon name={NAV_ICONS[i]!} />{item.title}</a>)}</nav>
 
     <section id="overview" className={`${styles.section} ${styles.overviewSection}`} aria-labelledby="overview-title">
@@ -42,6 +44,7 @@ export function PairGuide({ view, storageKey, children }: { view: PairView; shar
 
     <PairProfiles view={view} onPerspectiveChange={setPerspective} />
     <PairSituations guide={guide} />
+    <PairSurvey />
 
     <div className={styles.middleGrid}>
       <section id="translator" className={`${styles.section} ${styles.translatorSection}`} aria-labelledby="translator-title">
@@ -59,10 +62,10 @@ export function PairGuide({ view, storageKey, children }: { view: PairView; shar
     </div>
 
     <div className={styles.bottomGrid}>
-      <PairAgreements key={storageKey} storageKey={storageKey} />
+      <PairAgreements key={storageKey} />
       <section id="summary" className={`${styles.section} ${styles.summary}`} aria-labelledby="summary-title"><p className={styles.kicker}>07 / Ваш персональный итог</p><h2 id="summary-title">Вам не нужно становиться одинаковыми.</h2><p>Начните с одной ситуации. Проверьте гипотезу и выберите маленький шаг, который подходит обоим.</p><a className="button" href="#agreements">Вернуться к договорённостям <span aria-hidden="true">↗</span></a><div className={styles.pdf}><h3>Карта в PDF</h3><p>Скачивание пока недоступно. Сейчас разбор можно читать и использовать на этой странице.</p><span className={styles.badge}>Следующий этап</span></div></section>
     </div>
     {children}
-    <p className={styles.reportNote}>Материалы для самопознания, не психологическая и не медицинская диагностика. Общий опрос и подтверждение договорённостей обоими пока недоступны.</p>
-  </div>;
+    <p className={styles.reportNote}>Материалы для самопознания, не психологическая и не медицинская диагностика.</p>
+  </div></PairSharedState>;
 }
