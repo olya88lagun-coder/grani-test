@@ -14,8 +14,12 @@ test("private drafts, mutual answers, versioned agreements and dirty refresh in 
     const pa=await a.newPage(),pb=await b.newPage();
     await Promise.all([pa.goto(`/pair/${pair.pairId}`),pb.goto(`/pair/${pair.pairId}`)]);
     for(const page of [pa,pb]){
-      await page.getByLabel("Я согласен(на) на хранение и раскрытие ответов карты пары").check();
-      await page.getByRole("button",{name:"Принять отдельное согласие"}).click();
+      const checkbox=page.getByLabel("Я согласен(на) на хранение и раскрытие ответов карты пары");
+      await checkbox.focus();await page.keyboard.press("Space");await expect(checkbox).toBeChecked();
+      await page.keyboard.press("Tab");await expect(page.getByRole("link",{name:"Отдельное согласие",exact:true})).toBeFocused();
+      await page.keyboard.press("Tab");await expect(page.getByRole("link",{name:"Политика обработки данных",exact:true})).toBeFocused();
+      await page.keyboard.press("Tab");await expect(page.getByRole("button",{name:"Принять отдельное согласие"})).toBeFocused();
+      await page.keyboard.press("Enter");
       await expect(page.getByText("Отдельное согласие принято.",{exact:true})).toBeVisible();
     }
     const question=pa.getByLabel("Ответ: Когда вы спорите");
@@ -40,7 +44,7 @@ test("private drafts, mutual answers, versioned agreements and dirty refresh in 
     const agreementA=pa.locator("[data-agreement-slot='0']"),agreementB=pb.locator("[data-agreement-slot='0']");
     await agreementA.getByLabel("01 Как мы спорим").fill("Пауза двадцать минут");
     await agreementA.getByRole("button",{name:"Предложить партнёру"}).click();
-    await agreementA.getByRole("button",{name:"Подтвердить эту версию"}).click();
+    await agreementA.getByRole("button",{name:"Подтвердить эту версию"}).focus();await pa.keyboard.press("Enter");
     await pb.getByRole("button",{name:"Обновить общие данные"}).click();
     await agreementB.getByRole("button",{name:"Подтвердить эту версию"}).click();
     await expect(agreementB).toContainText("Подтверждено обоими");
