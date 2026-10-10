@@ -119,5 +119,9 @@ export function useAtlasDraft(resultId:string,initial:ClientAtlasDraft){
     return()=>document.removeEventListener("click",protectNavigation,true);
   },[flush]);
   const leaveWithoutSaving=()=>{leavingApproved.current=true;clearTabDrafts(resultId);window.location.assign(`/result/${encodeURIComponent(resultId)}`);};
-  return {data,update,status,message,retry,loadServer,saveNow:flush,leaveWithoutSaving,localRecoveryAvailable};
+  const prepareExport=async()=>{
+    await flush();
+    return !busy.current&&!blocked.current&&JSON.stringify(current.current)===saved.current?revision.current:null;
+  };
+  return {data,update,status,message,retry,loadServer,saveNow:flush,prepareExport,leaveWithoutSaving,localRecoveryAvailable};
 }
