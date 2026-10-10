@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import { boolean, check, foreignKey, index, integer, jsonb, pgEnum, pgTable, text, timestamp, unique, uniqueIndex, uuid, type AnyPgColumn } from "drizzle-orm/pg-core";
 import { REPORT_KINDS, type AnswerFields, type CardSnapshot, type SurveyAnswers } from "@grani/core";
 import type { AtlasDraftData } from "./personality-atlas";
+import type { MoneyPracticeData } from "@grani/core";
 
 export const authProviderEnum = pgEnum("auth_provider", ["telegram", "vk"]);
 export const genderEnum = pgEnum("gender", ["female", "male"]);
@@ -58,6 +59,16 @@ export const results = pgTable(
   },
   (t) => [index("results_user_created_idx").on(t.userId, t.createdAt)],
 );
+
+export const practiceDrafts = pgTable("practice_drafts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  resultId: uuid("result_id").notNull().references(() => results.id, { onDelete: "cascade" }),
+  practiceKey: text("practice_key").notNull(),
+  schemaVersion: integer("schema_version").notNull().default(1),
+  revision: integer("revision").notNull().default(1),
+  data: jsonb("data").$type<MoneyPracticeData>().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+}, t => [uniqueIndex("practice_drafts_result_key_uq").on(t.resultId, t.practiceKey), check("practice_drafts_revision_positive", sql`${t.revision}>0`), check("practice_drafts_version_positive", sql`${t.schemaVersion}>0`)]);
 
 export const personalityAtlasDrafts = pgTable("personality_atlas_drafts", {
   resultId: uuid("result_id").primaryKey().references(() => results.id, { onDelete:"cascade" }),

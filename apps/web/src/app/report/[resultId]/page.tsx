@@ -6,6 +6,7 @@ import { PersonalityAtlas } from "@/components/personality-atlas/PersonalityAtla
 import { buildPersonalityAtlas } from "@/lib/personality-atlas";
 import { initialAtlasData } from "@/server/personality-atlas-service";
 import { personalityAtlasEnabled } from "@/server/personality-atlas-feature";
+import { moneyPracticeEnabled } from "@/server/practice-service";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -162,6 +163,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
             {view.chapters.map((chapter) => (
               <article key={chapter.kind} className={`card stack report-chapter report-chapter--${chapter.state}`}>
                 <h3>{chapter.title}</h3>
+                {chapter.kind === "chapter_money" && unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled() && <Link className="button button--ghost" href={`/report/${resultId}/practice/money`}>Открыть мой финансовый компас</Link>}
                 {chapter.state === "ready" && (
                   <>
                     <Paragraphs text={chapter.sections.text} />
