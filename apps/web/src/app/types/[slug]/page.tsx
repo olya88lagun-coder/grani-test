@@ -65,6 +65,7 @@ export default async function TypePage({ params }: Props) {
                     </li>
                   ))}
                 </ul>
+                <p><Link className="button button--ghost" href="/test">Узнать свой тип бесплатно <span aria-hidden="true">→</span></Link></p>
               </div>
               <div className={detail.gem} aria-hidden="true">
                 <GemPortrait dir={gemAssetDir(typeCodeToDir(code))} size={360} priority />

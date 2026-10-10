@@ -5,12 +5,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArticleTile } from "@/components/ArticleTile";
+import { ArticleReading } from "@/components/ArticleReading";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
-import { RichText } from "@/components/RichText";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
-import { splitForInlineCta } from "@/lib/article-layout";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, articleJsonLd, faqJsonLd, publicMetadata, traitPath } from "@/lib/seo";
 
@@ -35,17 +34,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // Автор всех статей — редакция проекта: вымышленных экспертов не заводим
 const AUTHOR = "Команда «Граней»";
-
-function InlineCta() {
-  return (
-    <aside className="article-inline-cta" aria-label="Пройти тест">
-      <p>Хочешь узнать, как эти черты выражены у тебя?</p>
-      <Link className="button" href="/test">
-        Пройти тест Big Five <span aria-hidden="true">→</span>
-      </Link>
-    </aside>
-  );
-}
 
 // Пять черт модели со ссылками на страницы обоих полюсов — общая опора для всех статей.
 function FiveTraits() {
@@ -77,7 +65,6 @@ export default async function ArticlePage({ params }: Props) {
   const path = article.canonical;
   const card = articleCard(article);
   const sources = ARTICLE_SOURCES[article.slug] ?? [];
-  const parts = splitForInlineCta(article.body);
   // Три статьи: сначала из той же рубрики, затем самые свежие; остальные доступны через «Все статьи»
   const rest = getArticles().filter((other) => other.slug !== article.slug);
   const others = [...rest.filter((other) => other.tag === article.tag), ...rest.filter((other) => other.tag !== article.tag)]
@@ -102,17 +89,7 @@ export default async function ArticlePage({ params }: Props) {
         <blockquote className="article-insight">
           <p>{article.description}</p>
         </blockquote>
-        <div className="article-body">
-          {parts ? (
-            <>
-              <RichText text={parts[0]} />
-              <InlineCta />
-              <RichText text={parts[1]} />
-            </>
-          ) : (
-            <RichText text={article.body} />
-          )}
-        </div>
+        <ArticleReading body={article.body} />
         {article.faq.length > 0 && (
           <section className="stack" aria-labelledby="article-faq">
             <h2 id="article-faq">Вопросы по теме</h2>

@@ -1,5 +1,6 @@
 import { METHOD_SOURCES, TRAIT_LABELS } from "@grani/content";
 import Link from "next/link";
+import { TestAccessNote } from "@/components/TestAccessNote";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { SourceList } from "@/components/SourceList";
@@ -88,13 +89,14 @@ export default function BigFiveTestPage() {
             <h1 id="big-five-title" className={styles.title}>
               Тест Big Five — Большая пятёрка личности
             </h1>
-            <p className="lead">Бесплатно, 50 утверждений, около 10 минут — и сразу результат: профиль по пяти чертам и один из 16 типов «Граней».</p>
+            <p className="lead">Бесплатно, 50 утверждений, около 10 минут. В результате — профиль по пяти чертам и один из 16 типов «Граней».</p>
             <div className={styles.actions}>
               <Link className="button button--lg" href="/test">
                 Пройти тест бесплатно <span aria-hidden="true">→</span>
               </Link>
-              <span className="home-time">Результат сразу после ответов</span>
+              <span className="home-time">Результат после ответов и входа</span>
             </div>
+            <TestAccessNote />
           </div>
           <article className={styles.preview} aria-label="Пример результата теста">
             <div className={styles.art}>

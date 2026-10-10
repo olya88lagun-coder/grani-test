@@ -40,6 +40,8 @@
 .page :global(.home-status) { background: var(--surface-2); color: var(--ink); border-radius: var(--radius); margin-bottom: 21px; }
 .page .secondaryAction { display: inline-flex; align-items: center; min-height: 44px; color: var(--ink); font-size: 15px; border-bottom: 1px solid var(--gold); text-decoration: none; }
 .page .secondaryAction:hover { color: var(--accent-hover); }
+.page .exampleNote { display: block; color: var(--ink-soft); font-size: 13px; line-height: 1.6; }
+.page :global(.home-hero__copy .test-access-note) { width: fit-content; padding: 8px 12px; background: var(--bg); border-radius: 8px; }
 
 .page :global(.home-crystal) { min-width: 0; min-height: 0; width: 100%; max-width: 540px; aspect-ratio: 1; justify-self: center; }
 /* Орбиту рисует сам фон, схема с кругами ему мешала бы */

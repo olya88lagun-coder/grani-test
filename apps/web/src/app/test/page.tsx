@@ -2,6 +2,7 @@ import { SELF_ITEMS } from "@grani/content";
 import type { Metadata } from "next";
 import { InAppBrowserNotice } from "@/components/InAppBrowserNotice";
 import { Questionnaire } from "@/components/Questionnaire";
+import { TestAccessNote } from "@/components/TestAccessNote";
 import { STORAGE_KEY } from "@/lib/test-progress";
 import styles from "./test.module.css";
 
@@ -15,6 +16,7 @@ export default function TestPage() {
       <div className={styles.container}>
         <div className={styles.intro}>
           <p>Выбирай ответ, который ближе к твоему обычному поведению.</p>
+          <TestAccessNote />
         </div>
         <InAppBrowserNotice place="test" />
         <Questionnaire items={items} storageKey={STORAGE_KEY} submitUrl="/api/results" submitLabel="Узнать результат" startGoal="test_start" finishGoal="test_finish" trackProgress progressGem={{ shape: "hexagon", family: 2 }} />

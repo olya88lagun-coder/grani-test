@@ -51,6 +51,10 @@ export default function TypesPage() {
                 . Каждая бывает высокой или низкой — отсюда 16 сочетаний. Пятая черта,{" "}
                 <Link href={traitPath("stability", "high")}>эмоциональная устойчивость</Link>, уточняет тип: спокойный он или чувствительный.
               </p>
+              <div className={index.testAction}>
+                <Link className="button" href="/test">Узнать свой тип <span aria-hidden="true">→</span></Link>
+                <span>Бесплатно · около 10 минут</span>
+              </div>
             </div>
           </header>
           <nav className={index.familyNav} aria-label="Семейства типов">

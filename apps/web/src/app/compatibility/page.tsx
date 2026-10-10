@@ -51,7 +51,7 @@ export default function CompatibilityPage() {
             <p className="lead">{DESCRIPTION}</p>
             <PairActions />
           </div>
-          <p className={styles.percent}>78%<span>пример · совместимость пары</span></p>
+          <p className={styles.percent}>78%<span>пример · индекс сочетания профилей</span><span>Сочетание профилей, не прогноз отношений.</span></p>
         </header>
         </div>
         </section>

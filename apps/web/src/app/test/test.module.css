@@ -4,6 +4,7 @@
 .container { width: 100%; max-width: 880px; margin-inline: auto; padding: 36px 28px 0; }
 .intro { margin-bottom: 28px; }
 .intro p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--ink-soft); max-width: 560px; }
+.intro p + p { margin-top: 10px; font-size: 14px; }
 
 .page :global(.questionnaire) { display: grid; gap: 20px; }
 .page :global(.questionnaire > *) { margin: 0; }
