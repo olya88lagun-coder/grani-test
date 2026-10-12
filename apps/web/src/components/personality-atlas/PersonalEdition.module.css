@@ -13,3 +13,11 @@
 .practice,.resources>section{scroll-margin-top:85px}
 
 .root[data-personal-edition] a.moneyLink{color:#0b211b}
+/* Обложка главы на карточке сферы: сверху картинка, текст без отступа под значок */
+.sphereCard>.sphereThumb{height:140px;margin:0 0 20px;border-radius:3px;background:#07130f center top/cover no-repeat}
+.sphereThumb[data-thumb="money"]{background-image:url("/chapters/money-mobile.webp")}
+.sphereThumb[data-thumb="conflict"]{background-image:url("/chapters/conflict-mobile.webp")}
+.sphereThumb[data-thumb="stress"]{background-image:url("/chapters/stress-mobile.webp")}
+.sphereThumb[data-thumb="relationships"]{background-image:url("/chapters/relationships-mobile.webp")}
+.root[data-personal-edition] .sphereCard>.label{max-width:none;min-height:24px}
+.root[data-personal-edition] .sphereCard h3{max-width:none}
