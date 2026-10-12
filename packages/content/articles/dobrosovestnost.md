@@ -4,7 +4,8 @@ seoTitle: Добросовестность в Big Five: что это такое
 description: Добросовестность в Big Five связана с организованностью и доведением дел до конца. Как она проявляется, когда помогает и почему высокий балл не всегда удобен.
 date: 2026-10-09
 tag: Личность
-image: /home/article-extrovert.webp
+image: /images/articles/02-dobrosovestnost.webp
+imageAlt: Упорядоченный ряд изумрудных кубов, сфер и пирамид на круглом постаменте с золотым ободом
 status: published
 reviewed: true
 canonical: /articles/dobrosovestnost

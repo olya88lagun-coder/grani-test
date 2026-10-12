@@ -3,7 +3,8 @@ title: Насколько точен тест Big Five
 description: Тест Big Five не предсказывает судьбу, но измеряет устойчиво. Разбираем, что говорят исследования о повторяемости баллов, структуре черт и связи с реальной жизнью.
 date: 2026-10-06
 tag: Наука
-image: /home/type-architect.webp
+image: /images/articles/05-tochnost-big-five.webp
+imageAlt: Пять изумрудных фигур на круглом постаменте внутри золотых измерительных дуг
 status: published
 reviewed: true
 canonical: /articles/naskolko-tochen-big-five

@@ -13,6 +13,7 @@ describe("published articles", () => {
     for (const article of getArticles()) {
       expect(article.image, article.slug).toBeTruthy();
       expect(existsSync(`${PUBLIC_DIR}${article.image}`), `${article.slug}: ${article.image}`).toBe(true);
+      expect(article.imageAlt?.length, article.slug).toBeGreaterThan(20);
     }
   });
 

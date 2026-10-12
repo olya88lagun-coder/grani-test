@@ -6,6 +6,7 @@ import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
 import { articleDate, publicMetadata } from "@/lib/seo";
 import { ArticleGrid } from "./ArticleGrid";
+import { ArticleCover } from "@/components/ArticleCover";
 
 export const metadata = publicMetadata({
   title: "Статьи о личности и отношениях",
@@ -38,7 +39,7 @@ export default function ArticlesPage() {
                 {dates[featured.slug]} <span aria-hidden="true">→</span>
               </p>
             </div>
-            <img className="journal-featured__image" src={featured.image} alt="" />
+            <ArticleCover article={featured} className="journal-featured__image" sizes="(max-width: 899px) 100vw, 55vw" preload />
           </Link>
         )}
 

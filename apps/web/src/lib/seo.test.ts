@@ -81,6 +81,13 @@ describe("metadata", () => {
     expect(OG_IMAGE).toMatchObject({ url: "/og/grani-night.jpg", width: 1200, height: 630 });
   });
 
+  it("uses a page-specific social image when supplied", () => {
+    const image = { url: "/images/articles/01-big-five.webp", width: 1600, height: 900, alt: "Пять изумрудных фигур" };
+    const meta = publicMetadata({ title: "Большая пятёрка", description: "Описание статьи", path: "/articles/big-five", image });
+    expect(meta.openGraph?.images).toEqual([image]);
+    expect(meta.twitter).toMatchObject({ images: [image.url] });
+  });
+
   it("builds a schema.org breadcrumb list with absolute urls", () => {
     expect(breadcrumbs([{ name: "Типы", path: "/types" }, { name: "Искра", path: "/types/iskra" }])).toEqual({
       "@context": "https://schema.org",
