@@ -2,7 +2,7 @@ import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedP
 import { typeName, unlockedKinds } from "@grani/core";
 import { typeCodeToDir } from "@grani/content";
 import { Fragment, type ReactNode } from "react";
-import { PersonalityAtlas } from "@/components/personality-atlas/PersonalityAtlas";
+import { PersonalEdition } from "@/components/personality-atlas/PersonalEdition";
 import { buildPersonalityAtlas } from "@/lib/personality-atlas";
 import { initialAtlasData } from "@/server/personality-atlas-service";
 import { personalityAtlasEnabled } from "@/server/personality-atlas-feature";
@@ -53,10 +53,14 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
   const stored = model ? await loadAtlasDraft(db, resultId) : null;
   const FullContent = model ? LegacyDisclosure : Fragment;
 
+  if (model && view.full) return <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
+    {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
+    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
+  </main>;
+
   return (
     <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
       {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
-      {model && <PersonalityAtlas key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} typeCode={result.typeCode} gemDir={gemAssetDir(typeCodeToDir(result.typeCode))} model={model} initialDraft={{revision:stored?.revision ?? 0, data:stored?.data ?? initialAtlasData(model), updatedAt:stored?.updatedAt?.toISOString() ?? null}} />}
       <div className="page page--report stack">
         {!model && <header className="report-hero">
           <div className="report-hero__copy">
