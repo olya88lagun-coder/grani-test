@@ -1,6 +1,6 @@
-import { buildFriendsInput, buildPairInput, buildPersonalInput, generateReport, type ReportInput, type ReportWriter } from "@grani/ai";
-import { compareFriendAnswers, type Library } from "@grani/content";
-import { CHAPTER_KINDS, friendsReportDue, type GenerateJob, type NotifyJob } from "@grani/core";
+import { buildFriendsInput, buildPairInput, buildPersonalInput, generateChapterCards, generateReport, type GeneratedReport, type ReportInput, type ReportWriter } from "@grani/ai";
+import { compareFriendAnswers, hasCardsFormat, type Library } from "@grani/content";
+import { CHAPTER_KINDS, friendsReportDue, type ChapterKind, type GenerateJob, type NotifyJob } from "@grani/core";
 import {
   getActivePair,
   getInviteForResult,
@@ -15,7 +15,15 @@ import {
 } from "@grani/db";
 import type { Logger } from "./log";
 
-export type GenerateDeps = { db: Database; library: Library; writer: ReportWriter | null; log: Logger; enqueueNotify: (job: NotifyJob) => Promise<void> };
+export type GenerateDeps = {
+  db: Database;
+  library: Library;
+  writer: ReportWriter | null;
+  log: Logger;
+  enqueueNotify: (job: NotifyJob) => Promise<void>;
+  // Пилот: главы с темами пишутся карточками; по умолчанию выключено
+  chapterCardsV2?: boolean;
+};
 
 const targetOf = (job: GenerateJob): ReportTarget => (job.kind === "pair" ? { pairId: job.pairId } : { resultId: job.resultId });
 
@@ -49,6 +57,20 @@ async function announcementFor(job: GenerateJob, reportId: string, deps: Generat
   return CHAPTER_KINDS.every((kind) => ready.has(kind)) ? { kind: "chapters_ready", resultId: job.resultId } : null;
 }
 
+type ChapterJob = { kind: ChapterKind; resultId: string };
+
+// Формат карточек — только у глав с темами и только при включённом флаге и подключённом ИИ
+function usesCards(job: GenerateJob, deps: GenerateDeps): job is ChapterJob {
+  return deps.chapterCardsV2 === true && deps.writer !== null && isChapter(job.kind) && hasCardsFormat(job.kind as ChapterKind);
+}
+
+async function generateCards(job: ChapterJob, deps: GenerateDeps): Promise<GeneratedReport | null> {
+  const result = await getResult(deps.db, job.resultId);
+  if (!result || !deps.writer) return null;
+  const cards = await generateChapterCards(deps.writer, { library: deps.library, kind: job.kind, result }, { log: (message, extra) => deps.log("warn", message, extra) });
+  return cards ? { sections: cards.sections, source: "ai", attempts: cards.attempts } : null;
+}
+
 export async function runGenerate(job: GenerateJob, deps: GenerateDeps): Promise<void> {
   const target = targetOf(job);
   if (await getReport(deps.db, target, job.kind)) return;
@@ -57,7 +79,10 @@ export async function runGenerate(job: GenerateJob, deps: GenerateDeps): Promise
     deps.log("info", "report skipped", { kind: job.kind });
     return;
   }
-  const generated = await generateReport(deps.writer, input, { log: (message, extra) => deps.log("warn", message, extra) });
+  const cardsRequested = usesCards(job, deps);
+  const cards = cardsRequested ? await generateCards(job, deps) : null;
+  // Если карточки не получились, глава собирается из блоков без повторного обращения к модели
+  const generated = cards ?? (await generateReport(cardsRequested ? null : deps.writer, input, { log: (message, extra) => deps.log("warn", message, extra) }));
   const { report, created } = await saveReport(deps.db, { target, kind: job.kind, sections: generated.sections, source: generated.source });
   deps.log("info", "report generated", { kind: job.kind, source: generated.source, attempts: generated.attempts, created });
   if (!created) return;

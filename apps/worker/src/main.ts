@@ -38,7 +38,7 @@ const enqueueNotify = async (job: NotifyJob) => {
 await boss.work<GenerateJob>(QUEUES.generate, async ([job]) => {
   if (!job) return;
   try {
-    await runGenerate(job.data, { db, library, writer, log, enqueueNotify });
+    await runGenerate(job.data, { db, library, writer, log, enqueueNotify, chapterCardsV2: env.chapterCardsV2 });
   } catch (error) {
     log("warn", "generate job failed", { kind: job.data.kind, error: String(error), cause: error instanceof Error ? String(error.cause) : undefined });
     throw error;
@@ -68,7 +68,7 @@ await boss.work(QUEUES.retention, async () => {
   }
 });
 
-log("info", "worker started", { vk: senders.vk !== undefined, dryRun: env.dryRun, ai: env.ai.provider });
+log("info", "worker started", { vk: senders.vk !== undefined, dryRun: env.dryRun, ai: env.ai.provider, chapterCardsV2: env.chapterCardsV2 });
 
 let stopping = false;
 async function shutdown(signal: string) {
