@@ -76,8 +76,8 @@ export function PersonalEdition({resultId,displayName,typeName,model,initialDraf
     <a className="skip" href="#edition-content">К содержанию разбора</a>
     <div className={styles.masthead}><span className={styles.brand}>ГРАНИ<small>Личный атлас</small></span><span className={styles.owner}>{displayName}<small>Полный разбор · {typeName}</small></span></div>
     <nav ref={navRef} className={styles.navigation} aria-label="Разделы личного разбора">{NAV.map(n=><a href={`#edition-${n.id}`} key={n.id} aria-current={active===n.id?"page":undefined} onClick={e=>{e.preventDefault();navigate(n.id);}}>{n.label}</a>)}</nav>
-    <div id="edition-content" className={styles.content}>
       {pendingEditor&&<p className={styles.notice} role="status">Есть неприменённые правки. <button type="button" className="text-button" onClick={()=>{navigate("memo");setTarget(pendingEditor);}}>Вернуться к редактору</button></p>}
+    <div id="edition-content" className={styles.content}>
       <h1 ref={titleRef} tabIndex={-1} className={active==="portrait"?styles.coverTitle:styles.srOnly}>{active==="portrait"?<>Личный<br/><em>разбор.</em></>:"Ваш личный разбор"}</h1>
       <div className={styles.view} id="edition-portrait" hidden={active!=="portrait"}>
         <header className={styles.cover}><div><p className={styles.label}>Личное издание для {displayName}</p><div className={styles.titleSpace}/><p className={styles.coverIntro}>Ваш портрет, пять граней характера и ориентиры для повседневных решений — по ответам в тесте.</p><a className={styles.textLink} href="#edition-reading">Прочитать мой портрет <span aria-hidden="true">↓</span></a></div><figure><Image src="/report-personal-edition/cover.png" alt="" fill sizes="(max-width:600px) 90px, (max-width:1000px) 40vw, 520px" priority/><figcaption>У каждого сочетания<br/>свой характер.</figcaption></figure></header>
