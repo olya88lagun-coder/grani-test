@@ -22,9 +22,9 @@ test("six answers, four compass directions, seven-day journal and edited memo su
   await page.locator("#money-compass").scrollIntoViewIfNeeded();
   await page.getByRole("button", { name: "Пауза перед покупкой", exact: true }).click();
   await expect(page.locator("#money-compass")).toContainText("Зависит от ситуации");
-  await page.locator("#money-compass summary").click(); await expect(page.locator("#money-compass")).toContainText("Часто решаю сразу");
+  await page.locator("#money-compass [data-basis] summary").click(); await expect(page.locator("#money-compass")).toContainText("Часто решаю сразу");
   await page.screenshot({ path: resolve(out, "desktop-compass.png") });
-  await expect(page.locator("#money-situations article")).toHaveCount(4);
+  await expect(page.locator("#money-compass [data-direction]")).toHaveCount(4);
   await page.locator('input[name="money-habit"][value="pause"]').check(); await page.getByRole("button", { name: "Начать семь дней" }).click();
   await page.getByRole("checkbox", { name: "Я попробовал(а) выбранный шаг" }).check();
   await page.locator("#money-day-note").fill("После паузы покупка оказалась необязательной");
