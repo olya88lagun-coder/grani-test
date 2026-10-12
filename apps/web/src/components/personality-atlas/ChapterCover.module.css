@@ -1,0 +1,29 @@
+/* Обложка шапки главы: слева тёмное место под текст, сюжет справа. Контраст светлого текста к левым 40% кадров — от 12 : 1 */
+.cover.cover {
+  position: relative;
+  display: block;
+  min-height: 340px;
+  padding: 44px 0 40px 28px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(212, 184, 120, 0.22);
+  border-radius: 6px;
+  background-color: #07130f; /* цвет нижнего края картинок, чтобы не было шва */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: right center;
+}
+.cover > div { max-width: 42%; }
+.cover[data-chapter="money"] { background-image: url("/chapters/money-desktop.webp"); }
+.cover[data-chapter="conflict"] { background-image: url("/chapters/conflict-desktop.webp"); }
+.cover[data-chapter="stress"] { background-image: url("/chapters/stress-desktop.webp"); }
+.cover[data-chapter="relationships"] { background-image: url("/chapters/relationships-desktop.webp"); }
+
+/* Мобильные кадры: сюжет в верхней половине, под ним спокойный фон для текста */
+@media (max-width: 760px) {
+  .cover.cover { min-height: 0; padding: 250px 20px 24px; background-size: 100% auto; background-position: top center; }
+  .cover > div { max-width: none; }
+  .cover[data-chapter="money"] { background-image: url("/chapters/money-mobile.webp"); }
+  .cover[data-chapter="conflict"] { background-image: url("/chapters/conflict-mobile.webp"); }
+  .cover[data-chapter="stress"] { background-image: url("/chapters/stress-mobile.webp"); }
+  .cover[data-chapter="relationships"] { background-image: url("/chapters/relationships-mobile.webp"); }
+}

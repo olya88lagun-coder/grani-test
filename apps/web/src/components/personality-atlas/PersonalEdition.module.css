@@ -11,3 +11,5 @@
 .root[data-personal-edition]{--ink:#f1ecdf;--soft:#bbc5bc}.paper{--ink:#233a30;--soft:#586452}.root[data-personal-edition] .paper :global(summary:focus-visible){outline-color:var(--accent)}
 .bundle{--ink:#233a30;--text:#233a30}
 .practice,.resources>section{scroll-margin-top:85px}
+
+.root[data-personal-edition] a.moneyLink{color:#0b211b}
