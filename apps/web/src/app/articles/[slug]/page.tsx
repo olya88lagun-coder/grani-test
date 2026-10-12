@@ -4,6 +4,7 @@ import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArticleCover } from "@/components/ArticleCover";
 import { ArticleTile } from "@/components/ArticleTile";
 import { ArticleReading } from "@/components/ArticleReading";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -28,7 +29,13 @@ const findArticle = (slug: string) => getArticles().find((article) => article.sl
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = findArticle((await params).slug);
   if (!article) return {};
-  const meta = publicMetadata({ title: article.seoTitle ?? article.title, description: article.description, path: article.canonical });
+  const card = articleCard(article);
+  const meta = publicMetadata({
+    title: article.seoTitle ?? article.title,
+    description: article.description,
+    path: article.canonical,
+    image: { url: card.image, width: 1600, height: 900, alt: card.imageAlt },
+  });
   return { ...meta, openGraph: { ...meta.openGraph, type: "article", publishedTime: article.date } };
 }
 
@@ -85,7 +92,7 @@ export default async function ArticlePage({ params }: Props) {
             {AUTHOR} · обновлено {articleDate(article.date)} · <Link href="/about">подробнее о методике</Link>
           </p>
         </header>
-        <img className="article-hero__image" src={card.image} alt="" />
+        <ArticleCover article={card} className="article-hero__image" sizes="(max-width: 980px) 100vw, 980px" preload />
         <blockquote className="article-insight">
           <p>{article.description}</p>
         </blockquote>

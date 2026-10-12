@@ -1,9 +1,8 @@
 import type { Article } from "@grani/content";
 
-// Рубрика берётся из front matter статьи (tag), обложку подставляет сайт: автописатель картинку не выбирает.
-// Поле image статьи учитывается, только если это одна из ночных обложек ниже; старые светлые картинки
-// (листья, облака, атриум), которые писали прежние статьи, игнорируются.
-export type ArticleVisual = { tag: string; image: string };
+// Рубрика, индивидуальная обложка и alt берутся из front matter статьи.
+// Старые светлые картинки (листья, облака, атриум) по-прежнему заменяются ночными fallback-обложками.
+export type ArticleVisual = { tag: string; image: string; imageAlt: string };
 
 // Несколько обложек на рубрику: вариант выбирается по slug, поэтому карточки в одном ряду не повторяются
 // и каждая статья всегда получает одну и ту же картинку.
@@ -26,6 +25,7 @@ function variantFor(covers: readonly string[], slug: string): string {
 }
 
 export function articleCover(article: Article): string {
+  if (article.image?.startsWith("/images/articles/")) return article.image;
   if (article.image && NIGHT_COVERS.has(article.image)) return article.image;
   const covers = (article.tag ? COVERS_BY_TAG[article.tag] : undefined) ?? DEFAULT_COVERS;
   return variantFor(covers, article.slug);
@@ -41,5 +41,6 @@ export function articleCard(article: Article): ArticleCard {
     date: article.date,
     tag: article.tag ?? FALLBACK_TAG,
     image: articleCover(article),
+    imageAlt: article.imageAlt ?? "",
   };
 }

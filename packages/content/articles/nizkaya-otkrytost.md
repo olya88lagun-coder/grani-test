@@ -4,7 +4,8 @@ seoTitle: Низкая открытость опыту: сильные стор�
 description: Низкая открытость в Big Five означает интерес к проверенным решениям и конкретным задачам. Разбираем её сильные стороны, ограничения и отношение к переменам.
 date: 2026-10-09
 tag: Личность
-image: /home/article-extrovert.webp
+image: /images/articles/03-nizkaya-otkrytost.webp
+imageAlt: Книги и письменные принадлежности на изумрудном столе перед круглым освещённым проходом
 status: published
 reviewed: true
 canonical: /articles/nizkaya-otkrytost

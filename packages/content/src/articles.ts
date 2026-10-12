@@ -19,9 +19,10 @@ export type Article = {
   canonical: string;
   cluster?: string;
   intent?: string;
-  // Рубрика и иллюстрация карточки; картинка — ассет сайта из /home, наличие файла проверяет тест сайта
+  // Рубрика и общая иллюстрация для карточки, hero и SEO; наличие файла проверяет тест сайта.
   tag?: string;
   image?: string;
+  imageAlt?: string;
   faq: readonly ArticleFaq[];
   body: string;
   blocks: TextBlock[];
@@ -38,7 +39,8 @@ const RawFrontMatter = z.strictObject({
   cluster: z.string().min(2).max(40).optional(),
   intent: z.string().min(4).max(80).optional(),
   tag: z.string().min(3).max(24).optional(),
-  image: z.string().regex(/^\/home\/[a-z0-9-]+\.webp$/).optional(),
+  image: z.string().regex(/^\/(?:home|images\/articles)\/[a-z0-9-]+\.webp$/).optional(),
+  imageAlt: z.string().min(20).max(180).optional(),
   faq: z.string().min(20).max(1200).optional(),
 });
 

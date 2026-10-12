@@ -3,7 +3,8 @@ title: Открытость опыту: любопытство и идеи
 description: Открытость опыту — черта Big Five о тяге к новому и непривычному. Разбираем, из чего она состоит, как проявляется на обоих полюсах и как читать свой балл.
 date: 2026-10-09
 tag: Личность
-image: /home/article-extrovert.webp
+image: /images/articles/04-otkrytost-opytu.webp
+imageAlt: Парящие раскрытые книги и изумрудные кристаллы вокруг сияющего золотого портала
 status: published
 reviewed: true
 canonical: /articles/otkrytost-opytu

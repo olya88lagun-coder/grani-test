@@ -4,7 +4,8 @@ seoTitle: IPIP-50: что это за опросник
 description: IPIP-50 — открытый опросник из 50 утверждений для измерения пяти черт личности. Разбираем, откуда он взялся, как устроен и почему ему можно доверять.
 date: 2026-09-29
 tag: Наука
-image: /home/type-architect.webp
+image: /images/articles/07-ipip-50.webp
+imageAlt: Пять групп изумрудных сфер на золотых подносах вокруг раскрытого опросника
 status: published
 reviewed: true
 canonical: /articles/ipip-50

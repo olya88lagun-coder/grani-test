@@ -3,7 +3,8 @@ title: Как читать результаты Big Five
 description: Результаты Big Five — это не оценка «хорошо или плохо», а пять шкал. Разбираем, что значит балл у края и у середины и насколько ему можно доверять.
 date: 2026-10-02
 tag: Наука
-image: /home/hero-atrium.webp
+image: /images/articles/06-rezultaty-big-five.webp
+imageAlt: Пять изумрудных столбцов разной высоты и золотая лупа над самым высоким столбцом
 status: published
 reviewed: true
 canonical: /articles/rezultaty-big-five

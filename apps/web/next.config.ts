@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", headers: SECURITY_HEADERS },
       { source: "/home/:file*", headers: PUBLIC_IMAGE_CACHE },
+      { source: "/images/articles/:file*", headers: PUBLIC_IMAGE_CACHE },
       { source: "/og/:file*", headers: PUBLIC_IMAGE_CACHE },
     ];
   },

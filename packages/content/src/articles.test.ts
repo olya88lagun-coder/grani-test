@@ -43,6 +43,17 @@ describe("parseArticle", () => {
     expect(() => parseArticle("long-seo", RAW.replace("date:", `seoTitle: ${"я".repeat(53)}\ndate:`), SHORT)).toThrow(/seoTitle/);
   });
 
+  it("reads an article cover path and its meaningful alternative text", () => {
+    const withCover = RAW.replace(
+      "date: 2026-09-22",
+      "date: 2026-09-22\nimage: /images/articles/01-big-five.webp\nimageAlt: Пять изумрудных фигур на тёмном постаменте",
+    );
+    expect(parseArticle("with-cover", withCover, SHORT)).toMatchObject({
+      image: "/images/articles/01-big-five.webp",
+      imageAlt: "Пять изумрудных фигур на тёмном постаменте",
+    });
+  });
+
   it("supports structured SEO fields and FAQ", () => {
     const article = parseArticle(
       "demo",
