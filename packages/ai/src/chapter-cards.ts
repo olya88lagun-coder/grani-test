@@ -1,0 +1,98 @@
+import { chapterSeeds, CHAPTER_SECTIONS, CHAPTER_TITLES, findStopWords, traitBlock, type ChapterSeed, type Library } from "@grani/content";
+import { TRAITS, traitLevel, type ChapterKind } from "@grani/core";
+import { z } from "zod";
+import { styleProblems } from "./chapter-style";
+import { personalFacts, type PersonalScores } from "./input";
+import { COMMON_RULES, type Prompt } from "./prompt";
+import { cardsShape, parseChapterCards, sectionStrings, SituationSchema, type ChapterCardsSections } from "./sections";
+import { extractJson } from "./validate";
+
+export type ChapterPart = "overview" | "situations_a" | "situations_b";
+export const CHAPTER_PARTS: readonly ChapterPart[] = ["overview", "situations_a", "situations_b"];
+export type ChapterCardsContext = { library: Library; kind: ChapterKind; result: PersonalScores };
+
+const SITUATIONS_PER_PART = 3;
+const MAX_HEDGES_PER_CARD = 1;
+const MAX_HEDGES_OVERVIEW = 2;
+
+export function partSeeds(kind: ChapterKind, part: ChapterPart): readonly ChapterSeed[] {
+  const seeds = chapterSeeds(kind);
+  if (part === "overview") return [];
+  return part === "situations_a" ? seeds.slice(0, SITUATIONS_PER_PART) : seeds.slice(SITUATIONS_PER_PART);
+}
+
+const RULES = [
+  ...COMMON_RULES,
+  "Пиши по-русски, на «ты», обращаясь к одному человеку.",
+  "Ситуации — это примеры («например, друг просит денег»), а не факты о читателе: нельзя писать «ты уже…», «у тебя было…», «ты всегда…», «ты никогда…».",
+  "«Что сказать» — готовые фразы, которые человек может произнести сразу, без оговорок.",
+  "Не более одной оговорки («может», «возможно», «можно сравнить») на карточку: пиши прямо, как опытный редактор.",
+  "Не пересказывай блоки слово в слово: объясняй, почему так получается, и предлагай одно конкретное действие.",
+];
+
+const OVERVIEW_SHAPE = [
+  '{"headline": "главный вывод о человеке в этой сфере, 40–140 знаков",',
+  ' "summary": "2–3 предложения о том, как человек обращается с этой сферой, 150–500 знаков",',
+  ' "others_see": "как это видят близкие, 120–400 знаков",',
+  ' "traps": [{"trap": "типичная ловушка, 20–200 знаков", "instead": "что делать вместо, 20–200 знаков"}, {"trap": "…", "instead": "…"}, {"trap": "…", "instead": "…"}]}',
+  "Количество ловушек соблюдай строго: traps — ровно 3 объекта.",
+].join("\n");
+
+const SITUATIONS_SHAPE = [
+  '{"situations": [{"seed": "id темы из seeds", "title": "название ситуации, 20–90 знаков",',
+  ' "scene": "пример ситуации, в которой читатель узнает себя, 80–320 знаков",',
+  ' "why": "почему так: свяжи одну-две черты читателя, 80–320 знаков",',
+  ' "traits": ["openness"], "say": ["1–3 готовые фразы, по 10–160 знаков"],',
+  ' "do": "одно конкретное действие, 40–260 знаков"}]}',
+  "Дай по одному объекту на каждую тему из seeds, в том же порядке; seed — её id.",
+  `traits — только из: ${TRAITS.join(", ")}.`,
+].join("\n");
+
+export function buildChapterPartPrompt(part: ChapterPart, ctx: ChapterCardsContext): Prompt {
+  const section = CHAPTER_SECTIONS[ctx.kind];
+  const blocks = Object.fromEntries(TRAITS.map((trait) => [trait, traitBlock(ctx.library, trait, traitLevel(ctx.result.scores[trait]), section)]));
+  const seeds = partSeeds(ctx.kind, part).map(({ id, title, focus, traits }) => ({ id, title, focus, traits }));
+  return {
+    system: [...RULES, `Схема ответа:\n${part === "overview" ? OVERVIEW_SHAPE : SITUATIONS_SHAPE}`].join("\n\n"),
+    // Во входе только баллы, уровни, темы и блоки — имён и идентификаторов в нём нет
+    user: JSON.stringify({ chapter: CHAPTER_TITLES[ctx.kind], facts: personalFacts(ctx.result), seeds, blocks }),
+  };
+}
+
+const OverviewSchema = z.strictObject({ headline: cardsShape.headline, summary: cardsShape.summary, others_see: cardsShape.others_see, traps: cardsShape.traps });
+const SituationsSchema = z.strictObject({ situations: z.array(SituationSchema).min(1).max(SITUATIONS_PER_PART) });
+export type OverviewPart = z.infer<typeof OverviewSchema>;
+export type SituationsPart = z.infer<typeof SituationsSchema>;
+export type PartFailure = "not_json" | "schema" | "stop_words" | "style" | "seeds";
+export type PartCheck<T> = { ok: true; value: T } | { ok: false; reason: PartFailure };
+
+const hasStopWords = (value: unknown) => sectionStrings(value).some((text) => findStopWords(text).length > 0);
+
+export function validateOverview(raw: string): PartCheck<OverviewPart> {
+  const json = extractJson(raw);
+  if (json === undefined) return { ok: false, reason: "not_json" };
+  const parsed = OverviewSchema.safeParse(json);
+  if (!parsed.success) return { ok: false, reason: "schema" };
+  if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
+  if (styleProblems(sectionStrings(parsed.data), MAX_HEDGES_OVERVIEW).length > 0) return { ok: false, reason: "style" };
+  return { ok: true, value: parsed.data };
+}
+
+export function validateSituations(raw: string, expectedSeeds: readonly string[]): PartCheck<SituationsPart> {
+  const json = extractJson(raw);
+  if (json === undefined) return { ok: false, reason: "not_json" };
+  const parsed = SituationsSchema.safeParse(json);
+  if (!parsed.success) return { ok: false, reason: "schema" };
+  if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
+  if (parsed.data.situations.some((card) => styleProblems(sectionStrings(card), MAX_HEDGES_PER_CARD).length > 0)) return { ok: false, reason: "style" };
+  const seeds = parsed.data.situations.map((card) => card.seed);
+  if (seeds.length !== expectedSeeds.length || seeds.some((seed, index) => seed !== expectedSeeds[index])) return { ok: false, reason: "seeds" };
+  return { ok: true, value: parsed.data };
+}
+
+export function assembleChapterCards(overview: OverviewPart, a: SituationsPart, b: SituationsPart): ChapterCardsSections | null {
+  const situations = [...a.situations, ...b.situations];
+  // Одинаковые названия значат, что модель повторила карточку, — такую главу не сохраняем
+  if (new Set(situations.map((card) => card.title)).size !== situations.length) return null;
+  return parseChapterCards({ version: 2, ...overview, situations });
+}
