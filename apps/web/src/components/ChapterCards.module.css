@@ -23,11 +23,14 @@
 
 .axes { display: grid; gap: 18px; padding: 20px; border: 1px solid var(--cc-line); border-radius: 6px; background: var(--cc-surface); }
 .poles { display: flex; justify-content: space-between; gap: 16px; font-size: 14px; color: var(--cc-muted); }
+.poles span:last-child { text-align: right; }
 .track { position: relative; height: 2px; margin: 12px 0 6px; background: var(--cc-line); }
 .track i { position: absolute; top: -6px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; background: var(--cc-accent); }
 .score { margin: 0; font-size: 13px; color: var(--cc-muted); }
 
 .cards { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+/* Правило `li+li` из PersonalEdition.module.css (специфичнее) сдвигало вторую колонку вниз */
+.cards > li { margin: 0 !important; }
 .card { height: 100%; padding: 24px; border: 1px solid var(--cc-line); border-radius: 6px; background: var(--cc-surface); }
 .number { font: 300 32px/1 var(--font-display), Georgia, serif; color: var(--cc-accent); margin: 0 0 8px; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -44,5 +47,5 @@
 @media (max-width: 760px) {
   .cards { grid-template-columns: 1fr; }
   .card, .block, .axes { padding: 18px; }
-  .poles { flex-direction: column; gap: 2px; }
+  .poles { font-size: 13px; }
 }
