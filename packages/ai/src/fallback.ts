@@ -1,7 +1,7 @@
 import { TRAITS, type Trait } from "@grani/core";
 import { PAIR_SECTIONS } from "@grani/content";
 import { byPronounced, type PersonalFacts, type ReportInput } from "./input";
-import type { ChapterSections, FriendsSections, FullSections, PairSections, ReportSections } from "./sections";
+import type { ChapterTextSections, FriendsSections, FullSections, PairSections, ReportSections } from "./sections";
 import type { ReportKind } from "@grani/core";
 
 const ADVICE_MARKER = "Что помогает:";
@@ -42,7 +42,7 @@ function full(input: Extract<ReportInput, { kind: "full" }>): FullSections {
   };
 }
 
-function chapter(input: Extract<ReportInput, { kind: `chapter_${string}` }>): ChapterSections {
+function chapter(input: Extract<ReportInput, { kind: `chapter_${string}` }>): ChapterTextSections {
   const top = ordered(input.facts);
   return {
     text: top.map((trait) => firstParagraph(input.blocks.traits[trait])).join("\n\n"),

@@ -4,7 +4,7 @@ import { readWorkerEnv } from "./env";
 const BASE = { DATABASE_URL: "postgres://u:p@db/grani", APP_URL: "https://grani-test.ru" };
 
 test("works without the VK community configured", () => {
-  expect(readWorkerEnv(BASE)).toEqual({ ...BASE, vkGroupToken: null, dryRun: false, poolMax: 3, ai: { provider: "none" } });
+  expect(readWorkerEnv(BASE)).toEqual({ ...BASE, vkGroupToken: null, dryRun: false, poolMax: 3, ai: { provider: "none" }, chapterCardsV2: false });
 });
 
 test("reads the VK token and the dry run switch, and ignores a Telegram token", () => {
@@ -14,7 +14,15 @@ test("reads the VK token and the dry run switch, and ignores a Telegram token", 
     dryRun: true,
     poolMax: 3,
     ai: { provider: "none" },
+    chapterCardsV2: false,
   });
+});
+
+test("the chapter cards pilot is off unless CHAPTER_CARDS_V2 is 1", () => {
+  expect(readWorkerEnv(BASE).chapterCardsV2).toBe(false);
+  expect(readWorkerEnv({ ...BASE, CHAPTER_CARDS_V2: "0" }).chapterCardsV2).toBe(false);
+  expect(readWorkerEnv({ ...BASE, CHAPTER_CARDS_V2: "1" }).chapterCardsV2).toBe(true);
+  expect(() => readWorkerEnv({ ...BASE, CHAPTER_CARDS_V2: "yes" })).toThrow(/CHAPTER_CARDS_V2/);
 });
 
 test("takes the pool size from DATABASE_POOL_MAX, like the site", () => {

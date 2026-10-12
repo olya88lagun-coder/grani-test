@@ -12,13 +12,23 @@ import {
   seedUserWithResult,
   type Database,
 } from "@grani/db/testing";
-import { fallbackSections, buildPersonalInput } from "@grani/ai";
+import { fallbackSections, buildPersonalInput, parseSections, type Prompt, type ReportWriter } from "@grani/ai";
+import { cardsStubWriter } from "@grani/ai/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { runGenerate, type GenerateDeps } from "./generate";
 
 let db: Database;
 let deps: GenerateDeps;
 let anna: { userId: string; resultId: string };
+
+const CHAPTER_RESULT = { scores: { openness: 60, conscientiousness: 55, extraversion: 70, agreeableness: 65, stability: 40 }, typeCode: "++++", stability: "sensitive" } as const;
+
+// Модель, которая отвечает по-старому: одним корректным текстом главы формата 1
+function oldFormatWriter(kind: "chapter_money" | "chapter_stress"): ReportWriter & { calls: Prompt[] } {
+  const calls: Prompt[] = [];
+  const answer = JSON.stringify(fallbackSections(buildPersonalInput(getLibrary(), kind, CHAPTER_RESULT)));
+  return { name: "stub", calls, complete: async (prompt) => (calls.push(prompt), answer) };
+}
 
 beforeEach(async () => {
   db = await createTestDb();
@@ -50,6 +60,49 @@ describe("runGenerate", () => {
     await runGenerate({ kind: "chapter_money", resultId: anna.resultId }, deps);
 
     expect((await getReport(db, { resultId: anna.resultId }, "chapter_money"))?.source).toBe("ai");
+  });
+
+  test("with the pilot flag the money chapter is saved as cards written by the model", async () => {
+    deps.writer = cardsStubWriter();
+    deps.chapterCardsV2 = true;
+
+    await runGenerate({ kind: "chapter_money", resultId: anna.resultId }, deps);
+
+    const report = await getReport(db, { resultId: anna.resultId }, "chapter_money");
+    expect(report?.source).toBe("ai");
+    expect(parseSections("chapter_money", report?.sections)).toMatchObject({ version: 2 });
+  });
+
+  test("when a part fails the chapter is built from the library and no model answer is mixed in", async () => {
+    deps.writer = cardsStubWriter({ overview: ["{}", "{}", "{}"] });
+    deps.chapterCardsV2 = true;
+
+    await runGenerate({ kind: "chapter_money", resultId: anna.resultId }, deps);
+
+    const report = await getReport(db, { resultId: anna.resultId }, "chapter_money");
+    expect(report?.source).toBe("fallback");
+    expect(parseSections("chapter_money", report?.sections)).toHaveProperty("tips");
+  });
+
+  test("without the flag the model is asked once, for the old chapter format", async () => {
+    const stub = oldFormatWriter("chapter_money");
+    deps.writer = stub;
+
+    await runGenerate({ kind: "chapter_money", resultId: anna.resultId }, deps);
+
+    expect(stub.calls).toHaveLength(1);
+    expect(JSON.parse(stub.calls[0]!.user)).not.toHaveProperty("seeds");
+  });
+
+  test("other chapters stay in the old format even with the flag", async () => {
+    const stub = oldFormatWriter("chapter_stress");
+    deps.writer = stub;
+    deps.chapterCardsV2 = true;
+
+    await runGenerate({ kind: "chapter_stress", resultId: anna.resultId }, deps);
+
+    expect(stub.calls).toHaveLength(1);
+    expect(JSON.parse(stub.calls[0]!.user)).not.toHaveProperty("seeds");
   });
 
   test("the friends section waits for the paid full report and three friends", async () => {

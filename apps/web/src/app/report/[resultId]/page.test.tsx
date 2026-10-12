@@ -1,5 +1,8 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import { parseChapterCards } from "@grani/ai";
+import { sampleOverview, sampleSituation } from "@grani/ai/testing";
+import { chapterSeeds } from "@grani/content";
 const mocks=vi.hoisted(()=>({result:vi.fn(),products:vi.fn(),load:vi.fn(),user:vi.fn(),view:vi.fn(),notFound:vi.fn(()=>{throw Error("404")}),redirect:vi.fn(()=>{throw Error("redirect")})}));
 vi.mock("@grani/db",()=>({getResultForOwner:mocks.result,listOwnedProducts:mocks.products,loadAtlasDraft:mocks.load,getInviteForResult:vi.fn(async()=>null),listReports:vi.fn(async()=>[]),countFriendResponses:vi.fn()}));
 vi.mock("@/server/db",()=>({getDb:()=>({})}));
@@ -18,3 +21,6 @@ test("flag off preserves original report without reading the draft table",async(
 test("flag on mounts personal edition with real scores and preserves original report",async()=>{process.env.PERSONALITY_ATLAS_V2="1";const html=await render();expect(html).toContain("data-personal-edition");expect(html).toContain("Анна");expect(html).toContain("Existing portrait");expect(html).toContain("85</strong>");expect(html.match(/<h1/g)).toHaveLength(1);expect(mocks.load).toHaveBeenCalledWith({},"r");});
 test("pending report still uses original preparing state",async()=>{process.env.PERSONALITY_ATLAS_V2="1";mocks.view.mockReturnValue({full:null,preparing:true,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null});expect(await render()).toContain("Готовим");expect(mocks.load).not.toHaveBeenCalled();});
 test("foreign result and unpaid result cannot load private drafts",async()=>{process.env.PERSONALITY_ATLAS_V2="1";mocks.result.mockResolvedValueOnce(null);await expect(render()).rejects.toThrow("404");mocks.products.mockResolvedValueOnce([]);await expect(render()).rejects.toThrow("redirect");expect(mocks.load).not.toHaveBeenCalled();});
+const moneyView=(sections:unknown)=>({full,preparing:false,friends:{state:"waiting",counter:"0 из 3"},bundle:null,chapters:[{kind:"chapter_money",title:"Деньги",state:"ready",sections}]});
+test("flag off: an old text chapter is shown as before",async()=>{mocks.view.mockReturnValue(moneyView({text:"Старый абзац главы про деньги, который уже оплатили.",tips:["Старый совет номер один","Старый совет номер два","Старый совет номер три"]}));const html=await render();expect(html).toContain("Старый абзац главы про деньги");expect(html).toContain("Старый совет номер два");});
+test("flag off: a cards chapter is shown as cards",async()=>{const cards=parseChapterCards({version:2,...sampleOverview(),situations:chapterSeeds("chapter_money").map(sampleSituation)});mocks.view.mockReturnValue(moneyView(cards));const html=await render();expect(html).toContain("Ты щедрее к людям, чем к себе");expect(html.match(/Узнаёшь себя\?/g)).toHaveLength(6);});

@@ -5,7 +5,9 @@ import { getResultForOwner, listReports, listOwnedProducts } from "@grani/db";
 import { canBuy, formatRub, PRODUCT_PRICES } from "@grani/core";
 import { MoneyPractice } from "@/components/practice/MoneyPractice";
 import { BuyButton } from "@/components/BuyButton";
+import { ChapterCards } from "@/components/ChapterCards";
 import { Paragraphs } from "@/components/Paragraphs";
+import { isChapterCards } from "@/lib/chapter-view";
 import { parseSections } from "@grani/ai";
 import { getDb } from "@/server/db";
 import { requireUser } from "@/server/viewer";
@@ -29,6 +31,6 @@ export default async function MoneyPage({ params }: { params: Promise<{ resultId
   const sections = legacy ? parseSections("chapter_money", legacy.sections) : null;
   return <main data-band="night" data-night-entry>
     <MoneyPractice key={resultId} resultId={resultId} displayName={user.displayName} scores={result.scores} initialDraft={outcome.draft} />
-    {sections && <div className="page" style={{ paddingBlock: "0 48px" }}><details className="card stack"><summary>Текст ранее созданной главы «Деньги»</summary><Paragraphs text={sections.text} /><ul>{sections.tips.map(tip => <li key={tip}>{tip}</li>)}</ul></details></div>}
+    {sections && <div className="page" style={{ paddingBlock: "0 48px" }}><details className="card stack"><summary>Текст ранее созданной главы «Деньги»</summary>{isChapterCards(sections) ? <ChapterCards kind="chapter_money" sections={sections} scores={result.scores} /> : <><Paragraphs text={sections.text} /><ul>{sections.tips.map(tip => <li key={tip}>{tip}</li>)}</ul></>}</details></div>}
   </main>;
 }

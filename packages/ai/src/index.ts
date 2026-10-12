@@ -4,5 +4,8 @@ export * from "./fallback";
 export * from "./prompt";
 export * from "./validate";
 export * from "./generate";
+export * from "./chapter-style";
+export * from "./chapter-cards";
+export * from "./generate-chapter";
 export * from "./providers/yandex";
 export * from "./providers/gigachat";

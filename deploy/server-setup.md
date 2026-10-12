@@ -164,6 +164,8 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST https://grani-test.ru/api/yooka
 
 Затем `docker compose up -d worker`. Проверка — строка `worker started` с нужным `ai`.
 
+**Пилот «Деньги карточками».** `CHAPTER_CARDS_V2=1` в `.env`, затем `docker compose up -d worker`. В строке `worker started` должно быть `chapterCardsV2: true`. Откат — убрать переменную и перезапустить воркер: уже созданные главы продолжат открываться.
+
 ## 11. Логи и откат
 
 ```bash
