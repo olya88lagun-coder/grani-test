@@ -1,6 +1,6 @@
 import { countFriendResponses, getInviteForResult, getResultForOwner, listOwnedProducts, listReports, loadAtlasDraft } from "@grani/db";
-import { typeName, unlockedKinds } from "@grani/core";
-import { typeCodeToDir } from "@grani/content";
+import { CHAPTER_KINDS, typeName, unlockedKinds } from "@grani/core";
+import { chapterSeeds, typeCodeToDir } from "@grani/content";
 import { Fragment, type ReactNode } from "react";
 import { PersonalEdition } from "@/components/personality-atlas/PersonalEdition";
 import { buildPersonalityAtlas } from "@/lib/personality-atlas";
@@ -13,8 +13,10 @@ import { notFound, redirect } from "next/navigation";
 import { ShareCard } from "@/app/result/[id]/ShareCard";
 import { AutoRefresh } from "@/components/AutoRefresh";
 import { BuyButton } from "@/components/BuyButton";
+import { ChapterCards } from "@/components/ChapterCards";
 import { Paragraphs } from "@/components/Paragraphs";
 import { GemPortrait } from "@/components/GemPortrait";
+import { isChapterCards } from "@/lib/chapter-view";
 import { gemAssetDir } from "@/lib/gem-assets";
 import { buildReportPageView, REPORT_DISCLAIMER } from "@/lib/report-view";
 import { getDb } from "@/server/db";
@@ -53,9 +55,11 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
   const stored = model ? await loadAtlasDraft(db, resultId) : null;
   const FullContent = model ? LegacyDisclosure : Fragment;
 
+  const chapterPreviews = Object.fromEntries(CHAPTER_KINDS.map((kind) => [kind, chapterSeeds(kind).map((seed) => seed.title)]));
+
   if (model && view.full) return <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
     {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
-    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
+    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} chapterPreviews={chapterPreviews} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
   </main>;
 
   return (
@@ -168,12 +172,14 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
               <article key={chapter.kind} className={`card stack report-chapter report-chapter--${chapter.state}`}>
                 <h3>{chapter.title}</h3>
                 {chapter.kind === "chapter_money" && unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled() && <Link className="button button--ghost" href={`/report/${resultId}/practice/money`}>Открыть мой финансовый компас</Link>}
-                {chapter.state === "ready" && (
+                {chapter.state === "ready" && (isChapterCards(chapter.sections) ? (
+                  <ChapterCards kind={chapter.kind} sections={chapter.sections} scores={result.scores} />
+                ) : (
                   <>
                     <Paragraphs text={chapter.sections.text} />
                     <ul className="report-list">{chapter.sections.tips.map((tip) => <li key={tip}>{tip}</li>)}</ul>
                   </>
-                )}
+                ))}
                 {chapter.state === "preparing" && <Preparing what="главу" />}
                 {chapter.state === "available" && (
                   <BuyButton product={chapter.kind} targetId={resultId} label={`Глава «${chapter.title}» — ${chapter.price}`} ghost />
