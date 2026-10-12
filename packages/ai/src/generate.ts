@@ -12,10 +12,10 @@ export type GeneratedReport = { sections: ReportSections[ReportKind]; source: "a
 export const GENERATION_TIMEOUT_MS = 60_000;
 export const GENERATION_ATTEMPTS = 3;
 
-class TimeoutError extends Error {}
+export class TimeoutError extends Error {}
 
 // Сигнал отменяет запрос у провайдера; гонка с таймером страхует, если провайдер сигнал не слушает
-async function completeWithTimeout(writer: ReportWriter, prompt: Prompt, timeoutMs: number): Promise<string> {
+export async function completeWithTimeout(writer: ReportWriter, prompt: Prompt, timeoutMs: number): Promise<string> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   const timeout = new Promise<never>((_, reject) => {

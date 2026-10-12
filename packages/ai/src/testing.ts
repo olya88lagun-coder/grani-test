@@ -1,5 +1,8 @@
 import type { Trait } from "@grani/core";
+import type { ChapterPart } from "./chapter-cards";
+import type { ReportWriter } from "./generate";
 import type { PersonalScores } from "./input";
+import type { Prompt } from "./prompt";
 
 export const SAMPLE_SCORES: PersonalScores = {
   scores: { openness: 30, conscientiousness: 45, extraversion: 50, agreeableness: 60, stability: 35 },
@@ -31,5 +34,34 @@ export function sampleSituation(seed: { id: string; title: string }) {
     traits: ["agreeableness"] as Trait[],
     say: ["Мне нужно время подумать, отвечу завтра."],
     do: "Запиши заранее сумму и условия, на которых тебе комфортно, и держись их.",
+  };
+}
+
+type Step = string | Error | "hang";
+
+// Определяет часть по первой теме входа: пустой список — обзор, «help» — группа A, иначе группа B
+function partOf(prompt: Prompt): ChapterPart {
+  const seeds = (JSON.parse(prompt.user) as { seeds: { id: string }[] }).seeds;
+  if (seeds.length === 0) return "overview";
+  return seeds[0]!.id === "help" ? "situations_a" : "situations_b";
+}
+
+// Заглушка модели для глав-карточек: по умолчанию отвечает корректно, script задаёт цепочку ответов для части
+export function cardsStubWriter(script: Partial<Record<ChapterPart, readonly Step[]>> = {}): ReportWriter & { calls: Prompt[] } {
+  const calls: Prompt[] = [];
+  const queues = new Map<ChapterPart, Step[]>(Object.entries(script).map(([part, steps]) => [part as ChapterPart, [...(steps as Step[])]]));
+  return {
+    name: "stub",
+    calls,
+    async complete(prompt) {
+      calls.push(prompt);
+      const part = partOf(prompt);
+      const step = queues.get(part)?.shift();
+      if (step === "hang") return new Promise<string>(() => {});
+      if (step instanceof Error) throw step;
+      if (typeof step === "string") return step;
+      const seeds = (JSON.parse(prompt.user) as { seeds: { id: string; title: string }[] }).seeds;
+      return JSON.stringify(part === "overview" ? sampleOverview() : { situations: seeds.map(sampleSituation) });
+    },
   };
 }
