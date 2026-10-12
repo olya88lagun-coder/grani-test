@@ -39,6 +39,14 @@ describe("ChapterCards", () => {
     expect(without).not.toContain("/practice/money");
   });
 
+  test("a money card shows the icon of its theme, other themes stay without a picture", () => {
+    const html = renderToStaticMarkup(<ChapterCards kind="chapter_money" sections={sections()} scores={SCORES} />);
+
+    for (const seed of chapterSeeds("chapter_money")) expect(html).toContain(`chapters%2Fmoney%2F${seed.id}.webp`);
+    const stress = renderToStaticMarkup(<ChapterCards kind="chapter_stress" sections={sections()} scores={SCORES} />);
+    expect(stress).not.toContain("chapters%2F");
+  });
+
   test("model text is escaped, not interpreted as HTML", () => {
     const html = renderToStaticMarkup(
       <ChapterCards kind="chapter_money" sections={sections((value) => ({ ...value, headline: "<script>alert(1)</script> " + value.headline }))} scores={SCORES} />,
