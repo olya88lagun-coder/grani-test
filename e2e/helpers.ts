@@ -30,6 +30,12 @@ export async function signedInWithResult(browser: Browser, name: string): Promis
 // Имя через пробел: на страницах показывается первое слово, а dev-вход различает пользователей по полному имени
 export const uniqueName = (prefix: string) => `${prefix} ${Date.now()}${Math.floor(Math.random() * 1000)}`;
 
+export async function openCurrentQuestion(page: Page) {
+  await expect(page.locator(".tc-answer > summary, .buy-form__input:visible").first()).toBeVisible();
+  const summary = page.locator(".tc-answer:not([open]) > summary");
+  if (await summary.count()) await summary.click();
+}
+
 type CurrentCardJson = { card: { id: string; state: string } | null };
 
 // Проходит n карточек через API: оба отвечают и нажимают «Продолжить». Нужен, чтобы дойти до платной карточки без кликов по экранам

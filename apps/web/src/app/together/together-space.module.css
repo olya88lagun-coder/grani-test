@@ -6,3 +6,10 @@
 .space :global(.tc-progress progress::-moz-progress-bar) { background: var(--gold); }
 .space :global(.tc-progress progress) { accent-color: var(--gold); }
 .space :global(.tc-banner) { box-shadow: inset 0 0 0 1px var(--gold); }
+.space :global(.page:has([data-together-active])) { max-width: 1328px; padding-top: 40px; }
+.space :global(.page:has([data-together-active]) > .eyebrow) { display: none; }
+/* В активном пространстве прежние документы/cookie доступны в «Дополнительно». */
+.space:has([data-together-active]) ~ :global(.footer) { display: none; }
+.space:has([data-together-active]) { min-height: calc(100dvh - 80px); padding-bottom: 32px; }
+@media (max-width: 759px) { .space :global(.page:has([data-together-active])) { padding-top: 20px; padding-inline: 20px; } }
+@media (max-width: 359px) { .space :global(.page:has([data-together-active])) { padding-inline: 16px; } }

@@ -5,13 +5,14 @@ import { lockTitle, partnerStatusText, type AnswerValues, type CardLockView, typ
 import { SeasonRoadmap } from "./SeasonRoadmap";
 
 export function CardHeader({ card }: { card: CardView }) {
+  const compact = card.state === "answer" && !card.locked;
   return (
     <header className="stack">
       <p className="eyebrow">
         Карточка {card.position} · {card.estimatedMinutes} мин
       </p>
-      <h2 className="display tc-title" tabIndex={-1} data-card-heading>{card.title}</h2>
-      <p className="lead">{card.prompt}</p>
+      <h2 className={compact ? "eyebrow tc-card-title" : "display tc-title"} tabIndex={-1} data-card-heading>{card.title}</h2>
+      <p className={compact ? "lead tc-question" : "lead"}>{card.prompt}</p>
     </header>
   );
 }
@@ -59,12 +60,12 @@ export function AnswerForm({ card, values, onChange, onSubmit, working, fieldErr
         const id = `tc-field-${field.id}`;
         return (
           <div key={field.id} className="stack buy-form">
-            <label className="buy-form__label" htmlFor={id}>
+            <label className={`buy-form__label${field.label.trim() === card.prompt.trim() ? " tc-label-hidden" : ""}`} htmlFor={id}>
               {field.label}
               {!field.required && " (необязательно)"}
             </label>
             {long ? (
-              <textarea id={id} className="buy-form__input tc-textarea" rows={5} required={field.required} aria-invalid={fieldError ? true : undefined} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
+              <textarea id={id} className="buy-form__input tc-textarea" rows={3} required={field.required} aria-invalid={fieldError ? true : undefined} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
             ) : (
               <input id={id} className="buy-form__input" required={field.required} aria-invalid={fieldError ? true : undefined} value={value} onChange={(event) => onChange({ ...values, [field.id]: event.target.value })} />
             )}
@@ -100,7 +101,7 @@ export function WaitingPanel({ card, partnerName, working, onEdit, onDelete, onC
       <div className="tc-actions">
         <button type="button" className="button button--ghost" disabled={working} onClick={onEdit}>Изменить ответ</button>
         <button type="button" className="button button--ghost" disabled={working} onClick={onDelete}>Удалить ответ</button>
-        <button type="button" className="button button--ghost" disabled={working} onClick={onCheck}>Проверить ответы</button>
+        <button type="button" className="button" disabled={working} onClick={onCheck}>Проверить ответы</button>
         <button type="button" className="button button--ghost" disabled={working} onClick={onSkip}>Пропустить карточку</button>
       </div>
     </div>
@@ -137,7 +138,7 @@ export function RevealPanel({ card, partnerName, working, doneIntent, onDoneInte
                   <span>{field.label}</span>
                 </label>
               ))}
-              <p className="buy-form__hint">Это только выбор материала. Книга и карточка заботы появятся на следующих этапах.</p>
+              <p className="buy-form__hint">Выбор для карточки заботы учитывается в итоге первого месяца. Материал для будущей книги можно выбрать уже сейчас; сама книга пока не готова.</p>
             </div>
           )}
           <button type="button" className="button button--ghost" disabled={working} onClick={onEdit}>Изменить мой ответ</button>

@@ -1,0 +1,98 @@
+/* Только личная главная active-пространства. Светлая карточка имеет собственные alias-токены. */
+.home { --home-cream: #efe9da; --home-dark: #173b2b; --home-muted: #526153; --home-rose: #865047; display: grid; gap: 22px; min-width: 0; }
+.welcome { display: flex; align-items: center; justify-content: space-between; gap: 32px; padding: 20px 0 8px; }
+.welcome > div:first-child { max-width: 680px; min-width: 0; flex: 1; }
+.welcome h1 { font-size: clamp(38px, 5vw, 65px); font-weight: 300; line-height: 1.06; margin: 20px 0 18px; text-wrap: balance; overflow-wrap: anywhere; }
+.overline { margin: 0; }
+.intro { max-width: 550px; color: var(--ink-soft); font-size: 16px; line-height: 1.7; margin: 0; }
+.mark { width: 48px; height: 48px; color: var(--gold); opacity: .8; flex: none; }
+.context { display: flex; align-items: center; gap: 20px; border: 1px solid var(--line); border-radius: 20px; padding: 24px; flex: .7; background: var(--surface); min-width: 0; }
+.context p { margin: 0; font-size: 14px; line-height: 1.65; }
+.context p:first-child { color: var(--gold); }
+.mainRow { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1fr); gap: 24px; align-items: stretch; }
+.access { color: var(--ink-soft); }
+.activity {
+  --bg: #e7e0d0; --surface: var(--home-cream); --surface-3: #d2ccbb;
+  --ink: var(--home-dark); --ink-soft: var(--home-muted); --accent: var(--home-dark); --accent-hover: #244c37;
+  --accent-ink: var(--home-cream); --gold: var(--home-rose); --danger: #9b2c32; --line: #b8b9a5;
+  position: relative; isolation: isolate; min-width: 0; padding: clamp(22px, 3vw, 38px); background: var(--surface); color: var(--ink); border-radius: 24px;
+}
+.activityLabel { margin: 0 0 24px; padding-bottom: 18px; border-bottom: 1px solid var(--line); color: var(--gold); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; line-height: 1.6; }
+.home .activity :global(.card) { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.home .activity :global(.stack > * + *) { margin-top: 16px; }
+.home .activity :global(.tc-label-hidden + .buy-form__input) { margin-top: 0; }
+.home .activity :global(.eyebrow) { color: var(--gold); }
+.activity :global(.tc-title) { font-size: clamp(32px, 4vw, 49px); }
+.activity :global(.tc-card-title) { font-size: 12px; font-family: var(--font-body); font-weight: 500; margin: 0; }
+.activity :global(.tc-question) { font-family: var(--font-display); font-size: clamp(30px, 3vw, 44px); font-weight: 300; line-height: 1.15; color: var(--ink); max-width: 650px; }
+.activity :global(.tc-label-hidden) { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+.activity :global(.tc-textarea) { min-height: 96px; }
+.activity :global(.tc-answer) { min-width: 0; }
+.activity :global(.tc-answer > summary) { display: flex; gap: 24px; justify-content: center; width: min(100%, 405px); list-style: none; cursor: pointer; border-radius: 32px; }
+.activity :global(.tc-answer > summary::-webkit-details-marker) { display: none; }
+.activity :global(.tc-answer-body) { padding-top: 24px; }
+.activity :global(.tc-paper) { border: 1px solid var(--line); padding: clamp(16px, 2.2vw, 24px); }
+.activity :global(.buy-form__input) { background: #faf6ed; border: 1px solid #7d8a76; color: var(--ink); }
+.activity :global(.button--ghost) { box-shadow: inset 0 0 0 1px var(--line); }
+.activity :global(.button) { min-height: 48px; }
+.history, .moments { position: relative; min-width: 0; padding: 32px; border: 1px solid var(--line); border-radius: 20px; background: var(--surface); }
+.history { overflow: hidden; min-height: 0; }
+.moments { padding-right: 300px; }
+.history h2, .moments h2 { font-size: clamp(29px, 3vw, 40px); margin: 16px 0; font-weight: 300; line-height: 1.15; }
+.heart { position: absolute; pointer-events: none; z-index: -1; width: 290px; right: -18px; top: 68px; }
+.heart img, .book img { display: block; width: 100%; height: auto; }
+.activity[data-activity="available"] :global(header) { padding-right: 178px; }
+.activity[data-activity="available"] :global(.tc-question) { margin: 12px 0 4px; }
+.activity[data-activity="available"] :global(header + .muted) { max-width: 520px; }
+.bookTeaser { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 22px; }
+.book { display: block; width: 180px; flex: none; }
+.bookTeaser p { font-size: 13px; line-height: 1.65; color: var(--ink-soft); margin: 0; }
+.momentsBook { position: absolute; width: 220px; right: 36px; bottom: 24px; color: var(--gold); fill: none; stroke: currentColor; stroke-width: 1.1; }
+.secondaryCopy { color: var(--ink-soft); font-size: 14px; line-height: 1.7; margin: 0 0 22px; }
+.home .history :global(.card) { background: transparent; border: 0; padding: 0; }
+.details { border: 1px solid var(--line); border-radius: var(--radius); }
+.details > summary { min-height: 56px; padding: 16px 22px; color: var(--ink); cursor: pointer; font-size: 14px; }
+.detailsBody { padding: 0 22px 24px; display: grid; gap: 18px; }
+.detailsBody p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.details > summary { display: list-item; }
+.settingsHint { display: block; font-size: 12px; line-height: 1.7; color: var(--ink-soft); margin-top: 4px; }
+.subDetails > summary { min-height: 48px; padding: 14px 0; cursor: pointer; }
+.detailsBody > :global(.footer) { padding: 22px 0 0; background: transparent; }
+.detailsBody :global(.footer__inner) { padding: 0; }
+.detailsBody :global(.footer__brand) { display: none; }
+.detailsBody :global(.footer nav) { padding-top: 18px; }
+.home :is(button, a, input, textarea, summary):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+@media (min-width: 760px) and (max-width: 1099px) {
+  .mainRow { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 759px) {
+  .home { gap: 16px; }
+  .welcome { flex-direction: column; align-items: stretch; gap: 16px; padding-top: 0; }
+  .welcome h1 { margin: 12px 0; }
+  .intro { font-size: 14px; line-height: 1.6; }
+  .welcome h1 { font-size: clamp(35px, 7vw, 48px); }
+  .context { padding: 14px 16px; gap: 12px; }
+  .mark { width: 36px; height: 40px; }
+  .mainRow { grid-template-columns: minmax(0, 1fr); }
+  .mainRow { gap: 16px; }
+  .history, .moments { padding: 22px; }
+  .history { min-height: 0; }
+  .bookTeaser { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--line); justify-content: flex-start; }
+  .book { width: 62px; }
+  .bookTeaser p br { display: none; }
+  .heart { width: 100px; top: 10px; right: 8px; }
+  .activity[data-activity="available"] :global(header) { padding-right: 0; }
+  .activity[data-activity="available"] :global(header > .eyebrow) { padding-right: 72px; }
+  .activity[data-activity="available"] :global(.tc-question) { margin-top: 16px; }
+  .activity :global(.stack) { gap: 14px; }
+  .home .activity :global(.stack > * + *) { margin-top: 12px; }
+  .home .activity :global(.tc-label-hidden + .buy-form__input) { margin-top: 0; }
+  .activity :global(.tc-answer-body) { padding-top: 16px; }
+  .history h2, .moments h2 { margin: 10px 0; }
+  .secondaryCopy { margin-bottom: 16px; }
+  .momentsBook { display: none; }
+  .activity { border-radius: 18px; }
+  .activityLabel { margin-bottom: 16px; padding-bottom: 12px; }
+}
+@media (max-width: 389px) { .mark { display: none; } .activity { padding: 20px 16px; } .welcome h1 { font-size: 36px; } }
+@media (prefers-reduced-motion: reduce) { .home *, .home *::before, .home *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

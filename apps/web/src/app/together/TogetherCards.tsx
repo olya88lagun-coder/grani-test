@@ -5,7 +5,6 @@ import {
   CARD_POLL_INTERVAL_MS,
   CARD_POLL_MAX_ATTEMPTS,
   cardFailure,
-  progressText,
   serializeAnswer,
   validateDraft,
   type AnswerValues,
@@ -17,6 +16,10 @@ import { callApi, LOGIN_AGAIN_URL, readCurrentCard } from "./client";
 import { AnswerForm, CardHeader, EndPanel, LockedPanel, MonthLockedPanel, PartnerStatus, RevealPanel, SkippedPanel, WaitingPanel } from "./CardPanels";
 import { CardHistory } from "./CardHistory";
 import { ConfirmDialog } from "./ConfirmDialog";
+import { CareCard } from "./CareCard";
+import { TogetherHome } from "./TogetherHome";
+import { buildTogetherHomeView } from "@/lib/together-home-view";
+import type { SpaceView } from "@/lib/together-view";
 import "./together-cards.css";
 
 type Props = {
@@ -26,6 +29,10 @@ type Props = {
   renderPayment: () => ReactNode;
   onGone: () => void;
   onAccessCheck: () => void;
+  space: SpaceView;
+  firstName: string;
+  renew: ReactNode;
+  extras: ReactNode;
 };
 
 type Load = "loading" | "ready" | "gone" | "error";
@@ -37,7 +44,7 @@ const without = <T,>(record: Record<string, T>, key: string): Record<string, T> 
 
 // Карточки пары. Состояние, права и ответ партнёра приходят только от сервера; здесь хранятся лишь несохранённый
 // текст формы (чтобы не потерять его при обновлении) и намерение отметить «Сделали вместе» до нажатия «Продолжить»
-export function TogetherCards({ partnerName, price, accessActive, renderPayment, onGone, onAccessCheck }: Props) {
+export function TogetherCards({ partnerName, price, accessActive, renderPayment, onGone, onAccessCheck, space, firstName, renew, extras }: Props) {
   const [load, setLoad] = useState<Load>("loading");
   const [card, setCard] = useState<CardView | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
@@ -52,6 +59,8 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
   const [dialog, setDialog] = useState<"skip" | "delete" | null>(null);
   const [pollRound, setPollRound] = useState(0);
   const [pollExhausted, setPollExhausted] = useState(false);
+  const [careRevision, setCareRevision] = useState(0);
+  const [careRefresh, setCareRefresh] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const focusAfterLoad = useRef(false);
 
@@ -70,6 +79,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       setCard(result.body.card);
       setProgress(result.body.progress);
       setLoad("ready");
+      setCareRefresh((revision) => revision + 1);
       if (clearError) setError(null);
       return;
     }
@@ -173,6 +183,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       if (problem) return setFieldError(problem.message);
       const result = await callApi<{ state?: string }>(url("answer"), { method: "PUT", body: { fields: serializeAnswer(card, values, card.state === "revealed") } });
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      setCareRevision((revision) => revision + 1);
       // Правка началась до раскрытия, а сохранилась после него: партнёр уже мог прочитать прежний текст
       if (editStart === "waiting" && result.body.state === "edited") setNotice(EDITED_AFTER_REVEAL);
       setEditing(false);
@@ -188,6 +199,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       const fields = { ...card.mine!.fields, [fieldId]: value };
       const result = await callApi(url("answer"), { method: "PUT", body: { fields: serializeAnswer(card, fields, true) } });
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      setCareRevision((revision) => revision + 1);
       await reload();
     });
 
@@ -196,6 +208,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       const result = await callApi(url("answer"), { method: "DELETE" });
       setDialog(null);
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      setCareRevision((revision) => revision + 1);
       setEditing(false);
       setDrafts((current) => without(current, card!.id));
       await reload();
@@ -206,6 +219,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       const result = await callApi(url("skip"), { body: {} });
       setDialog(null);
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      setCareRevision((revision) => revision + 1);
       setEditing(false);
       await reload();
     });
@@ -216,6 +230,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
     act(async () => {
       const result = await callApi(url("continue"), { body: doneIntent[card.id] ? { done: true } : {} });
       if (!result.ok) return fail(cardFailure(result.status, result.body.error ?? ""));
+      setCareRevision((revision) => revision + 1);
       setDoneIntent((current) => without(current, card.id));
       setEditing(false);
       focusAfterLoad.current = true;
@@ -230,15 +245,29 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
     setEditing(true);
   };
 
+  const home = (activity: ReactNode) => <TogetherHome
+    view={buildTogetherHomeView({ space, card, cardLoad: load })}
+    firstName={firstName}
+    pairNames={space.members.map((member) => member.displayName.trim().split(/\s+/)[0]).filter(Boolean).join(" и ")}
+    accessUntil={space.access.accessUntil}
+    activity={activity}
+    history={<CardHistory partnerName={partnerName} onFailure={fail} />}
+    care={<CareCard refreshKey={careRevision} backgroundRefreshKey={careRefresh} />}
+    renew={renew}
+    extras={extras}
+  />;
+  // Один и тот же корень во всех состояниях: загрузка карточки не сбрасывает историю и открытые блоки.
+  const homeFrame = (activity: ReactNode) => <div className="stack">{home(activity)}</div>;
+
   if (load === "loading") {
-    return (
+    return homeFrame(
       <section className="card stack" aria-busy="true">
         <p role="status">Загружаем карточку…</p>
       </section>
     );
   }
   if (load === "gone") {
-    return (
+    return homeFrame(
       <section className="card stack">
         <h2 className="display">Пространство недоступно</h2>
         <p>Не удалось открыть совместные карточки.</p>
@@ -246,7 +275,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
     );
   }
   if (load === "error") {
-    return (
+    return homeFrame(
       <section className="card stack">
         {error && <p className="error" role="alert">{error}</p>}
         <button type="button" className="button button--ghost" onClick={() => { setError(null); setLoad("loading"); void reload(); }}>Повторить</button>
@@ -259,13 +288,8 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
 
   return (
     <div className="stack">
+      {home(
       <section ref={sectionRef} className="card stack">
-        {progress && (
-          <div className="tc-progress">
-            <span className="eyebrow">Пройдено: {progressText(progress)}</span>
-            <progress aria-label="Пройдено карточек" value={progress.done} max={progress.total} />
-          </div>
-        )}
         {card ? (
           <>
             <CardHeader card={card} />
@@ -273,9 +297,13 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
             {card.locked && card.lock?.kind !== "month" && <LockedPanel price={price}>{renderPayment()}</LockedPanel>}
             {!card.locked && card.state === "answer" && (
               <>
-                <PartnerStatus card={card} partnerName={partnerName} />
                 <p className="muted">Ответы откроются, когда ответят оба. До этого партнёр видит только статус.</p>
-                <AnswerForm card={card} values={values} onChange={setValues} onSubmit={() => submit(values)} working={working} fieldError={fieldError} submitLabel="Отправить ответ" />
+                <AnswerDisclosure key={card.id}>
+                  <div className="stack tc-answer-body">
+                    <PartnerStatus card={card} partnerName={partnerName} />
+                    <AnswerForm card={card} values={values} onChange={setValues} onSubmit={() => submit(values)} working={working} fieldError={fieldError} submitLabel="Отправить ответ" />
+                  </div>
+                </AnswerDisclosure>
                 <button type="button" className="button button--ghost" disabled={working} onClick={() => setDialog("skip")}>Пропустить карточку</button>
               </>
             )}
@@ -314,8 +342,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
         {notice && <p role="status">{notice}</p>}
         {error && <p className="error" role="alert">{error}</p>}
       </section>
-
-      <CardHistory partnerName={partnerName} onFailure={fail} />
+      )}
 
       {dialog === "skip" && (
         <ConfirmDialog title="Пропустить для обоих?" confirmLabel="Да, пропустить" cancelLabel="Не пропускать" working={working} onConfirm={skip} onClose={() => setDialog(null)}>
@@ -329,4 +356,19 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       )}
     </div>
   );
+}
+
+function AnswerDisclosure({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const wasOpen = useRef(false);
+  return <details className="tc-answer" onToggle={(event) => {
+    const disclosure = event.currentTarget;
+    setOpen(disclosure.open);
+    if (disclosure.open) disclosure.querySelector<HTMLElement>("textarea, input")?.focus();
+    else if (wasOpen.current) disclosure.querySelector<HTMLElement>("summary")?.focus();
+    wasOpen.current = disclosure.open;
+  }}>
+    <summary className="button">{open ? "Свернуть ответ" : "Ответить"}</summary>
+    {children}
+  </details>;
 }

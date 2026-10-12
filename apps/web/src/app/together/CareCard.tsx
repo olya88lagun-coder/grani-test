@@ -2,11 +2,11 @@
 
 import type { CareCard as CareCardData, CareEntry } from "@grani/core";
 import { useEffect, useState } from "react";
-import { callApi } from "./client";
+import { callApi, LOGIN_AGAIN_URL } from "./client";
 import { TogetherMark } from "./TogetherMark";
 import styles from "./together-extras.module.css";
 
-type State = { kind: "loading" } | { kind: "hidden" } | { kind: "ready"; card: CareCardData };
+type State = ({ kind: "loading" } | { kind: "hidden" } | { kind: "error" } | { kind: "ready"; card: CareCardData }) & { key: number };
 
 function Entries({ title, entries }: { title: string; entries: readonly CareEntry[] }) {
   if (entries.length === 0) return null;
@@ -25,22 +25,34 @@ function Entries({ title, entries }: { title: string; entries: readonly CareEntr
   );
 }
 
-// Итог месяца 1. Показывается только когда месяц пройден; пока сервер не готов отдать карточку, блока на странице нет
-export function CareCard() {
-  const [state, setState] = useState<State>({ kind: "loading" });
+// Локальная правка сразу очищает итог; безопасное фоновое чтение сохраняет его до нового ответа сервера.
+export function CareCard({ refreshKey = 0, backgroundRefreshKey = 0 }: { refreshKey?: number; backgroundRefreshKey?: number }) {
+  const [retryRound, setRetryRound] = useState(0);
+  const [state, setState] = useState<State>({ kind: "loading", key: refreshKey });
 
   useEffect(() => {
     let cancelled = false;
+    setState((current) => current.key === refreshKey && (current.kind === "ready" || current.kind === "hidden") ? current : { kind: "loading", key: refreshKey });
     void callApi<{ ready: boolean; card?: CareCardData }>("/api/together/care").then((result) => {
       if (cancelled) return;
-      setState(result.ok && result.body.ready && result.body.card ? { kind: "ready", card: result.body.card } : { kind: "hidden" });
+      if (result.status === 401) {
+        setState({ kind: "hidden", key: refreshKey });
+        window.location.href = LOGIN_AGAIN_URL;
+      } else if (result.status === 404 || (result.ok && !result.body.ready)) setState({ kind: "hidden", key: refreshKey });
+      else if (result.ok && result.body.ready && result.body.card) setState({ kind: "ready", card: result.body.card, key: refreshKey });
+      else setState({ kind: "error", key: refreshKey });
     });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshKey, backgroundRefreshKey, retryRound]);
 
-  if (state.kind !== "ready") return null;
+  if (state.key !== refreshKey || state.kind === "loading") return <p className={styles.hint} role="status">Обновляем карточку заботы…</p>;
+  if (state.kind === "hidden") return null;
+  if (state.kind === "error") return <section className={`${styles.care} stack`}>
+    <p role="alert">Не получилось загрузить карточку заботы.</p>
+    <button type="button" className="button button--ghost" onClick={() => setRetryRound((round) => round + 1)}>Повторить загрузку карточки заботы</button>
+  </section>;
   const { card } = state;
   return (
     <section className={styles.care} aria-labelledby="care-card-title">
