@@ -1,7 +1,13 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import { expect, type Browser, type Page } from "@playwright/test";
+import { test } from "./together-fixture";
 import { BASE_URL, playCardsViaApi, uniqueName } from "./helpers";
 
 const EMAIL = "anna@example.ru";
+
+// Ручные контексты живут дольше одного теста. Закрываем их, чтобы ожидания старых пар не опрашивали локальную БД.
+test.afterEach(async ({ browser }) => {
+  await Promise.all(browser.contexts().map((context) => context.close()));
+});
 
 // Заход через страницу «Вдвоём»: «Войти» запоминает, куда вернуть, dev-вход заменяет VK ID на локальной машине
 async function signInThrough(page: Page, entry: string, name: string) {
@@ -62,11 +68,14 @@ test("two people go from the sign-in to a paid space through the screens", async
   await expect(anna.getByRole("heading", { name: "Это ваш человек?" })).toBeVisible();
   await expect(anna.getByText(borisName)).toBeVisible();
   await anna.getByRole("button", { name: "Да, подтвердить партнёра" }).click();
-  await expect(anna.getByRole("heading", { name: "Вы теперь вдвоём" })).toBeVisible();
+  await expect(anna.getByRole("heading", { level: 1 })).toHaveText(/приятно видеть вас!/);
+  // Подтверждение без перезагрузки должно убрать оформление pending-экрана.
+  expect(await anna.getByLabel("Текущая карточка", { exact: true }).evaluate((node) => getComputedStyle(node).backgroundColor)).toBe("rgb(239, 233, 218)");
+  expect(await anna.locator(".page").evaluate((node) => getComputedStyle(node).maxWidth)).toBe("1328px");
 
   // Партнёр узнаёт о подтверждении и оплачивает; успех показывается только после проверки на сервере
   await boris.getByRole("button", { name: "Проверить подтверждение" }).click();
-  await expect(boris.getByRole("heading", { name: "Вы теперь вдвоём" })).toBeVisible();
+  await expect(boris.getByRole("heading", { level: 1 })).toHaveText(/приятно видеть вас!/);
   // Оплата предлагается в закрытой карточке: три вводные бесплатны, до платной пара доходит через API
   await expect(boris.getByRole("heading", { name: "Замечать хорошее" })).toBeVisible();
   await playCardsViaApi(anna, boris, 3);
@@ -84,6 +93,7 @@ test("two people go from the sign-in to a paid space through the screens", async
   await expect(anna.getByText(/Доступ действует до/)).toBeVisible();
 
   // Выход только после подтверждения последствий, затем пространство закрыто для обоих
+  await anna.locator("details[data-space-settings] > summary").click();
   await anna.getByRole("button", { name: "Выйти из пространства" }).click();
   const confirmLeave = anna.getByRole("button", { name: "Выйти из пространства" });
   await expect(confirmLeave).toBeDisabled();
@@ -145,6 +155,7 @@ test("an active pair gets a link for friends; a friend who comes by it keeps the
 
   // Ссылка для друзей: на экране активного пространства
   await anna.goto("/together");
+  await anna.locator("details[data-space-settings] > summary").click();
   await anna.getByText("Поделиться с парой друзей").click();
   await anna.getByRole("button", { name: "Получить ссылку" }).click();
   const link = await anna.getByLabel("Ссылка для друзей").inputValue();
@@ -206,7 +217,7 @@ test("the care card of month 1 shows each person's items under their name and st
 
   // Месяц не пройден: сервер отвечает ready: false, блока нет
   await anna.goto("/together");
-  await expect(anna.getByRole("button", { name: "Выйти из пространства" })).toBeVisible();
+  await expect(anna.locator("details[data-space-settings] > summary")).toBeVisible();
   await expect(anna.getByRole("heading", { name: "Наши способы заботы" })).toHaveCount(0);
 
   // Месяц пройден: блок показывает пункты под именами, ритуалы с авторами
@@ -234,7 +245,7 @@ test("the public Together page leads with the promise and the price, labels its 
   const page = await newPage(browser);
   const heroImages: string[] = [];
   page.on("request", (request) => {
-    if (/\/together\/hero-still-life/.test(request.url())) heroImages.push(new URL(request.url()).pathname);
+    if (/\/together\/hero-night/.test(request.url())) heroImages.push(new URL(request.url()).pathname);
   });
   await page.goto("/together", { waitUntil: "networkidle" });
 

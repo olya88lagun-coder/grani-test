@@ -1,4 +1,5 @@
-import { expect, test, type APIResponse, type Browser, type Page } from "@playwright/test";
+import { expect, type APIResponse, type Browser, type Page } from "@playwright/test";
+import { test } from "./together-fixture";
 import { BASE_URL, uniqueName } from "./helpers";
 
 const origin = { origin: BASE_URL };

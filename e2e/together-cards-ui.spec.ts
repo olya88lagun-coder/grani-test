@@ -1,7 +1,12 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
-import { BASE_URL, playCardsViaApi, uniqueName } from "./helpers";
+import { expect, type Browser, type Page } from "@playwright/test";
+import { test } from "./together-fixture";
+import { BASE_URL, openCurrentQuestion, playCardsViaApi, uniqueName } from "./helpers";
 
 const origin = { origin: BASE_URL };
+
+test.afterEach(async ({ browser }) => {
+  await Promise.all(browser.contexts().map((context) => context.close()));
+});
 
 async function signedIn(browser: Browser, name: string): Promise<Page> {
   const page = await (await browser.newContext()).newPage();
@@ -26,9 +31,11 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await anna.goto("/together");
   await boris.goto("/together");
   await expect(anna.getByRole("heading", { name: "Замечать хорошее" })).toBeVisible();
-  await expect(anna.getByText("Пройдено: 0 из 159")).toBeVisible();
+  await expect(anna.getByText("Знакомство с пространством", { exact: true })).toBeVisible();
+  await expect(anna.getByRole("progressbar")).toHaveCount(0);
 
   // Аня отвечает; Борис видит только статус, текст до его ответа не приходит ни в сеть, ни в страницу
+  await openCurrentQuestion(anna);
   await anna.getByLabel(/Какой небольшой поступок/).fill(secret);
   await anna.getByRole("button", { name: "Отправить ответ" }).click();
   await expect(anna.getByRole("heading", { name: "Ваш ответ на месте" })).toBeVisible();
@@ -36,10 +43,12 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   const borisCurrent = boris.waitForResponse((response) => response.url().endsWith("/api/together/cards/current") && response.request().method() === "GET");
   await boris.reload();
   expect(await (await borisCurrent).text()).not.toContain(secret);
+  await openCurrentQuestion(boris);
   await expect(boris.getByText(/ответ есть\. Текст откроется/)).toBeVisible();
   expect(await boris.content()).not.toContain(secret);
 
   // Борис отвечает: ему сразу открывается итог; Аня после проверки видит тот же итог, а не следующую карточку
+  await openCurrentQuestion(boris);
   await boris.getByLabel(/Какой небольшой поступок/).fill("Борис ответил");
   await boris.getByRole("button", { name: "Отправить ответ" }).click();
   await expect(boris.getByText("Борис ответил")).toBeVisible();
@@ -60,6 +69,7 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
 
   // Правка текста после раскрытия показывается партнёру отметкой
   await anna.getByRole("button", { name: "Изменить мой ответ" }).click();
+  await openCurrentQuestion(anna);
   await anna.getByLabel(/Какой небольшой поступок/).fill(`${secret} (поправка)`);
   await anna.getByRole("button", { name: "Сохранить изменения" }).click();
   await boris.reload();
@@ -79,6 +89,7 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(boris.getByText("Карточка 2")).toBeVisible();
 
   // Борис пропускает вторую карточку: итог виден ему после перезагрузки и Ане, текст не раскрывается
+  await openCurrentQuestion(anna);
   await anna.getByLabel(/Какое маленькое действие/).fill("Мой ответ на вторую");
   await anna.getByRole("button", { name: "Отправить ответ" }).click();
   await boris.getByRole("button", { name: "Пропустить карточку" }).click();
@@ -91,8 +102,8 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(anna.getByText("Только вам")).toBeVisible();
   for (const page of [boris, anna]) await page.getByRole("button", { name: "Продолжить" }).click();
 
-  // История и прогресс
-  await expect(anna.getByText("Пройдено: 2 из 159")).toBeVisible();
+  // История сохраняется; главная показывает тему без общего счётчика
+  await expect(anna.getByText("Знакомство с пространством", { exact: true })).toBeVisible();
   await anna.getByRole("button", { name: "История карточек" }).click();
   await expect(anna.getByText("Карточка 2 · пропущена")).toBeVisible();
   await expect(anna.getByText("Карточка 1 · ответы открыты")).toBeVisible();
@@ -104,15 +115,18 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(boris.getByRole("heading", { name: "Продолжите вдвоём" })).toBeVisible();
   await expect(boris.getByRole("button", { name: "Пропустить карточку" })).toHaveCount(0);
   const lockedTitle = await boris.locator("[data-card-heading]").innerText();
+  await openCurrentQuestion(boris);
   await boris.getByLabel("Электронная почта для чека").fill("anna@example.ru");
   await boris.getByRole("button", { name: "Перейти к оплате 399 ₽" }).click();
   await expect(boris).toHaveURL(/\/dev\/pay\/fake-/);
   await boris.getByRole("button", { name: "Оплатить" }).click();
   await expect(boris.getByRole("heading", { name: "Доступ открыт для двоих" })).toBeVisible({ timeout: 60_000 });
   await expect(boris.getByRole("heading", { name: lockedTitle })).toBeVisible();
+  await openCurrentQuestion(boris);
   await expect(boris.getByRole("button", { name: "Отправить ответ" })).toBeVisible();
 
   // Выход закрывает карточки для обоих
+  await boris.locator("details[data-space-settings] > summary").click();
   await boris.getByRole("button", { name: "Выйти из пространства" }).click();
   await boris.getByLabel("Я понимаю последствия").check();
   await boris.getByRole("button", { name: "Выйти из пространства" }).last().click();
@@ -130,12 +144,14 @@ test("an edit that started before the reveal is not silently turned into an edit
   await pair(anna, boris);
 
   await anna.goto("/together");
+  await openCurrentQuestion(anna);
   await anna.getByLabel(/Какой небольшой поступок/).fill("Первый вариант Ани");
   await anna.getByRole("button", { name: "Отправить ответ" }).click();
   await expect(anna.getByRole("heading", { name: "Ваш ответ на месте" })).toBeVisible();
 
   // Аня начинает править, а Борис за это время отвечает: ответы открываются
   await anna.getByRole("button", { name: "Изменить ответ" }).click();
+  await openCurrentQuestion(anna);
   await anna.getByLabel(/Какой небольшой поступок/).fill("Исправленный вариант Ани");
   const current = (await (await boris.request.get("/api/together/cards/current")).json()) as { card: { id: string } };
   expect((await boris.request.put(`/api/together/cards/${current.card.id}/answer`, { data: { fields: { answer: "Борис ответил" } }, headers: origin })).ok()).toBe(true);

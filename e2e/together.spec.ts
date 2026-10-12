@@ -1,4 +1,5 @@
-import { expect, test, type Browser, type Page } from "@playwright/test";
+import { expect, type Browser, type Page } from "@playwright/test";
+import { test } from "./together-fixture";
 import { BASE_URL, uniqueName } from "./helpers";
 
 const EMAIL = "anna@example.ru";
@@ -85,7 +86,7 @@ test("two accounts without tests build a space, pay once, and leave", async ({ b
 });
 
 test("the owner sees what needs a manual decision", async ({ browser }) => {
-  test.skip(process.env.OWNER_IDENTITY !== "telegram:dev-Владелица", "needs OWNER_IDENTITY=telegram:dev-Владелица in the app and in the test process");
+  test.skip(process.env.OWNER_IDENTITY !== "vk:dev-Владелица", "needs OWNER_IDENTITY=vk:dev-Владелица in the app and in the test process");
   const owner = await signedIn(browser, "Владелица");
 
   const response = await owner.request.get("/api/admin/together");

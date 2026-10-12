@@ -2,8 +2,8 @@
 
 import { formatRub, TOGETHER_INVITE_NOTE_MAX, TOGETHER_PRICE_KOPECKS } from "@grani/core";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Footer } from "@/components/Footer";
 import {
-  formatAccessUntil,
   inviteLine,
   isWaitingForPartner,
   POLL_INTERVAL_MS,
@@ -15,13 +15,11 @@ import {
   type SpaceView,
 } from "@/lib/together-view";
 import { callApi, LOGIN_AGAIN_URL, readSpace } from "./client";
-import { CareCard } from "./CareCard";
 import { ConsentCheckbox } from "./ConsentCheckbox";
 import { InviteNote } from "./InviteNote";
 import { PaymentForm } from "./PaymentForm";
 import { ShareFriends } from "./ShareFriends";
 import { TogetherCards } from "./TogetherCards";
-import { TogetherStats } from "./TogetherStats";
 import { useWaitingPoll } from "./useWaitingPoll";
 
 const BUSY_RETRY_MS = 1000;
@@ -30,7 +28,6 @@ const PRICE = formatRub(TOGETHER_PRICE_KOPECKS);
 
 type Props = { initial: SpaceView | null; firstName: string; purchaseId: string | null; referral?: string };
 
-const names = (space: SpaceView) => space.members.map((member) => member.displayName).join(" и ");
 const partnerName = (space: SpaceView) => space.members.find((member) => member.role !== space.myRole)?.displayName ?? "Партнёр";
 
 export function TogetherSpace({ initial, firstName, purchaseId, referral }: Props) {
@@ -197,8 +194,20 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
   useWaitingPoll(isWaitingForPartner(screen), setSpace);
   const outcome = purchase ? purchaseOutcome(purchase, space) : null;
 
+  const spaceActions = space && <section className="stack">
+    <p className="muted"><a href="/together/about">Как «Вдвоём» выглядит для тех, кто видит его впервые</a></p>
+    {!leaving && <button type="button" className="button button--ghost" onClick={() => setLeaving(true)}>Выйти из пространства</button>}
+    {leaving && <div className="card stack" role="dialog" aria-labelledby="leave-title">
+      <h2 id="leave-title" className="display">Выйти из пространства?</h2>
+      <p>Совместная программа и доступ прекратятся для обоих участников. Остаток оплаченного срока автоматически не переносится, но плательщик может запросить возврат за неиспользованные сутки: условия в <a href="/offer" target="_blank" rel="noopener">оферте</a>.</p>
+      <label className="choice"><input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} /><span>Я понимаю последствия</span></label>
+      <button type="button" className="button button--block" disabled={!acknowledged || working} onClick={leave}>Выйти из пространства</button>
+      <button type="button" className="button button--ghost button--block" onClick={() => setLeaving(false)}>Остаться</button>
+    </div>}
+  </section>;
+
   return (
-    <div className="stack">
+    <div className="stack" data-together-active={space?.status === "active" ? "" : undefined}>
       {purchaseId && <PurchaseResult outcome={outcome} exhausted={pollExhausted} onCheck={() => setPollRound((round) => round + 1)} />}
 
       {screen === "start" && (
@@ -261,27 +270,10 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
         </section>
       )}
 
-      {screen === "ready" && space && (
-        <section className="card stack">
-          <h1 className="display">Вы теперь вдвоём</h1>
-          <p className="lead">{names(space)} подтвердили участие. Три вводные карточки доступны бесплатно, а доступ на 30 дней откроется, когда дойдёте до основного маршрута.</p>
-        </section>
-      )}
-
-      {screen === "expired" && space?.access.accessUntil && (
-        <section className="card stack">
-          <h1 className="display">Доступ закончился</h1>
-          <p className="lead">
-            Платный доступ закончился {formatAccessUntil(space.access.accessUntil)}. История ваших ответов осталась, платные карточки откроются снова после продления.
-          </p>
-          <PaymentForm idPrefix="together-expired" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={`Продлить на 30 дней за ${PRICE}`} workingLabel="Готовим оплату…" legal />
-        </section>
-      )}
-
-      {space?.status === "active" && space.stats && <TogetherStats stats={space.stats} />}
-
       {space?.status === "active" && (
         <TogetherCards
+          space={space}
+          firstName={firstName}
           partnerName={partnerName(space)}
           price={PRICE}
           accessActive={space.access.active}
@@ -290,49 +282,16 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
           renderPayment={() => (
             <PaymentForm idPrefix="together" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={`Перейти к оплате ${PRICE}`} workingLabel="Готовим оплату…" legal />
           )}
-        />
-      )}
-
-      {(screen === "paid" || screen === "limit") && space && (
-        <section className="card stack">
-          <h1 className="display">Ваше пространство</h1>
-          <p className="eyebrow">Доступ активен</p>
-          {space.access.accessUntil && <p className="lead">Доступ действует до {formatAccessUntil(space.access.accessUntil)}. Для обоих участников, ручное продление.</p>}
-          {screen === "paid" ? (
+          renew={space.access.canRenew ? (
             <div className="stack">
-              <PaymentForm idPrefix="together-renew" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label="Добавить ещё 30 дней" ghost />
+              <PaymentForm idPrefix="together-renew" email={email} onEmail={setEmail} onSubmit={() => void startPayment()} working={working} label={space.access.active ? "Добавить ещё 30 дней" : `Продлить на 30 дней за ${PRICE}`} ghost legal />
               <p className="muted">Продление добавляет период после текущего. История сохраняется.</p>
             </div>
-          ) : (
-            <p className="muted">Следующий период уже оплачен. Новую оплату предложим, когда останется не больше 30 суток доступа.</p>
-          )}
-        </section>
+          ) : <p className="muted">Следующий период уже оплачен. Новую оплату предложим, когда останется не больше 30 суток доступа.</p>}
+          extras={<><ShareFriends />{spaceActions}<Footer /></>}
+        />
       )}
-
-      {space?.status === "active" && <CareCard />}
-
-      {space?.status === "active" && <ShareFriends />}
-
-      {space && (
-        <section className="stack">
-          <p className="muted">
-            <a href="/together/about">Как «Вдвоём» выглядит для тех, кто видит его впервые</a>
-          </p>
-          {!leaving && <button type="button" className="button button--ghost" onClick={() => setLeaving(true)}>Выйти из пространства</button>}
-          {leaving && (
-            <div className="card stack" role="dialog" aria-labelledby="leave-title">
-              <h2 id="leave-title" className="display">Выйти из пространства?</h2>
-              <p>Совместная программа и доступ прекратятся для обоих участников. Остаток оплаченного срока автоматически не переносится, но плательщик может запросить возврат за неиспользованные сутки: условия в <a href="/offer" target="_blank" rel="noopener">оферте</a>.</p>
-              <label className="choice">
-                <input type="checkbox" checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} />
-                <span>Я понимаю последствия</span>
-              </label>
-              <button type="button" className="button button--block" disabled={!acknowledged || working} onClick={leave}>Выйти из пространства</button>
-              <button type="button" className="button button--ghost button--block" onClick={() => setLeaving(false)}>Остаться</button>
-            </div>
-          )}
-        </section>
-      )}
+      {space?.status !== "active" && spaceActions}
 
       {message && <p role="status">{message}</p>}
       {error && <p className="error" role="alert">{error}</p>}
