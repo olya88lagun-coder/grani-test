@@ -3,7 +3,7 @@ import { getLibrary } from "@grani/content/data";
 import { describe, expect, test, vi } from "vitest";
 import type { ChapterCardsContext } from "./chapter-cards";
 import { generateChapterCards } from "./generate-chapter";
-import { cardsStubWriter, SAMPLE_SCORES, sampleSituation } from "./testing";
+import { cardsStubWriter, SAMPLE_SCORES, sampleOverview, sampleSituation } from "./testing";
 
 const CTX: ChapterCardsContext = { library: getLibrary(), kind: "chapter_money", result: SAMPLE_SCORES };
 
@@ -32,7 +32,7 @@ describe("generateChapterCards", () => {
 
   test("a rejection for a wrong schema is logged with the fields at fault", async () => {
     const log = vi.fn();
-    const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}"] });
+    const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}", "{}", "{}"] });
 
     await generateChapterCards(stub, CTX, { log });
 
@@ -52,14 +52,38 @@ describe("generateChapterCards", () => {
     expect(log).toHaveBeenCalledWith("chapter part repeats another", expect.objectContaining({ part: "situations_b" }));
   });
 
+  test("asks the overview again when its way-outs repeat the advice of the cards", async () => {
+    const seeds = chapterSeeds("chapter_money");
+    const first = sampleSituation(seeds[0]!).do;
+    const base = sampleOverview();
+    const repeating = JSON.stringify({ ...base, traps: [{ ...base.traps[0]!, instead: first }, base.traps[1]!, base.traps[2]!] });
+    const log = vi.fn();
+    const stub = cardsStubWriter({ overview: [repeating] });
+
+    const result = await generateChapterCards(stub, CTX, { log });
+
+    expect(stub.calls).toHaveLength(4);
+    expect(result?.sections.traps.map((trap) => trap.instead)).not.toContain(first);
+    expect(log).toHaveBeenCalledWith("chapter part repeats another", expect.objectContaining({ part: "overview" }));
+  });
+
+  test("gives every part five attempts before the chapter falls back", async () => {
+    const stub = cardsStubWriter({ situations_a: ["{}", "{}", "{}", "{}"] });
+
+    const result = await generateChapterCards(stub, CTX);
+
+    expect(result?.attempts).toBe(5);
+    expect(stub.calls).toHaveLength(7);
+  });
+
   test("returns null when a part keeps failing, so the caller falls back", async () => {
-    const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}"] });
+    const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}", "{}", "{}"] });
 
     expect(await generateChapterCards(stub, CTX)).toBeNull();
   });
 
   test("a hanging part ends in null instead of a half-finished chapter", async () => {
-    const stub = cardsStubWriter({ situations_a: ["hang", "hang", "hang"] });
+    const stub = cardsStubWriter({ situations_a: ["hang", "hang", "hang", "hang", "hang"] });
 
     expect(await generateChapterCards(stub, CTX, { timeoutMs: 20 })).toBeNull();
   });
@@ -74,7 +98,7 @@ describe("generateChapterCards", () => {
 
   test("themes in the wrong order are never accepted, so no chapter is saved", async () => {
     const reversed = JSON.stringify({ situations: [...chapterSeeds("chapter_money").slice(0, 3)].reverse().map(sampleSituation) });
-    const stub = cardsStubWriter({ situations_a: [reversed, reversed, reversed] });
+    const stub = cardsStubWriter({ situations_a: [reversed, reversed, reversed, reversed, reversed] });
 
     expect(await generateChapterCards(stub, CTX)).toBeNull();
   });

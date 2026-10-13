@@ -39,16 +39,21 @@ async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterC
 
 // Три части идут параллельно: так глава укладывается во время одной задачи, а сбой одной части не портит остальные.
 // Если какая-то часть не получилась за все попытки, возвращается null — вызывающий соберёт главу из блоков
-export async function generateChapterCards(writer: ReportWriter, ctx: ChapterCardsContext, options: Options = {}): Promise<{ sections: ChapterCardsSections; attempts: number } | null> {
+// Строгие проверки (стиль, повторы, род) отклоняют ответы чаще, чем общая генерация, поэтому у карточек пять попыток вместо трёх
+export const CARD_ATTEMPTS = 5;
+
+export async function generateChapterCards(writer: ReportWriter, rawCtx: ChapterCardsContext, rawOptions: Options = {}): Promise<{ sections: ChapterCardsSections; attempts: number } | null> {
+  const ctx = rawCtx;
+  const options: Options = { attempts: CARD_ATTEMPTS, ...rawOptions };
   const [overviewPart, partA, partB] = CHAPTER_PARTS;
   const idsOf = (part: ChapterPart) => partSeeds(ctx.kind, part).map((seed) => seed.id);
   const blocks = blockTexts(ctx);
-  const [overview, a, firstB] = await Promise.all([
-    runPart(writer, overviewPart!, ctx, (raw, final) => validateOverview(raw, final), options),
+  const [firstOverview, a, firstB] = await Promise.all([
+    runPart(writer, overviewPart!, ctx, (raw, final) => validateOverview(raw, final, { blocks }), options),
     runPart(writer, partA!, ctx, (raw, final) => validateSituations(raw, idsOf(partA!), { blocks }, final), options),
     runPart(writer, partB!, ctx, (raw, final) => validateSituations(raw, idsOf(partB!), { blocks }, final), options),
   ]);
-  if (!overview || !a || !firstB) return null;
+  if (!firstOverview || !a || !firstB) return null;
 
   // Группы пишутся порознь и могут дать одинаковый совет: вторую просим ещё раз, зная советы первой
   let b = firstB;
@@ -57,6 +62,15 @@ export async function generateChapterCards(writer: ReportWriter, ctx: ChapterCar
     options.log?.("chapter part repeats another", { kind: ctx.kind, writer: writer.name, part: partB });
     const again = await runPart(writer, partB!, ctx, (raw, final) => validateSituations(raw, idsOf(partB!), { blocks, avoid: actionsA }, final), options);
     if (again) b = { value: again.value, attempts: Math.max(b.attempts, again.attempts) };
+  }
+
+  // Обзор пишется независимо от карточек: его «вместо этого» могло совпасть с их советами — просим ещё раз с запретом на них
+  let overview = firstOverview;
+  const actions = [...a.value.situations, ...b.value.situations].map((card) => card.do);
+  if (overview.value.traps.some((trap) => repeatsAny(trap.instead, actions))) {
+    options.log?.("chapter part repeats another", { kind: ctx.kind, writer: writer.name, part: overviewPart });
+    const again = await runPart(writer, overviewPart!, ctx, (raw, final) => validateOverview(raw, final, { blocks, avoid: actions }), options);
+    if (again) overview = { value: again.value, attempts: Math.max(overview.attempts, again.attempts) };
   }
 
   const sections = assembleChapterCards(overview.value, a.value, b.value);

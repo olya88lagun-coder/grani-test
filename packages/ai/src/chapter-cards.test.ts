@@ -63,6 +63,24 @@ describe("validateOverview style", () => {
   });
 });
 
+describe("validateOverview repeats", () => {
+  const blocks = blockTexts(CTX);
+  const libraryTip = blocks.flatMap((block) => block.split(/(?<=[.!?])\s+/)).find((sentence) => sentence.length >= 50 && sentence.length <= 190)!;
+  const withInstead = (instead: string) => {
+    const base = sampleOverview();
+    return JSON.stringify({ ...base, traps: [{ ...base.traps[0]!, instead }, base.traps[1]!, base.traps[2]!] });
+  };
+
+  test("a trap whose way out is a library tip, or the advice of a card, is asked again", () => {
+    expect(validateOverview(withInstead(libraryTip), false, { blocks })).toEqual({ ok: false, reason: "repeat" });
+    expect(validateOverview(withInstead(sampleSituation(SEEDS_A[0]!).do), false, { blocks: [], avoid: [sampleSituation(SEEDS_A[0]!).do] })).toEqual({ ok: false, reason: "repeat" });
+  });
+
+  test("on the last attempt the repeat is forgiven", () => {
+    expect(validateOverview(withInstead(libraryTip), true, { blocks }).ok).toBe(true);
+  });
+});
+
 describe("validateSituations", () => {
   const ids = SEEDS_A.map((seed) => seed.id);
 
