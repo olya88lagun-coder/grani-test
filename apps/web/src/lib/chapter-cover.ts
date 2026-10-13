@@ -19,7 +19,7 @@ export function seedIconPath(kind: ChapterKind, seed: string): string | null {
 
 // Значки тем «В жизни» (public/life/<тема>.webp). Список пополняется, когда файлы нарисованы и лежат в папке
 // (задание: docs/redesign/CODEX_LIFE_CARDS.md); пока он пуст, карточки показываются без значков
-export const LIFE_ICON_SEEDS: readonly string[] = [];
+export const LIFE_ICON_SEEDS: readonly string[] = ["change", "critique", "deadline", "talk", "method"];
 
 export function lifeIconPath(seed: string): string | null {
   return LIFE_ICON_SEEDS.includes(seed) ? `/life/${seed}.webp` : null;
