@@ -1,8 +1,8 @@
 import { beforeEach, expect, test, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { parseChapterCards } from "@grani/ai";
-import { sampleOverview, sampleSituation } from "@grani/ai/testing";
-import { chapterSeeds, lifeSeeds } from "@grani/content";
+import { samplePortrait, sampleOverview, sampleSituation } from "@grani/ai/testing";
+import { chapterSeeds, lifeSeeds, portraitSeeds } from "@grani/content";
 import { initialAtlasData } from "@/server/personality-atlas-service";
 import { buildPersonalityAtlas } from "@/lib/personality-atlas";
 const mocks=vi.hoisted(()=>({result:vi.fn(),products:vi.fn(),load:vi.fn(),user:vi.fn(),view:vi.fn(),enqueue:vi.fn(),notFound:vi.fn(()=>{throw Error("404")}),redirect:vi.fn(()=>{throw Error("redirect")})}));
@@ -18,7 +18,7 @@ vi.mock("@/app/result/[id]/ShareCard",()=>({ShareCard:()=>null}));
 vi.mock("@/components/AutoRefresh",()=>({AutoRefresh:()=>null}));
 import ReportPage from "./page";
 const full={portrait:"Existing portrait",strengths:["Existing strength"],blind_spots:[],manual:{work:[],fight:[],annoys:[]}};
-beforeEach(()=>{vi.clearAllMocks();delete process.env.PERSONALITY_ATLAS_V2;delete process.env.LIFE_CARDS_V1;mocks.user.mockResolvedValue({id:"owner",displayName:"Анна",gender:"female"});mocks.result.mockResolvedValue({id:"r",typeCode:"++--",scores:{openness:85,conscientiousness:90,extraversion:25,agreeableness:35,stability:65}});mocks.products.mockResolvedValue(["full"]);mocks.load.mockResolvedValue(null);mocks.view.mockReturnValue({full,life:null,preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null});});
+beforeEach(()=>{vi.clearAllMocks();delete process.env.PERSONALITY_ATLAS_V2;delete process.env.LIFE_CARDS_V1;delete process.env.PORTRAIT_V1;mocks.user.mockResolvedValue({id:"owner",displayName:"Анна",gender:"female"});mocks.result.mockResolvedValue({id:"r",typeCode:"++--",scores:{openness:85,conscientiousness:90,extraversion:25,agreeableness:35,stability:65}});mocks.products.mockResolvedValue(["full"]);mocks.load.mockResolvedValue(null);mocks.view.mockReturnValue({full,life:null,preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null});});
 const render=async()=>renderToStaticMarkup(await ReportPage({params:Promise.resolve({resultId:"r"})}));
 test("flag off preserves original report without reading the draft table",async()=>{const html=await render();expect(html).toContain("Existing portrait");expect(html).not.toContain("Мои грани");expect(mocks.load).not.toHaveBeenCalled();});
 test("flag on mounts personal edition with real scores and preserves original report",async()=>{process.env.PERSONALITY_ATLAS_V2="1";const html=await render();expect(html).toContain("data-personal-edition");expect(html).toContain("Анна");expect(html).toContain("Existing portrait");expect(html).toContain("85</strong>");expect(html.match(/<h1/g)).toHaveLength(1);expect(mocks.load).toHaveBeenCalledWith({},"r");});
@@ -49,4 +49,23 @@ test("the epigraph comes from the first life card, and a saved memo keeps its ow
   const html=await render();
   expect(html).toMatch(/<span>Личный ориентир<\/span><p>Моя сохранённая фраза/);
   expect(html).not.toMatch(/<span>Личный ориентир<\/span><p>Мне нужно время/);
+});
+
+test("an existing buyer without the portrait gets the job queued once when the portrait flag is on",async()=>{
+  process.env.PERSONALITY_ATLAS_V2="1";process.env.PORTRAIT_V1="1";
+  mocks.view.mockReturnValue({full,life:null,portrait:null,preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null});
+  await render();
+  expect(mocks.enqueue).toHaveBeenCalledTimes(1);
+  expect(mocks.enqueue).toHaveBeenCalledWith({kind:"portrait",resultId:"r"});
+});
+test("nothing is queued for the portrait with the flag off or with a ready portrait",async()=>{
+  process.env.PERSONALITY_ATLAS_V2="1";
+  mocks.view.mockReturnValue({full,life:null,portrait:null,preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null});
+  await render();
+  process.env.PORTRAIT_V1="1";
+  const answer=samplePortrait();
+  mocks.view.mockReturnValue({full,life:null,portrait:{version:1,headline:answer.headline,blocks:answer.blocks.map((block,index)=>({...block,title:portraitSeeds()[index]!.title}))},preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null});
+  const html=await render();
+  expect(html).toContain("data-portrait-blocks");
+  expect(mocks.enqueue).not.toHaveBeenCalled();
 });

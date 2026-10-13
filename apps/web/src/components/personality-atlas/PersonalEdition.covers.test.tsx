@@ -12,6 +12,7 @@ const full = { portrait: "Портрет", strengths: ["Опора"], blind_spot
 const view: ReportPageView = {
   full,
   life: null,
+  portrait: null,
   friends: { state: "waiting", counter: "0 из 3" },
   chapters: CHAPTER_KINDS.map((kind) => ({ kind, title: kind, state: "available", price: formatRub(PRODUCT_PRICES[kind]) })),
   bundle: { price: formatRub(PRODUCT_PRICES.chapters_all) },

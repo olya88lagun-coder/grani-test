@@ -10,6 +10,7 @@ const schema = z.object({
   AI_PROVIDER: z.enum(["none", "yandex", "gigachat"]).default("none"),
   CHAPTER_CARDS_V2: z.enum(["0", "1"]).optional(),
   LIFE_CARDS_V1: z.enum(["0", "1"]).optional(),
+  PORTRAIT_V1: z.enum(["0", "1"]).optional(),
   YANDEX_API_KEY: z.string().min(1).optional(),
   YANDEX_FOLDER_ID: z.string().min(1).optional(),
   GIGACHAT_AUTH_KEY: z.string().min(1).optional(),
@@ -31,7 +32,7 @@ function readAi(env: z.infer<typeof schema>): AiConfig {
   return { provider: "none" };
 }
 
-export type WorkerEnv = { DATABASE_URL: string; APP_URL: string; vkGroupToken: string | null; dryRun: boolean; poolMax: number; ai: AiConfig; chapterCardsV2: boolean; lifeCardsV1: boolean };
+export type WorkerEnv = { DATABASE_URL: string; APP_URL: string; vkGroupToken: string | null; dryRun: boolean; poolMax: number; ai: AiConfig; chapterCardsV2: boolean; lifeCardsV1: boolean; portraitV1: boolean };
 
 export function readWorkerEnv(source: Record<string, string | undefined> = process.env): WorkerEnv {
   const parsed = schema.safeParse(source);
@@ -49,5 +50,6 @@ export function readWorkerEnv(source: Record<string, string | undefined> = proce
     ai: readAi(env),
     chapterCardsV2: env.CHAPTER_CARDS_V2 === "1",
     lifeCardsV1: env.LIFE_CARDS_V1 === "1",
+    portraitV1: env.PORTRAIT_V1 === "1",
   };
 }

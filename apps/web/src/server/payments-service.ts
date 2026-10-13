@@ -1,4 +1,4 @@
-import { canBuy, friendsReportDue, isProduct, isTogetherProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
+import { canBuy, EXTRA_KINDS, friendsReportDue, isProduct, isTogetherProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type ExtraKind, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
 import {
   attachPayment,
   countFriendResponses,
@@ -32,8 +32,8 @@ export type PaymentsDeps = {
   remindReceipts: (now: Date) => Promise<void>;
   // Владелица сайта получает разборы бесплатно — без ЮKassa и без чека
   isOwner: (userId: string) => Promise<boolean>;
-  // Карточки «В жизни» ставятся вместе с полным разбором только при включённом флаге: задача, завершённая как «пропущено», заняла бы id
-  lifeCards?: boolean;
+  // Дополнительные отчёты ставятся вместе с полным разбором только при включённом флаге: задача, завершённая как «пропущено», заняла бы id
+  extras?: Readonly<Partial<Record<ExtraKind, boolean>>>;
 };
 export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "email_required" | "invalid_email" | "not_found" | "not_available" | "payment_failed" };
 // since — с какого момента считать ожидание: создание покупки, а у оплаченной время оплаты (ISO-строка)
@@ -87,8 +87,8 @@ async function enqueuePaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
   const jobs = jobsFor(purchase.product, target);
   if ("resultId" in target && purchase.product === "full") {
     if (friendsReportDue(["full"], await friendsCount(deps.db, target.resultId))) jobs.push({ kind: "friends", resultId: target.resultId });
-    // Карточек нет в jobsFor: страница оплаты не должна ждать отчёт, у которого есть запасной вариант
-    if (deps.lifeCards === true) jobs.push({ kind: "life", resultId: target.resultId });
+    // Дополнительных отчётов нет в jobsFor: страница оплаты не должна ждать отчёт, у которого есть запасной вариант
+    for (const kind of EXTRA_KINDS) if (deps.extras?.[kind] === true) jobs.push({ kind, resultId: target.resultId });
   }
   for (const job of jobs) await deps.enqueueGenerate(job);
 }

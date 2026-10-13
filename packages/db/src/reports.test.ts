@@ -28,6 +28,14 @@ describe("saveReport", () => {
     expect((await listReports(db, { resultId })).map((report) => report.kind).sort()).toEqual(["full", "life"]);
   });
 
+  test("stores the portrait beside the other reports of a result", async () => {
+    await saveReport(db, { target: { resultId }, kind: "full", sections: {}, source: "ai" });
+    const portrait = await saveReport(db, { target: { resultId }, kind: "portrait", sections: { version: 1 }, source: "ai" });
+
+    expect(portrait.created).toBe(true);
+    expect((await getReport(db, { resultId }, "portrait"))?.sections).toEqual({ version: 1 });
+  });
+
   test("keeps different kinds apart and lists them", async () => {
     await saveReport(db, { target: { resultId }, kind: "full", sections: {}, source: "ai" });
     await saveReport(db, { target: { resultId }, kind: "chapter_money", sections: {}, source: "fallback" });

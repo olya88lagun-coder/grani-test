@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
-import { parseLifeCards } from "@grani/ai";
-import { sampleSituation } from "@grani/ai/testing";
-import { lifeSeeds } from "@grani/content";
+import { parseLifeCards, parsePortrait } from "@grani/ai";
+import { samplePortrait, sampleSituation } from "@grani/ai/testing";
+import { lifeSeeds, portraitSeeds } from "@grani/content";
 import { describe, expect, test } from "vitest";
 import { CHAPTER_KINDS, formatRub, PRODUCT_PRICES, typeCodeOf, typeName } from "@grani/core";
 import type { ReportPageView } from "@/lib/report-view";
@@ -11,7 +11,7 @@ import { editionViewForHash, PersonalEdition } from "./PersonalEdition";
 
 const model=buildPersonalityAtlas({openness:78,conscientiousness:48,extraversion:50,agreeableness:78,stability:88});
 const full={portrait:"Настоящий сохранённый портрет владельца отчёта.",strengths:["Первая личная опора","Вторая личная опора"],blind_spots:[{text:"Наблюдение из оплаченного отчёта",tip:"Совет из сохранённого отчёта"}],manual:{work:["Моя работа"],fight:["Мой разговор"],annoys:["Мои предпочтения"]}};
-const baseView:ReportPageView={full,life:null,friends:{state:"waiting",counter:"0 из 3"},chapters:CHAPTER_KINDS.map(kind=>({kind,title:kind,state:"available",price:formatRub(PRODUCT_PRICES[kind])})),bundle:{price:formatRub(PRODUCT_PRICES.chapters_all)},preparing:false};
+const baseView:ReportPageView={full,life:null,portrait:null,friends:{state:"waiting",counter:"0 из 3"},chapters:CHAPTER_KINDS.map(kind=>({kind,title:kind,state:"available",price:formatRub(PRODUCT_PRICES[kind])})),bundle:{price:formatRub(PRODUCT_PRICES.chapters_all)},preparing:false};
 const props={resultId:"owned-result",displayName:"Реальный владелец",typeName:"Искра",model,initialDraft:{revision:0,updatedAt:null,data:initialAtlasData(model)},view:baseView,moneyPracticeAvailable:false};
 
 describe("personal edition contracts",()=>{
@@ -33,6 +33,23 @@ describe("personal edition contracts",()=>{
     const without=renderToStaticMarkup(<PersonalEdition {...props}/>);
     expect(without).not.toContain("data-life-cards");
     expect(without).toContain("Пять жизненных ситуаций");
+  });
+  test("the portrait tab shows the blocks instead of the paragraph, the scale map and the strengths when the portrait is ready",()=>{
+    const answer=samplePortrait();
+    const portrait=parsePortrait({version:1,headline:answer.headline,blocks:answer.blocks.map((block,index)=>({...block,title:portraitSeeds()[index]!.title}))})!;
+    const withBlocks=renderToStaticMarkup(<PersonalEdition {...props} view={{...baseView,portrait}}/>);
+    expect(withBlocks).toContain("data-portrait-blocks");
+    expect(withBlocks).toContain(portrait.headline);
+    expect(withBlocks).not.toContain("Что связывает");
+    expect(withBlocks).not.toContain("Ваши сильные стороны");
+    expect(withBlocks).not.toContain('id="atlas-section-2"');
+    expect(withBlocks).toContain("Что стоит замечать");
+    expect(withBlocks).toContain(full.blind_spots[0]!.tip);
+    const without=renderToStaticMarkup(<PersonalEdition {...props}/>);
+    expect(without).not.toContain("data-portrait-blocks");
+    expect(without).toContain("Что связывает");
+    expect(without).toContain("Ваши сильные стороны");
+    expect(without).toContain(full.portrait);
   });
   test("uses existing chapter keys and exact prices",()=>{
     const html=renderToStaticMarkup(<PersonalEdition {...props}/>);

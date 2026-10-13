@@ -1,4 +1,4 @@
-import type { ReportKind } from "@grani/core";
+import type { ExtraKind, ReportKind } from "@grani/core";
 import type { ReportInput } from "./input";
 
 export type Prompt = { system: string; user: string };
@@ -22,7 +22,7 @@ function chapterShape(title: string): string {
 }
 
 // У карточек «В жизни» нет единого запроса: промпты частей строит chapter-cards.ts
-const SHAPES: Readonly<Record<Exclude<ReportKind, "life">, string>> = {
+const SHAPES: Readonly<Record<Exclude<ReportKind, ExtraKind>, string>> = {
   full: [
     '{"portrait": "связный текст о сочетании черт, 600–1800 знаков",',
     ' "strengths": ["4–5 сильных сторон, по 1–2 предложения"],',

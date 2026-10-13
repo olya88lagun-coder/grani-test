@@ -1,5 +1,5 @@
-import { sampleSituation } from "@grani/ai/testing";
-import { lifeSeeds } from "@grani/content";
+import { samplePortrait, sampleSituation } from "@grani/ai/testing";
+import { lifeSeeds, portraitSeeds } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import type { ReportRecord } from "@grani/db";
 import { describe, expect, test } from "vitest";
@@ -87,6 +87,35 @@ describe("life cards in the page view", () => {
     const view = buildReportPageView({ owned: ["full"], reports: [report("full", FULL)], friendsCount: 0 });
 
     expect(view.life).toBeNull();
+    expect(view.preparing).toBe(false);
+  });
+});
+
+describe("portrait blocks in the page view", () => {
+  const PORTRAIT = { version: 1, headline: samplePortrait().headline, blocks: samplePortrait().blocks.map((block, index) => ({ ...block, title: portraitSeeds()[index]!.title })) };
+
+  test("the owner of the full report sees the blocks", () => {
+    const view = buildReportPageView({ owned: ["full"], reports: [report("portrait", PORTRAIT)], friendsCount: 0 });
+
+    expect(view.portrait?.blocks).toHaveLength(5);
+  });
+
+  test("without the full report a stored portrait stays hidden", () => {
+    const view = buildReportPageView({ owned: [], reports: [report("portrait", PORTRAIT)], friendsCount: 0 });
+
+    expect(view.portrait).toBeNull();
+  });
+
+  test("a damaged portrait is ignored", () => {
+    const view = buildReportPageView({ owned: ["full"], reports: [report("portrait", { version: 2 })], friendsCount: 0 });
+
+    expect(view.portrait).toBeNull();
+  });
+
+  test("waiting for the blocks never keeps the page refreshing", () => {
+    const view = buildReportPageView({ owned: ["full"], reports: [report("full", FULL)], friendsCount: 0 });
+
+    expect(view.portrait).toBeNull();
     expect(view.preparing).toBe(false);
   });
 });

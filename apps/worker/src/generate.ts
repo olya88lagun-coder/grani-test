@@ -1,6 +1,19 @@
-import { buildFriendsInput, buildPairInput, buildPersonalInput, generateChapterCards, generateLifeCards, generateReport, type GeneratedReport, type ReportInput, type ReportWriter } from "@grani/ai";
+import {
+  buildFriendsInput,
+  buildPairInput,
+  buildPersonalInput,
+  generateChapterCards,
+  generateLifeCards,
+  generatePortrait,
+  generateReport,
+  type GenerateLog,
+  type GeneratedReport,
+  type PersonalScores,
+  type ReportInput,
+  type ReportWriter,
+} from "@grani/ai";
 import { compareFriendAnswers, hasCardsFormat, type Library } from "@grani/content";
-import { CHAPTER_KINDS, friendsReportDue, unlockedKinds, type ChapterKind, type GenerateJob, type NotifyJob } from "@grani/core";
+import { CHAPTER_KINDS, friendsReportDue, isExtraKind, unlockedKinds, type ChapterKind, type ExtraKind, type GenerateJob, type NotifyJob } from "@grani/core";
 import {
   getActivePair,
   getInviteForResult,
@@ -25,6 +38,8 @@ export type GenerateDeps = {
   chapterCardsV2?: boolean;
   // Карточки «В жизни»; по умолчанию выключено
   lifeCardsV1?: boolean;
+  // Блоки «Портрета»; по умолчанию выключено
+  portraitV1?: boolean;
 };
 
 const targetOf = (job: GenerateJob): ReportTarget => (job.kind === "pair" ? { pairId: job.pairId } : { resultId: job.resultId });
@@ -34,8 +49,8 @@ async function buildInput(job: GenerateJob, deps: GenerateDeps): Promise<ReportI
     const pair = await getActivePair(deps.db, job.pairId);
     return pair ? buildPairInput(deps.library, pair.members[0].result.scores, pair.members[1].result.scores) : null;
   }
-  // Карточки «В жизни» идут отдельным путём без общего входа и без запасного текста (см. runLife)
-  if (job.kind === "life") return null;
+  // Дополнительные отчёты идут отдельным путём без общего входа и без запасного текста (см. runLife)
+  if (isExtraKind(job.kind)) return null;
   const result = await getResult(deps.db, job.resultId);
   if (!result) return null;
   if (job.kind !== "friends") return buildPersonalInput(deps.library, job.kind, result);
@@ -75,36 +90,46 @@ async function generateCards(job: ChapterJob, deps: GenerateDeps): Promise<Gener
   return cards ? { sections: cards.sections, source: "ai", attempts: cards.attempts } : null;
 }
 
-type LifeJob = { kind: "life"; resultId: string };
-const isLife = (job: GenerateJob): job is LifeJob => job.kind === "life";
+type ExtraJob = { kind: ExtraKind; resultId: string };
+const isExtra = (job: GenerateJob): job is ExtraJob => isExtraKind(job.kind);
 
-// У карточек «В жизни» нет запасного текста: запасной вариант — статичные сценарии на странице.
+type ExtraContext = { library: Library; result: PersonalScores };
+type ExtraRun = { sections: unknown; attempts: number } | null;
+type Extra = { enabled: (deps: GenerateDeps) => boolean; failure: string; generate: (writer: ReportWriter, ctx: ExtraContext, log: GenerateLog) => Promise<ExtraRun> };
+
+// Дополнительные отчёты не имеют запасного текста: запасной вариант — прежний вид вкладки.
 // Поэтому без ИИ, без флага, без оплаченного разбора или после исчерпанных попыток отчёт просто не сохраняется
-async function runLife(job: LifeJob, deps: GenerateDeps): Promise<void> {
-  if (deps.lifeCardsV1 !== true || deps.writer === null) {
+const EXTRAS: Readonly<Record<ExtraKind, Extra>> = {
+  life: { enabled: (deps) => deps.lifeCardsV1 === true, failure: "life cards failed", generate: (writer, ctx, log) => generateLifeCards(writer, ctx, { log }) },
+  portrait: { enabled: (deps) => deps.portraitV1 === true, failure: "portrait failed", generate: (writer, ctx, log) => generatePortrait(writer, ctx, { log }) },
+};
+
+async function runExtra(job: ExtraJob, deps: GenerateDeps): Promise<void> {
+  const extra = EXTRAS[job.kind];
+  if (!extra.enabled(deps) || deps.writer === null) {
     deps.log("info", "report skipped", { kind: job.kind });
     return;
   }
   const target = { resultId: job.resultId };
   const result = await getResult(deps.db, job.resultId);
   // Сайт проверил доступ при постановке задачи; проверяем ещё раз — между ними могло пройти время
-  if (!result || !unlockedKinds(await listOwnedProducts(deps.db, target)).has("life")) {
+  if (!result || !unlockedKinds(await listOwnedProducts(deps.db, target)).has(job.kind)) {
     deps.log("info", "report skipped", { kind: job.kind });
     return;
   }
-  const cards = await generateLifeCards(deps.writer, { library: deps.library, result }, { log: (message, extra) => deps.log("warn", message, extra) });
-  if (!cards) {
-    deps.log("warn", "life cards failed", { kind: job.kind });
+  const generated = await extra.generate(deps.writer, { library: deps.library, result }, (message, fields) => deps.log("warn", message, fields));
+  if (!generated) {
+    deps.log("warn", extra.failure, { kind: job.kind });
     return;
   }
-  const { created } = await saveReport(deps.db, { target, kind: "life", sections: cards.sections, source: "ai" });
-  deps.log("info", "report generated", { kind: job.kind, source: "ai", attempts: cards.attempts, created });
+  const { created } = await saveReport(deps.db, { target, kind: job.kind, sections: generated.sections, source: "ai" });
+  deps.log("info", "report generated", { kind: job.kind, source: "ai", attempts: generated.attempts, created });
 }
 
 export async function runGenerate(job: GenerateJob, deps: GenerateDeps): Promise<void> {
   const target = targetOf(job);
   if (await getReport(deps.db, target, job.kind)) return;
-  if (isLife(job)) return runLife(job, deps);
+  if (isExtra(job)) return runExtra(job, deps);
   const input = await buildInput(job, deps);
   if (!input) {
     deps.log("info", "report skipped", { kind: job.kind });

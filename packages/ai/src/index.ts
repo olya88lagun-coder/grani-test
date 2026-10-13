@@ -8,5 +8,7 @@ export * from "./chapter-style";
 export * from "./chapter-cards";
 export * from "./generate-chapter";
 export * from "./generate-life";
+export * from "./portrait-cards";
+export * from "./generate-portrait";
 export * from "./providers/yandex";
 export * from "./providers/gigachat";

@@ -1,7 +1,7 @@
 import { MIN_FRIENDS } from "./friends";
 import { CHAPTER_PRODUCTS, type Product } from "./pricing";
 
-export const REPORT_KINDS = ["full", "friends", "chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships", "pair", "life"] as const;
+export const REPORT_KINDS = ["full", "friends", "chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships", "pair", "life", "portrait"] as const;
 export type ReportKind = (typeof REPORT_KINDS)[number];
 export type ChapterKind = (typeof CHAPTER_PRODUCTS)[number];
 export const CHAPTER_KINDS: readonly ChapterKind[] = CHAPTER_PRODUCTS;
@@ -9,6 +9,14 @@ export type ProductTarget = "result" | "pair";
 
 export function isReportKind(value: unknown): value is ReportKind {
   return typeof value === "string" && (REPORT_KINDS as readonly string[]).includes(value);
+}
+
+// Дополнительные отчёты открываются вместе с полным разбором, не продаются и не объявляются письмом «Готово»
+export const EXTRA_KINDS = ["life", "portrait"] as const;
+export type ExtraKind = (typeof EXTRA_KINDS)[number];
+
+export function isExtraKind(value: unknown): value is ExtraKind {
+  return typeof value === "string" && (EXTRA_KINDS as readonly string[]).includes(value);
 }
 
 export function productTarget(product: Product): ProductTarget {
@@ -20,10 +28,10 @@ export function reportKindsFor(product: Product): readonly ReportKind[] {
   return product === "chapters_all" ? CHAPTER_KINDS : [product];
 }
 
-// Карточки «В жизни» не продаются: открываются вместе с полным разбором
+// Дополнительные отчёты не продаются: открываются вместе с полным разбором
 export function unlockedKinds(owned: readonly Product[]): ReadonlySet<ReportKind> {
   const kinds = new Set(owned.flatMap(reportKindsFor));
-  if (kinds.has("full")) kinds.add("life");
+  if (kinds.has("full")) for (const kind of EXTRA_KINDS) kinds.add(kind);
   return kinds;
 }
 
