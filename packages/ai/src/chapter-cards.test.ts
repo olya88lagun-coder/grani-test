@@ -75,6 +75,13 @@ describe("validateSituations", () => {
     expect(validateSituations(situations(SEEDS_A), ids).ok).toBe(true);
   });
 
+  test("accepts the title of a theme as the card title even when it is short", () => {
+    const cards = SEEDS_A.map((seed) => ({ ...sampleSituation(seed), title: seed.title }));
+
+    expect(Math.min(...SEEDS_A.map((seed) => seed.title.length))).toBeLessThan(20);
+    expect(validateSituations(JSON.stringify({ situations: cards }), ids).ok).toBe(true);
+  });
+
   test("rejects missing, reordered, duplicated or foreign themes", () => {
     expect(validateSituations(situations(SEEDS_A.slice(0, 2)), ids)).toEqual({ ok: false, reason: "seeds" });
     expect(validateSituations(situations([...SEEDS_A].reverse()), ids)).toEqual({ ok: false, reason: "seeds" });

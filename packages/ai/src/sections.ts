@@ -20,7 +20,7 @@ const ChapterSchema = z.strictObject({ text: text(300, 8000), tips: list(text(20
 
 export const SituationSchema = z.strictObject({
   seed: text(2, 40),
-  title: text(20, 90),
+  title: text(10, 90),
   scene: text(80, 320),
   why: text(80, 320),
   traits: z.array(z.enum(TRAITS)).min(1).max(2),
