@@ -1,6 +1,7 @@
 import { chapterSeeds, CHAPTER_SECTIONS, CHAPTER_TITLES, findStopWords, traitBlock, type ChapterSeed, type Library } from "@grani/content";
 import { TRAITS, traitLevel, type ChapterKind } from "@grani/core";
 import { z } from "zod";
+import { repeatsAny } from "./chapter-overlap";
 import { styleProblems } from "./chapter-style";
 import { personalFacts, type PersonalScores } from "./input";
 import { COMMON_RULES, type Prompt } from "./prompt";
@@ -28,6 +29,7 @@ const RULES = [
   "«Что сказать» — готовые фразы, которые человек может произнести сразу, без оговорок.",
   "Не более одной оговорки («может», «возможно», «можно сравнить») на карточку: пиши прямо, как опытный редактор.",
   "Не пересказывай блоки слово в слово: объясняй, почему так получается, и предлагай одно конкретное действие.",
+  "«Что сделать» — своё действие для именно этой ситуации: не копируй советы из blocks и не повторяй действия других карточек; называй срок, сумму или число, если это уместно.",
 ];
 
 const OVERVIEW_SHAPE = [
@@ -48,9 +50,14 @@ const SITUATIONS_SHAPE = [
   `traits — только из: ${TRAITS.join(", ")}.`,
 ].join("\n");
 
+const blocksOf = (ctx: ChapterCardsContext): Record<string, string> =>
+  Object.fromEntries(TRAITS.map((trait) => [trait, traitBlock(ctx.library, trait, traitLevel(ctx.result.scores[trait]), CHAPTER_SECTIONS[ctx.kind])]));
+
+// Готовые тексты библиотеки, которые модель получает на вход: с ними сверяются советы в ответе
+export const blockTexts = (ctx: ChapterCardsContext): readonly string[] => Object.values(blocksOf(ctx));
+
 export function buildChapterPartPrompt(part: ChapterPart, ctx: ChapterCardsContext): Prompt {
-  const section = CHAPTER_SECTIONS[ctx.kind];
-  const blocks = Object.fromEntries(TRAITS.map((trait) => [trait, traitBlock(ctx.library, trait, traitLevel(ctx.result.scores[trait]), section)]));
+  const blocks = blocksOf(ctx);
   const seeds = partSeeds(ctx.kind, part).map(({ id, title, focus, traits }) => ({ id, title, focus, traits }));
   return {
     system: [...RULES, `Схема ответа:\n${part === "overview" ? OVERVIEW_SHAPE : SITUATIONS_SHAPE}`].join("\n\n"),
@@ -63,7 +70,7 @@ const OverviewSchema = z.strictObject({ headline: cardsShape.headline, summary: 
 const SituationsSchema = z.strictObject({ situations: z.array(SituationSchema).min(1).max(SITUATIONS_PER_PART) });
 export type OverviewPart = z.infer<typeof OverviewSchema>;
 export type SituationsPart = z.infer<typeof SituationsSchema>;
-export type PartFailure = "not_json" | "schema" | "stop_words" | "style" | "seeds";
+export type PartFailure = "not_json" | "schema" | "stop_words" | "style" | "seeds" | "repeat";
 // detail есть только у ошибки схемы: пути полей и пределы, без текста ответа
 export type PartCheck<T> = { ok: true; value: T } | { ok: false; reason: PartFailure; detail?: string };
 
@@ -93,7 +100,10 @@ export function validateOverview(raw: string): PartCheck<OverviewPart> {
   return { ok: true, value: parsed.data };
 }
 
-export function validateSituations(raw: string, expectedSeeds: readonly string[]): PartCheck<SituationsPart> {
+// blocks — тексты библиотеки, avoid — советы соседней группы; на последней попытке повторы прощаются: лучше повтор, чем запасной текст
+export type RepeatGuard = { blocks: readonly string[]; avoid?: readonly string[] };
+
+export function validateSituations(raw: string, expectedSeeds: readonly string[], guard: RepeatGuard = { blocks: [] }, final = false): PartCheck<SituationsPart> {
   const json = extractJson(raw);
   if (json === undefined) return { ok: false, reason: "not_json" };
   const parsed = SituationsSchema.safeParse(json);
@@ -102,7 +112,13 @@ export function validateSituations(raw: string, expectedSeeds: readonly string[]
   if (parsed.data.situations.some((card) => styleProblems(sectionStrings(card), MAX_HEDGES_PER_CARD).length > 0)) return { ok: false, reason: "style" };
   const seeds = parsed.data.situations.map((card) => card.seed);
   if (seeds.length !== expectedSeeds.length || seeds.some((seed, index) => seed !== expectedSeeds[index])) return { ok: false, reason: "seeds" };
+  if (!final && hasRepeatedAction(parsed.data, guard)) return { ok: false, reason: "repeat" };
   return { ok: true, value: parsed.data };
+}
+
+function hasRepeatedAction(part: SituationsPart, guard: RepeatGuard): boolean {
+  const actions = part.situations.map((card) => card.do);
+  return actions.some((action, index) => repeatsAny(action, [...guard.blocks, ...(guard.avoid ?? []), ...actions.filter((_, other) => other !== index)]));
 }
 
 export function assembleChapterCards(overview: OverviewPart, a: SituationsPart, b: SituationsPart): ChapterCardsSections | null {
