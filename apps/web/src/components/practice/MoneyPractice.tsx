@@ -62,7 +62,7 @@ export function MoneyPractice({ resultId, displayName, scores, initialDraft }: {
               <CompassWheel directions={directions} activeIndex={axisIndex} onSelect={setAxisIndex} />
               <div className={styles.compassDetail} aria-live="polite">
                 <div className={styles.directionArt}><Image src={`/practice/money/${active.image}.png`} alt="" fill sizes="(max-width: 700px) 90vw, 440px" /></div>
-                <h3>{active.title}</h3><p className={styles.compassState}>{active.label}</p><p>{active.note}</p>
+                <div className={styles.directionHead}><div><h3>{active.title}</h3><p className={styles.compassState}>{active.label}</p></div>{active.icon && <Image className={styles.directionIcon} src={active.icon} alt="" width={96} height={96} />}</div><p>{active.note}</p>
                 <h4>Что попробовать: {active.situation}</h4><p>{active.action}</p><blockquote>{active.phrase}</blockquote>
                 <details data-basis><summary>На какие ответы опирается вывод</summary><ul>{active.basis.map(b => <li key={b}>{b}</li>)}</ul></details>
                 <a href="#money-questions">Вернуться к вопросам</a>

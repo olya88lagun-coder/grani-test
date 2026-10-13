@@ -146,3 +146,7 @@
 .dataBlock { margin: 36px 0 12px; padding: 16px 0; border-top: 1px solid var(--practice-line); font-size: 14px; color: var(--practice-muted); }
 .dataBlock summary { color: var(--practice-ink); font-size: 16px; }
 .heroFoot strong { color: var(--practice-gold); font-weight: 600; }
+.directionHead { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.directionHead h3 { margin-bottom: 0; }
+.directionIcon { flex: none; width: 96px; height: 96px; object-fit: contain; }
+@media (max-width: 600px) { .directionIcon { width: 72px; height: 72px; } }
