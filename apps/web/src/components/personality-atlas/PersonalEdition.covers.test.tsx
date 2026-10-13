@@ -11,6 +11,7 @@ const model = buildPersonalityAtlas({ openness: 78, conscientiousness: 48, extra
 const full = { portrait: "Портрет", strengths: ["Опора"], blind_spots: [{ text: "Наблюдение", tip: "Совет" }], manual: { work: ["Работа"], fight: ["Разговор"], annoys: ["Предпочтения"] } };
 const view: ReportPageView = {
   full,
+  life: null,
   friends: { state: "waiting", counter: "0 из 3" },
   chapters: CHAPTER_KINDS.map((kind) => ({ kind, title: kind, state: "available", price: formatRub(PRODUCT_PRICES[kind]) })),
   bundle: { price: formatRub(PRODUCT_PRICES.chapters_all) },

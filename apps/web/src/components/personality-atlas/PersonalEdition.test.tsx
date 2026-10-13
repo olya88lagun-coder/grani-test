@@ -8,7 +8,7 @@ import { editionViewForHash, PersonalEdition } from "./PersonalEdition";
 
 const model=buildPersonalityAtlas({openness:78,conscientiousness:48,extraversion:50,agreeableness:78,stability:88});
 const full={portrait:"Настоящий сохранённый портрет владельца отчёта.",strengths:["Первая личная опора","Вторая личная опора"],blind_spots:[{text:"Наблюдение из оплаченного отчёта",tip:"Совет из сохранённого отчёта"}],manual:{work:["Моя работа"],fight:["Мой разговор"],annoys:["Мои предпочтения"]}};
-const baseView:ReportPageView={full,friends:{state:"waiting",counter:"0 из 3"},chapters:CHAPTER_KINDS.map(kind=>({kind,title:kind,state:"available",price:formatRub(PRODUCT_PRICES[kind])})),bundle:{price:formatRub(PRODUCT_PRICES.chapters_all)},preparing:false};
+const baseView:ReportPageView={full,life:null,friends:{state:"waiting",counter:"0 из 3"},chapters:CHAPTER_KINDS.map(kind=>({kind,title:kind,state:"available",price:formatRub(PRODUCT_PRICES[kind])})),bundle:{price:formatRub(PRODUCT_PRICES.chapters_all)},preparing:false};
 const props={resultId:"owned-result",displayName:"Реальный владелец",typeName:"Искра",model,initialDraft:{revision:0,updatedAt:null,data:initialAtlasData(model)},view:baseView,moneyPracticeAvailable:false};
 
 describe("personal edition contracts",()=>{
