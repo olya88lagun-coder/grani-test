@@ -208,6 +208,7 @@ export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "naskolko-tochen-big-five": [ROBERTS_DELVECCHIO_2000, GOLDBERG_1992, MCCRAE_COSTA_1997, SOTO_2019],
   ekstraversiya: [LUCAS_2000, DEYOUNG_2007, CHEEK_BUSS_1981],
   introversiya: [LUCAS_2000, DEYOUNG_2007, CHEEK_BUSS_1981],
+  "nizkaya-dobrosovestnost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
 };
 
 // Источники гидов по чертам: из чего складывается черта (DeYoung), с чем связана в жизни (Soto),
