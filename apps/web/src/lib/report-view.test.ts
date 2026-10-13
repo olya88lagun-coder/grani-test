@@ -1,3 +1,5 @@
+import { sampleSituation } from "@grani/ai/testing";
+import { lifeSeeds } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import type { ReportRecord } from "@grani/db";
 import { describe, expect, test } from "vitest";
@@ -57,5 +59,34 @@ describe("buildReportPageView", () => {
     expect(view.chapters.every((chapter) => chapter.state === "preparing")).toBe(true);
     expect(view.friends).toEqual({ state: "preparing" });
     expect(view.preparing).toBe(true);
+  });
+});
+
+describe("life cards in the page view", () => {
+  const LIFE = { version: 1, situations: lifeSeeds().map(sampleSituation) };
+
+  test("the owner of the full report sees the cards", () => {
+    const view = buildReportPageView({ owned: ["full"], reports: [report("life", LIFE)], friendsCount: 0 });
+
+    expect(view.life?.situations).toHaveLength(5);
+  });
+
+  test("without the full report a stored life report stays hidden", () => {
+    const view = buildReportPageView({ owned: [], reports: [report("life", LIFE)], friendsCount: 0 });
+
+    expect(view.life).toBeNull();
+  });
+
+  test("a damaged life report is ignored", () => {
+    const view = buildReportPageView({ owned: ["full"], reports: [report("life", { version: 2 })], friendsCount: 0 });
+
+    expect(view.life).toBeNull();
+  });
+
+  test("waiting for the cards never keeps the page refreshing", () => {
+    const view = buildReportPageView({ owned: ["full"], reports: [report("full", FULL)], friendsCount: 0 });
+
+    expect(view.life).toBeNull();
+    expect(view.preparing).toBe(false);
   });
 });

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseChapterCards, parseSections, sectionStrings } from "./sections";
+import { parseChapterCards, parseLifeCards, parseSections, sectionStrings } from "./sections";
 
 const long = (n: number) => "а".repeat(n);
 const situation = (seed: string) => ({ seed, title: long(30), scene: long(100), why: long(100), traits: ["agreeableness"], say: [long(20)], do: long(60) });
@@ -61,4 +61,28 @@ test("parseChapterCards returns the typed value or null", () => {
 
 test("sectionStrings collects every text for the stop-word check", () => {
   expect(sectionStrings({ a: "x", b: ["y", { c: "z" }], d: 3 })).toEqual(["x", "y", "z"]);
+});
+
+describe("parseLifeCards", () => {
+  const life = (overrides: Record<string, unknown> = {}) => ({ version: 1, situations: ["sa", "sb", "sc", "sd", "se"].map(situation), ...overrides });
+
+  test("accepts five cards of version 1", () => {
+    expect(parseLifeCards(life())?.situations).toHaveLength(5);
+  });
+
+  test("rejects four or six cards, another version, extra fields and a chapter-style object", () => {
+    expect(parseLifeCards(life({ situations: ["sa", "sb", "sc", "sd"].map(situation) }))).toBeNull();
+    expect(parseLifeCards(life({ situations: ["sa", "sb", "sc", "sd", "se", "sf"].map(situation) }))).toBeNull();
+    expect(parseLifeCards(life({ version: 2 }))).toBeNull();
+    expect(parseLifeCards(life({ headline: long(60) }))).toBeNull();
+    expect(parseLifeCards(cards())).toBeNull();
+    expect(parseLifeCards(null)).toBeNull();
+  });
+});
+
+test("parseSections knows the life kind", () => {
+  const valid = { version: 1, situations: ["sa", "sb", "sc", "sd", "se"].map(situation) };
+
+  expect(parseSections("life", valid)?.situations).toHaveLength(5);
+  expect(parseSections("life", { ...valid, version: 2 })).toBeNull();
 });

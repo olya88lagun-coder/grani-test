@@ -119,6 +119,15 @@ describe("report_ready", () => {
     expect(telegram).toHaveBeenCalledWith("300", `Готово: полный разбор. Открыть: ${APP_URL}/report/${owner.resultId}`);
   });
 
+  test("says nothing about the life cards: they appear on the page by themselves", async () => {
+    const owner = await seedUserWithResult(db, { externalId: "310" });
+    const { report } = await saveReport(db, { target: { resultId: owner.resultId }, kind: "life", sections: {}, source: "ai" });
+
+    await runNotify({ kind: "report_ready", reportId: report.id }, deps);
+
+    expect(telegram).not.toHaveBeenCalled();
+  });
+
   test("tells both members about the pair report, nobody after leaving", async () => {
     const pair = await seedPair(db);
     const { report } = await saveReport(db, { target: { pairId: pair.pairId }, kind: "pair", sections: {}, source: "fallback" });

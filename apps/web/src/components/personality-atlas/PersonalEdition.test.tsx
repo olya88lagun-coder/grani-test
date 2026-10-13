@@ -1,4 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
+import { parseLifeCards } from "@grani/ai";
+import { sampleSituation } from "@grani/ai/testing";
+import { lifeSeeds } from "@grani/content";
 import { describe, expect, test } from "vitest";
 import { CHAPTER_KINDS, formatRub, PRODUCT_PRICES, typeCodeOf, typeName } from "@grani/core";
 import type { ReportPageView } from "@/lib/report-view";
@@ -8,7 +11,7 @@ import { editionViewForHash, PersonalEdition } from "./PersonalEdition";
 
 const model=buildPersonalityAtlas({openness:78,conscientiousness:48,extraversion:50,agreeableness:78,stability:88});
 const full={portrait:"Настоящий сохранённый портрет владельца отчёта.",strengths:["Первая личная опора","Вторая личная опора"],blind_spots:[{text:"Наблюдение из оплаченного отчёта",tip:"Совет из сохранённого отчёта"}],manual:{work:["Моя работа"],fight:["Мой разговор"],annoys:["Мои предпочтения"]}};
-const baseView:ReportPageView={full,friends:{state:"waiting",counter:"0 из 3"},chapters:CHAPTER_KINDS.map(kind=>({kind,title:kind,state:"available",price:formatRub(PRODUCT_PRICES[kind])})),bundle:{price:formatRub(PRODUCT_PRICES.chapters_all)},preparing:false};
+const baseView:ReportPageView={full,life:null,friends:{state:"waiting",counter:"0 из 3"},chapters:CHAPTER_KINDS.map(kind=>({kind,title:kind,state:"available",price:formatRub(PRODUCT_PRICES[kind])})),bundle:{price:formatRub(PRODUCT_PRICES.chapters_all)},preparing:false};
 const props={resultId:"owned-result",displayName:"Реальный владелец",typeName:"Искра",model,initialDraft:{revision:0,updatedAt:null,data:initialAtlasData(model)},view:baseView,moneyPracticeAvailable:false};
 
 describe("personal edition contracts",()=>{
@@ -20,6 +23,16 @@ describe("personal edition contracts",()=>{
     expect(html.match(/id="atlas-section-[1-9]"/g)).toHaveLength(9);
     for(const value of [78,48,50,88])expect(html).toContain(`>${value}</strong>`);
     expect(html).toContain("Пять граней");expect(html).toContain("4 сферы");expect(html).toContain("Взгляд друзей");
+  });
+  test("the life tab shows the model's cards when they are ready and the static scenarios otherwise",()=>{
+    const life=parseLifeCards({version:1,situations:lifeSeeds().map(sampleSituation)})!;
+    const withCards=renderToStaticMarkup(<PersonalEdition {...props} view={{...baseView,life}}/>);
+    expect(withCards).toContain("data-life-cards");
+    expect(withCards).toContain("Ситуация: Планы внезапно изменились");
+    expect(withCards).not.toContain("Пять жизненных ситуаций");
+    const without=renderToStaticMarkup(<PersonalEdition {...props}/>);
+    expect(without).not.toContain("data-life-cards");
+    expect(without).toContain("Пять жизненных ситуаций");
   });
   test("uses existing chapter keys and exact prices",()=>{
     const html=renderToStaticMarkup(<PersonalEdition {...props}/>);

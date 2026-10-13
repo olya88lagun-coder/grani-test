@@ -12,7 +12,9 @@ export function pairCreatedText(partnerFirstName: string, score: number, url: st
   return `Пара готова: вы и ${partnerFirstName}, совместимость ${score}%. Посмотреть типы и шкалы рядом: ${url}`;
 }
 
-const READY_TITLES: Readonly<Record<ReportKind, string>> = {
+// Карточки «В жизни» появляются на странице сами, сообщения о них нет
+type AnnouncedKind = Exclude<ReportKind, "life">;
+const READY_TITLES: Readonly<Record<AnnouncedKind, string>> = {
   full: "полный разбор",
   friends: "раздел «Как тебя видят другие»",
   chapter_money: "глава «Деньги»",
@@ -22,7 +24,7 @@ const READY_TITLES: Readonly<Record<ReportKind, string>> = {
   pair: "разбор вашей пары",
 };
 
-export function reportReadyText(kind: ReportKind, url: string): string {
+export function reportReadyText(kind: AnnouncedKind, url: string): string {
   return `Готово: ${READY_TITLES[kind]}. Открыть: ${url}`;
 }
 

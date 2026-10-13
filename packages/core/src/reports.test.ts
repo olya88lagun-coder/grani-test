@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { isProduct } from "./pricing";
 import { CHAPTER_KINDS, canBuy, friendsReportDue, isReportKind, productTarget, reportKindsFor, unlockedKinds } from "./reports";
 
 describe("reportKindsFor", () => {
@@ -15,8 +16,18 @@ describe("reportKindsFor", () => {
     expect(productTarget("chapters_all")).toBe("result");
   });
 
-  test("collects everything the purchases opened", () => {
-    expect([...unlockedKinds(["full", "chapters_all"])].sort()).toEqual(["chapter_conflict", "chapter_money", "chapter_relationships", "chapter_stress", "full"]);
+  test("collects everything the purchases opened, the life cards come with the full report", () => {
+    expect([...unlockedKinds(["full", "chapters_all"])].sort()).toEqual(["chapter_conflict", "chapter_money", "chapter_relationships", "chapter_stress", "full", "life"]);
+  });
+
+  test("the life cards are not sold and open only with the full report", () => {
+    expect(isReportKind("life")).toBe(true);
+    expect(isProduct("life")).toBe(false);
+    expect(reportKindsFor("full")).toEqual(["full"]);
+    expect(unlockedKinds(["full"]).has("life")).toBe(true);
+    expect(unlockedKinds(["chapter_money"]).has("life")).toBe(false);
+    expect(unlockedKinds(["pair"]).has("life")).toBe(false);
+    expect(unlockedKinds([]).has("life")).toBe(false);
   });
 });
 

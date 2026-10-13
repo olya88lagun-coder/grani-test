@@ -23,7 +23,7 @@ function withFix(prompt: Prompt, hint: string | undefined): Prompt {
   return hint ? { ...prompt, user: JSON.stringify({ ...(JSON.parse(prompt.user) as object), fix: hint }) } : prompt;
 }
 
-async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterCardsContext, check: (raw: string, final: boolean) => PartCheck<T>, options: Options): Promise<PartResult<T> | null> {
+export async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterCardsContext, check: (raw: string, final: boolean) => PartCheck<T>, options: Options): Promise<PartResult<T> | null> {
   const prompt = buildChapterPartPrompt(part, ctx);
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
   let hint: string | undefined;

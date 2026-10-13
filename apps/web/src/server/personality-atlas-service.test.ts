@@ -1,5 +1,8 @@
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { createTestDb, deleteUserData, purchases, seedUserWithResult, type Database } from "@grani/db/testing";
+import { parseLifeCards } from "@grani/ai";
+import { sampleSituation } from "@grani/ai/testing";
+import { lifeSeeds } from "@grani/content";
+import { createTestDb, deleteUserData, purchases, saveReport, seedUserWithResult, type Database } from "@grani/db/testing";
 import { buildPersonalityAtlas } from "@/lib/personality-atlas";
 import { initialAtlasData, readPersonalAtlas, savePersonalAtlas, validateAtlasData } from "./personality-atlas-service";
 
@@ -55,5 +58,43 @@ describe("private atlas drafts",()=>{
     expect(await readPersonalAtlas(db,owner)).toEqual({ok:false,error:"not_found"});
     const {personalityAtlasDrafts}=await import("@grani/db");
     expect(await db.select().from(personalityAtlasDrafts)).toHaveLength(0);
+  });
+});
+
+describe("memo from the life cards",()=>{
+  const life=()=>parseLifeCards({version:1,situations:lifeSeeds().map(sampleSituation)})!;
+  const model=()=>buildPersonalityAtlas(SOFIA);
+
+  test("the epigraph and the 'what to try' line come from the first card, the rest is unchanged",()=>{
+    const plain=initialAtlasData(model()),withCards=initialAtlasData(model(),life());
+    expect(withCards.memo.quote).toBe(life().situations[0]!.say[0]);
+    expect(withCards.memo.items[4]).toBe(life().situations[0]!.do);
+    expect(withCards.memo.items.slice(0,4)).toEqual(plain.memo.items.slice(0,4));
+    expect(withCards.interaction).toEqual(plain.interaction);
+    expect(initialAtlasData(model(),null)).toEqual(plain);
+  });
+
+  test("a new memo is built from the stored cards, a saved memo is never touched",async()=>{
+    const buyer=await seedUserWithResult(db,{externalId:"atlas-life",scores:SOFIA});
+    await db.insert(purchases).values({userId:buyer.userId,resultId:buyer.resultId,product:"full",amountKopecks:29900,status:"succeeded",paidAt:new Date()});
+    await saveReport(db,{target:{resultId:buyer.resultId},kind:"life",sections:life(),source:"ai"});
+
+    const before=await readPersonalAtlas(db,buyer);
+    expect(before).toMatchObject({ok:true,draft:{revision:0,data:{memo:{quote:life().situations[0]!.say[0]}}}});
+
+    const mine=initialAtlasData(model());mine.memo.quote="Моя фраза";
+    await savePersonalAtlas(db,{...buyer,expectedRevision:0,data:mine});
+    const after=await readPersonalAtlas(db,buyer);
+    expect(after).toMatchObject({ok:true,draft:{revision:1,data:{memo:{quote:"Моя фраза"}}}});
+    if(after.ok)expect(after.draft.data.memo.items[4]).toBe(mine.memo.items[4]);
+  });
+
+  test("a damaged life report gives the usual memo",async()=>{
+    const broken=await seedUserWithResult(db,{externalId:"atlas-life-broken",scores:SOFIA});
+    await db.insert(purchases).values({userId:broken.userId,resultId:broken.resultId,product:"full",amountKopecks:29900,status:"succeeded",paidAt:new Date()});
+    await saveReport(db,{target:{resultId:broken.resultId},kind:"life",sections:{version:2},source:"ai"});
+
+    const result=await readPersonalAtlas(db,broken);
+    expect(result).toMatchObject({ok:true,draft:{data:{memo:{quote:fresh().memo.quote}}}});
   });
 });

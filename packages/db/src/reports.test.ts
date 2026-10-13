@@ -19,6 +19,15 @@ describe("saveReport", () => {
     expect((await getReport(db, { resultId }, "full"))?.sections).toEqual({ portrait: "a" });
   });
 
+  test("stores the life cards beside the other reports of a result", async () => {
+    await saveReport(db, { target: { resultId }, kind: "full", sections: {}, source: "ai" });
+    const life = await saveReport(db, { target: { resultId }, kind: "life", sections: { version: 1 }, source: "ai" });
+
+    expect(life.created).toBe(true);
+    expect((await getReport(db, { resultId }, "life"))?.sections).toEqual({ version: 1 });
+    expect((await listReports(db, { resultId })).map((report) => report.kind).sort()).toEqual(["full", "life"]);
+  });
+
   test("keeps different kinds apart and lists them", async () => {
     await saveReport(db, { target: { resultId }, kind: "full", sections: {}, source: "ai" });
     await saveReport(db, { target: { resultId }, kind: "chapter_money", sections: {}, source: "fallback" });

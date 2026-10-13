@@ -1,8 +1,9 @@
-import { buildPersonalInput, fallbackSections, parseSections, type ChapterSections, type FullSections, type PersonalScores } from "@grani/ai";
+import { buildPersonalInput, fallbackSections, parseSections, type ChapterSections, type FullSections, type LifeSections, type PersonalScores } from "@grani/ai";
 import { CHAPTER_TITLES, type Library } from "@grani/content";
 import { canBuy, CHAPTER_KINDS, formatRub, MIN_FRIENDS, PRODUCT_PRICES, unlockedKinds, type ChapterKind, type Product } from "@grani/core";
 import type { ReportRecord } from "@grani/db";
 import { friendsCounter } from "./friends-view";
+import { parseLifeReport } from "./life-report";
 
 export const REPORT_DISCLAIMER = "Материалы для самопознания, не психологическая и не медицинская диагностика.";
 
@@ -16,6 +17,7 @@ export type ReportPageView = {
   full: FullSections | null;
   friends: FriendsSectionView;
   chapters: readonly ChapterView[];
+  life: LifeSections | null;
   bundle: { price: string } | null;
   preparing: boolean;
 };
@@ -60,10 +62,14 @@ export function buildReportPageView(p: { owned: readonly Product[]; reports: rea
     return { kind, title, state: "available", price: formatRub(PRODUCT_PRICES[kind]) };
   });
 
+  // Карточки открыты вместе с полным разбором; повреждённый отчёт равен отсутствующему. На «готовим» они не влияют
+  const life = unlocked.has("life") ? parseLifeReport(byKind.get("life")) : null;
+
   return {
     full,
     friends,
     chapters,
+    life,
     bundle: canBuy("chapters_all", p.owned) ? { price: formatRub(PRODUCT_PRICES.chapters_all) } : null,
     preparing: full === null || friends.state === "preparing" || chapters.some((chapter) => chapter.state === "preparing"),
   };

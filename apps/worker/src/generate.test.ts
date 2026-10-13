@@ -165,3 +165,77 @@ describe("chapter bundle", () => {
     expect(deps.enqueueNotify).toHaveBeenCalledWith(expect.objectContaining({ kind: "report_ready" }));
   });
 });
+
+describe("life cards", () => {
+  const lifeJob = () => ({ kind: "life" as const, resultId: anna.resultId });
+
+  beforeEach(() => {
+    deps.lifeCardsV1 = true;
+  });
+
+  test("a paid owner gets five cards written by the model and no announcement", async () => {
+    await payFull();
+    const stub = cardsStubWriter();
+    deps.writer = stub;
+
+    await runGenerate(lifeJob(), deps);
+
+    const report = await getReport(db, { resultId: anna.resultId }, "life");
+    expect(report?.source).toBe("ai");
+    expect(parseSections("life", report?.sections)?.situations).toHaveLength(5);
+    expect(stub.calls).toHaveLength(2);
+    expect(deps.enqueueNotify).not.toHaveBeenCalled();
+  });
+
+  test("without the flag nothing is asked and nothing is saved", async () => {
+    await payFull();
+    const stub = cardsStubWriter();
+    deps.writer = stub;
+    deps.lifeCardsV1 = false;
+
+    await runGenerate(lifeJob(), deps);
+
+    expect(stub.calls).toHaveLength(0);
+    expect(await getReport(db, { resultId: anna.resultId }, "life")).toBeNull();
+  });
+
+  test("without the model nothing is saved: the page keeps the static scenarios", async () => {
+    await payFull();
+    deps.writer = null;
+
+    await runGenerate(lifeJob(), deps);
+
+    expect(await getReport(db, { resultId: anna.resultId }, "life")).toBeNull();
+  });
+
+  test("without the paid full report the model is not asked and nothing is saved", async () => {
+    const stub = cardsStubWriter();
+    deps.writer = stub;
+
+    await runGenerate(lifeJob(), deps);
+
+    expect(stub.calls).toHaveLength(0);
+    expect(await getReport(db, { resultId: anna.resultId }, "life")).toBeNull();
+  });
+
+  test("when every attempt fails nothing is saved and the failure is logged without the answer text", async () => {
+    await payFull();
+    deps.writer = cardsStubWriter({ situations_b: ["{}", "{}", "{}", "{}", "{}"] });
+
+    await runGenerate(lifeJob(), deps);
+
+    expect(await getReport(db, { resultId: anna.resultId }, "life")).toBeNull();
+    expect(deps.log).toHaveBeenCalledWith("warn", "life cards failed", { kind: "life" });
+  });
+
+  test("a second run does not ask the model again", async () => {
+    await payFull();
+    const stub = cardsStubWriter();
+    deps.writer = stub;
+
+    await runGenerate(lifeJob(), deps);
+    await runGenerate(lifeJob(), deps);
+
+    expect(stub.calls).toHaveLength(2);
+  });
+});

@@ -1,0 +1,1 @@
+ALTER TYPE "public"."report_kind" ADD VALUE 'life';

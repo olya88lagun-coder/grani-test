@@ -6,6 +6,8 @@ import { PersonalEdition } from "@/components/personality-atlas/PersonalEdition"
 import { buildPersonalityAtlas } from "@/lib/personality-atlas";
 import { initialAtlasData } from "@/server/personality-atlas-service";
 import { personalityAtlasEnabled } from "@/server/personality-atlas-feature";
+import { lifeCardsEnabled, requestLifeCards } from "@/server/life-cards";
+import { enqueueGenerate } from "@/server/queue";
 import { moneyPracticeEnabled } from "@/server/practice-service";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -52,6 +54,8 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
   });
   const name = typeName(result.typeCode, user.gender);
   const model = personalityAtlasEnabled() && view.full ? buildPersonalityAtlas(result.scores) : null;
+  // Уже купившим карточки «В жизни» ставятся при открытии страницы; пока их нет, вкладка показывает статичные сценарии
+  if (model) await requestLifeCards({ enabled: lifeCardsEnabled(), enqueueGenerate }, { resultId, owned, hasLife: view.life !== null });
   const stored = model ? await loadAtlasDraft(db, resultId) : null;
   const FullContent = model ? LegacyDisclosure : Fragment;
 
@@ -59,7 +63,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
 
   if (model && view.full) return <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
     {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
-    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} chapterPreviews={chapterPreviews} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
+    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} chapterPreviews={chapterPreviews} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model, view.life),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
   </main>;
 
   return (

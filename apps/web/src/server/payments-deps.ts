@@ -6,6 +6,7 @@ import { createFakeGateway, type FakeGateway } from "./payments/fake";
 import type { PaymentGateway } from "./payments/gateway";
 import { createYooKassaGateway } from "./payments/yookassa";
 import type { PaymentsDeps } from "./payments-service";
+import { lifeCardsEnabled } from "./life-cards";
 import { enqueueGenerate, enqueueNotify } from "./queue";
 
 export function createGateway(config: PaymentsConfig, p: { appUrl: string; fetchFn: typeof fetch }): PaymentGateway | null {
@@ -29,7 +30,7 @@ export function paymentsDeps(): PaymentsDeps | null {
     const { bucket, delaySeconds } = receiptsReminderWindow(now);
     await enqueueNotify({ kind: "receipts_pending", bucket, ownerUserId }, { startAfterSeconds: delaySeconds });
   };
-  return { db, gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate, remindReceipts, isOwner };
+  return { db, gateway, appUrl: env.APP_URL, now: () => new Date(), enqueueGenerate, remindReceipts, isOwner, lifeCards: lifeCardsEnabled() };
 }
 
 export function fakeGateway(): FakeGateway | null {
