@@ -39,6 +39,19 @@ describe("generateChapterCards", () => {
     expect(log).toHaveBeenCalledWith("chapter part rejected", expect.objectContaining({ part: "situations_b", reason: "schema", detail: expect.stringContaining("situations") }));
   });
 
+  test("asks the second group again when its advice repeats the first group", async () => {
+    const [a, b] = [chapterSeeds("chapter_money").slice(0, 3), chapterSeeds("chapter_money").slice(3)];
+    const repeating = JSON.stringify({ situations: b.map((seed, index) => ({ ...sampleSituation(seed), ...(index === 0 ? { do: sampleSituation(a[0]!).do } : {}) })) });
+    const log = vi.fn();
+    const stub = cardsStubWriter({ situations_b: [repeating] });
+
+    const result = await generateChapterCards(stub, CTX, { log });
+
+    expect(stub.calls).toHaveLength(4);
+    expect(new Set(result?.sections.situations.map((card) => card.do)).size).toBe(6);
+    expect(log).toHaveBeenCalledWith("chapter part repeats another", expect.objectContaining({ part: "situations_b" }));
+  });
+
   test("returns null when a part keeps failing, so the caller falls back", async () => {
     const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}"] });
 

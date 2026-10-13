@@ -1,6 +1,6 @@
 import { getLibrary } from "@grani/content/data";
 import { describe, expect, test } from "vitest";
-import { assembleChapterCards, buildChapterPartPrompt, partSeeds, validateOverview, validateSituations, type ChapterCardsContext } from "./chapter-cards";
+import { assembleChapterCards, blockTexts, buildChapterPartPrompt, partSeeds, validateOverview, validateSituations, type ChapterCardsContext } from "./chapter-cards";
 import { SAMPLE_SCORES, sampleOverview, sampleSituation } from "./testing";
 
 const CTX: ChapterCardsContext = { library: getLibrary(), kind: "chapter_money", result: SAMPLE_SCORES };
@@ -80,6 +80,37 @@ describe("validateSituations", () => {
 
     expect(Math.min(...SEEDS_A.map((seed) => seed.title.length))).toBeLessThan(20);
     expect(validateSituations(JSON.stringify({ situations: cards }), ids).ok).toBe(true);
+  });
+
+  describe("repeated advice", () => {
+    const blocks = blockTexts(CTX);
+    const libraryTip = blocks.flatMap((block) => block.split(/(?<=[.!?])\s+/)).find((sentence) => sentence.length >= 50 && sentence.length <= 250)!;
+    const withAction = (index: number, action: string) =>
+      JSON.stringify({ situations: SEEDS_A.map((seed, i) => ({ ...sampleSituation(seed), ...(i === index ? { do: action } : {}) })) });
+
+    test("rejects an action copied from a library block", () => {
+      expect(validateSituations(withAction(1, libraryTip), ids, { blocks })).toEqual({ ok: false, reason: "repeat" });
+    });
+
+    test("rejects the same action on two cards", () => {
+      const raw = JSON.stringify({ situations: SEEDS_A.map((seed) => ({ ...sampleSituation(seed), do: "Раз в месяц просматривай расходы и накопления, даже если кажется, что всё в порядке." })) });
+
+      expect(validateSituations(raw, ids, { blocks })).toEqual({ ok: false, reason: "repeat" });
+    });
+
+    test("rejects an action that repeats the neighbouring group", () => {
+      const other = sampleSituation(SEEDS_B[0]!).do;
+
+      expect(validateSituations(withAction(0, other), ids, { blocks, avoid: [other] })).toEqual({ ok: false, reason: "repeat" });
+    });
+
+    test("on the last attempt a repeat is forgiven, so the chapter does not fall back to plain text", () => {
+      expect(validateSituations(withAction(1, libraryTip), ids, { blocks }, true).ok).toBe(true);
+    });
+
+    test("accepts distinct actions", () => {
+      expect(validateSituations(situations(SEEDS_A), ids, { blocks }).ok).toBe(true);
+    });
   });
 
   test("rejects missing, reordered, duplicated or foreign themes", () => {
