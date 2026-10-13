@@ -280,3 +280,47 @@ describe("together purchases are invisible to report views", () => {
     expect(await getPurchaseView(deps, { purchaseId: purchase.id, userId: space.initiatorId })).toBeNull();
   });
 });
+
+describe("life cards after payment", () => {
+  test("a full purchase queues the life cards too when the flag is on", async () => {
+    deps = { ...deps, lifeCards: true };
+
+    await buyAndPay("full");
+
+    expect(enqueue).toHaveBeenCalledWith({ kind: "full", resultId: anna.resultId });
+    expect(enqueue).toHaveBeenCalledWith({ kind: "life", resultId: anna.resultId });
+  });
+
+  test("with the flag off no life job is queued: it would be finished as skipped and block the later one", async () => {
+    await buyAndPay("full");
+
+    expect(enqueue.mock.calls.map(([job]) => job.kind)).not.toContain("life");
+  });
+
+  test("a chapter purchase never queues the life cards", async () => {
+    deps = { ...deps, lifeCards: true };
+    await buyAndPay("full");
+    enqueue.mockClear();
+
+    await buyAndPay("chapter_money");
+
+    expect(enqueue.mock.calls.map(([job]) => job.kind)).toEqual(["chapter_money"]);
+  });
+
+  test("the waiting page does not wait for the life cards and does not requeue them", async () => {
+    deps = { ...deps, lifeCards: true };
+    const purchase = await buyAndPay("full");
+    enqueue.mockClear();
+
+    const early = await getPurchaseView(deps, { purchaseId: purchase!.id, userId: anna.userId });
+    expect(early?.ready).toBe(false);
+    expect(enqueue.mock.calls.map(([job]) => job.kind)).toEqual(["full"]);
+
+    await saveReport(db, { target: { resultId: anna.resultId }, kind: "full", sections: {}, source: "fallback" });
+    enqueue.mockClear();
+
+    const late = await getPurchaseView(deps, { purchaseId: purchase!.id, userId: anna.userId });
+    expect(late?.ready).toBe(true);
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+});
