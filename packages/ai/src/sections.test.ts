@@ -79,3 +79,10 @@ describe("parseLifeCards", () => {
     expect(parseLifeCards(null)).toBeNull();
   });
 });
+
+test("parseSections knows the life kind", () => {
+  const valid = { version: 1, situations: ["sa", "sb", "sc", "sd", "se"].map(situation) };
+
+  expect(parseSections("life", valid)?.situations).toHaveLength(5);
+  expect(parseSections("life", { ...valid, version: 2 })).toBeNull();
+});

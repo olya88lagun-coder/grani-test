@@ -50,6 +50,8 @@ async function notifyPairCreated(deps: NotifyDeps, job: Extract<NotifyJob, { kin
 async function notifyReportReady(deps: NotifyDeps, job: Extract<NotifyJob, { kind: "report_ready" }>): Promise<boolean> {
   const report = await getReportById(deps.db, job.reportId);
   if (!report) return true;
+  // Карточки «В жизни» появляются на странице сами, сообщения о них нет
+  if (report.kind === "life") return true;
   if (report.pairId) {
     // Пара могла распасться до уведомления — тогда разбор не виден никому, и сообщать не о чем
     const pair = await getActivePair(deps.db, report.pairId);

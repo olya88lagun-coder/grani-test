@@ -1,7 +1,7 @@
 import { MIN_FRIENDS } from "./friends";
 import { CHAPTER_PRODUCTS, type Product } from "./pricing";
 
-export const REPORT_KINDS = ["full", "friends", "chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships", "pair"] as const;
+export const REPORT_KINDS = ["full", "friends", "chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships", "pair", "life"] as const;
 export type ReportKind = (typeof REPORT_KINDS)[number];
 export type ChapterKind = (typeof CHAPTER_PRODUCTS)[number];
 export const CHAPTER_KINDS: readonly ChapterKind[] = CHAPTER_PRODUCTS;
@@ -20,8 +20,11 @@ export function reportKindsFor(product: Product): readonly ReportKind[] {
   return product === "chapters_all" ? CHAPTER_KINDS : [product];
 }
 
+// Карточки «В жизни» не продаются: открываются вместе с полным разбором
 export function unlockedKinds(owned: readonly Product[]): ReadonlySet<ReportKind> {
-  return new Set(owned.flatMap(reportKindsFor));
+  const kinds = new Set(owned.flatMap(reportKindsFor));
+  if (kinds.has("full")) kinds.add("life");
+  return kinds;
 }
 
 export function canBuy(product: Product, owned: readonly Product[]): boolean {

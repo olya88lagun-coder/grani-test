@@ -56,7 +56,7 @@ export type Situation = z.infer<typeof SituationSchema>;
 export type LifeSections = z.infer<typeof LifeCardsSchema>;
 export type ChapterSections = ChapterTextSections | ChapterCardsSections;
 export type PairSections = z.infer<typeof PairSchema>;
-export type ReportSections = { full: FullSections; friends: FriendsSections; pair: PairSections } & Record<ChapterKind, ChapterSections>;
+export type ReportSections = { full: FullSections; friends: FriendsSections; pair: PairSections; life: LifeSections } & Record<ChapterKind, ChapterSections>;
 
 export const SECTION_SCHEMAS: { readonly [K in ReportKind]: z.ZodType<ReportSections[K]> } = {
   full: FullSchema,
@@ -66,6 +66,7 @@ export const SECTION_SCHEMAS: { readonly [K in ReportKind]: z.ZodType<ReportSect
   chapter_stress: ChapterAnySchema,
   chapter_relationships: ChapterAnySchema,
   pair: PairSchema,
+  life: LifeCardsSchema,
 };
 
 export function parseSections<K extends ReportKind>(kind: K, value: unknown): ReportSections[K] | null {

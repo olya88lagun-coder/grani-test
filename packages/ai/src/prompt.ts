@@ -21,7 +21,8 @@ function chapterShape(title: string): string {
   ].join("\n");
 }
 
-const SHAPES: Readonly<Record<ReportKind, string>> = {
+// У карточек «В жизни» нет единого запроса: промпты частей строит chapter-cards.ts
+const SHAPES: Readonly<Record<Exclude<ReportKind, "life">, string>> = {
   full: [
     '{"portrait": "связный текст о сочетании черт, 600–1800 знаков",',
     ' "strengths": ["4–5 сильных сторон, по 1–2 предложения"],',
