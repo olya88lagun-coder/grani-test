@@ -15,16 +15,15 @@ import { completeWithTimeout, GENERATION_ATTEMPTS, GENERATION_TIMEOUT_MS, Timeou
 import { repeatsAny } from "./chapter-overlap";
 import type { ChapterCardsSections } from "./sections";
 
-type Options = { timeoutMs?: number; attempts?: number; log?: GenerateLog };
-type PartResult<T> = { value: T; attempts: number };
+export type Options = { timeoutMs?: number; attempts?: number; log?: GenerateLog };
+export type PartResult<T> = { value: T; attempts: number };
 
 // Замечание к прошлому ответу идёт отдельным полем входа: модель исправляет конкретные места, а не пишет всё заново вслепую
 function withFix(prompt: Prompt, hint: string | undefined): Prompt {
   return hint ? { ...prompt, user: JSON.stringify({ ...(JSON.parse(prompt.user) as object), fix: hint }) } : prompt;
 }
 
-export async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterCardsContext, check: (raw: string, final: boolean) => PartCheck<T>, options: Options): Promise<PartResult<T> | null> {
-  const prompt = buildChapterPartPrompt(part, ctx);
+export async function runPrompt<T>(writer: ReportWriter, label: { kind: string; part: string }, prompt: Prompt, check: (raw: string, final: boolean) => PartCheck<T>, options: Options): Promise<PartResult<T> | null> {
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
   let hint: string | undefined;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
@@ -33,7 +32,7 @@ export async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: C
     try {
       const checked = check(await completeWithTimeout(writer, withFix(prompt, hint), options.timeoutMs ?? GENERATION_TIMEOUT_MS), attempt === attempts);
       if (checked.ok) {
-        if (checked.forgiven) options.log?.("chapter part accepted with remarks", { kind: ctx.kind, writer: writer.name, part, attempt, forgiven: checked.forgiven });
+        if (checked.forgiven) options.log?.("chapter part accepted with remarks", { kind: label.kind, writer: writer.name, part: label.part, attempt, forgiven: checked.forgiven });
         return { value: checked.value, attempts: attempt };
       }
       reason = checked.reason;
@@ -43,9 +42,13 @@ export async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: C
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
     }
     // Текст ответа в лог не пишется: в нём может оказаться то, что проверка как раз не пропустила
-    options.log?.("chapter part rejected", { kind: ctx.kind, writer: writer.name, part, attempt, reason, ...(detail ? { detail } : {}) });
+    options.log?.("chapter part rejected", { kind: label.kind, writer: writer.name, part: label.part, attempt, reason, ...(detail ? { detail } : {}) });
   }
   return null;
+}
+
+export function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterCardsContext, check: (raw: string, final: boolean) => PartCheck<T>, options: Options): Promise<PartResult<T> | null> {
+  return runPrompt(writer, { kind: ctx.kind, part }, buildChapterPartPrompt(part, ctx), check, options);
 }
 
 // Три части идут параллельно: так глава укладывается во время одной задачи, а сбой одной части не портит остальные.

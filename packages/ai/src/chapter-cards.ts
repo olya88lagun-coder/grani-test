@@ -14,9 +14,9 @@ export type ChapterCardsContext = { library: Library; kind: CardsKind; result: P
 
 const SITUATIONS_PER_PART = 3;
 // Оговорок («может», «возможно») на последней попытке разрешено больше: лучше мягкий текст, чем запасной
-const MAX_HEDGES_PER_CARD = 1;
+export const MAX_HEDGES_PER_CARD = 1;
 const MAX_HEDGES_OVERVIEW = 2;
-const MAX_HEDGES_PER_CARD_FINAL = 3;
+export const MAX_HEDGES_PER_CARD_FINAL = 3;
 const MAX_HEDGES_OVERVIEW_FINAL = 4;
 
 export function partSeeds(kind: CardsKind, part: ChapterPart): readonly ChapterSeed[] {
@@ -25,14 +25,21 @@ export function partSeeds(kind: CardsKind, part: ChapterPart): readonly ChapterS
   return part === "situations_a" ? seeds.slice(0, SITUATIONS_PER_PART) : seeds.slice(SITUATIONS_PER_PART);
 }
 
+// Общие правила письма: те же строки использует и «Портрет»
+export const RULE_VOICE = "Пиши по-русски, на «ты», обращаясь к одному человеку.";
+export const RULE_GENDER =
+  "Текст должен подходить читателю любого пола: не используй формы, которые зависят от рода («ты взял», «я рад», «ты открыт», «я готов»); пиши в настоящем времени и безлично («ты открываешься новому», «мне нужно время», «давай вернёмся к разговору»).";
+export const RULE_FIX = "Если во входе есть поле fix, это замечания к твоему прошлому ответу: исправь именно их, остальное сохрани.";
+export const RULE_HEDGES = "Не более одной оговорки («может», «возможно», «можно сравнить») на карточку: пиши прямо, как опытный редактор.";
+
 const RULES = [
   ...COMMON_RULES,
-  "Пиши по-русски, на «ты», обращаясь к одному человеку.",
-  "Текст должен подходить читателю любого пола: не используй формы, которые зависят от рода («ты взял», «я рад», «ты открыт», «я готов»); пиши в настоящем времени и безлично («ты открываешься новому», «мне нужно время», «давай вернёмся к разговору»).",
-  "Если во входе есть поле fix, это замечания к твоему прошлому ответу: исправь именно их, остальное сохрани.",
+  RULE_VOICE,
+  RULE_GENDER,
+  RULE_FIX,
   "Ситуации — это примеры («например, в разговоре возникла неловкая пауза»), а не факты о читателе: нельзя писать «ты уже…», «у тебя было…», «ты всегда…», «ты никогда…».",
   "«Что сказать» — готовые фразы, которые человек может произнести сразу, без оговорок.",
-  "Не более одной оговорки («может», «возможно», «можно сравнить») на карточку: пиши прямо, как опытный редактор.",
+  RULE_HEDGES,
   "Не пересказывай блоки слово в слово: объясняй, почему так получается, и предлагай одно конкретное действие.",
   "«Что сделать» — своё действие для именно этой ситуации: не копируй советы из blocks и не повторяй действия других карточек; называй срок, сумму или число, если это уместно.",
 ];
@@ -90,7 +97,7 @@ export type PartCheck<T> = { ok: true; value: T; forgiven?: string[] } | { ok: f
 
 const MAX_DETAIL_ISSUES = 5;
 
-function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail: string; hint: string } {
+export function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail: string; hint: string } {
   const detail = error.issues
     .slice(0, MAX_DETAIL_ISSUES)
     .map((issue) => {
@@ -102,7 +109,7 @@ function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail
   return { ok: false, reason: "schema", detail, hint: `Не прошли проверку поля: ${detail}. Исправь их по схеме.` };
 }
 
-const hasStopWords = (value: unknown) => sectionStrings(value).some((text) => findStopWords(text).length > 0);
+export const hasStopWords = (value: unknown) => sectionStrings(value).some((text) => findStopWords(text).length > 0);
 
 const STYLE_HINTS: Record<Exclude<StyleProblem, "gendered">, string> = {
   hedges: "Слишком много оговорок («может», «возможно»): оставь не больше одной на карточку.",
@@ -110,10 +117,10 @@ const STYLE_HINTS: Record<Exclude<StyleProblem, "gendered">, string> = {
   past_claim: "Нельзя утверждать о прошлом читателя («ты уже», «ты всегда»): пиши примерами.",
 };
 
-type StyleReview = { fail: StyleProblem[]; forgiven: StyleProblem[]; hint: string };
+export type StyleReview = { fail: StyleProblem[]; forgiven: StyleProblem[]; hint: string };
 
 // На последней попытке принимается больше оговорок и форма рода: такой текст лучше запасного, а в лог попадает пометка
-function reviewStyle(strings: readonly string[], maxHedges: number, maxHedgesFinal: number, final: boolean): StyleReview {
+export function reviewStyle(strings: readonly string[], maxHedges: number, maxHedgesFinal: number, final: boolean): StyleReview {
   const strict = styleProblems(strings, maxHedges);
   const fail = final ? styleProblems(strings, maxHedgesFinal).filter((problem) => problem !== "gendered") : strict;
   const forgiven = final ? strict.filter((problem) => !fail.includes(problem)) : [];
@@ -125,7 +132,7 @@ function reviewStyle(strings: readonly string[], maxHedges: number, maxHedgesFin
   return { fail, forgiven, hint: hints.join(" ") };
 }
 
-function mergeReviews(reviews: readonly StyleReview[]): StyleReview {
+export function mergeReviews(reviews: readonly StyleReview[]): StyleReview {
   return {
     fail: [...new Set(reviews.flatMap((review) => review.fail))],
     forgiven: [...new Set(reviews.flatMap((review) => review.forgiven))],
@@ -133,7 +140,7 @@ function mergeReviews(reviews: readonly StyleReview[]): StyleReview {
   };
 }
 
-const styleFailure = (review: StyleReview): { ok: false; reason: "style"; detail: string; hint: string } => ({ ok: false, reason: "style", detail: review.fail.join(","), hint: review.hint });
+export const styleFailure = (review: StyleReview): { ok: false; reason: "style"; detail: string; hint: string } => ({ ok: false, reason: "style", detail: review.fail.join(","), hint: review.hint });
 const REPEAT_HINT = "Совет повторяет готовый текст или другую карточку: напиши своё действие для этой ситуации.";
 
 export function validateOverview(raw: string, final = false, guard: RepeatGuard = { blocks: [] }): PartCheck<OverviewPart> {

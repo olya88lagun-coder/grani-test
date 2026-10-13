@@ -1,4 +1,4 @@
-import { chapterSeeds, lifeSeeds } from "@grani/content";
+import { chapterSeeds, lifeSeeds, portraitSeeds } from "@grani/content";
 import { CHAPTER_KINDS, type Trait } from "@grani/core";
 import type { ChapterPart } from "./chapter-cards";
 import type { ReportWriter } from "./generate";
@@ -91,6 +91,38 @@ export function cardsStubWriter(script: Partial<Record<ChapterPart, readonly Ste
       if (typeof step === "string") return step;
       const seeds = (JSON.parse(prompt.user) as { seeds: { id: string; title: string }[] }).seeds;
       return JSON.stringify(part === "overview" ? sampleOverview() : { situations: seeds.map(sampleSituation) });
+    },
+  };
+}
+
+// Корректный ответ модели для портрета: фраза и пять блоков по темам, у каждого своя мысль
+export function samplePortrait() {
+  const texts = [
+    "Ты быстро загораешься новой идеей, а довести её до результата помогают понятные шаги. Поэтому полезно сразу записать первый маленький шаг и срок: так интерес не растворяется в планах, а превращается в действие.",
+    "В разговоре тебе важны и контакт, и спокойный темп. Ты слышишь собеседника, но иногда соглашаешься быстрее, чем успеваешь понять, чего хочется самому. Короткая пауза перед ответом возвращает голос и никого не обижает.",
+    "Под нагрузкой тебе нужно сначала снизить шум вокруг, а уже потом принимать решения. Помогает список из трёх дел на сегодня и одно окно без уведомлений. Когда сигналов становится меньше, возвращаются ясность и ровное настроение.",
+    "Силы к тебе возвращаются там, где есть и свобода пробовать новое, и живые люди рядом. Тихий вечер без планов полезен, но если он затягивается, тянет к разговору. Договорись с собой о паре встреч в неделю и одном дне для себя.",
+    "Тебе легко доверяют: ты замечаешь, что нужно другим, и помнишь про договорённости. Чтобы надёжность не превращалась в перегруз, заранее называй, сколько времени и сил можно дать, и оставляй запас на собственные дела.",
+  ];
+  return {
+    headline: "Ты соединяешь интерес к новому с заботой о людях и порядком, и тебе важно беречь на это силы",
+    blocks: portraitSeeds().map((seed, index) => ({ seed: seed.id, text: texts[index]! })),
+  };
+}
+
+// Заглушка модели для портрета: по умолчанию отвечает корректно, script задаёт цепочку ответов
+export function portraitStubWriter(script: readonly Step[] = []): ReportWriter & { calls: Prompt[] } {
+  const calls: Prompt[] = [];
+  const queue = [...script];
+  return {
+    name: "stub",
+    calls,
+    async complete(prompt) {
+      calls.push(prompt);
+      const step = queue.shift();
+      if (step === "hang") return new Promise<string>(() => {});
+      if (step instanceof Error) throw step;
+      return typeof step === "string" ? step : JSON.stringify(samplePortrait());
     },
   };
 }
