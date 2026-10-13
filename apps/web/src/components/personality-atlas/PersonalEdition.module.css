@@ -214,3 +214,79 @@
   .gemTraits { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 20px; }
   .root[data-personal-edition] .chapterHeading > div { padding: 20px 0; }
 }
+
+/* Пять сюжетных фонов; содержимое и управление остаются живой разметкой. */
+.hero {
+  position: relative;
+  isolation: isolate;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  margin: 24px 0 32px;
+}
+.hero::before, .hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.hero::before {
+  z-index: -2;
+  background: var(--hero-desktop) right center / cover no-repeat;
+}
+.hero::after {
+  z-index: -1;
+  background: linear-gradient(90deg, #0b211b 0%, #0b211b 46%, rgba(11,33,27,.88) 54%, rgba(11,33,27,.15) 68%, transparent 84%);
+}
+.heroPortrait { --hero-desktop: url("/report-personal-edition/heroes/portrait-desktop.webp"); --hero-mobile: url("/report-personal-edition/heroes/portrait-mobile.webp"); }
+.heroFacets { --hero-desktop: url("/report-personal-edition/heroes/facets-desktop.webp"); --hero-mobile: url("/report-personal-edition/heroes/facets-mobile.webp"); }
+.heroLife { --hero-desktop: url("/report-personal-edition/heroes/life-desktop.webp"); --hero-mobile: url("/report-personal-edition/heroes/life-mobile.webp"); }
+.heroMemo { --hero-desktop: url("/report-personal-edition/heroes/memo-desktop.webp"); --hero-mobile: url("/report-personal-edition/heroes/memo-mobile.webp"); }
+.heroSpheres { --hero-desktop: url("/report-personal-edition/heroes/spheres-desktop.webp"); --hero-mobile: url("/report-personal-edition/heroes/spheres-mobile.webp"); }
+.cover.heroPortrait { padding: 52px 36px 40px; gap: 28px; }
+.root[data-personal-edition] .coverTitle { left: 36px; top: 126px; max-width: 48%; }
+.heroPortrait > div:first-child { background: var(--bg); padding-right: 16px; }
+.heroPortrait .gemTraits, .heroPortrait figcaption { background: var(--bg); }
+.heroPortrait .gemTraits { padding: 16px; }
+.heroPortrait figcaption { padding: 12px 20px; }
+.root[data-personal-edition] .heroIntro {
+  display: block;
+  min-height: 430px;
+  padding: 52px 36px 48px;
+}
+.root[data-personal-edition] .heroIntro > div,
+.root[data-personal-edition] .heroIntro > p { max-width: 48%; background: var(--bg); }
+.root[data-personal-edition] .heroIntro > p { margin-top: 24px; }
+.root[data-personal-edition] .heroLife .lifeScene { display: none; }
+.heroSpheres { padding: 52px 36px 40px; min-height: 500px; align-items: start; }
+.heroSpheres > div { background: var(--bg); }
+.heroSpheres .ownedNote { background: var(--bg); padding: 24px; margin-top: 220px; }
+.heroSpheres .bundle { margin-top: 180px; }
+
+@media (max-width: 1000px) {
+  .cover.heroPortrait { padding-inline: 24px; }
+  .root[data-personal-edition] .coverTitle { left: 24px; }
+  .root[data-personal-edition] .heroIntro { padding-inline: 24px; }
+  .heroSpheres { padding-inline: 24px; gap: 28px; }
+}
+@media (max-width: 600px) {
+  .hero { margin-top: 20px; }
+  .hero::before { background-image: var(--hero-mobile); }
+  .cover.heroPortrait { padding: 28px 20px 24px; }
+  .root[data-personal-edition] .coverTitle { left: 20px; top: 105px; max-width: calc(100% - 40px); }
+  .heroPortrait > div:first-child { padding-right: 0; }
+  .heroPortrait::before, .heroPortrait::after { display: none; }
+  .heroPortrait .portraitStone {
+    background: linear-gradient(#0b211b 0%, transparent 60px, transparent 300px, #0b211b 430px), var(--hero-mobile) center / cover no-repeat;
+  }
+  .heroPortrait .titleSpace { height: 192px; }
+  .heroPortrait .gemTraits { padding: 12px 0; }
+  .heroPortrait figcaption { padding: 12px 0; }
+  .root[data-personal-edition] .heroIntro,
+  .heroSpheres { padding: 270px 20px 28px; min-height: 0; }
+  .heroIntro::before, .heroSpheres::before { bottom: auto; height: 260px; }
+  .heroIntro::after, .heroSpheres::after { background: linear-gradient(transparent 0%, transparent 180px, #0b211b 260px, #0b211b 100%); }
+  .root[data-personal-edition] .heroIntro > div,
+  .root[data-personal-edition] .heroIntro > p { max-width: none; }
+  .heroSpheres .ownedNote, .heroSpheres .bundle { margin-top: 28px; }
+  .heroSpheres .ownedNote { padding: 20px 0 20px 20px; }
+}
