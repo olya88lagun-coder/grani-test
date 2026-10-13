@@ -128,6 +128,15 @@ describe("report_ready", () => {
     expect(telegram).not.toHaveBeenCalled();
   });
 
+  test("says nothing about the portrait blocks either", async () => {
+    const owner = await seedUserWithResult(db, { externalId: "311" });
+    const { report } = await saveReport(db, { target: { resultId: owner.resultId }, kind: "portrait", sections: {}, source: "ai" });
+
+    await runNotify({ kind: "report_ready", reportId: report.id }, deps);
+
+    expect(telegram).not.toHaveBeenCalled();
+  });
+
   test("tells both members about the pair report, nobody after leaving", async () => {
     const pair = await seedPair(db);
     const { report } = await saveReport(db, { target: { pairId: pair.pairId }, kind: "pair", sections: {}, source: "fallback" });

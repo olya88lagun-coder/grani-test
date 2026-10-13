@@ -120,6 +120,13 @@
       "when": 1791901042245,
       "tag": "0016_life_report_kind",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1791916085050,
+      "tag": "0017_portrait_report_kind",
+      "breakpoints": true
     }
   ]
 }
