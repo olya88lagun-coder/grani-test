@@ -30,6 +30,15 @@ describe("generateChapterCards", () => {
     expect(log).toHaveBeenCalledWith("chapter part rejected", expect.objectContaining({ part: "overview", attempt: 1, reason: "not_json" }));
   });
 
+  test("a rejection for a wrong schema is logged with the fields at fault", async () => {
+    const log = vi.fn();
+    const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}"] });
+
+    await generateChapterCards(stub, CTX, { log });
+
+    expect(log).toHaveBeenCalledWith("chapter part rejected", expect.objectContaining({ part: "situations_b", reason: "schema", detail: expect.stringContaining("situations") }));
+  });
+
   test("returns null when a part keeps failing, so the caller falls back", async () => {
     const stub = cardsStubWriter({ situations_b: ["{}", "{}", "{}"] });
 

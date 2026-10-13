@@ -47,7 +47,7 @@ describe("validateOverview", () => {
 
   test("rejects broken JSON, a wrong schema, stop words and filler phrases", () => {
     expect(validateOverview("не json")).toEqual({ ok: false, reason: "not_json" });
-    expect(validateOverview("{}")).toEqual({ ok: false, reason: "schema" });
+    expect(validateOverview("{}")).toMatchObject({ ok: false, reason: "schema" });
     expect(validateOverview(JSON.stringify({ ...sampleOverview(), summary: sampleOverview().summary + " Это похоже на депрессию." }))).toEqual({ ok: false, reason: "stop_words" });
     expect(validateOverview(JSON.stringify({ ...sampleOverview(), others_see: sampleOverview().others_see + " Полезно в твоей конкретной ситуации." }))).toEqual({ ok: false, reason: "style" });
   });
@@ -55,6 +55,21 @@ describe("validateOverview", () => {
 
 describe("validateSituations", () => {
   const ids = SEEDS_A.map((seed) => seed.id);
+
+  test("a schema failure names the offending fields and limits, never the text itself", () => {
+    const [first, ...rest] = SEEDS_A.map(sampleSituation);
+    const tooLong = "Секретная длинная фраза. ".repeat(20);
+    const raw = JSON.stringify({ situations: [{ ...first!, why: tooLong, extra: "x" }, ...rest] });
+    const result = validateSituations(raw, ids);
+
+    expect(result).toMatchObject({ ok: false, reason: "schema" });
+    const detail = (result as { detail?: string }).detail ?? "";
+    expect(detail).toContain("situations.0.why");
+    expect(detail).toContain("too_big");
+    expect(detail).toContain("320");
+    expect(detail).toContain("extra");
+    expect(detail).not.toContain("Секретная");
+  });
 
   test("accepts the expected themes in order", () => {
     expect(validateSituations(situations(SEEDS_A), ids).ok).toBe(true);

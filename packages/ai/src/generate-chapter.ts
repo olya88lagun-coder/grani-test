@@ -20,15 +20,17 @@ async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterC
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     let reason: string;
+    let detail: string | undefined;
     try {
       const checked = check(await completeWithTimeout(writer, prompt, options.timeoutMs ?? GENERATION_TIMEOUT_MS));
       if (checked.ok) return { value: checked.value, attempts: attempt };
       reason = checked.reason;
+      detail = checked.detail;
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
     }
     // Текст ответа в лог не пишется: в нём может оказаться то, что проверка как раз не пропустила
-    options.log?.("chapter part rejected", { kind: ctx.kind, writer: writer.name, part, attempt, reason });
+    options.log?.("chapter part rejected", { kind: ctx.kind, writer: writer.name, part, attempt, reason, ...(detail ? { detail } : {}) });
   }
   return null;
 }

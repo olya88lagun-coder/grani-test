@@ -64,7 +64,22 @@ const SituationsSchema = z.strictObject({ situations: z.array(SituationSchema).m
 export type OverviewPart = z.infer<typeof OverviewSchema>;
 export type SituationsPart = z.infer<typeof SituationsSchema>;
 export type PartFailure = "not_json" | "schema" | "stop_words" | "style" | "seeds";
-export type PartCheck<T> = { ok: true; value: T } | { ok: false; reason: PartFailure };
+// detail есть только у ошибки схемы: пути полей и пределы, без текста ответа
+export type PartCheck<T> = { ok: true; value: T } | { ok: false; reason: PartFailure; detail?: string };
+
+const MAX_DETAIL_ISSUES = 5;
+
+function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail: string } {
+  const detail = error.issues
+    .slice(0, MAX_DETAIL_ISSUES)
+    .map((issue) => {
+      const limit = "maximum" in issue ? `<=${String(issue.maximum)}` : "minimum" in issue ? `>=${String(issue.minimum)}` : "";
+      const keys = issue.code === "unrecognized_keys" ? `(${issue.keys.join(",")})` : "";
+      return `${issue.path.join(".") || "root"}:${issue.code}${limit}${keys}`;
+    })
+    .join("; ");
+  return { ok: false, reason: "schema", detail };
+}
 
 const hasStopWords = (value: unknown) => sectionStrings(value).some((text) => findStopWords(text).length > 0);
 
@@ -72,7 +87,7 @@ export function validateOverview(raw: string): PartCheck<OverviewPart> {
   const json = extractJson(raw);
   if (json === undefined) return { ok: false, reason: "not_json" };
   const parsed = OverviewSchema.safeParse(json);
-  if (!parsed.success) return { ok: false, reason: "schema" };
+  if (!parsed.success) return schemaFailure(parsed.error);
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
   if (styleProblems(sectionStrings(parsed.data), MAX_HEDGES_OVERVIEW).length > 0) return { ok: false, reason: "style" };
   return { ok: true, value: parsed.data };
@@ -82,7 +97,7 @@ export function validateSituations(raw: string, expectedSeeds: readonly string[]
   const json = extractJson(raw);
   if (json === undefined) return { ok: false, reason: "not_json" };
   const parsed = SituationsSchema.safeParse(json);
-  if (!parsed.success) return { ok: false, reason: "schema" };
+  if (!parsed.success) return schemaFailure(parsed.error);
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
   if (parsed.data.situations.some((card) => styleProblems(sectionStrings(card), MAX_HEDGES_PER_CARD).length > 0)) return { ok: false, reason: "style" };
   const seeds = parsed.data.situations.map((card) => card.seed);
