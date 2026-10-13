@@ -2,7 +2,7 @@ import { chapterSeeds, CHAPTER_SECTIONS, CHAPTER_TITLES, findStopWords, traitBlo
 import { TRAITS, traitLevel, type ChapterKind } from "@grani/core";
 import { z } from "zod";
 import { repeatsAny } from "./chapter-overlap";
-import { styleProblems } from "./chapter-style";
+import { genderedForms, styleProblems, type StyleProblem } from "./chapter-style";
 import { personalFacts, type PersonalScores } from "./input";
 import { COMMON_RULES, type Prompt } from "./prompt";
 import { cardsShape, parseChapterCards, sectionStrings, SituationSchema, type ChapterCardsSections } from "./sections";
@@ -29,6 +29,7 @@ const RULES = [
   ...COMMON_RULES,
   "Пиши по-русски, на «ты», обращаясь к одному человеку.",
   "Текст должен подходить читателю любого пола: не используй формы, которые зависят от рода («ты взял», «я рад», «ты открыт», «я готов»); пиши в настоящем времени и безлично («ты открываешься новому», «мне нужно время», «давай вернёмся к разговору»).",
+  "Если во входе есть поле fix, это замечания к твоему прошлому ответу: исправь именно их, остальное сохрани.",
   "Ситуации — это примеры («например, в разговоре возникла неловкая пауза»), а не факты о читателе: нельзя писать «ты уже…», «у тебя было…», «ты всегда…», «ты никогда…».",
   "«Что сказать» — готовые фразы, которые человек может произнести сразу, без оговорок.",
   "Не более одной оговорки («может», «возможно», «можно сравнить») на карточку: пиши прямо, как опытный редактор.",
@@ -76,11 +77,12 @@ export type OverviewPart = z.infer<typeof OverviewSchema>;
 export type SituationsPart = z.infer<typeof SituationsSchema>;
 export type PartFailure = "not_json" | "schema" | "stop_words" | "style" | "seeds" | "repeat";
 // detail есть у ошибки схемы (пути полей и пределы) и у ошибки стиля (названия нарушений); текста ответа в нём нет
-export type PartCheck<T> = { ok: true; value: T } | { ok: false; reason: PartFailure; detail?: string };
+// hint — замечание модели к прошлому ответу, forgiven — что принято на последней попытке; в лог идут только detail и названия
+export type PartCheck<T> = { ok: true; value: T; forgiven?: string[] } | { ok: false; reason: PartFailure; detail?: string; hint?: string };
 
 const MAX_DETAIL_ISSUES = 5;
 
-function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail: string } {
+function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail: string; hint: string } {
   const detail = error.issues
     .slice(0, MAX_DETAIL_ISSUES)
     .map((issue) => {
@@ -89,14 +91,42 @@ function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail
       return `${issue.path.join(".") || "root"}:${issue.code}${limit}${keys}`;
     })
     .join("; ");
-  return { ok: false, reason: "schema", detail };
+  return { ok: false, reason: "schema", detail, hint: `Не прошли проверку поля: ${detail}. Исправь их по схеме.` };
 }
 
 const hasStopWords = (value: unknown) => sectionStrings(value).some((text) => findStopWords(text).length > 0);
 
-function styleFailure(problems: readonly string[]): { ok: false; reason: "style"; detail: string } {
-  return { ok: false, reason: "style", detail: problems.join(",") };
+const STYLE_HINTS: Record<Exclude<StyleProblem, "gendered">, string> = {
+  hedges: "Слишком много оговорок («может», «возможно»): оставь не больше одной на карточку.",
+  empty_phrase: "Убери пустые фразы вроде «в твоей конкретной ситуации».",
+  past_claim: "Нельзя утверждать о прошлом читателя («ты уже», «ты всегда»): пиши примерами.",
+};
+
+type StyleReview = { fail: StyleProblem[]; forgiven: StyleProblem[]; hint: string };
+
+// На последней попытке принимается больше оговорок и форма рода: такой текст лучше запасного, а в лог попадает пометка
+function reviewStyle(strings: readonly string[], maxHedges: number, maxHedgesFinal: number, final: boolean): StyleReview {
+  const strict = styleProblems(strings, maxHedges);
+  const fail = final ? styleProblems(strings, maxHedgesFinal).filter((problem) => problem !== "gendered") : strict;
+  const forgiven = final ? strict.filter((problem) => !fail.includes(problem)) : [];
+  const hints = fail.map((problem) => {
+    if (problem !== "gendered") return STYLE_HINTS[problem];
+    const forms = genderedForms(strings).map((form) => `«${form}»`).join(", ");
+    return `Есть формы, зависящие от рода: ${forms}. Перепиши эти места в настоящем времени или безлично, текст подходит любому читателю.`;
+  });
+  return { fail, forgiven, hint: hints.join(" ") };
 }
+
+function mergeReviews(reviews: readonly StyleReview[]): StyleReview {
+  return {
+    fail: [...new Set(reviews.flatMap((review) => review.fail))],
+    forgiven: [...new Set(reviews.flatMap((review) => review.forgiven))],
+    hint: [...new Set(reviews.map((review) => review.hint).filter(Boolean))].join(" "),
+  };
+}
+
+const styleFailure = (review: StyleReview): { ok: false; reason: "style"; detail: string; hint: string } => ({ ok: false, reason: "style", detail: review.fail.join(","), hint: review.hint });
+const REPEAT_HINT = "Совет повторяет готовый текст или другую карточку: напиши своё действие для этой ситуации.";
 
 export function validateOverview(raw: string, final = false, guard: RepeatGuard = { blocks: [] }): PartCheck<OverviewPart> {
   const json = extractJson(raw);
@@ -104,11 +134,13 @@ export function validateOverview(raw: string, final = false, guard: RepeatGuard 
   const parsed = OverviewSchema.safeParse(json);
   if (!parsed.success) return schemaFailure(parsed.error);
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
-  const overviewProblems = styleProblems(sectionStrings(parsed.data), final ? MAX_HEDGES_OVERVIEW_FINAL : MAX_HEDGES_OVERVIEW);
-  if (overviewProblems.length > 0) return styleFailure(overviewProblems);
+  const review = reviewStyle(sectionStrings(parsed.data), MAX_HEDGES_OVERVIEW, MAX_HEDGES_OVERVIEW_FINAL, final);
+  if (review.fail.length > 0) return styleFailure(review);
   // «Вместо этого» из ловушек не должно быть готовым советом библиотеки или дословным советом карточки
-  if (!final && parsed.data.traps.some((trap) => repeatsAny(trap.instead, [...guard.blocks, ...(guard.avoid ?? [])]))) return { ok: false, reason: "repeat" };
-  return { ok: true, value: parsed.data };
+  const repeated = parsed.data.traps.some((trap) => repeatsAny(trap.instead, [...guard.blocks, ...(guard.avoid ?? [])]));
+  if (repeated && !final) return { ok: false, reason: "repeat", hint: REPEAT_HINT };
+  const forgiven = [...review.forgiven, ...(repeated ? ["repeat"] : [])];
+  return { ok: true, value: parsed.data, ...(forgiven.length > 0 ? { forgiven } : {}) };
 }
 
 // blocks — тексты библиотеки, avoid — советы соседней группы; на последней попытке повторы прощаются: лучше повтор, чем запасной текст
@@ -120,12 +152,14 @@ export function validateSituations(raw: string, expectedSeeds: readonly string[]
   const parsed = SituationsSchema.safeParse(json);
   if (!parsed.success) return schemaFailure(parsed.error);
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
-  const cardProblems = [...new Set(parsed.data.situations.flatMap((card) => styleProblems(sectionStrings(card), final ? MAX_HEDGES_PER_CARD_FINAL : MAX_HEDGES_PER_CARD)))];
-  if (cardProblems.length > 0) return styleFailure(cardProblems);
+  const review = mergeReviews(parsed.data.situations.map((card) => reviewStyle(sectionStrings(card), MAX_HEDGES_PER_CARD, MAX_HEDGES_PER_CARD_FINAL, final)));
+  if (review.fail.length > 0) return styleFailure(review);
   const seeds = parsed.data.situations.map((card) => card.seed);
   if (seeds.length !== expectedSeeds.length || seeds.some((seed, index) => seed !== expectedSeeds[index])) return { ok: false, reason: "seeds" };
-  if (!final && hasRepeatedAction(parsed.data, guard)) return { ok: false, reason: "repeat" };
-  return { ok: true, value: parsed.data };
+  const repeated = hasRepeatedAction(parsed.data, guard);
+  if (repeated && !final) return { ok: false, reason: "repeat", hint: REPEAT_HINT };
+  const forgiven = [...review.forgiven, ...(repeated ? ["repeat"] : [])];
+  return { ok: true, value: parsed.data, ...(forgiven.length > 0 ? { forgiven } : {}) };
 }
 
 function hasRepeatedAction(part: SituationsPart, guard: RepeatGuard): boolean {

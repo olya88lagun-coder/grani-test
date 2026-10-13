@@ -67,6 +67,28 @@ describe("generateChapterCards", () => {
     expect(log).toHaveBeenCalledWith("chapter part repeats another", expect.objectContaining({ part: "overview" }));
   });
 
+  test("the next request carries the remark about the previous answer", async () => {
+    const gendered = JSON.stringify({ ...sampleOverview(), headline: "Ты щедр к людям, но тревожишься из-за неожиданных трат и расходов" });
+    const stub = cardsStubWriter({ overview: [gendered] });
+
+    await generateChapterCards(stub, CTX);
+
+    const second = stub.calls.filter((call) => (JSON.parse(call.user) as { seeds: unknown[] }).seeds.length === 0)[1]!;
+    expect(JSON.parse(second.user).fix).toContain("«ты щедр»");
+    expect(stub.calls[0]!.user).not.toContain('"fix"');
+  });
+
+  test("the last attempt accepts a gendered form but says so in the log", async () => {
+    const gendered = JSON.stringify({ ...sampleOverview(), headline: "Ты щедр к людям, но тревожишься из-за неожиданных трат и расходов" });
+    const log = vi.fn();
+    const stub = cardsStubWriter({ overview: [gendered, gendered, gendered, gendered, gendered] });
+
+    const result = await generateChapterCards(stub, CTX, { log });
+
+    expect(result).not.toBeNull();
+    expect(log).toHaveBeenCalledWith("chapter part accepted with remarks", expect.objectContaining({ part: "overview", forgiven: ["gendered"] }));
+  });
+
   test("gives every part five attempts before the chapter falls back", async () => {
     const stub = cardsStubWriter({ situations_a: ["{}", "{}", "{}", "{}"] });
 

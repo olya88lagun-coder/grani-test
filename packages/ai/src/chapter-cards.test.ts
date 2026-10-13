@@ -63,6 +63,21 @@ describe("validateOverview style", () => {
   });
 });
 
+describe("validateOverview gender", () => {
+  const gendered = () => JSON.stringify({ ...sampleOverview(), headline: "Ты щедр к людям, но тревожишься из-за неожиданных трат и расходов" });
+
+  test("a form that depends on gender is rejected with a hint that quotes the fragment", () => {
+    const result = validateOverview(gendered());
+
+    expect(result).toMatchObject({ ok: false, reason: "style", detail: "gendered" });
+    expect((result as { hint?: string }).hint).toContain("«ты щедр»");
+  });
+
+  test("on the last attempt it is accepted and reported as forgiven", () => {
+    expect(validateOverview(gendered(), true)).toMatchObject({ ok: true, forgiven: ["gendered"] });
+  });
+});
+
 describe("validateOverview repeats", () => {
   const blocks = blockTexts(CTX);
   const libraryTip = blocks.flatMap((block) => block.split(/(?<=[.!?])\s+/)).find((sentence) => sentence.length >= 50 && sentence.length <= 190)!;
@@ -72,8 +87,8 @@ describe("validateOverview repeats", () => {
   };
 
   test("a trap whose way out is a library tip, or the advice of a card, is asked again", () => {
-    expect(validateOverview(withInstead(libraryTip), false, { blocks })).toEqual({ ok: false, reason: "repeat" });
-    expect(validateOverview(withInstead(sampleSituation(SEEDS_A[0]!).do), false, { blocks: [], avoid: [sampleSituation(SEEDS_A[0]!).do] })).toEqual({ ok: false, reason: "repeat" });
+    expect(validateOverview(withInstead(libraryTip), false, { blocks })).toMatchObject({ ok: false, reason: "repeat" });
+    expect(validateOverview(withInstead(sampleSituation(SEEDS_A[0]!).do), false, { blocks: [], avoid: [sampleSituation(SEEDS_A[0]!).do] })).toMatchObject({ ok: false, reason: "repeat" });
   });
 
   test("on the last attempt the repeat is forgiven", () => {
@@ -145,19 +160,19 @@ describe("validateSituations", () => {
       JSON.stringify({ situations: SEEDS_A.map((seed, i) => ({ ...sampleSituation(seed), ...(i === index ? { do: action } : {}) })) });
 
     test("rejects an action copied from a library block", () => {
-      expect(validateSituations(withAction(1, libraryTip), ids, { blocks })).toEqual({ ok: false, reason: "repeat" });
+      expect(validateSituations(withAction(1, libraryTip), ids, { blocks })).toMatchObject({ ok: false, reason: "repeat" });
     });
 
     test("rejects the same action on two cards", () => {
       const raw = JSON.stringify({ situations: SEEDS_A.map((seed) => ({ ...sampleSituation(seed), do: "Раз в месяц просматривай расходы и накопления, даже если кажется, что всё в порядке." })) });
 
-      expect(validateSituations(raw, ids, { blocks })).toEqual({ ok: false, reason: "repeat" });
+      expect(validateSituations(raw, ids, { blocks })).toMatchObject({ ok: false, reason: "repeat" });
     });
 
     test("rejects an action that repeats the neighbouring group", () => {
       const other = sampleSituation(SEEDS_B[0]!).do;
 
-      expect(validateSituations(withAction(0, other), ids, { blocks, avoid: [other] })).toEqual({ ok: false, reason: "repeat" });
+      expect(validateSituations(withAction(0, other), ids, { blocks, avoid: [other] })).toMatchObject({ ok: false, reason: "repeat" });
     });
 
     test("on the last attempt a repeat is forgiven, so the chapter does not fall back to plain text", () => {

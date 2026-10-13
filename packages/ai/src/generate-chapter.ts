@@ -10,6 +10,7 @@ import {
   type ChapterPart,
   type PartCheck,
 } from "./chapter-cards";
+import type { Prompt } from "./prompt";
 import { completeWithTimeout, GENERATION_ATTEMPTS, GENERATION_TIMEOUT_MS, TimeoutError, type GenerateLog, type ReportWriter } from "./generate";
 import { repeatsAny } from "./chapter-overlap";
 import type { ChapterCardsSections } from "./sections";
@@ -17,17 +18,27 @@ import type { ChapterCardsSections } from "./sections";
 type Options = { timeoutMs?: number; attempts?: number; log?: GenerateLog };
 type PartResult<T> = { value: T; attempts: number };
 
+// Замечание к прошлому ответу идёт отдельным полем входа: модель исправляет конкретные места, а не пишет всё заново вслепую
+function withFix(prompt: Prompt, hint: string | undefined): Prompt {
+  return hint ? { ...prompt, user: JSON.stringify({ ...(JSON.parse(prompt.user) as object), fix: hint }) } : prompt;
+}
+
 async function runPart<T>(writer: ReportWriter, part: ChapterPart, ctx: ChapterCardsContext, check: (raw: string, final: boolean) => PartCheck<T>, options: Options): Promise<PartResult<T> | null> {
   const prompt = buildChapterPartPrompt(part, ctx);
   const attempts = options.attempts ?? GENERATION_ATTEMPTS;
+  let hint: string | undefined;
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     let reason: string;
     let detail: string | undefined;
     try {
-      const checked = check(await completeWithTimeout(writer, prompt, options.timeoutMs ?? GENERATION_TIMEOUT_MS), attempt === attempts);
-      if (checked.ok) return { value: checked.value, attempts: attempt };
+      const checked = check(await completeWithTimeout(writer, withFix(prompt, hint), options.timeoutMs ?? GENERATION_TIMEOUT_MS), attempt === attempts);
+      if (checked.ok) {
+        if (checked.forgiven) options.log?.("chapter part accepted with remarks", { kind: ctx.kind, writer: writer.name, part, attempt, forgiven: checked.forgiven });
+        return { value: checked.value, attempts: attempt };
+      }
       reason = checked.reason;
       detail = checked.detail;
+      hint = checked.hint;
     } catch (error) {
       reason = error instanceof TimeoutError ? "timeout" : `error: ${String(error)}`;
     }
