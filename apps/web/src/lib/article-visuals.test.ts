@@ -41,13 +41,17 @@ describe("article covers", () => {
       "sovmestimost-par": "13-sovmestimost-par.webp",
       "test-lichnosti": "14-test-lichnosti.webp",
     } as const;
-    const cards = getArticles().map(articleCard);
-    expect(cards).toHaveLength(14);
+    // Новые статьи конвейера получают обложку по рубрике (см. "falls back to a default
+    // cover" ниже) и не входят в этот словарь — он покрывает только статьи с
+    // индивидуальной редакторской обложкой, добавленной вручную.
+    const dedicatedSlugs = Object.keys(expected);
+    const cards = getArticles().map(articleCard).filter((card) => dedicatedSlugs.includes(card.slug));
+    expect(cards).toHaveLength(dedicatedSlugs.length);
     for (const card of cards) {
       expect(card.image).toBe(`/images/articles/${expected[card.slug as keyof typeof expected]}`);
       expect(card.imageAlt.length, card.slug).toBeGreaterThan(20);
     }
-    expect(new Set(cards.map((card) => card.image)).size).toBe(14);
+    expect(new Set(cards.map((card) => card.image)).size).toBe(dedicatedSlugs.length);
   });
 
   it("falls back to a default cover for an unknown or missing tag", () => {
