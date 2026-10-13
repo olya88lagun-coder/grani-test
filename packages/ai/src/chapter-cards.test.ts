@@ -49,7 +49,17 @@ describe("validateOverview", () => {
     expect(validateOverview("не json")).toEqual({ ok: false, reason: "not_json" });
     expect(validateOverview("{}")).toMatchObject({ ok: false, reason: "schema" });
     expect(validateOverview(JSON.stringify({ ...sampleOverview(), summary: sampleOverview().summary + " Это похоже на депрессию." }))).toEqual({ ok: false, reason: "stop_words" });
-    expect(validateOverview(JSON.stringify({ ...sampleOverview(), others_see: sampleOverview().others_see + " Полезно в твоей конкретной ситуации." }))).toEqual({ ok: false, reason: "style" });
+    expect(validateOverview(JSON.stringify({ ...sampleOverview(), others_see: sampleOverview().others_see + " Полезно в твоей конкретной ситуации." }))).toMatchObject({ ok: false, reason: "style" });
+  });
+});
+
+describe("validateOverview style", () => {
+  test("three hedges are rejected at first and forgiven on the last attempt", () => {
+    const base = sampleOverview();
+    const raw = JSON.stringify({ ...base, summary: base.summary + " Это может мешать, а иногда может помогать, и возможно, поменяется." });
+
+    expect(validateOverview(raw)).toMatchObject({ ok: false, reason: "style", detail: "hedges" });
+    expect(validateOverview(raw, true).ok).toBe(true);
   });
 });
 
@@ -80,6 +90,34 @@ describe("validateSituations", () => {
 
     expect(Math.min(...SEEDS_A.map((seed) => seed.title.length))).toBeLessThan(20);
     expect(validateSituations(JSON.stringify({ situations: cards }), ids).ok).toBe(true);
+  });
+
+  describe("style", () => {
+    const hedgy = "Собеседник может обидеться, а ты можешь промолчать, и тогда возможно всё останется как есть.";
+    const withScene = (scene: string) => JSON.stringify({ situations: SEEDS_A.map((seed, i) => ({ ...sampleSituation(seed), ...(i === 0 ? { scene } : {}) })) });
+
+    test("names the problems of a rejected card, never the text", () => {
+      const result = validateSituations(withScene(hedgy), ids, { blocks: [] });
+
+      expect(result).toMatchObject({ ok: false, reason: "style", detail: "hedges" });
+    });
+
+    test("a card with several hedges is forgiven on the last attempt, not before", () => {
+      expect(validateSituations(withScene(hedgy), ids, { blocks: [] }, true).ok).toBe(true);
+    });
+
+    test("a claim about the reader's past is never forgiven", () => {
+      const claim = "Ты всегда сначала молчишь, а потом долго переживаешь, что не высказал своё мнение вслух.";
+
+      expect(validateSituations(withScene(claim), ids, { blocks: [] }, true)).toMatchObject({ ok: false, reason: "style", detail: "past_claim" });
+    });
+
+    test("a scene of about sixty characters passes the schema", () => {
+      const scene = "Например, коллега отвечает резко, и ты не знаешь, как ответить.";
+
+      expect(scene.length).toBeLessThan(80);
+      expect(validateSituations(withScene(scene), ids, { blocks: [] }).ok).toBe(true);
+    });
   });
 
   describe("repeated advice", () => {
@@ -125,8 +163,8 @@ describe("validateSituations", () => {
     const past = { ...sampleSituation(SEEDS_A[0]!), scene: "Ты уже не раз отдавал деньги, хотя планировал другое, и потом долго переживал из-за этого решения." };
     const rest = SEEDS_A.slice(1).map(sampleSituation);
 
-    expect(validateSituations(JSON.stringify({ situations: [hedged, ...rest] }), ids)).toEqual({ ok: false, reason: "style" });
-    expect(validateSituations(JSON.stringify({ situations: [past, ...rest] }), ids)).toEqual({ ok: false, reason: "style" });
+    expect(validateSituations(JSON.stringify({ situations: [hedged, ...rest] }), ids)).toMatchObject({ ok: false, reason: "style" });
+    expect(validateSituations(JSON.stringify({ situations: [past, ...rest] }), ids)).toMatchObject({ ok: false, reason: "style" });
   });
 });
 
