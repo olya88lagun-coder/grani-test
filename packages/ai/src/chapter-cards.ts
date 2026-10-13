@@ -28,6 +28,7 @@ export function partSeeds(kind: ChapterKind, part: ChapterPart): readonly Chapte
 const RULES = [
   ...COMMON_RULES,
   "Пиши по-русски, на «ты», обращаясь к одному человеку.",
+  "Текст должен подходить читателю любого пола: не используй формы, которые зависят от рода («ты взял», «я рад», «ты открыт», «я готов»); пиши в настоящем времени и безлично («ты открываешься новому», «мне нужно время», «давай вернёмся к разговору»).",
   "Ситуации — это примеры («например, в разговоре возникла неловкая пауза»), а не факты о читателе: нельзя писать «ты уже…», «у тебя было…», «ты всегда…», «ты никогда…».",
   "«Что сказать» — готовые фразы, которые человек может произнести сразу, без оговорок.",
   "Не более одной оговорки («может», «возможно», «можно сравнить») на карточку: пиши прямо, как опытный редактор.",
@@ -97,7 +98,7 @@ function styleFailure(problems: readonly string[]): { ok: false; reason: "style"
   return { ok: false, reason: "style", detail: problems.join(",") };
 }
 
-export function validateOverview(raw: string, final = false): PartCheck<OverviewPart> {
+export function validateOverview(raw: string, final = false, guard: RepeatGuard = { blocks: [] }): PartCheck<OverviewPart> {
   const json = extractJson(raw);
   if (json === undefined) return { ok: false, reason: "not_json" };
   const parsed = OverviewSchema.safeParse(json);
@@ -105,6 +106,8 @@ export function validateOverview(raw: string, final = false): PartCheck<Overview
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
   const overviewProblems = styleProblems(sectionStrings(parsed.data), final ? MAX_HEDGES_OVERVIEW_FINAL : MAX_HEDGES_OVERVIEW);
   if (overviewProblems.length > 0) return styleFailure(overviewProblems);
+  // «Вместо этого» из ловушек не должно быть готовым советом библиотеки или дословным советом карточки
+  if (!final && parsed.data.traps.some((trap) => repeatsAny(trap.instead, [...guard.blocks, ...(guard.avoid ?? [])]))) return { ok: false, reason: "repeat" };
   return { ok: true, value: parsed.data };
 }
 

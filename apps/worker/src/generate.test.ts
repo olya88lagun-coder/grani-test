@@ -74,7 +74,7 @@ describe("runGenerate", () => {
   });
 
   test("when a part fails the chapter is built from the library and no model answer is mixed in", async () => {
-    deps.writer = cardsStubWriter({ overview: ["{}", "{}", "{}"] });
+    deps.writer = cardsStubWriter({ overview: ["{}", "{}", "{}", "{}", "{}"] });
     deps.chapterCardsV2 = true;
 
     await runGenerate({ kind: "chapter_money", resultId: anna.resultId }, deps);
