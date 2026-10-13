@@ -1,3 +1,4 @@
+import { styleProblems } from "@grani/ai";
 import { describe, expect, test } from "vitest";
 import { ATLAS_BASE_RULES, ATLAS_PAIR_RULES, buildPersonalityAtlas, editorialWeight } from "./personality-atlas";
 
@@ -44,5 +45,22 @@ describe("personality atlas v0.3", () => {
 
   test.each([-1,101,NaN,Infinity])("invalid score %s is rejected rather than silently clamped", value => {
     expect(()=>buildPersonalityAtlas({...SOFIA,openness:value})).toThrow();
+  });
+});
+
+describe("memo epigraph", () => {
+  test("no profile gets an empty phrase as the memo epigraph", () => {
+    const profiles = [
+      { openness: 30, conscientiousness: 45, extraversion: 50, agreeableness: 60, stability: 35 },
+      { openness: 50, conscientiousness: 50, extraversion: 50, agreeableness: 50, stability: 50 },
+      { openness: 10, conscientiousness: 90, extraversion: 20, agreeableness: 80, stability: 70 },
+      SOFIA,
+    ];
+
+    for (const scores of profiles) {
+      const quote = buildPersonalityAtlas(scores).memo.quote;
+      expect(styleProblems([quote], 1), quote).toEqual([]);
+      expect(quote).not.toContain("конкретной ситуации");
+    }
   });
 });

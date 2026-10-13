@@ -19,7 +19,7 @@ export async function loadAtlasMemoPdfSource(db:Database,p:{user:UserRecord;resu
  const model=buildPersonalityAtlas(result.scores),stored=await loadAtlasDraft(db,p.resultId);
  const revision=stored?.revision??0;
  if(revision!==p.expectedRevision)return {ok:false,error:"stale_version"};
- const data=stored?validateAtlasData(stored.data):initialAtlasData(model);
+ const data=stored?validateAtlasData(stored.data):initialAtlasData(model,view.life ?? null);
  if(!data)return {ok:false,error:"invalid"};
  return {displayName:p.user.displayName,typeName:typeName(result.typeCode,p.user.gender),typeCode:result.typeCode,gemDir:gemAssetDir(typeCodeToDir(result.typeCode)),model,memo:data.memo,revision,generatedAt:p.generatedAt};
 }

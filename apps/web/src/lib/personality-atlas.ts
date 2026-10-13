@@ -62,6 +62,9 @@ export type PersonalityAtlas = {
   memo:{quote:string;items:{label:string;text:string}[]};
 };
 
+// Запасной эпиграф памятки, пока нет карточек «В жизни»: без пустых фраз вроде «в моей конкретной ситуации»
+const NEUTRAL_MEMO_QUOTE = "Свою привычную реакцию я могу проверить на одной знакомой ситуации.";
+
 export function buildPersonalityAtlas(scores:TraitScores):PersonalityAtlas {
   for(const trait of ATLAS_TRAITS)if(!Number.isFinite(scores[trait.key])||scores[trait.key]<0||scores[trait.key]>100)throw new Error("Invalid Big Five score");
   const basis=(keys:readonly Trait[])=>keys.map(key=>`${ATLAS_TRAITS.find(t=>t.key===key)!.code} ${scores[key]}`);
@@ -97,7 +100,7 @@ export function buildPersonalityAtlas(scores:TraitScores):PersonalityAtlas {
     formulaText:isSofiaTheme?"Открытость позволяет рассматривать новые решения, добросовестность поддерживает последовательное выполнение задач. Возможное противоречие — продолжать исследовать варианты и одновременно стремиться зафиксировать план.":`${first.explanation} Возможный перегиб: ${first.risk.charAt(0).toLowerCase()+first.risk.slice(1)}`,
     traits:ATLAS_TRAITS.map(t=>({...t,value:scores[t.key],level:traitLevel(scores[t.key]),description:baseMatches.find(r=>r.trait===t.key)!.explanation})),
     interaction,
-    memo:{quote:isSofiaTheme?"Хорошая система помогает двигаться вперёд, а не только готовиться к движению.":"Полезный подход — тот, который помогает в моей конкретной ситуации.",items:[
+    memo:{quote:isSofiaTheme?"Хорошая система помогает двигаться вперёд, а не только готовиться к движению.":NEUTRAL_MEMO_QUOTE,items:[
       {label:"Моя возможная сила",text:isSofiaTheme?"Превращать идеи в последовательные действия.":first.explanation},
       {label:"Мой возможный перегиб",text:isSofiaTheme?"Слишком долго готовиться к практической проверке.":first.risk},
       {label:"Как мне выбирать",text:"Сравнивать варианты по критериям и назначать момент решения."},

@@ -63,7 +63,7 @@ export default async function ReportPage({ params }: { params: Promise<{ resultI
 
   if (model && view.full) return <main className={`inner-page inner-page--report ${styles.page}`} data-night-entry data-band="night">
     {view.preparing && <AutoRefresh seconds={REFRESH_SECONDS} />}
-    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} chapterPreviews={chapterPreviews} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
+    <PersonalEdition key={resultId} resultId={resultId} displayName={user.displayName} typeName={name} model={model} view={view} moneyPracticeAvailable={unlockedKinds(owned).has("chapter_money") && moneyPracticeEnabled()} chapterPreviews={chapterPreviews} initialDraft={{revision:stored?.revision ?? 0,data:stored?.data ?? initialAtlasData(model, view.life),updatedAt:stored?.updatedAt?.toISOString() ?? null}} />
   </main>;
 
   return (

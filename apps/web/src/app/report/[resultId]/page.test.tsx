@@ -3,6 +3,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { parseChapterCards } from "@grani/ai";
 import { sampleOverview, sampleSituation } from "@grani/ai/testing";
 import { chapterSeeds, lifeSeeds } from "@grani/content";
+import { initialAtlasData } from "@/server/personality-atlas-service";
+import { buildPersonalityAtlas } from "@/lib/personality-atlas";
 const mocks=vi.hoisted(()=>({result:vi.fn(),products:vi.fn(),load:vi.fn(),user:vi.fn(),view:vi.fn(),enqueue:vi.fn(),notFound:vi.fn(()=>{throw Error("404")}),redirect:vi.fn(()=>{throw Error("redirect")})}));
 vi.mock("@grani/db",()=>({getResultForOwner:mocks.result,listOwnedProducts:mocks.products,loadAtlasDraft:mocks.load,getInviteForResult:vi.fn(async()=>null),listReports:vi.fn(async()=>[]),countFriendResponses:vi.fn()}));
 vi.mock("@/server/db",()=>({getDb:()=>({})}));
@@ -34,4 +36,17 @@ test("nothing is queued with the flag off, with ready cards, on the old page or 
   delete process.env.PERSONALITY_ATLAS_V2;mocks.view.mockReturnValue({full,preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null,life:null});await render();
   process.env.PERSONALITY_ATLAS_V2="1";mocks.products.mockResolvedValueOnce([]);await expect(render()).rejects.toThrow("redirect");
   expect(mocks.enqueue).not.toHaveBeenCalled();
+});
+
+test("the epigraph comes from the first life card, and a saved memo keeps its own text",async()=>{
+  process.env.PERSONALITY_ATLAS_V2="1";
+  const cards={version:1,situations:lifeSeeds().map(sampleSituation)};
+  mocks.view.mockReturnValue({full,preparing:false,friends:{state:"waiting",counter:"0 из 3"},chapters:[],bundle:null,life:cards});
+  expect(await render()).toMatch(/<span>Личный ориентир<\/span><p>Мне нужно время подумать, отвечу завтра\./);
+
+  const saved=initialAtlasData(buildPersonalityAtlas({openness:85,conscientiousness:90,extraversion:25,agreeableness:35,stability:65}));saved.memo.quote="Моя сохранённая фраза";
+  mocks.load.mockResolvedValue({revision:4,data:saved,updatedAt:new Date()});
+  const html=await render();
+  expect(html).toMatch(/<span>Личный ориентир<\/span><p>Моя сохранённая фраза/);
+  expect(html).not.toMatch(/<span>Личный ориентир<\/span><p>Мне нужно время/);
 });
