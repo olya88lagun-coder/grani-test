@@ -47,6 +47,13 @@ describe("ChapterCards", () => {
     expect(stress).not.toContain("chapters%2F");
   });
 
+  test.each([["chapter_conflict", "Отстаиваю своё"], ["chapter_stress", "Восстанавливаюсь один"], ["chapter_relationships", "Нужно личное пространство"]] as const)("%s shows its own scales", (kind, label) => {
+    const html = renderToStaticMarkup(<ChapterCards kind={kind} sections={sections()} scores={SCORES} />);
+
+    expect(html).toContain(label);
+    expect(html).not.toContain("Охотно пробую новое");
+  });
+
   test("model text is escaped, not interpreted as HTML", () => {
     const html = renderToStaticMarkup(
       <ChapterCards kind="chapter_money" sections={sections((value) => ({ ...value, headline: "<script>alert(1)</script> " + value.headline }))} scores={SCORES} />,
