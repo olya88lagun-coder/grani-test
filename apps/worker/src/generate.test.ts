@@ -13,7 +13,7 @@ import {
   type Database,
 } from "@grani/db/testing";
 import { fallbackSections, buildPersonalInput, parseSections, type Prompt, type ReportWriter } from "@grani/ai";
-import { cardsStubWriter } from "@grani/ai/testing";
+import { cardsStubWriter, portraitStubWriter } from "@grani/ai/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { runGenerate, type GenerateDeps } from "./generate";
 
@@ -237,5 +237,75 @@ describe("life cards", () => {
     await runGenerate(lifeJob(), deps);
 
     expect(stub.calls).toHaveLength(2);
+  });
+});
+
+describe("portrait blocks", () => {
+  const portraitJob = () => ({ kind: "portrait" as const, resultId: anna.resultId });
+
+  beforeEach(() => {
+    deps.portraitV1 = true;
+  });
+
+  test("a paid owner gets a headline and five blocks written by the model, with no announcement", async () => {
+    await payFull();
+    const stub = portraitStubWriter();
+    deps.writer = stub;
+
+    await runGenerate(portraitJob(), deps);
+
+    const report = await getReport(db, { resultId: anna.resultId }, "portrait");
+    expect(report?.source).toBe("ai");
+    expect(parseSections("portrait", report?.sections)?.blocks).toHaveLength(5);
+    expect(stub.calls).toHaveLength(1);
+    expect(deps.enqueueNotify).not.toHaveBeenCalled();
+  });
+
+  test("without the flag nothing is asked and nothing is saved, and the life flag does not enable it", async () => {
+    await payFull();
+    const stub = portraitStubWriter();
+    deps.writer = stub;
+    deps.portraitV1 = false;
+    deps.lifeCardsV1 = true;
+
+    await runGenerate(portraitJob(), deps);
+
+    expect(stub.calls).toHaveLength(0);
+    expect(await getReport(db, { resultId: anna.resultId }, "portrait")).toBeNull();
+  });
+
+  test("without the model or without the paid full report nothing is saved", async () => {
+    await payFull();
+    deps.writer = null;
+    await runGenerate(portraitJob(), deps);
+    expect(await getReport(db, { resultId: anna.resultId }, "portrait")).toBeNull();
+
+    const other = await seedUserWithResult(db, { externalId: "boris" });
+    const stub = portraitStubWriter();
+    deps.writer = stub;
+    await runGenerate({ kind: "portrait", resultId: other.resultId }, deps);
+    expect(stub.calls).toHaveLength(0);
+    expect(await getReport(db, { resultId: other.resultId }, "portrait")).toBeNull();
+  });
+
+  test("when every attempt fails nothing is saved and the failure is logged without the answer text", async () => {
+    await payFull();
+    deps.writer = portraitStubWriter(["{}", "{}", "{}", "{}", "{}"]);
+
+    await runGenerate(portraitJob(), deps);
+
+    expect(await getReport(db, { resultId: anna.resultId }, "portrait")).toBeNull();
+    expect(deps.log).toHaveBeenCalledWith("warn", "portrait failed", { kind: "portrait" });
+  });
+
+  test("a second run does not ask the model again", async () => {
+    await payFull();
+    const stub = portraitStubWriter();
+    deps.writer = stub;
+
+    await runGenerate(portraitJob(), deps);
+    await runGenerate(portraitJob(), deps);
+
+    expect(stub.calls).toHaveLength(1);
   });
 });

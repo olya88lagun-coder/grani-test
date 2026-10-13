@@ -4,7 +4,7 @@ import { readWorkerEnv } from "./env";
 const BASE = { DATABASE_URL: "postgres://u:p@db/grani", APP_URL: "https://grani-test.ru" };
 
 test("works without the VK community configured", () => {
-  expect(readWorkerEnv(BASE)).toEqual({ ...BASE, vkGroupToken: null, dryRun: false, poolMax: 3, ai: { provider: "none" }, chapterCardsV2: false, lifeCardsV1: false });
+  expect(readWorkerEnv(BASE)).toEqual({ ...BASE, vkGroupToken: null, dryRun: false, poolMax: 3, ai: { provider: "none" }, chapterCardsV2: false, lifeCardsV1: false, portraitV1: false });
 });
 
 test("reads the VK token and the dry run switch, and ignores a Telegram token", () => {
@@ -16,6 +16,7 @@ test("reads the VK token and the dry run switch, and ignores a Telegram token", 
     ai: { provider: "none" },
     chapterCardsV2: false,
     lifeCardsV1: false,
+    portraitV1: false,
   });
 });
 
@@ -51,4 +52,11 @@ test("the life cards are off unless LIFE_CARDS_V1 is 1", () => {
   expect(readWorkerEnv({ ...BASE, LIFE_CARDS_V1: "0" }).lifeCardsV1).toBe(false);
   expect(readWorkerEnv({ ...BASE, LIFE_CARDS_V1: "1" }).lifeCardsV1).toBe(true);
   expect(() => readWorkerEnv({ ...BASE, LIFE_CARDS_V1: "yes" })).toThrow(/LIFE_CARDS_V1/);
+});
+
+test("the portrait blocks are off unless PORTRAIT_V1 is 1", () => {
+  expect(readWorkerEnv(BASE).portraitV1).toBe(false);
+  expect(readWorkerEnv({ ...BASE, PORTRAIT_V1: "0" }).portraitV1).toBe(false);
+  expect(readWorkerEnv({ ...BASE, PORTRAIT_V1: "1" }).portraitV1).toBe(true);
+  expect(() => readWorkerEnv({ ...BASE, PORTRAIT_V1: "yes" })).toThrow(/PORTRAIT_V1/);
 });
