@@ -44,7 +44,7 @@ export async function generateChapterCards(writer: ReportWriter, ctx: ChapterCar
   const idsOf = (part: ChapterPart) => partSeeds(ctx.kind, part).map((seed) => seed.id);
   const blocks = blockTexts(ctx);
   const [overview, a, firstB] = await Promise.all([
-    runPart(writer, overviewPart!, ctx, validateOverview, options),
+    runPart(writer, overviewPart!, ctx, (raw, final) => validateOverview(raw, final), options),
     runPart(writer, partA!, ctx, (raw, final) => validateSituations(raw, idsOf(partA!), { blocks }, final), options),
     runPart(writer, partB!, ctx, (raw, final) => validateSituations(raw, idsOf(partB!), { blocks }, final), options),
   ]);

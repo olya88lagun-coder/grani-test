@@ -13,8 +13,11 @@ export const CHAPTER_PARTS: readonly ChapterPart[] = ["overview", "situations_a"
 export type ChapterCardsContext = { library: Library; kind: ChapterKind; result: PersonalScores };
 
 const SITUATIONS_PER_PART = 3;
+// Оговорок («может», «возможно») на последней попытке разрешено больше: лучше мягкий текст, чем запасной
 const MAX_HEDGES_PER_CARD = 1;
 const MAX_HEDGES_OVERVIEW = 2;
+const MAX_HEDGES_PER_CARD_FINAL = 3;
+const MAX_HEDGES_OVERVIEW_FINAL = 4;
 
 export function partSeeds(kind: ChapterKind, part: ChapterPart): readonly ChapterSeed[] {
   const seeds = chapterSeeds(kind);
@@ -42,8 +45,8 @@ const OVERVIEW_SHAPE = [
 
 const SITUATIONS_SHAPE = [
   '{"situations": [{"seed": "id темы из seeds", "title": "название ситуации, 10–90 знаков",',
-  ' "scene": "пример ситуации, в которой читатель узнает себя, 80–320 знаков",',
-  ' "why": "почему так: свяжи одну-две черты читателя, 80–320 знаков",',
+  ' "scene": "пример ситуации, в которой читатель узнает себя, 50–320 знаков",',
+  ' "why": "почему так: свяжи одну-две черты читателя, 50–320 знаков",',
   ' "traits": ["openness"], "say": ["1–3 готовые фразы, по 10–160 знаков"],',
   ' "do": "одно конкретное действие, 40–260 знаков"}]}',
   "Дай по одному объекту на каждую тему из seeds, в том же порядке; seed — её id.",
@@ -71,7 +74,7 @@ const SituationsSchema = z.strictObject({ situations: z.array(SituationSchema).m
 export type OverviewPart = z.infer<typeof OverviewSchema>;
 export type SituationsPart = z.infer<typeof SituationsSchema>;
 export type PartFailure = "not_json" | "schema" | "stop_words" | "style" | "seeds" | "repeat";
-// detail есть только у ошибки схемы: пути полей и пределы, без текста ответа
+// detail есть у ошибки схемы (пути полей и пределы) и у ошибки стиля (названия нарушений); текста ответа в нём нет
 export type PartCheck<T> = { ok: true; value: T } | { ok: false; reason: PartFailure; detail?: string };
 
 const MAX_DETAIL_ISSUES = 5;
@@ -90,13 +93,18 @@ function schemaFailure(error: z.ZodError): { ok: false; reason: "schema"; detail
 
 const hasStopWords = (value: unknown) => sectionStrings(value).some((text) => findStopWords(text).length > 0);
 
-export function validateOverview(raw: string): PartCheck<OverviewPart> {
+function styleFailure(problems: readonly string[]): { ok: false; reason: "style"; detail: string } {
+  return { ok: false, reason: "style", detail: problems.join(",") };
+}
+
+export function validateOverview(raw: string, final = false): PartCheck<OverviewPart> {
   const json = extractJson(raw);
   if (json === undefined) return { ok: false, reason: "not_json" };
   const parsed = OverviewSchema.safeParse(json);
   if (!parsed.success) return schemaFailure(parsed.error);
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
-  if (styleProblems(sectionStrings(parsed.data), MAX_HEDGES_OVERVIEW).length > 0) return { ok: false, reason: "style" };
+  const overviewProblems = styleProblems(sectionStrings(parsed.data), final ? MAX_HEDGES_OVERVIEW_FINAL : MAX_HEDGES_OVERVIEW);
+  if (overviewProblems.length > 0) return styleFailure(overviewProblems);
   return { ok: true, value: parsed.data };
 }
 
@@ -109,7 +117,8 @@ export function validateSituations(raw: string, expectedSeeds: readonly string[]
   const parsed = SituationsSchema.safeParse(json);
   if (!parsed.success) return schemaFailure(parsed.error);
   if (hasStopWords(parsed.data)) return { ok: false, reason: "stop_words" };
-  if (parsed.data.situations.some((card) => styleProblems(sectionStrings(card), MAX_HEDGES_PER_CARD).length > 0)) return { ok: false, reason: "style" };
+  const cardProblems = [...new Set(parsed.data.situations.flatMap((card) => styleProblems(sectionStrings(card), final ? MAX_HEDGES_PER_CARD_FINAL : MAX_HEDGES_PER_CARD)))];
+  if (cardProblems.length > 0) return styleFailure(cardProblems);
   const seeds = parsed.data.situations.map((card) => card.seed);
   if (seeds.length !== expectedSeeds.length || seeds.some((seed, index) => seed !== expectedSeeds[index])) return { ok: false, reason: "seeds" };
   if (!final && hasRepeatedAction(parsed.data, guard)) return { ok: false, reason: "repeat" };
