@@ -1,5 +1,6 @@
 import { traitLevel, type MoneyAnswer, type MoneyHabit, type MoneyPracticeData, type Trait, type TraitLevel, type TraitScores } from "@grani/core";
 import { z } from "zod";
+import { seedIconPath } from "./chapter-cover";
 
 export const MAX_PRACTICE_REVISION = 2_147_483_646;
 const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(s => {
@@ -99,13 +100,16 @@ export function recommendations(answers: readonly (MoneyAnswer | null)[]) {
 export type AxisId = (typeof AXES)[number]["id"];
 const AXIS_SITUATION: Record<AxisId, Situation["id"]> = { plan: "unexpected", pause: "purchase", boundaries: "shared", conditions: "offer" };
 
+// Золотая иконка темы главы «Деньги», ближайшей по смыслу к ситуации направления
+const SITUATION_ICON_SEED: Record<Situation["id"], string> = { purchase: "mood", unexpected: "surprise", shared: "shared", offer: "new" };
+
 // Направление компаса вместе с шагом своей ситуации: ситуации больше не отдельный раздел
 export function directionDetails(answers: readonly (MoneyAnswer | null)[]) {
   const steps = recommendations(answers);
   return buildCompass(answers).map(axis => {
     const step = steps.find(s => s.id === AXIS_SITUATION[axis.id])!;
     const answer = answers[step.basis] ?? null;
-    return { ...axis, note: STATE_NOTES[axis.state], situation: step.title, image: step.image, action: step.action, phrase: step.phrase, recall: answer === null || answer === "unsure" };
+    return { ...axis, note: STATE_NOTES[axis.state], situation: step.title, image: step.image, icon: seedIconPath("chapter_money", SITUATION_ICON_SEED[step.id]), action: step.action, phrase: step.phrase, recall: answer === null || answer === "unsure" };
   });
 }
 

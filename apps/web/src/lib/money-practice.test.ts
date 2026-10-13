@@ -60,6 +60,9 @@ describe("directions", () => {
     expect(RECALL_NOTE).toContain("вспомни один недавний случай");
   });
 
+  test("every direction carries the golden icon of the chapter theme closest to its situation", () => {
+    expect(directionDetails(ALL_C).map(d => d.icon)).toEqual(["/chapters/money/surprise.webp", "/chapters/money/mood.webp", "/chapters/money/shared.webp", "/chapters/money/new.webp"]);
+  });
   test("the recall flag is raised only for missing or unknown answers of the direction's situation", () => {
     expect(directionDetails(Array(6).fill(null)).every(d => d.recall)).toBe(true);
     expect(directionDetails(Array(6).fill("unsure")).every(d => d.recall)).toBe(true);

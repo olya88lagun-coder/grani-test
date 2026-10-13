@@ -58,6 +58,14 @@ describe("MoneyPractice compass", () => {
     expect(html).toContain("Это не оценка финансовой успешности");
   });
 
+  test("the opened direction shows its icon next to the title", () => {
+    const html = render(withAnswers(Array(6).fill("c")));
+    const start = at(html, "Ясность расходов</h3>");
+    const detail = html.slice(start, start + 600);
+
+    expect(detail).toContain("chapters%2Fmoney%2Fsurprise.webp");
+  });
+
   test("the five traits are folded into a block inside the compass, not a section of their own", () => {
     const html = render();
     const compass = html.slice(at(html, 'id="money-compass"'), at(html, 'id="money-week"'));
