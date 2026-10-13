@@ -5,6 +5,7 @@ export * from "./library";
 export * from "./labels";
 export * from "./chapter-seeds";
 export * from "./life-seeds";
+export * from "./portrait-seeds";
 export * from "./friends";
 export * from "./markdown";
 export * from "./articles";
