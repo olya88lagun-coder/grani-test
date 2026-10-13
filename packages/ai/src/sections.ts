@@ -38,6 +38,18 @@ export const ChapterCardsSchema = z.strictObject({ version: z.literal(2), ...car
 // Вкладка «В жизни»: те же карточки без обзора и ловушек, ровно пять
 export const LIFE_SITUATIONS = 5;
 export const LifeCardsSchema = z.strictObject({ version: z.literal(1), situations: z.array(SituationSchema).length(LIFE_SITUATIONS) });
+// Вкладка «Портрет»: фраза-вывод и пять коротких блоков; заголовки подставляет код из тем, модель пишет только текст
+export const PORTRAIT_BLOCKS = 5;
+const portraitText = text(150, 350);
+export const PortraitSchema = z.strictObject({
+  version: z.literal(1),
+  headline: cardsShape.headline,
+  blocks: z.array(z.strictObject({ seed: text(2, 40), title: text(10, 60), text: portraitText })).length(PORTRAIT_BLOCKS),
+});
+export const PortraitModelSchema = z.strictObject({
+  headline: cardsShape.headline,
+  blocks: z.array(z.strictObject({ seed: text(2, 40), text: portraitText })).length(PORTRAIT_BLOCKS),
+});
 // Формат 1 строгий и не знает поля version, формат 2 требует его — союз однозначен
 const ChapterAnySchema = z.union([ChapterSchema, ChapterCardsSchema]);
 const PairSchema = z.strictObject({
@@ -54,9 +66,10 @@ export type ChapterTextSections = z.infer<typeof ChapterSchema>;
 export type ChapterCardsSections = z.infer<typeof ChapterCardsSchema>;
 export type Situation = z.infer<typeof SituationSchema>;
 export type LifeSections = z.infer<typeof LifeCardsSchema>;
+export type PortraitSections = z.infer<typeof PortraitSchema>;
 export type ChapterSections = ChapterTextSections | ChapterCardsSections;
 export type PairSections = z.infer<typeof PairSchema>;
-export type ReportSections = { full: FullSections; friends: FriendsSections; pair: PairSections; life: LifeSections } & Record<ChapterKind, ChapterSections>;
+export type ReportSections = { full: FullSections; friends: FriendsSections; pair: PairSections; life: LifeSections; portrait: PortraitSections } & Record<ChapterKind, ChapterSections>;
 
 export const SECTION_SCHEMAS: { readonly [K in ReportKind]: z.ZodType<ReportSections[K]> } = {
   full: FullSchema,
@@ -67,6 +80,7 @@ export const SECTION_SCHEMAS: { readonly [K in ReportKind]: z.ZodType<ReportSect
   chapter_relationships: ChapterAnySchema,
   pair: PairSchema,
   life: LifeCardsSchema,
+  portrait: PortraitSchema,
 };
 
 export function parseSections<K extends ReportKind>(kind: K, value: unknown): ReportSections[K] | null {
@@ -81,6 +95,11 @@ export function parseChapterCards(value: unknown): ChapterCardsSections | null {
 
 export function parseLifeCards(value: unknown): LifeSections | null {
   const parsed = LifeCardsSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+}
+
+export function parsePortrait(value: unknown): PortraitSections | null {
+  const parsed = PortraitSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
 }
 

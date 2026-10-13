@@ -1,4 +1,4 @@
-import { formatRub, MIN_FRIENDS, type ReportKind } from "@grani/core";
+import { formatRub, MIN_FRIENDS, type ExtraKind, type ReportKind } from "@grani/core";
 
 export function friendAnsweredText(friendsCount: number, url: string): string {
   if (friendsCount < MIN_FRIENDS) {
@@ -12,8 +12,8 @@ export function pairCreatedText(partnerFirstName: string, score: number, url: st
   return `Пара готова: вы и ${partnerFirstName}, совместимость ${score}%. Посмотреть типы и шкалы рядом: ${url}`;
 }
 
-// Карточки «В жизни» появляются на странице сами, сообщения о них нет
-type AnnouncedKind = Exclude<ReportKind, "life">;
+// Дополнительные отчёты («В жизни», «Портрет») появляются на странице сами, сообщения о них нет
+type AnnouncedKind = Exclude<ReportKind, ExtraKind>;
 const READY_TITLES: Readonly<Record<AnnouncedKind, string>> = {
   full: "полный разбор",
   friends: "раздел «Как тебя видят другие»",

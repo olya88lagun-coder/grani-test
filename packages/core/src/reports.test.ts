@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { isProduct } from "./pricing";
-import { CHAPTER_KINDS, canBuy, friendsReportDue, isReportKind, productTarget, reportKindsFor, unlockedKinds } from "./reports";
+import { CHAPTER_KINDS, EXTRA_KINDS, canBuy, friendsReportDue, isExtraKind, isReportKind, productTarget, reportKindsFor, unlockedKinds } from "./reports";
 
 describe("reportKindsFor", () => {
   test("a product opens the report of the same name, all chapters open four", () => {
@@ -17,7 +17,23 @@ describe("reportKindsFor", () => {
   });
 
   test("collects everything the purchases opened, the life cards come with the full report", () => {
-    expect([...unlockedKinds(["full", "chapters_all"])].sort()).toEqual(["chapter_conflict", "chapter_money", "chapter_relationships", "chapter_stress", "full", "life"]);
+    expect([...unlockedKinds(["full", "chapters_all"])].sort()).toEqual(["chapter_conflict", "chapter_money", "chapter_relationships", "chapter_stress", "full", "life", "portrait"]);
+  });
+
+  test("extra reports open with the full report, are not sold and are recognised by isExtraKind", () => {
+    expect(EXTRA_KINDS).toEqual(["life", "portrait"]);
+    for (const kind of EXTRA_KINDS) {
+      expect(isReportKind(kind)).toBe(true);
+      expect(isProduct(kind)).toBe(false);
+      expect(unlockedKinds(["full"]).has(kind)).toBe(true);
+      expect(unlockedKinds(["chapters_all"]).has(kind)).toBe(false);
+      expect(unlockedKinds(["pair"]).has(kind)).toBe(false);
+      expect(isExtraKind(kind)).toBe(true);
+    }
+    expect(isExtraKind("full")).toBe(false);
+    expect(isExtraKind("chapter_money")).toBe(false);
+    expect(isExtraKind(undefined)).toBe(false);
+    expect(reportKindsFor("full")).toEqual(["full"]);
   });
 
   test("the life cards are not sold and open only with the full report", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseChapterCards, parseLifeCards, parseSections, sectionStrings } from "./sections";
+import { parseChapterCards, parseLifeCards, parsePortrait, parseSections, sectionStrings } from "./sections";
 
 const long = (n: number) => "а".repeat(n);
 const situation = (seed: string) => ({ seed, title: long(30), scene: long(100), why: long(100), traits: ["agreeableness"], say: [long(20)], do: long(60) });
@@ -85,4 +85,24 @@ test("parseSections knows the life kind", () => {
 
   expect(parseSections("life", valid)?.situations).toHaveLength(5);
   expect(parseSections("life", { ...valid, version: 2 })).toBeNull();
+});
+
+describe("parsePortrait", () => {
+  const block = (seed: string) => ({ seed, title: long(20), text: long(200) });
+  const portrait = (overrides: Record<string, unknown> = {}) => ({ version: 1, headline: long(60), blocks: ["sa", "sb", "sc", "sd", "se"].map(block), ...overrides });
+
+  test("accepts a headline and five blocks of version 1, also through parseSections", () => {
+    expect(parsePortrait(portrait())?.blocks).toHaveLength(5);
+    expect(parseSections("portrait", portrait())?.headline).toHaveLength(60);
+  });
+
+  test("rejects other block counts, another version, short or long text and extra fields", () => {
+    expect(parsePortrait(portrait({ blocks: ["sa", "sb", "sc", "sd"].map(block) }))).toBeNull();
+    expect(parsePortrait(portrait({ blocks: ["sa", "sb", "sc", "sd", "se", "sf"].map(block) }))).toBeNull();
+    expect(parsePortrait(portrait({ version: 2 }))).toBeNull();
+    expect(parsePortrait(portrait({ blocks: ["sa", "sb", "sc", "sd", "se"].map((seed) => ({ ...block(seed), text: long(149) })) }))).toBeNull();
+    expect(parsePortrait(portrait({ blocks: ["sa", "sb", "sc", "sd", "se"].map((seed) => ({ ...block(seed), text: long(351) })) }))).toBeNull();
+    expect(parsePortrait(portrait({ summary: long(60) }))).toBeNull();
+    expect(parsePortrait(null)).toBeNull();
+  });
 });

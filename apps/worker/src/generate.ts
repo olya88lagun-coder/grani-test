@@ -1,6 +1,6 @@
 import { buildFriendsInput, buildPairInput, buildPersonalInput, generateChapterCards, generateLifeCards, generateReport, type GeneratedReport, type ReportInput, type ReportWriter } from "@grani/ai";
 import { compareFriendAnswers, hasCardsFormat, type Library } from "@grani/content";
-import { CHAPTER_KINDS, friendsReportDue, unlockedKinds, type ChapterKind, type GenerateJob, type NotifyJob } from "@grani/core";
+import { CHAPTER_KINDS, friendsReportDue, isExtraKind, unlockedKinds, type ChapterKind, type GenerateJob, type NotifyJob } from "@grani/core";
 import {
   getActivePair,
   getInviteForResult,
@@ -34,8 +34,8 @@ async function buildInput(job: GenerateJob, deps: GenerateDeps): Promise<ReportI
     const pair = await getActivePair(deps.db, job.pairId);
     return pair ? buildPairInput(deps.library, pair.members[0].result.scores, pair.members[1].result.scores) : null;
   }
-  // Карточки «В жизни» идут отдельным путём без общего входа и без запасного текста (см. runLife)
-  if (job.kind === "life") return null;
+  // Дополнительные отчёты идут отдельным путём без общего входа и без запасного текста (см. runLife)
+  if (isExtraKind(job.kind)) return null;
   const result = await getResult(deps.db, job.resultId);
   if (!result) return null;
   if (job.kind !== "friends") return buildPersonalInput(deps.library, job.kind, result);
