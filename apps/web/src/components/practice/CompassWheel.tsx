@@ -5,8 +5,8 @@ type Direction = { id: string; title: string; state: CompassState; label: string
 type Props = { directions: readonly Direction[]; activeIndex: number; onSelect: (index: number) => void };
 
 const CENTER = 160;
-const OUTER = 112;
-const INNER = 52;
+const OUTER = 150;
+const INNER = 62;
 const GAP_DEGREES = 2.5;
 
 // Угол отсчитывается по часовой стрелке от верха: сектор 0 — сверху, 1 — справа, 2 — снизу, 3 — слева
@@ -41,7 +41,7 @@ export function CompassWheel({ directions, activeIndex, onSelect }: Props) {
         ))}
         {directions.map((d, i) => {
           if (d.state !== "practice") return null;
-          const [x, y] = point((OUTER + INNER) / 2, i * 90);
+          const [x, y] = point(OUTER - 12, i * 90);
           return <circle key={d.id} cx={x} cy={y} r={5} className={styles.marker} data-marker="" />;
         })}
       </svg>
