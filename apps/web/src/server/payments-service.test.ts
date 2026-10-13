@@ -281,24 +281,33 @@ describe("together purchases are invisible to report views", () => {
   });
 });
 
-describe("life cards after payment", () => {
-  test("a full purchase queues the life cards too when the flag is on", async () => {
-    deps = { ...deps, lifeCards: true };
+describe("extra reports after payment", () => {
+  test("a full purchase also queues the enabled extra reports", async () => {
+    deps = { ...deps, extras: { life: true, portrait: true } };
 
     await buyAndPay("full");
 
     expect(enqueue).toHaveBeenCalledWith({ kind: "full", resultId: anna.resultId });
     expect(enqueue).toHaveBeenCalledWith({ kind: "life", resultId: anna.resultId });
+    expect(enqueue).toHaveBeenCalledWith({ kind: "portrait", resultId: anna.resultId });
   });
 
-  test("with the flag off no life job is queued: it would be finished as skipped and block the later one", async () => {
+  test("each extra report follows its own flag", async () => {
+    deps = { ...deps, extras: { portrait: true } };
+
     await buyAndPay("full");
 
-    expect(enqueue.mock.calls.map(([job]) => job.kind)).not.toContain("life");
+    expect(enqueue.mock.calls.map(([job]) => job.kind)).toEqual(["full", "portrait"]);
   });
 
-  test("a chapter purchase never queues the life cards", async () => {
-    deps = { ...deps, lifeCards: true };
+  test("with the flags off no extra job is queued: it would be finished as skipped and block the later one", async () => {
+    await buyAndPay("full");
+
+    expect(enqueue.mock.calls.map(([job]) => job.kind)).toEqual(["full"]);
+  });
+
+  test("a chapter purchase never queues extra reports", async () => {
+    deps = { ...deps, extras: { life: true, portrait: true } };
     await buyAndPay("full");
     enqueue.mockClear();
 
@@ -307,8 +316,8 @@ describe("life cards after payment", () => {
     expect(enqueue.mock.calls.map(([job]) => job.kind)).toEqual(["chapter_money"]);
   });
 
-  test("the waiting page does not wait for the life cards and does not requeue them", async () => {
-    deps = { ...deps, lifeCards: true };
+  test("the waiting page does not wait for extra reports and does not requeue them", async () => {
+    deps = { ...deps, extras: { life: true, portrait: true } };
     const purchase = await buyAndPay("full");
     enqueue.mockClear();
 
