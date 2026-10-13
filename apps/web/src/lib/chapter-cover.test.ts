@@ -21,15 +21,16 @@ describe("chapterCoverSlug", () => {
 });
 
 describe("seedIconPath", () => {
-  test("every money theme has an icon file in the public folder", () => {
-    for (const seed of chapterSeeds("chapter_money")) {
-      const path = seedIconPath("chapter_money", seed.id);
-      expect(path).toBe(`/chapters/money/${seed.id}.webp`);
-      expect(existsSync(new URL(`money/${seed.id}.webp`, PUBLIC)), `${seed.id}.webp`).toBe(true);
+  test.each(CHAPTER_KINDS)("every theme of %s has an icon file in the public folder", (kind) => {
+    const slug = chapterCoverSlug(kind);
+
+    for (const seed of chapterSeeds(kind)) {
+      expect(seedIconPath(kind, seed.id)).toBe(`/chapters/${slug}/${seed.id}.webp`);
+      expect(existsSync(new URL(`${slug}/${seed.id}.webp`, PUBLIC)), `${slug}/${seed.id}.webp`).toBe(true);
     }
   });
 
-  test("unknown themes and chapters without icons give no path", () => {
+  test("unknown themes and themes of another chapter give no path", () => {
     expect(seedIconPath("chapter_money", "unknown")).toBeNull();
     expect(seedIconPath("chapter_stress", "help")).toBeNull();
   });

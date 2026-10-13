@@ -54,6 +54,14 @@ describe("ChapterCards", () => {
     expect(html).not.toContain("Охотно пробую новое");
   });
 
+  test.each(["chapter_conflict", "chapter_stress", "chapter_relationships"] as const)("%s cards show the icon of their own themes", (kind) => {
+    const seeds = chapterSeeds(kind);
+    const html = renderToStaticMarkup(<ChapterCards kind={kind} sections={sections((value) => ({ ...value, situations: value.situations.map((card, index) => ({ ...card, seed: seeds[index]!.id })) }))} scores={SCORES} />);
+    const slug = kind.replace("chapter_", "");
+
+    for (const seed of seeds) expect(html).toContain(`chapters%2F${slug}%2F${seed.id}.webp`);
+  });
+
   test("model text is escaped, not interpreted as HTML", () => {
     const html = renderToStaticMarkup(
       <ChapterCards kind="chapter_money" sections={sections((value) => ({ ...value, headline: "<script>alert(1)</script> " + value.headline }))} scores={SCORES} />,

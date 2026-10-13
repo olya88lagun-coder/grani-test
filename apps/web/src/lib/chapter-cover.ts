@@ -5,9 +5,12 @@ export function chapterCoverSlug(kind: ChapterKind): string {
   return kind.replace("chapter_", "");
 }
 
-// Значки тем: у главы «Деньги» есть по значку на каждую из шести тем, у остальных глав значков пока нет
+// Значки тем: по значку на каждую из шести тем каждой главы
 const SEED_ICONS: Partial<Record<ChapterKind, readonly string[]>> = {
   chapter_money: ["help", "surprise", "mood", "new", "periods", "shared"],
+  chapter_conflict: ["notice", "voice", "position", "critique", "pause", "deal"],
+  chapter_stress: ["signals", "overload", "uncertainty", "recovery", "ask", "routine"],
+  chapter_relationships: ["start", "space", "feelings", "support", "home", "limits"],
 };
 
 export function seedIconPath(kind: ChapterKind, seed: string): string | null {
