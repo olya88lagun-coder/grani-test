@@ -16,3 +16,11 @@ const SEED_ICONS: Partial<Record<ChapterKind, readonly string[]>> = {
 export function seedIconPath(kind: ChapterKind, seed: string): string | null {
   return SEED_ICONS[kind]?.includes(seed) ? `/chapters/${chapterCoverSlug(kind)}/${seed}.webp` : null;
 }
+
+// Значки тем «В жизни» (public/life/<тема>.webp). Список пополняется, когда файлы нарисованы и лежат в папке
+// (задание: docs/redesign/CODEX_LIFE_CARDS.md); пока он пуст, карточки показываются без значков
+export const LIFE_ICON_SEEDS: readonly string[] = [];
+
+export function lifeIconPath(seed: string): string | null {
+  return LIFE_ICON_SEEDS.includes(seed) ? `/life/${seed}.webp` : null;
+}
