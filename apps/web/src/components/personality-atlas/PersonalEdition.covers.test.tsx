@@ -26,6 +26,7 @@ describe("sphere cards", () => {
 
     for (const kind of CHAPTER_KINDS) expect(html).toContain(`data-thumb="${chapterCoverSlug(kind)}"`);
     expect(html.match(/data-thumb=/g)).toHaveLength(4);
-    expect(html).not.toContain("/gems/");
+    const spheres = html.slice(html.indexOf('id="edition-spheres"'));
+    expect(spheres).not.toContain("/gems/");
   });
 });

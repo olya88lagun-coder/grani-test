@@ -58,6 +58,7 @@ describe("personal edition contracts",()=>{
       const scores={openness:values[0]!,conscientiousness:values[1]!,extraversion:values[2]!,agreeableness:values[3]!,stability};const ownModel=buildPersonalityAtlas(scores);const code=typeCodeOf(scores);
       const html=renderToStaticMarkup(<PersonalEdition {...props} model={ownModel} typeName={typeName(code,null)} initialDraft={{revision:0,updatedAt:null,data:initialAtlasData(ownModel)}}/>);
       expect(html).toContain(`>${stability}</strong>`);expect(html).toContain("Пять граней");expect(html).not.toContain("Анна");
+      expect(html).toContain(`data-gem-dir="${code.replaceAll("+","p").replaceAll("-","m")}"`);
     }
   });
 });
