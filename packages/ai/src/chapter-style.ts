@@ -10,6 +10,15 @@ const PAST_AFTER_PRONOUN = new RegExp(String.raw`(?<![а-яё])(?:ты|я)\s+${F
 const SHORT_ADJECTIVES = "рад|готов|должен|согласен|уверен|благодарен|прав|виноват|занят|устал|открыт|спокоен|устойчив|заботлив|терпелив|внимателен|чувствителен|добр|щедр|осторожен|ответственен|способен|склонен|привык|вынужден|обязан|уязвим|тревожен|раним";
 const SHORT_ADJECTIVE_AFTER_PRONOUN = new RegExp(String.raw`(?<![а-яё])(?:ты|я)\s+${FILLERS}(?:${SHORT_ADJECTIVES})(?![а-яё])`, "iu");
 const isGendered = (text: string) => PAST_AFTER_PRONOUN.test(text) || SHORT_ADJECTIVE_AFTER_PRONOUN.test(text);
+const GENDERED_PATTERNS = [PAST_AFTER_PRONOUN, SHORT_ADJECTIVE_AFTER_PRONOUN].map((pattern) => new RegExp(pattern.source, "giu"));
+const MAX_FORMS = 6;
+
+// Найденные фрагменты («ты открыт», «я готов») идут модели как замечание к прошлому ответу; в лог они не пишутся
+export function genderedForms(strings: readonly string[]): string[] {
+  const found = new Set<string>();
+  for (const text of strings) for (const pattern of GENDERED_PATTERNS) for (const match of text.matchAll(pattern)) found.add(match[0].toLowerCase().replace(/\s+/gu, " "));
+  return [...found].slice(0, MAX_FORMS);
+}
 
 export type StyleProblem = "hedges" | "empty_phrase" | "past_claim" | "gendered";
 

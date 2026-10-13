@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { hedgeCount, styleProblems } from "./chapter-style";
+import { genderedForms, hedgeCount, styleProblems } from "./chapter-style";
 
 describe("hedgeCount", () => {
   test("counts hedges in any case and ignores words that only contain them", () => {
@@ -48,5 +48,16 @@ describe("gendered forms", () => {
     "Ты сначала молчишь, а потом долго переживаешь.",
   ])("leaves neutral wording alone: %s", (text) => {
     expect(styleProblems([text], 1)).not.toContain("gendered");
+  });
+});
+
+describe("genderedForms", () => {
+  test("returns the offending fragments in lower case, nothing for neutral text", () => {
+    expect(genderedForms(["Ты открыт к новому.", "Говори так: «Я готов помочь»."])).toEqual(["ты открыт", "я готов"]);
+    expect(genderedForms(["Ты открываешься новому.", "Мне нужно время."])).toEqual([]);
+  });
+
+  test("lists each fragment once", () => {
+    expect(genderedForms(["Ты открыт. Ты открыт."])).toEqual(["ты открыт"]);
   });
 });
