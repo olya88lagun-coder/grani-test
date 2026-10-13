@@ -21,3 +21,7 @@
 .sphereThumb[data-thumb="relationships"]{background-image:url("/chapters/relationships-mobile.webp")}
 .root[data-personal-edition] .sphereCard>.label{max-width:none;min-height:24px}
 .root[data-personal-edition] .sphereCard h3{max-width:none}
+.compassPromo{margin-top:22px;max-width:480px;padding:16px 18px;border:1px solid rgba(215,190,131,.5);border-radius:6px;background:rgba(7,19,15,.78)}
+.root[data-personal-edition] .compassPromo p{margin:0 0 14px;font-size:15px;line-height:1.5;color:#efe7d4}
+.root[data-personal-edition] .compassPromo a.moneyLink{margin-top:0;width:100%;justify-content:center;min-height:52px;padding:14px 20px;font-size:16px;font-weight:600;text-align:center}
+.compassFoot{margin:24px auto 0;max-width:760px;background:rgba(7,19,15,.6)}
