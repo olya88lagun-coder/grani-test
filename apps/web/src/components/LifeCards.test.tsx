@@ -24,11 +24,11 @@ describe("LifeCards", () => {
     expect(html).not.toContain("Как это видят близкие");
   });
 
-  test("shows the card texts and no icons while the icon files are not listed", () => {
+  test("shows the card texts and five available life icons", () => {
     const html = renderToStaticMarkup(<LifeCards sections={sections()} />);
 
     expect(html).toContain("Ситуация: Планы внезапно изменились");
     expect(html).toContain("«Мне нужно время подумать, отвечу завтра.»");
-    expect(html).not.toContain("<img");
+    expect(html.match(/<img/g)).toHaveLength(5);
   });
 });
