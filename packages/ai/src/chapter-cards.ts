@@ -1,5 +1,5 @@
-import { chapterSeeds, CHAPTER_SECTIONS, CHAPTER_TITLES, findStopWords, traitBlock, type ChapterSeed, type Library } from "@grani/content";
-import { TRAITS, traitLevel, type ChapterKind } from "@grani/core";
+import { cardSeeds, cardsSections, cardsTitle, findStopWords, traitBlock, type CardsKind, type ChapterSeed, type Library } from "@grani/content";
+import { TRAITS, traitLevel } from "@grani/core";
 import { z } from "zod";
 import { repeatsAny } from "./chapter-overlap";
 import { genderedForms, styleProblems, type StyleProblem } from "./chapter-style";
@@ -10,7 +10,7 @@ import { extractJson } from "./validate";
 
 export type ChapterPart = "overview" | "situations_a" | "situations_b";
 export const CHAPTER_PARTS: readonly ChapterPart[] = ["overview", "situations_a", "situations_b"];
-export type ChapterCardsContext = { library: Library; kind: ChapterKind; result: PersonalScores };
+export type ChapterCardsContext = { library: Library; kind: CardsKind; result: PersonalScores };
 
 const SITUATIONS_PER_PART = 3;
 // Оговорок («может», «возможно») на последней попытке разрешено больше: лучше мягкий текст, чем запасной
@@ -19,8 +19,8 @@ const MAX_HEDGES_OVERVIEW = 2;
 const MAX_HEDGES_PER_CARD_FINAL = 3;
 const MAX_HEDGES_OVERVIEW_FINAL = 4;
 
-export function partSeeds(kind: ChapterKind, part: ChapterPart): readonly ChapterSeed[] {
-  const seeds = chapterSeeds(kind);
+export function partSeeds(kind: CardsKind, part: ChapterPart): readonly ChapterSeed[] {
+  const seeds = cardSeeds(kind);
   if (part === "overview") return [];
   return part === "situations_a" ? seeds.slice(0, SITUATIONS_PER_PART) : seeds.slice(SITUATIONS_PER_PART);
 }
@@ -55,8 +55,16 @@ const SITUATIONS_SHAPE = [
   `traits — только из: ${TRAITS.join(", ")}.`,
 ].join("\n");
 
+// Для глав один раздел библиотеки на черту, для «В жизни» три раздела подряд
 const blocksOf = (ctx: ChapterCardsContext): Record<string, string> =>
-  Object.fromEntries(TRAITS.map((trait) => [trait, traitBlock(ctx.library, trait, traitLevel(ctx.result.scores[trait]), CHAPTER_SECTIONS[ctx.kind])]));
+  Object.fromEntries(
+    TRAITS.map((trait) => [
+      trait,
+      cardsSections(ctx.kind)
+        .map((section) => traitBlock(ctx.library, trait, traitLevel(ctx.result.scores[trait]), section))
+        .join("\n\n"),
+    ]),
+  );
 
 // Готовые тексты библиотеки, которые модель получает на вход: с ними сверяются советы в ответе
 export const blockTexts = (ctx: ChapterCardsContext): readonly string[] => Object.values(blocksOf(ctx));
@@ -67,7 +75,7 @@ export function buildChapterPartPrompt(part: ChapterPart, ctx: ChapterCardsConte
   return {
     system: [...RULES, `Схема ответа:\n${part === "overview" ? OVERVIEW_SHAPE : SITUATIONS_SHAPE}`].join("\n\n"),
     // Во входе только баллы, уровни, темы и блоки — имён и идентификаторов в нём нет
-    user: JSON.stringify({ chapter: CHAPTER_TITLES[ctx.kind], facts: personalFacts(ctx.result), seeds, blocks }),
+    user: JSON.stringify({ chapter: cardsTitle(ctx.kind), facts: personalFacts(ctx.result), seeds, blocks }),
   };
 }
 

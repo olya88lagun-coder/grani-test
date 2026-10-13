@@ -35,6 +35,9 @@ export const cardsShape = {
   traps: z.array(z.strictObject({ trap: text(20, 200), instead: text(20, 200) })).length(3),
 };
 export const ChapterCardsSchema = z.strictObject({ version: z.literal(2), ...cardsShape });
+// Вкладка «В жизни»: те же карточки без обзора и ловушек, ровно пять
+export const LIFE_SITUATIONS = 5;
+export const LifeCardsSchema = z.strictObject({ version: z.literal(1), situations: z.array(SituationSchema).length(LIFE_SITUATIONS) });
 // Формат 1 строгий и не знает поля version, формат 2 требует его — союз однозначен
 const ChapterAnySchema = z.union([ChapterSchema, ChapterCardsSchema]);
 const PairSchema = z.strictObject({
@@ -49,6 +52,8 @@ export type FullSections = z.infer<typeof FullSchema>;
 export type FriendsSections = z.infer<typeof FriendsSchema>;
 export type ChapterTextSections = z.infer<typeof ChapterSchema>;
 export type ChapterCardsSections = z.infer<typeof ChapterCardsSchema>;
+export type Situation = z.infer<typeof SituationSchema>;
+export type LifeSections = z.infer<typeof LifeCardsSchema>;
 export type ChapterSections = ChapterTextSections | ChapterCardsSections;
 export type PairSections = z.infer<typeof PairSchema>;
 export type ReportSections = { full: FullSections; friends: FriendsSections; pair: PairSections } & Record<ChapterKind, ChapterSections>;
@@ -70,6 +75,11 @@ export function parseSections<K extends ReportKind>(kind: K, value: unknown): Re
 
 export function parseChapterCards(value: unknown): ChapterCardsSections | null {
   const parsed = ChapterCardsSchema.safeParse(value);
+  return parsed.success ? parsed.data : null;
+}
+
+export function parseLifeCards(value: unknown): LifeSections | null {
+  const parsed = LifeCardsSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
 }
 

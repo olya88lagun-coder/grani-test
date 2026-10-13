@@ -1,4 +1,6 @@
+import { traitBlock } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
+import { traitLevel } from "@grani/core";
 import { describe, expect, test } from "vitest";
 import { assembleChapterCards, blockTexts, buildChapterPartPrompt, partSeeds, validateOverview, validateSituations, type ChapterCardsContext } from "./chapter-cards";
 import { SAMPLE_SCORES, sampleOverview, sampleSituation } from "./testing";
@@ -216,5 +218,34 @@ describe("assembleChapterCards", () => {
     const twin = { ...sampleSituation(SEEDS_B[0]!), title: sampleSituation(SEEDS_A[0]!).title };
 
     expect(assembleChapterCards(overview, part(SEEDS_A), { situations: [twin, ...part(SEEDS_B).situations.slice(1)] })).toBeNull();
+  });
+});
+
+describe("life situations", () => {
+  const LIFE: ChapterCardsContext = { library: getLibrary(), kind: "life", result: SAMPLE_SCORES };
+
+  test("five themes go in two groups, three and two", () => {
+    expect(partSeeds("life", "situations_a").map((seed) => seed.id)).toEqual(["change", "critique", "deadline"]);
+    expect(partSeeds("life", "situations_b").map((seed) => seed.id)).toEqual(["talk", "method"]);
+    expect(partSeeds("life", "overview")).toEqual([]);
+  });
+
+  test("the prompt carries the life themes and, per trait, the work, conflict and stress blocks", () => {
+    const prompt = buildChapterPartPrompt("situations_b", LIFE);
+    const user = JSON.parse(prompt.user) as { chapter: string; seeds: { id: string }[]; blocks: Record<string, string> };
+
+    expect(user.chapter).toBe("Жизненные ситуации");
+    expect(user.seeds.map((seed) => seed.id)).toEqual(["talk", "method"]);
+    expect(Object.keys(user.blocks)).toHaveLength(5);
+    const level = traitLevel(SAMPLE_SCORES.scores.openness);
+    expect(user.blocks.openness).toBe((["work", "conflict", "stress"] as const).map((section) => traitBlock(getLibrary(), "openness", level, section)).join("\n\n"));
+    expect(blockTexts(LIFE)).toHaveLength(5);
+  });
+
+  test("a chapter prompt is unchanged: one section per trait", () => {
+    const user = JSON.parse(buildChapterPartPrompt("situations_a", CTX).user) as { blocks: Record<string, string> };
+    const level = traitLevel(SAMPLE_SCORES.scores.openness);
+
+    expect(user.blocks.openness).toBe(traitBlock(getLibrary(), "openness", level, "money"));
   });
 });

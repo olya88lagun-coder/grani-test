@@ -1,4 +1,4 @@
-import { chapterSeeds } from "@grani/content";
+import { chapterSeeds, lifeSeeds } from "@grani/content";
 import { CHAPTER_KINDS, type Trait } from "@grani/core";
 import type { ChapterPart } from "./chapter-cards";
 import type { ReportWriter } from "./generate";
@@ -36,12 +36,20 @@ const SAMPLE_ACTIONS = [
   "Перед встречей с друзьями решите, кто как платит, и закрепите это одним сообщением.",
 ] as const;
 
+// Совет для каждой из пяти ситуаций «В жизни». «critique» совпадает с темой главы «Конфликты» и берёт её совет: внутри одного отчёта советы всё равно разные
+const LIFE_SAMPLE_ACTIONS: Readonly<Record<string, string>> = {
+  change: "Когда план сорвался, выпиши три обязательных пункта и один, который можно сдвинуть на неделю.",
+  deadline: "За два дня до срока отдели то, без чего нельзя сдать, и закрой это первым, остальное запиши на потом.",
+  talk: "Перед разговором запиши одну главную мысль и первую фразу и скажи её в первые полминуты встречи.",
+  method: "Выбери один небольшой участок работы и попробуй чужой способ только на нём, потом сравни результат.",
+};
+
 const actionFor = (seedId: string): string | undefined => {
   for (const kind of CHAPTER_KINDS) {
     const index = chapterSeeds(kind).findIndex((seed) => seed.id === seedId);
     if (index >= 0) return SAMPLE_ACTIONS[index];
   }
-  return undefined;
+  return LIFE_SAMPLE_ACTIONS[seedId];
 };
 
 export function sampleSituation(seed: { id: string; title: string }) {
@@ -59,7 +67,7 @@ export function sampleSituation(seed: { id: string; title: string }) {
 type Step = string | Error | "hang";
 
 // Определяет часть по первой теме входа: пустой список — обзор, первая тема главы — группа A, иначе группа B
-const FIRST_SEEDS: ReadonlySet<string> = new Set(CHAPTER_KINDS.map((kind) => chapterSeeds(kind)[0]!.id));
+const FIRST_SEEDS: ReadonlySet<string> = new Set([...CHAPTER_KINDS.map((kind) => chapterSeeds(kind)[0]!.id), lifeSeeds()[0]!.id]);
 
 function partOf(prompt: Prompt): ChapterPart {
   const seeds = (JSON.parse(prompt.user) as { seeds: { id: string }[] }).seeds;
