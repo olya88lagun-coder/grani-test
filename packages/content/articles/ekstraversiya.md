@@ -4,6 +4,7 @@ description: Экстраверсия — это не про общительн�
 date: 2026-10-13
 tag: Личность
 image: /home/article-extrovert.webp
+imageAlt: Светлая изумрудная фигура на тёмном постаменте с золотой подсветкой
 status: published
 reviewed: true
 canonical: /articles/ekstraversiya
