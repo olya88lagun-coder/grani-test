@@ -94,15 +94,19 @@ describe("runGenerate", () => {
     expect(JSON.parse(stub.calls[0]!.user)).not.toHaveProperty("seeds");
   });
 
-  test("other chapters stay in the old format even with the flag", async () => {
-    const stub = oldFormatWriter("chapter_stress");
-    deps.writer = stub;
-    deps.chapterCardsV2 = true;
+  test("every chapter is written as cards with the flag", async () => {
+    for (const kind of ["chapter_conflict", "chapter_stress", "chapter_relationships"] as const) {
+      const stub = cardsStubWriter();
+      deps.writer = stub;
+      deps.chapterCardsV2 = true;
 
-    await runGenerate({ kind: "chapter_stress", resultId: anna.resultId }, deps);
+      await runGenerate({ kind, resultId: anna.resultId }, deps);
 
-    expect(stub.calls).toHaveLength(1);
-    expect(JSON.parse(stub.calls[0]!.user)).not.toHaveProperty("seeds");
+      expect(stub.calls, kind).toHaveLength(3);
+      const report = await getReport(db, { resultId: anna.resultId }, kind);
+      expect(report?.source, kind).toBe("ai");
+      expect(parseSections(kind, report?.sections), kind).toHaveProperty("situations");
+    }
   });
 
   test("the friends section waits for the paid full report and three friends", async () => {

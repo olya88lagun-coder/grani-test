@@ -1,4 +1,5 @@
-import type { Trait } from "@grani/core";
+import { chapterSeeds } from "@grani/content";
+import { CHAPTER_KINDS, type Trait } from "@grani/core";
 import type { ChapterPart } from "./chapter-cards";
 import type { ReportWriter } from "./generate";
 import type { PersonalScores } from "./input";
@@ -25,14 +26,22 @@ export function sampleOverview() {
   };
 }
 
-// У каждой темы свой совет: проверка повторов не должна видеть в тестовых карточках одно и то же
-const SAMPLE_ACTIONS: Record<string, string> = {
-  help: "Перед следующей просьбой о деньгах назови вслух сумму, которую готов дать, и срок возврата.",
-  surprise: "Открой заметку и выпиши три ближайших обязательных платежа, чтобы видеть запас до зарплаты.",
-  mood: "Когда захочется купить для настроения, поставь таймер на сутки и реши только после него.",
-  new: "Найди одну альтернативу незнакомому предложению и сравни условия по двум пунктам.",
-  periods: "Раз в неделю по воскресеньям смотри на баланс карты десять минут и не больше.",
-  shared: "Перед встречей с друзьями решите, кто как платит, и закрепите это одним сообщением.",
+// Своя формулировка совета у каждой из шести тем главы: проверка повторов не должна видеть в тестовых карточках одно и то же
+const SAMPLE_ACTIONS = [
+  "Перед следующей просьбой о деньгах назови вслух сумму, которую готов дать, и срок возврата.",
+  "Открой заметку и выпиши три ближайших обязательных платежа, чтобы видеть запас до зарплаты.",
+  "Когда захочется купить для настроения, поставь таймер на сутки и реши только после него.",
+  "Найди одну альтернативу незнакомому предложению и сравни условия по двум пунктам.",
+  "Раз в неделю по воскресеньям смотри на баланс карты десять минут и не больше.",
+  "Перед встречей с друзьями решите, кто как платит, и закрепите это одним сообщением.",
+] as const;
+
+const actionFor = (seedId: string): string | undefined => {
+  for (const kind of CHAPTER_KINDS) {
+    const index = chapterSeeds(kind).findIndex((seed) => seed.id === seedId);
+    if (index >= 0) return SAMPLE_ACTIONS[index];
+  }
+  return undefined;
 };
 
 export function sampleSituation(seed: { id: string; title: string }) {
@@ -43,17 +52,19 @@ export function sampleSituation(seed: { id: string; title: string }) {
     why: "Здесь сходятся твои черты: осторожность и чуткость к людям подсказывают держаться знакомого, поэтому важно заранее знать свой ответ.",
     traits: ["agreeableness"] as Trait[],
     say: ["Мне нужно время подумать, отвечу завтра."],
-    do: SAMPLE_ACTIONS[seed.id] ?? `Выбери один шаг для темы «${seed.title}» и сделай его до конца недели.`,
+    do: actionFor(seed.id) ?? `Выбери один шаг для темы «${seed.title}» и сделай его до конца недели.`,
   };
 }
 
 type Step = string | Error | "hang";
 
-// Определяет часть по первой теме входа: пустой список — обзор, «help» — группа A, иначе группа B
+// Определяет часть по первой теме входа: пустой список — обзор, первая тема главы — группа A, иначе группа B
+const FIRST_SEEDS: ReadonlySet<string> = new Set(CHAPTER_KINDS.map((kind) => chapterSeeds(kind)[0]!.id));
+
 function partOf(prompt: Prompt): ChapterPart {
   const seeds = (JSON.parse(prompt.user) as { seeds: { id: string }[] }).seeds;
   if (seeds.length === 0) return "overview";
-  return seeds[0]!.id === "help" ? "situations_a" : "situations_b";
+  return FIRST_SEEDS.has(seeds[0]!.id) ? "situations_a" : "situations_b";
 }
 
 // Заглушка модели для глав-карточек: по умолчанию отвечает корректно, script задаёт цепочку ответов для части
