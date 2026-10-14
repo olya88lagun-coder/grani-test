@@ -26,6 +26,14 @@ describe("buildPortraitPrompt", () => {
     expect(prompt.system).toContain("Не пересказывай");
   });
 
+  test("tells the model how to write the headline without a gendered short adjective", () => {
+    const { system } = buildPortraitPrompt(CTX);
+
+    expect(system).toContain("Фразу-вывод");
+    expect(system).toContain("«Ты открываешься новому");
+    expect(system).toContain("«ты открыт»");
+  });
+
   test("the free texts never go into the prompt as material to retell", () => {
     const prompt = buildPortraitPrompt(CTX);
 
