@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-for (const width of [320, 375, 390, 1024, 1440]) {
+for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
   test('pricing: production layout and contracts at ' + width + 'px', async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -26,12 +26,19 @@ for (const width of [320, 375, 390, 1024, 1440]) {
     }
     const compare = await page.locator('[aria-labelledby="pair-products"]').boundingBox();
     const grid = await cards.first().boundingBox();
-    expect(compare!.y + compare!.height).toBeLessThanOrEqual(grid!.y);
-    if (width >= 760) {
-      const boxes = await Promise.all((await cards.all()).map(card => card.boundingBox()));
-      expect(boxes[0]!.y).toBe(boxes[1]!.y);
+    const example = page.getByRole('figure');
+    await expect(example.locator('figcaption')).toHaveText('Пример');
+    await expect(example.locator('img')).toHaveCount(2);
+    const exampleBox = await example.boundingBox();
+    expect(compare!.y).toBeGreaterThan(grid!.y + grid!.height);
+    const boxes = await Promise.all((await cards.all()).map(card => card.boundingBox()));
+    expect(boxes[1]!.y).toBeGreaterThanOrEqual(grid!.y + grid!.height);
+    if (width < 760) expect(exampleBox!.y).toBeGreaterThanOrEqual(grid!.y + grid!.height);
+    if (width >= 1100) {
+      expect(boxes[1]!.y).toBe(boxes[2]!.y);
       expect(boxes[2]!.y).toBe(boxes[3]!.y);
-      expect(boxes[0]!.width).toBeCloseTo(boxes[1]!.width, 0);
+      expect(boxes[1]!.width).toBeCloseTo(boxes[2]!.width, 0);
+      expect(boxes[0]!.width).toBeGreaterThan(boxes[1]!.width);
     }
 
     for (const gem of await page.locator('[data-gem-dir]').all()) {
