@@ -64,6 +64,37 @@ test.describe("cookie banner", () => {
   // Без заранее сделанного выбора — как у нового посетителя
   test.use({ storageState: { cookies: [], origins: [] } });
 
+  test("keeps compact, equal cookie choices across public page palettes", async ({ page }) => {
+    for (const width of [320, 390, 768, 1280]) {
+      await page.setViewportSize({ width, height: 844 });
+      for (const route of ["/", "/pricing", "/types", "/compatibility", "/together", "/articles", "/test"]) {
+        await page.goto(route);
+        const banner = page.getByRole("dialog", { name: "Cookie" });
+        await expect(banner).toBeVisible();
+        await page.evaluate(() => document.fonts.ready);
+        const dimensions = await banner.evaluate(element => {
+          const buttons = Array.from(element.querySelectorAll("button"));
+          return {
+            height: element.getBoundingClientRect().height,
+            fontSize: parseFloat(getComputedStyle(element).fontSize),
+            buttons: buttons.map(button => ({ height: button.getBoundingClientRect().height, width: button.getBoundingClientRect().width, background: getComputedStyle(button).backgroundColor, color: getComputedStyle(button).color })),
+          };
+        });
+        if (width === 390) expect(dimensions.height).toBeLessThanOrEqual(120);
+        expect(dimensions.fontSize).toBeGreaterThanOrEqual(13);
+        expect(dimensions.buttons).toHaveLength(2);
+        expect(dimensions.buttons[0]!.height).toBeGreaterThanOrEqual(44);
+        expect(dimensions.buttons[1]).toEqual(dimensions.buttons[0]);
+        await expect(banner.getByRole("link", { name: "политике" })).toHaveAttribute("href", "/privacy");
+        for (const button of await banner.getByRole("button").all()) {
+          await button.focus();
+          await expect(button).toBeFocused();
+          await expect(button).toHaveCSS("outline-style", "solid");
+        }
+      }
+    }
+  });
+
   test("loads nothing until accepted and can be reopened from the footer", async ({ page }) => {
     const metrika: string[] = [];
     page.on("request", (request) => {

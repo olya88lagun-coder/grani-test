@@ -1,6 +1,7 @@
 import { CHAPTER_TITLES } from "@grani/content";
 import { CHAPTER_KINDS, formatRub, PRODUCT_PRICES, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/core";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "./pricing.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
@@ -49,7 +50,7 @@ export default function PricingPage() {
       </section>
       <article className="page page--wide stack pricing-page">
 
-        <div className={`pricing-grid ${styles.grid}`}>
+        <div className={styles.featured}>
           <section className="card stack pricing-card pricing-card--featured" data-band="night" aria-labelledby="price-full">
             <p className="eyebrow">Главное</p>
             <h2 id="price-full">Полный разбор личности</h2>
@@ -65,11 +66,26 @@ export default function PricingPage() {
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            <p className="muted">
-              Без доплаты: раздел «Как меня видят другие» — он появляется, когда на вопросы о вас ответят трое друзей, и в цену разбора не входит.
+            <p className={`muted ${styles.included}`}>
+              <strong>Без доплаты:</strong> раздел «Как меня видят другие» — он появляется, когда на вопросы о вас ответят трое друзей, и в цену разбора не входит.
             </p>
 
           </section>
+
+          <figure className={styles.example}>
+            <figcaption>Пример</figcaption>
+            <div className={styles.examplePages}>
+              <a className={styles.portraitExample} href="/pricing/portrait-example-v1.webp" target="_blank" rel="noopener noreferrer">
+                <Image src="/pricing/portrait-example-v1.webp" alt="Портрет" width={1124} height={1328} sizes="(max-width: 759px) calc(100vw - 74px), (max-width: 1099px) 43vw, 440px" />
+              </a>
+              <a className={styles.lifeExample} href="/pricing/life-example-v1.webp" target="_blank" rel="noopener noreferrer">
+                <Image src="/pricing/life-example-v1.webp" alt="В жизни" width={554} height={672} sizes="(max-width: 759px) calc(100vw - 74px), (max-width: 1099px) 43vw, 280px" />
+              </a>
+            </div>
+          </figure>
+        </div>
+
+        <div className={`pricing-grid ${styles.grid}`}>
 
           <section className="card stack pricing-card pricing-card--pair" data-band="night" aria-labelledby="price-pair">
             <p className="eyebrow">Для двоих</p>
@@ -86,7 +102,7 @@ export default function PricingPage() {
                 <li key={title}>{title}</li>
               ))}
             </ul>
-            <p className="muted">Разовая покупка без подписки. Совместная анкета и общие договорённости — по отдельному согласию обоих; базовый PDF доступен без них.</p>
+            <p className={`muted ${styles.included}`}><strong>Разовая покупка без подписки.</strong> Совместная анкета и общие договорённости — по отдельному согласию обоих; базовый PDF доступен без них.</p>
           </section>
 
           <section className="card stack pricing-card pricing-card--pair" data-band="night" aria-labelledby="price-together">
@@ -123,12 +139,15 @@ export default function PricingPage() {
           </section>
         </div>
 
-        <PairProductsCompare headingId="pair-products" prices={{ compatibility: formatRub(PRODUCT_PRICES.pair), together: `${formatRub(TOGETHER_PRICE_KOPECKS)} за ${TOGETHER_PERIOD_DAYS} дней` }} />
-
-        <p className="muted pricing-page__terms">
+        <div className={styles.trust}>
+          <svg aria-hidden="true" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M12 3 4 6v6c0 4 8 9 8 9s8-5 8-9V6l-8-3Z" /><path d="m8 12 3 3 5-6" /></svg>
+          <p className="muted pricing-page__terms">
           Оплата картой через ЮKassa, чек самозанятого из «Мой налог» оформляется после оплаты. Разбор появляется на сайте через пару минут после оплаты. Условия и возвраты — в{" "}
           <Link href="/offer">оферте</Link>.
         </p>
+        </div>
+
+        <PairProductsCompare headingId="pair-products" prices={{ compatibility: formatRub(PRODUCT_PRICES.pair), together: `${formatRub(TOGETHER_PRICE_KOPECKS)} за ${TOGETHER_PERIOD_DAYS} дней` }} />
       </article>
     </main>
   );
