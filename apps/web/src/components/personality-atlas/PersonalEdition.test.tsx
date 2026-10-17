@@ -15,6 +15,11 @@ const baseView:ReportPageView={full,life:null,portrait:null,friends:{state:"wait
 const props={resultId:"owned-result",displayName:"Реальный владелец",typeName:"Искра",model,initialDraft:{revision:0,updatedAt:null,data:initialAtlasData(model)},view:baseView,moneyPracticeAvailable:false};
 
 describe("personal edition contracts",()=>{
+  test("the name in the cover label is not put after a preposition, so it never needs a case ending",()=>{
+    const html=renderToStaticMarkup(<PersonalEdition {...props}/>);
+    expect(html).toContain("Личное издание · Реальный владелец");
+    expect(html).not.toContain("Личное издание для");
+  });
   test("shows stored paid content and all real scores without publishing the demo persona",()=>{
     const html=renderToStaticMarkup(<PersonalEdition {...props}/>);
     expect(html).toContain(full.portrait);expect(html).toContain(full.manual.work[0]);expect(html).toContain(full.blind_spots[0]!.tip);
