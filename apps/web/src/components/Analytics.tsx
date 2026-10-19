@@ -5,17 +5,19 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   ANALYTICS_READY_EVENT,
+  analyticsHitPath,
   COOKIE_SETTINGS_EVENT,
   isOwnerDevice,
   LOGIN_MARK,
   METRIKA_ID,
+  notifyAnalyticsReady,
   reachGoal,
   readChoice,
-  sanitizePath,
   sanitizeReferrer,
   saveChoice,
   type CookieChoice,
 } from "@/lib/analytics";
+import { flushPurchaseGoals, forgetPurchaseGoals } from "@/lib/purchase-analytics";
 import { SITE_URL } from "@/lib/site";
 
 type YmWindow = Window & { ym?: ((...args: unknown[]) => void) & { a?: unknown[][]; l?: number } };
@@ -35,6 +37,7 @@ function loadMetrika(): void {
   const script = document.createElement("script");
   script.async = true;
   script.src = "https://mc.yandex.ru/metrika/tag.js";
+  script.onload = notifyAnalyticsReady;
   document.head.appendChild(script);
   // defer: просмотры отправляем сами, с очищенным адресом
   ym(METRIKA_ID, "init", { defer: true, clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: false });
@@ -44,7 +47,7 @@ function sendHit(pathname: string): void {
   const ym = (window as YmWindow).ym;
   if (!ym) return;
   const origin = window.location.origin;
-  ym(METRIKA_ID, "hit", `${origin}${sanitizePath(pathname)}`, { referer: sanitizeReferrer(document.referrer, origin) });
+  ym(METRIKA_ID, "hit", `${origin}${analyticsHitPath(pathname, window.location.search)}`, { referer: sanitizeReferrer(document.referrer, origin) });
 }
 
 function takeLoginMark(): void {
@@ -66,20 +69,28 @@ export function Analytics() {
     setChoice(saved);
     setOpen(saved === null);
     const reopen = () => setOpen(true);
+    const flush = () => { void flushPurchaseGoals(); };
     window.addEventListener(COOKIE_SETTINGS_EVENT, reopen);
-    return () => window.removeEventListener(COOKIE_SETTINGS_EVENT, reopen);
+    window.addEventListener(ANALYTICS_READY_EVENT, flush);
+    window.addEventListener("online", flush);
+    return () => {
+      window.removeEventListener(COOKIE_SETTINGS_EVENT, reopen);
+      window.removeEventListener(ANALYTICS_READY_EVENT, flush);
+      window.removeEventListener("online", flush);
+    };
   }, []);
 
   useEffect(() => {
     if (choice !== "all" || !isProductionHost() || isOwnerDevice(window.localStorage)) return;
     loadMetrika();
     loaded.current = true;
-    window.dispatchEvent(new Event(ANALYTICS_READY_EVENT));
+    void flushPurchaseGoals();
   }, [choice]);
 
   useEffect(() => {
     if (choice === undefined) return;
     if (loaded.current) sendHit(pathname);
+    if (loaded.current) void flushPurchaseGoals();
     takeLoginMark();
   }, [pathname, choice]);
 
@@ -90,6 +101,7 @@ export function Analytics() {
 
   function decide(next: CookieChoice) {
     saveChoice(window.localStorage, next);
+    if (next === "necessary") forgetPurchaseGoals();
     setOpen(false);
     // Загруженную Метрику не выгрузить — после отказа страница перезагружается без неё
     if (next === "necessary" && loaded.current) {

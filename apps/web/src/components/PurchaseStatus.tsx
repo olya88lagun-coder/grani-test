@@ -19,7 +19,7 @@ export function PurchaseStatus({ initial }: { initial: PurchaseView }) {
   const finished = stage === "ready" || stage === "not_paid" || stage === "refunded";
 
   useEffect(() => {
-    if (stage === "ready" || (view.product === "pair" && view.status === "succeeded")) markPurchase(view);
+    if (view.status === "succeeded") void markPurchase(view);
     if (stage === "ready") {
       router.replace(view.reportUrl);
       return;

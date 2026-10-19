@@ -41,6 +41,8 @@ export function clientKeyFromHeaders(headers: Headers): string {
 const PURCHASES_PER_MINUTE = 10;
 
 export const purchasesLimiter = createRateLimiter({ limit: PURCHASES_PER_MINUTE, windowMs: MINUTE_MS });
+// Проверки аналитики не расходуют бюджет начала оплаты.
+export const purchaseAnalyticsLimiter = createRateLimiter({ limit: 30, windowMs: MINUTE_MS });
 
 const TOGETHER_PER_MINUTE = 30;
 
