@@ -3,8 +3,8 @@ title: Низкая добросовестность: гибкость и рис
 description: Низкая добросовестность в Big Five означает меньшую склонность к жёсткому плану и правилам, а не лень. Разбираем её сильные стороны, реальные риски и как с ней жить без самокритики.
 date: 2026-10-13
 tag: Личность
-image: /home/article-extrovert.webp
-imageAlt: Свободно расставленные изумрудные фигуры разной формы без строгого порядка на тёмном постаменте
+image: /images/articles/nizkaya-dobrosovestnost.webp
+imageAlt: Шесть изумрудных геометрических фигур свободно расположены на мраморе рядом с извилистой золотой лентой.
 status: published
 reviewed: true
 canonical: /articles/nizkaya-dobrosovestnost

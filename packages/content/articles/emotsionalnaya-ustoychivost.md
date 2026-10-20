@@ -4,8 +4,8 @@ seoTitle: Эмоциональная устойчивость в Big Five
 description: Эмоциональная устойчивость в Big Five — склонность сохранять ясную голову под давлением и быстро возвращаться в равновесие после неудач. Разбираем, из чего она складывается и как читать свой балл.
 date: 2026-10-20
 tag: Личность
-image: /home/article-extrovert.webp
-imageAlt: Устойчивый изумрудный кристалл твёрдо стоит на тёмном постаменте под мягким светом
+image: /images/articles/emotsionalnaya-ustoychivost.webp
+imageAlt: Массивный изумрудный кристалл устойчиво стоит на мраморном постаменте среди потоков золотого света.
 status: published
 reviewed: true
 canonical: /articles/emotsionalnaya-ustoychivost

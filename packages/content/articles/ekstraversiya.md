@@ -3,8 +3,8 @@ title: Экстраверсия: как она проявляется
 description: Экстраверсия — это не про общительность саму по себе, а про то, какой темп и внешняя стимуляция нужны человеку. Разбираем, из чего состоит черта и что говорят об этом исследования.
 date: 2026-10-13
 tag: Личность
-image: /home/article-extrovert.webp
-imageAlt: Светлая изумрудная фигура на тёмном постаменте с золотой подсветкой
+image: /images/articles/ekstraversiya.webp
+imageAlt: Пять изумрудных фигур на открытом постаменте соединены расходящимися золотыми дугами.
 status: published
 reviewed: true
 canonical: /articles/ekstraversiya

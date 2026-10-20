@@ -3,8 +3,8 @@ title: Доброжелательность: доверие и мягкость
 description: Доброжелательность — черта Big Five о доверии к людям и готовности идти на уступки. Разбираем, из чего она состоит, где помогает, а где создаёт трение.
 date: 2026-10-16
 tag: Личность
-image: /home/article-extrovert.webp
-imageAlt: Два изумрудных кристалла мягко соприкасаются гранями на тёмном постаменте
+image: /images/articles/dobrozhelatelnost.webp
+imageAlt: Две изумрудные скульптуры мягко соприкасаются, соединённые золотой дугой.
 status: published
 reviewed: true
 canonical: /articles/dobrozhelatelnost
