@@ -8,7 +8,8 @@ type PaymentBody = {
   id?: unknown;
   status?: unknown;
   paid?: unknown;
-  amount?: { value?: unknown };
+  test?: unknown;
+  amount?: { value?: unknown; currency?: unknown };
   metadata?: { purchase_id?: unknown };
   confirmation?: { confirmation_url?: unknown };
 };
@@ -25,6 +26,8 @@ function parsePayment(body: PaymentBody): GatewayPayment {
     amountKopecks,
     purchaseId: typeof body.metadata?.purchase_id === "string" ? body.metadata.purchase_id : null,
     confirmationUrl: typeof body.confirmation?.confirmation_url === "string" ? body.confirmation.confirmation_url : null,
+    test: typeof body.test === "boolean" ? body.test : null,
+    currency: typeof body.amount?.currency === "string" ? body.amount.currency : null,
   };
 }
 

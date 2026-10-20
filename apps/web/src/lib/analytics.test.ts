@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CONSENT_KEY,
+  analyticsHitPath,
   GOALS,
   progressGoalsCrossed,
   goalForProduct,
@@ -82,6 +83,19 @@ describe("sanitizePath", () => {
     expect(sanitizePath("/privacy")).toBe("/privacy");
     expect(sanitizePath("/?deleted=1")).toBe("/");
     expect(sanitizePath("")).toBe("/");
+  });
+});
+
+describe("public campaign attribution", () => {
+  it("preserves only valid marketing tags on a public landing page", () => {
+    expect(analyticsHitPath("/big-five-test", "?utm_source=vk&utm_medium=social&utm_campaign=autumn&email=private%40example.ru&token=secret#from"))
+      .toBe("/big-five-test?utm_source=vk&utm_medium=social&utm_campaign=autumn");
+  });
+
+  it("keeps private pages anonymous and drops query data even when named as marketing tags", () => {
+    expect(analyticsHitPath(`/result/${UUID}`, "?utm_source=vk&token=secret")).toBe("/result/:id");
+    expect(analyticsHitPath("/big-five-test", "?utm_source=person%40example.ru&utm_campaign=https%3A%2F%2Fprivate.test")).toBe("/big-five-test");
+    expect(analyticsHitPath("/admin/receipts", "?utm_source=vk")).toBe("/admin/receipts");
   });
 });
 

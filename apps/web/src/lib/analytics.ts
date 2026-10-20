@@ -40,6 +40,17 @@ export function progressGoalsCrossed(before: number, after: number, total: numbe
 export const CONSENT_KEY = "grani-cookie-consent";
 export const COOKIE_SETTINGS_EVENT = "grani:cookie-settings";
 export const ANALYTICS_READY_EVENT = "grani:analytics-ready";
+type ReadyWindow = Window & { graniMetrikaReady?: boolean };
+
+// Событие означает загрузку SDK, а не только создание стандартной очереди ym.
+export function notifyAnalyticsReady(): void {
+  (window as ReadyWindow).graniMetrikaReady = true;
+  window.dispatchEvent(new Event(ANALYTICS_READY_EVENT));
+}
+
+export function isAnalyticsReady(win: Window): boolean {
+  return (win as ReadyWindow).graniMetrikaReady === true;
+}
 export type CookieChoice = "all" | "necessary";
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 
@@ -86,6 +97,23 @@ const PRIVATE_SEGMENTS = /^\/(result|report|pair|purchases|p|f|cards\/manual|dev
 export function sanitizePath(path: string): string {
   const [pathname] = path.split(/[?#]/);
   return (pathname || "/").replace(PRIVATE_SEGMENTS, (_, section: string) => `/${section}/:id`);
+}
+
+const PUBLIC_ENTRY = /^\/(?:$|big-five-test\/?$|articles(?:\/[a-z0-9-]+)?\/?$|types(?:\/[a-z0-9-]+)?\/?$|traits(?:\/[a-z0-9-]+)?\/?$|(?:about|pricing|compatibility|together)\/?$)/;
+const CAMPAIGN_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+const CAMPAIGN_VALUE = /^[\p{L}\p{N} ._~+-]{1,100}$/u;
+
+// Только маркетинговые метки публичного входа; приватные URL, email и токены остаются очищенными.
+export function analyticsHitPath(pathname: string, search: string): string {
+  const clean = sanitizePath(pathname);
+  if (!PUBLIC_ENTRY.test(clean)) return clean;
+  const input = new URLSearchParams(search.split("#")[0]);
+  const output = new URLSearchParams();
+  for (const key of CAMPAIGN_KEYS) {
+    const value = input.get(key);
+    if (value && CAMPAIGN_VALUE.test(value)) output.set(key, value);
+  }
+  return output.size ? `${clean}?${output}` : clean;
 }
 
 export function sanitizeReferrer(referrer: string, origin: string): string | undefined {

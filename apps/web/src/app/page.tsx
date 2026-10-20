@@ -17,7 +17,7 @@ import styles from "./home-refined.module.css";
 // две страницы под один запрос сменяли бы друг друга в выдаче
 const HOME_TITLE = "Грани — тест личности по модели Big Five";
 const HOME_DESCRIPTION =
-  "«Грани» — тест личности: твой тип из 16, пять черт характера, взгляд друзей со стороны и карточка для сторис. Бесплатно, 10 минут.";
+  "«Грани»: бесплатный тест личности, 50 утверждений и пять шкал Big Five. Тип и карточка результата за 10 минут. Просмотр результата — после входа через VK ID.";
 
 const HOME = publicMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" });
 
@@ -211,7 +211,7 @@ export default function HomePage() {
             </p>
             <div className="home-hero__actions">
               <Link className="button button--lg" href="/test">
-                Пройти тест <span aria-hidden="true">→</span>
+                Пройти тест бесплатно <span aria-hidden="true">→</span>
               </Link>
               <Link className={styles.secondaryAction} href="/big-five-test">о тесте Big Five</Link>
             </div>

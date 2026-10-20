@@ -6,6 +6,9 @@ export type GatewayPayment = {
   amountKopecks: number;
   purchaseId: string | null;
   confirmationUrl: string | null;
+  // Только для аналитики; отсутствие сведений не считается реальным платежом.
+  test?: boolean | null;
+  currency?: string | null;
 };
 export type CreatePaymentInput = { purchaseId: string; amountKopecks: number; description: string; returnUrl: string };
 export type PaymentGateway = {
