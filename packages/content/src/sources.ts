@@ -211,6 +211,7 @@ export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "nizkaya-dobrosovestnost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
   "dobrozhelatelnost": [DEYOUNG_2007, MALOUFF_2010, ROBERTS_2006],
   "nizkaya-dobrozhelatelnost": [DEYOUNG_2007, MALOUFF_2010, ROBERTS_2006],
+  "emotsionalnaya-ustoychivost": [DEYOUNG_2007, MALOUFF_2010, ROBERTS_2006],
 };
 
 // Источники гидов по чертам: из чего складывается черта (DeYoung), с чем связана в жизни (Soto),
