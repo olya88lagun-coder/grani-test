@@ -3,8 +3,8 @@ title: Нейротизм в Big Five и чувствительность
 description: Нейротизм в Big Five — шкала чувствительности к стрессу, а не оценка характера. Разбираем, из чего она складывается, где чувствительность работает в плюс и как читать свой балл без самокритики.
 date: 2026-10-20
 tag: Личность
-image: /home/article-extrovert.webp
-imageAlt: Два изумрудных кристалла разной прозрачности стоят рядом на тёмном постаменте
+image: /images/articles/neyrotizm-big-five.webp
+imageAlt: Два изумрудных кристалла разной прозрачности преломляют тонкие золотые волны света.
 status: published
 reviewed: true
 canonical: /articles/neyrotizm-big-five

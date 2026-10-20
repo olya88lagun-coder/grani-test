@@ -3,8 +3,8 @@ title: Низкая доброжелательность: прямота и гр
 description: Низкая доброжелательность в Big Five — это прямота, скепсис и готовность отстаивать позицию, а не плохой характер. Разбираем сильные стороны, риски и как жить с этой чертой спокойно.
 date: 2026-10-20
 tag: Личность
-image: /home/article-extrovert.webp
-imageAlt: Один гранёный изумрудный кристалл стоит отдельно от остальных на тёмном постаменте
+image: /images/articles/nizkaya-dobrozhelatelnost.webp
+imageAlt: Крупный изумрудный обелиск стоит отдельно от двух меньших за тонкой золотой границей.
 status: published
 reviewed: true
 canonical: /articles/nizkaya-dobrozhelatelnost
