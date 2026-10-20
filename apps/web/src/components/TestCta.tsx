@@ -7,10 +7,11 @@ export function TestCta({ title = "Узнай свой тип" }: { title?: stri
       <p>50 коротких утверждений по модели «Большая пятёрка»: тип, пять шкал и карточка для сторис.</p>
       <div className="row">
         <Link className="button" href="/test">
-          Пройти тест <span aria-hidden="true">→</span>
+          Пройти тест бесплатно <span aria-hidden="true">→</span>
         </Link>
         <span className="muted">10 минут, бесплатно</span>
       </div>
+      <p className="muted">Для просмотра и сохранения результата нужен вход через VK ID.</p>
     </section>
   );
 }

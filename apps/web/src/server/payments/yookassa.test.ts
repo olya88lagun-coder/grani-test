@@ -18,7 +18,7 @@ describe("createYooKassaGateway", () => {
 
     const payment = await gateway.createPayment({ purchaseId: "purchase-1", amountKopecks: 29900, description: "Полный разбор", returnUrl: "https://grani-test.ru/purchases/purchase-1" });
 
-    expect(payment).toEqual({ id: "2c5a-pay", status: "pending", paid: false, amountKopecks: 29900, purchaseId: "purchase-1", confirmationUrl: PAYMENT.confirmation.confirmation_url });
+    expect(payment).toEqual({ id: "2c5a-pay", status: "pending", paid: false, amountKopecks: 29900, purchaseId: "purchase-1", confirmationUrl: PAYMENT.confirmation.confirmation_url, test: null, currency: "RUB" });
     const [url, init] = fetchFn.mock.calls[0]!;
     expect(url).toBe(`${YOOKASSA_API_URL}/payments`);
     expect(init.headers).toMatchObject({ authorization: `Basic ${Buffer.from("123:test_secret").toString("base64")}`, "idempotence-key": "purchase-1" });
@@ -45,5 +45,10 @@ describe("createYooKassaGateway", () => {
     const gateway = createYooKassaGateway({ shopId: "1", secretKey: "s", fetchFn: vi.fn().mockResolvedValue(json({ id: 1 })) });
 
     await expect(gateway.getPayment("x")).rejects.toThrow(/malformed/);
+  });
+
+  test.each([true, false])("keeps the provider test=%s flag and currency for independent analytics verification", async (testMode) => {
+    const gateway = createYooKassaGateway({ shopId: "1", secretKey: "s", fetchFn: vi.fn().mockResolvedValue(json({ ...PAYMENT, test: testMode })) });
+    expect(await gateway.getPayment("2c5a-pay")).toMatchObject({ test: testMode, currency: "RUB" });
   });
 });
