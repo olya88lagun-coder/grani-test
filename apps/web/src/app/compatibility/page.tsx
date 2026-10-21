@@ -4,14 +4,37 @@ import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
 import styles from "./compatibility.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { JsonLd } from "@/components/JsonLd";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
 import { TestCta } from "@/components/TestCta";
 import { PAIR_GUIDE_CONTENTS } from "@/lib/pair-guide";
-import { publicMetadata } from "@/lib/seo";
+import { faqJsonLd, publicMetadata, webPageJsonLd } from "@/lib/seo";
 
 const DESCRIPTION = "Пройдите тест вдвоём и узнайте процент совместимости по Большой пятёрке. Бесплатно — типы обоих и процент, подробный разбор пары — по желанию.";
+const TITLE = "Тест на совместимость пары по Big Five";
+const PATH = "/compatibility";
 
-export const metadata = publicMetadata({ title: "Тест на совместимость пары", description: DESCRIPTION, path: "/compatibility" });
+export const metadata = publicMetadata({ title: TITLE, description: DESCRIPTION, path: PATH });
+
+// Ответы пересказывают то, что страница уже обещает выше: так вопросы и разметка не расходятся с продуктом.
+const FAQ = [
+  {
+    question: "Можно ли проверить совместимость, если партнёр не хочет проходить тест?",
+    answer: "Нет. Пара создаётся только с согласия партнёра: он проходит тот же тест и соглашается показать результат. Без этого сравнение не строится.",
+  },
+  {
+    question: "Сколько времени занимает тест на совместимость?",
+    answer: "Около 10 минут на каждого: 50 утверждений о привычном поведении по модели «Большая пятёрка». Сначала тест проходите вы, затем партнёр по ссылке-приглашению.",
+  },
+  {
+    question: "Что в тесте на совместимость бесплатно?",
+    answer: "Бесплатно видны типы обоих партнёров, процент совместимости и то, из чего он сложился. Подробный разбор пары — по желанию: одна оплата открывает его обоим, платит один.",
+  },
+  {
+    question: "Можно ли верить проценту совместимости?",
+    answer: "Процент показывает сочетание ваших профилей по пяти чертам, а не прогноз отношений. Его лучше использовать как повод поговорить о различиях, а не как оценку пары.",
+  },
+] as const;
 
 const labels = (traits: readonly (keyof typeof TRAIT_LABELS)[]) => traits.map((trait) => TRAIT_LABELS[trait].toLowerCase()).join(", ");
 
@@ -140,6 +163,19 @@ export default function CompatibilityPage() {
           </details>
         </section>
 
+        <section className={`${styles.more} ${styles.faq}`} aria-label="Вопросы о тесте на совместимость">
+          {FAQ.map((item) => (
+            <details key={item.question}>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </section>
+
+        <p className="muted">
+          О том, как черты характера влияют на отношения, — в статье <Link href="/articles/sovmestimost-par">«Совместимость в паре»</Link>.
+        </p>
+
         <PairProductsCompare
           headingId="pair-products"
           current="compatibility"
@@ -149,6 +185,8 @@ export default function CompatibilityPage() {
         <p className="muted">Процент — повод поговорить о том, как вы устроены, а не приговор отношениям.</p>
         <TestCta title="Начните с себя" />
         </div>
+        <JsonLd data={webPageJsonLd({ title: TITLE, description: DESCRIPTION, path: PATH })} />
+        <JsonLd data={faqJsonLd(FAQ)} />
       </article>
     </main>
   );
