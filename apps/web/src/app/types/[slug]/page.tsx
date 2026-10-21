@@ -28,7 +28,7 @@ function pageTexts(slug: string) {
   const code = typeBySlug(slug);
   if (!code) return null;
   const texts = typeTexts(getLibrary(), code);
-  return { code, texts, title: `${typeDisplayName(code)} — тип личности`, description: firstSentences(texts.short, 160) };
+  return { code, texts, title: `${typeDisplayName(code)} — тип личности по Big Five`, description: firstSentences(texts.short, 160) };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
