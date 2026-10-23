@@ -127,6 +127,8 @@ describe("goals", () => {
     expect(GOALS).toEqual([
       "test_start",
       "test_finish",
+      "login_consent",
+      "login_start",
       "login",
       "invite_shared",
       "pair_invite_shared",

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { reachGoal } from "@/lib/analytics";
 import styles from "./login.module.css";
 
 export function LoginPanel({ lead }: { lead: string }) {
@@ -18,6 +19,7 @@ export function LoginPanel({ lead }: { lead: string }) {
       const response = await fetch("/api/consent", { method: "POST" });
       if (!response.ok) throw new Error(`consent ${response.status}`);
       setReady(true);
+      reachGoal("login_consent");
     } catch {
       setError("Не получилось сохранить согласие. Проверьте интернет и попробуйте ещё раз.");
     } finally {
@@ -45,7 +47,7 @@ export function LoginPanel({ lead }: { lead: string }) {
       )}
 
       {ready && (
-        <a className={`button button--block ${styles.action}`} href="/api/auth/vk/start">
+        <a className={`button button--block ${styles.action}`} href="/api/auth/vk/start" onClick={() => reachGoal("login_start")}>
           Войти через VK ID
         </a>
       )}

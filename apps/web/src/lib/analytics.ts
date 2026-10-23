@@ -7,6 +7,9 @@ export const YANDEX_VERIFICATION = "358d0b8f55e03e89";
 export const GOALS = [
   "test_start",
   "test_finish",
+  // Шаги входа между концом теста и успешным входом: видно, где люди отваливаются — на согласии или уже на VK ID
+  "login_consent",
+  "login_start",
   "login",
   "invite_shared",
   "pair_invite_shared",
