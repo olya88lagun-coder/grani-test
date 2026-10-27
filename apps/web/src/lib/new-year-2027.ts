@@ -1,4 +1,5 @@
 import { TRAITS, traitLevel, type TraitScores } from "@grani/core";
+import { DEFAULT_FIRST_STEP, DEFAULT_IF_THEN, DIRECTION_WORDS, FALLBACK_WORD, leaveNote, recapLead, strengthNote } from "./new-year-copy";
 
 export const YEAR_VERSION = 1;
 export const QUESTION_IDS = ["recap", "gratitude", "release", "direction", "goal", "obstacle"] as const;
@@ -7,9 +8,14 @@ export type YearAnswers = Partial<Record<QuestionId, string>>;
 export const ANSWER_LIMIT = 300;
 export const cleanAnswer = (value: unknown): string => typeof value === "string" ? value.trim().slice(0, ANSWER_LIMIT) : "";
 
+export const WORD_LIMIT = 24;
+export const YEAR_WORDS = ["Спокойствие", "Смелость", "Близость", "Ритм", "Опора", "Лёгкость", "Любопытство", "Ясность"] as const;
+export const cleanWord = (value: unknown): string => typeof value === "string" ? value.replace(/\s+/g, " ").trim().slice(0, WORD_LIMIT) : "";
+export const isStockWord = (word: string): boolean => YEAR_WORDS.some((stock) => stock.toLowerCase() === word.trim().toLowerCase());
+
 export const QUESTIONS: readonly { id: QuestionId; title: string; hint: string; options: readonly string[] }[] = [
   { id: "recap", title: "Каким был твой 2026?", hint: "Не нужно подводить идеальные итоги. Выбери то, что ближе сейчас.", options: ["Год перемен", "Год маленьких побед", "Непростой год", "Год поиска себя"] },
-  { id: "gratitude", title: "За что скажешь себе спасибо?", hint: "Даже если это что-то совсем небольшое.", options: ["За то, что продолжал идти", "За заботу о себе", "За смелое решение", "За честность с собой"] },
+  { id: "gratitude", title: "За что скажешь себе спасибо?", hint: "Даже если это что-то совсем небольшое.", options: ["За упорство, когда было непросто", "За заботу о себе", "За смелое решение", "За честность с собой"] },
   { id: "release", title: "Что хочется оставить в 2026?", hint: "Не обещание навсегда. То, чему хочется давать меньше места.", options: ["Спешку", "Сравнение с другими", "Лишние обязательства", "Ожидание идеального момента"] },
   { id: "direction", title: "Чего хочется больше в 2027?", hint: "Одно направление. Его можно будет изменить.", options: ["Больше спокойствия", "Больше нового", "Больше близости", "Больше своего ритма"] },
   { id: "goal", title: "Какую одну цель возьмёшь с собой?", hint: "Что-то твоё, а не из списка чужих ожиданий.", options: ["Вернуться к любимому делу", "Освоить новый навык", "Наладить режим отдыха", "Чаще встречаться с близкими"] },
@@ -40,6 +46,7 @@ const RESPONSES: Record<string, string> = {
 export type YearMap = {
   title: string; direction: string; goal: string; firstStep: string; ifThen: string;
   supports: string[]; profileUsed: boolean; reflections: { id: QuestionId; label: string; text: string }[];
+  word: string; lead: string | null; strength: string | null; leave: { title: string; text: string } | null; answered: QuestionId[];
 };
 
 export function buildYearMap(input: YearAnswers, profile?: unknown): YearMap {
@@ -65,14 +72,17 @@ export function buildYearMap(input: YearAnswers, profile?: unknown): YearMap {
   // A specific goal takes priority over a broad direction: do not substitute a social action for an unrelated custom goal.
   const firstStep = answers.goal
     ? `Выдели 10 минут: запиши одно действие для цели «${goal}», которое можно выполнить за эти 10 минут. Назначь день и время.`
-    : direction?.step || "Выдели 10 минут: выбери одно важное для себя дело и запиши самый маленький шаг к нему.";
+    : direction?.step || DEFAULT_FIRST_STEP;
   const obstacle = answers.obstacle;
   return {
     title: direction?.title || "Место для своего", direction: answers.direction || "Свой посильный ритм", goal, firstStep,
     ifThen: obstacle ? `Если возникнет «${obstacle}», то я ${Object.hasOwn(RESPONSES, obstacle) ? RESPONSES[obstacle] : "уменьшу первый шаг до двух минут и выберу, когда вернуться к нему"}.`
-      : "Если план окажется слишком большим, то я уменьшу первый шаг до двух минут и попробую снова.",
+      : DEFAULT_IF_THEN,
     profileUsed, supports,
     reflections: QUESTIONS.filter((q) => answers[q.id]).map((q) => ({ id: q.id, label: q.title, text: answers[q.id] })),
+    word: Object.hasOwn(DIRECTION_WORDS, answers.direction) ? DIRECTION_WORDS[answers.direction]! : FALLBACK_WORD,
+    lead: recapLead(answers.recap), strength: strengthNote(answers.gratitude), leave: leaveNote(answers.release),
+    answered: QUESTION_IDS.filter((id) => answers[id]),
   };
 }
 
@@ -85,7 +95,8 @@ export function shareContent(map: YearMap, includePersonal: boolean, firstStep =
   };
 }
 
-export type YearEdits = { firstStep: string | null; ifThen: string | null };
+export type YearEdits = { firstStep: string | null; ifThen: string | null; word: string | null };
+export const EMPTY_EDITS: YearEdits = { firstStep: null, ifThen: null, word: null };
 export function parseYearDraft(raw: string | null): { answers: YearAnswers; step: number; result: boolean; edits: YearEdits; useProfile: boolean } | null {
   try {
     const data: unknown = JSON.parse(raw || "null");
@@ -95,6 +106,6 @@ export function parseYearDraft(raw: string | null): { answers: YearAnswers; step
     const edits = d.edits && typeof d.edits === "object" ? d.edits as Record<string, unknown> : {};
     return { answers: Object.fromEntries(QUESTION_IDS.map((key) => [key, cleanAnswer((d.answers as Record<string, unknown>)[key])])),
       step: typeof d.step === "number" && Number.isInteger(d.step) ? Math.max(0, Math.min(5, d.step)) : 0, result: d.result === true,
-      edits: { firstStep: typeof edits.firstStep === "string" ? edits.firstStep.slice(0, ANSWER_LIMIT) : null, ifThen: typeof edits.ifThen === "string" ? edits.ifThen.slice(0, ANSWER_LIMIT) : null }, useProfile: d.useProfile !== false };
+      edits: { firstStep: typeof edits.firstStep === "string" ? edits.firstStep.slice(0, ANSWER_LIMIT) : null, ifThen: typeof edits.ifThen === "string" ? edits.ifThen.slice(0, ANSWER_LIMIT) : null, word: cleanWord(edits.word) || null }, useProfile: d.useProfile !== false };
   } catch { return null; }
 }

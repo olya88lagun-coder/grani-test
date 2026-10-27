@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { buildYearMap, parseYearDraft, QUESTIONS, YEAR_VERSION, type YearAnswers, type YearEdits } from "@/lib/new-year-2027";
+import { buildYearMap, EMPTY_EDITS, parseYearDraft, QUESTIONS, YEAR_VERSION, type YearAnswers, type YearEdits } from "@/lib/new-year-2027";
 import { trackYearEvent } from "@/lib/new-year-analytics";
 import { validProfile } from "@/lib/new-year-2027";
 import type { YearProfile } from "@/server/new-year-profile";
 import { YearQuestion } from "./YearQuestion";
+import { YearLanding } from "./YearLanding";
 import { YearResult } from "./YearResult";
 import styles from "./new-year.module.css";
 
@@ -14,7 +15,7 @@ const DRAFT_KEY = "grani-new-year-2027-v1";
 export function YearExperience() {
   const [screen, setScreen] = useState<"intro" | "question" | "result">("intro");
   const [answers, setAnswers] = useState<YearAnswers>({});
-  const [edits, setEdits] = useState<YearEdits>({ firstStep: null, ifThen: null });
+  const [edits, setEdits] = useState<YearEdits>(EMPTY_EDITS);
   const [step, setStep] = useState(0);
   const [hydrated, setHydrated] = useState(false);
   const [storageUnavailable, setStorageUnavailable] = useState(false);
@@ -68,7 +69,7 @@ export function YearExperience() {
   }
   function restart() {
     try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* In-memory state is cleared too. */ }
-    setAnswers({}); setEdits({ firstStep: null, ifThen: null }); setStep(0); setScreen("intro"); setUseProfile(true); interacted.current = true;
+    setAnswers({}); setEdits(EMPTY_EDITS); setStep(0); setScreen("intro"); setUseProfile(true); interacted.current = true;
   }
   const map = buildYearMap(answers, useProfile && profile.status === "available" ? profile.scores : undefined);
   return (
@@ -87,15 +88,16 @@ export function YearExperience() {
           </div>
           <div className={styles.heroArt} aria-hidden="true"><Image src="/home/hero-crystal.webp" alt="" width={900} height={1080} priority sizes="(max-width: 700px) 260px, 480px" /><span className={styles.artCaption}>Всё важное уже есть в тебе</span></div>
         </section>
-        <section className={styles.introFoot} aria-label="О карте"><p>Твой год — не список достижений.<br /><span>Здесь можно отвечать как есть. И пропускать.</span></p><p>В конце — личная карта 2027:<br /><span>твои опоры, первый шаг и запасной план.</span></p></section>
+        <section className={styles.introFoot} aria-label="О карте"><p>Твой год — не список достижений.<br /><span>Здесь можно отвечать как есть. И пропускать.</span></p><p>В конце — личная карта 2027:<br /><span>слово года, опоры, первый шаг и запасной план.</span></p></section>
+        <YearLanding onStart={begin} disabled={!hydrated} />
       </> : screen === "question" ?
         <YearQuestion key={step} question={QUESTIONS[step]!} step={step} value={answers[QUESTIONS[step]!.id] || ""} titleRef={title} onChange={changeAnswer} onNext={advance} onBack={() => { interacted.current = true; if (step === 0) setScreen("intro"); else setStep(step - 1); }} />
-        : <YearResult map={map} edits={edits} onEdits={setEdits} titleRef={title} onEdit={() => { interacted.current = true; setStep(0); setScreen("question"); }} />}
+        : <YearResult map={map} edits={edits} onEdits={setEdits} titleRef={title} onEdit={() => { interacted.current = true; setStep(0); setScreen("question"); }} profileStatus={profile.status} />}
       <aside className={styles.privacy} aria-label="Приватность и профиль">
         <p>{storageUnavailable ? "Хранилище браузера недоступно. Ответы сохраняются только до перезагрузки страницы." : "Ответы хранятся только в этой вкладке браузера. На сервер они не отправляются."}</p>
         {profile.status === "loading" && <p role="status">Проверяем, есть ли твой профиль Big Five…</p>}
         {profile.status === "available" && <label className={styles.check}><input type="checkbox" checked={useProfile} onChange={(e) => setUseProfile(e.target.checked)} />Учитывать мой сохранённый профиль Big Five</label>}
-        {profile.status === "guest" && <p>Можно без входа. Уже проходил Big Five? <a href="/login">Войди через VK ID</a>, затем вернись сюда и <button className={styles.textButton} onClick={() => void loadProfile()}>обнови профиль</button>.</p>}
+        {profile.status === "guest" && <p>Можно без входа. Big Five уже пройден? <a href="/login">Войди через VK ID</a>, затем вернись сюда и <button className={styles.textButton} onClick={() => void loadProfile()}>обнови профиль</button>.</p>}
         {profile.status === "missing" && <p>Сохранённого Big Five пока нет. Карта будет опираться на твои ответы. <a href="/test">Пройти Big Five</a></p>}
         {profile.status === "unavailable" && <p role="status">Профиль сейчас недоступен. Можно продолжить по ответам. <button className={styles.textButton} onClick={() => void loadProfile()}>Проверить снова</button></p>}
         {screen !== "intro" && <button type="button" onClick={restart} className={styles.textButton}>Удалить ответы и начать заново</button>}

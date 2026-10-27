@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
 const evidence = path.resolve("test-results/new-year-evidence");
@@ -12,7 +12,7 @@ test("guest can skip everything, edit and clear the local draft", async ({ page 
   await open(page);
   await expect(page.getByRole("heading", { level: 1 })).toBeFocused();
   await skip(page);
-  await expect(page.getByText("Ты пропустил вопросы.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Вопросы пропущены.", { exact: false })).toBeVisible();
   await expect(page.getByLabel("Первый шаг — уточни под себя")).toHaveValue(/10 минут/);
   await expect(page.getByLabel("Превью share-карточки")).not.toContainText("Выбрать одну посильную цель");
   await page.getByLabel("Первый шаг — уточни под себя").fill("Мой сохранённый шаг");
@@ -150,3 +150,115 @@ for (const width of [320, 390, 768, 1024, 1440]) {
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   });
 }
+
+const next = (page: Page) => page.getByRole("button", { name: "Дальше", exact: true }).click();
+const pick = (page: Page, label: string) => page.getByLabel(label, { exact: true }).check();
+async function reachStockResult(page: Page) {
+  await open(page);
+  await pick(page, "Год перемен"); await next(page);
+  await pick(page, "За заботу о себе"); await next(page);
+  await pick(page, "Спешку"); await next(page);
+  await pick(page, "Больше нового"); await next(page);
+  await pick(page, "Освоить новый навык"); await next(page);
+  await pick(page, "Усталость");
+  await page.getByRole("button", { name: "Моя карта 2027" }).click();
+}
+const slide = (page: Page, kicker: string) => page.locator("li", { has: page.getByRole("button", { name: `Скачать «${kicker}»` }) });
+const pngSize = async (file: string) => { const buf = await readFile(file); return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) }; };
+
+test("landing explains the card, is indexable and carries FAQ markup", async ({ page }) => {
+  await page.goto("/new-year-2027");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveCount(1);
+  for (const name of ["Так выглядит карта", "Как это работает", "Это не гороскоп", "Частые вопросы"]) await expect(page.getByRole("heading", { name })).toBeVisible();
+  await expect(page.getByText("Демонстрационный пример", { exact: true })).toBeVisible();
+  await page.getByText("Где хранятся мои ответы?").click();
+  await expect(page.getByText("На сервер они не отправляются", { exact: false }).first()).toBeVisible();
+  expect(await page.locator('meta[name="robots"]').getAttribute("content")).not.toContain("noindex");
+  const types = await page.$$eval('script[type="application/ld+json"]', (nodes) => nodes.map((n) => JSON.parse(n.textContent || "{}")["@type"]));
+  expect(types).toContain("FAQPage");
+});
+
+test("release answer fades out, the map gains word, strength and what to leave", async ({ page }) => {
+  await open(page);
+  await pick(page, "Год перемен"); await next(page);
+  await pick(page, "За заботу о себе"); await next(page);
+  await pick(page, "Спешку"); await next(page);
+  await expect(page.getByRole("status").filter({ hasText: "Оставляем это в 2026" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Чего хочется больше в 2027?" })).toBeVisible();
+});
+
+test("reduced motion skips the pause", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await open(page);
+  await skip(page, 2);
+  await pick(page, "Спешку"); await next(page);
+  await expect(page.getByRole("heading", { name: "Чего хочется больше в 2027?" })).toBeVisible({ timeout: 400 });
+});
+
+test("result: word of the year, answer-shaped blocks, cards need consent when personal", async ({ page }) => {
+  await reachStockResult(page);
+  await expect(page.getByRole("heading", { name: "Место для нового", level: 1 })).toBeVisible();
+  // Hidden labels inside the card rail once widened the whole page on phones, which makes Chrome zoom out.
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  await expect(page.getByText("Слово 2027 — Любопытство", { exact: false }).first()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Что оставить в 2026", level: 3 })).toBeVisible();
+  await expect(page.getByText("Опора — умение помнить о заботе о себе", { exact: false }).first()).toBeVisible();
+  await page.getByRole("radio", { name: "Ясность" }).check();
+  await expect(page.getByText("Слово 2027 — Ясность", { exact: false }).first()).toBeVisible();
+  await expect(page.getByRole("list", { name: "Карточки карты" }).getByRole("listitem")).toHaveCount(5);
+  // A stock word card has no personal text and needs no consent; every card built from answers is locked until the person agrees.
+  await expect(slide(page, "Слово 2027").getByRole("button", { name: "Скачать «Слово 2027»" })).toBeEnabled();
+  for (const kicker of ["Моя опора", "Оставляю в 2026", "Мой первый шаг", "Если что-то помешает"]) {
+    await expect(slide(page, kicker).getByRole("button", { name: `Скачать «${kicker}»` })).toBeDisabled();
+  }
+  await page.getByRole("radio", { name: "Своё слово" }).check();
+  await page.getByLabel("Твоё слово").fill("Мой секрет");
+  await expect(slide(page, "Слово 2027").getByRole("button", { name: "Скачать «Слово 2027»" })).toBeDisabled();
+  // The typed word stays off the wallpaper, and the page says so.
+  await expect(page.getByRole("img", { name: /Превью обоев/ })).not.toHaveAttribute("aria-label", /Мой секрет/);
+  await expect(page.getByText("Своё слово на обои не попадает", { exact: false }).first()).toBeVisible();
+});
+
+test("blank step text falls back instead of producing an empty card, and a restored custom word does not grab focus", async ({ page }) => {
+  await reachStockResult(page);
+  await page.getByLabel("Первый шаг — уточни под себя").fill("");
+  await expect(slide(page, "Мой первый шаг").locator("[data-slide]")).toContainText("10 минут");
+  await page.getByRole("radio", { name: "Своё слово" }).check();
+  await page.getByLabel("Твоё слово").fill("Моё слово");
+  await page.reload();
+  await expect(page.getByLabel("Твоё слово")).toHaveValue("Моё слово");
+  await expect(page.getByLabel("Твоё слово")).not.toBeFocused();
+});
+
+test("cards and wallpaper download with the expected file names and sizes", async ({ page }) => {
+  await reachStockResult(page);
+  const wordDownload = page.waitForEvent("download");
+  await slide(page, "Слово 2027").getByRole("button", { name: "Скачать «Слово 2027»" }).click();
+  const word = await wordDownload;
+  expect(word.suggestedFilename()).toBe("moi-grani-2027-word.png");
+  await word.saveAs(path.join(evidence, "card-word.png"));
+  expect(await pngSize(path.join(evidence, "card-word.png"))).toEqual({ width: 1080, height: 1350 });
+
+  await slide(page, "Мой первый шаг").getByLabel("На картинке будет мой текст", { exact: false }).check();
+  const stepDownload = page.waitForEvent("download");
+  await slide(page, "Мой первый шаг").getByRole("button", { name: "Скачать «Мой первый шаг»" }).click();
+  const step = await stepDownload;
+  expect(step.suggestedFilename()).toBe("moi-grani-2027-step.png");
+  await step.saveAs(path.join(evidence, "card-step.png"));
+
+  const wallpaperDownload = page.waitForEvent("download");
+  await page.getByRole("button", { name: "Скачать обои" }).click();
+  const wallpaper = await wallpaperDownload;
+  expect(wallpaper.suggestedFilename()).toBe("moi-grani-2027-oboi.png");
+  await wallpaper.saveAs(path.join(evidence, "wallpaper.png"));
+  expect(await pngSize(path.join(evidence, "wallpaper.png"))).toEqual({ width: 1080, height: 2340 });
+  await expect(page.getByText("Обои скачаны.", { exact: false })).toBeVisible();
+});
+
+test("a chosen word survives reload, and the result points to the Big Five test", async ({ page }) => {
+  await reachStockResult(page);
+  await page.getByRole("radio", { name: "Смелость" }).check();
+  await page.reload();
+  await expect(page.getByText("Слово 2027 — Смелость", { exact: false }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Пройти тест Big Five/ })).toHaveAttribute("href", "/test");
+});

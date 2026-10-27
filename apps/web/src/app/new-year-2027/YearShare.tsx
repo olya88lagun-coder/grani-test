@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import { shareContent, type YearMap } from "@/lib/new-year-2027";
-import { trackYearEvent } from "@/lib/new-year-analytics";
 import styles from "./new-year.module.css";
 
 export function YearShare({ map, firstStep }: { map: YearMap; firstStep: string }) {
@@ -14,22 +13,11 @@ export function YearShare({ map, firstStep }: { map: YearMap; firstStep: string 
   async function exportCard(share: boolean) {
     setBusy(true); setMessage("");
     try {
-      const { renderYearShare, downloadYearShare } = await import("@/lib/new-year-share");
-      const blob = await renderYearShare(content);
-      const file = new File([blob], "moi-grani-2027.png", { type: "image/png" });
-      if (share && navigator.canShare?.({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file] });
-          trackYearEvent("new_year_share"); setMessage("Карточка передана выбранному приложению.");
-        } catch (error) {
-          if (error instanceof Error && error.name === "AbortError") throw error;
-          downloadYearShare(blob); trackYearEvent("new_year_download");
-          setMessage("Приложение не открылось. Карточка скачана — её можно отправить из файлов.");
-        }
-      } else {
-        downloadYearShare(blob); trackYearEvent("new_year_download");
-        setMessage(share ? "Карточка скачана. Её можно отправить из галереи или файлов." : "Карточка скачана на устройство.");
-      }
+      const { renderYearShare, deliverYearImage } = await import("@/lib/new-year-share");
+      const outcome = await deliverYearImage(await renderYearShare(content), "moi-grani-2027.png", share);
+      setMessage(outcome === "shared" ? "Карточка передана выбранному приложению."
+        : outcome === "fallback" ? "Приложение не открылось. Карточка скачана — её можно отправить из файлов."
+        : share ? "Карточка скачана. Её можно отправить из галереи или файлов." : "Карточка скачана на устройство.");
     } catch (error) {
       if (error instanceof Error && error.name === "AbortError") setMessage("Отправка отменена. Карточка остаётся здесь.");
       else setMessage("Не получилось сохранить карточку. Попробуй ещё раз или сделай снимок её превью.");
