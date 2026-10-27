@@ -202,6 +202,7 @@ export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "sovmestimost-par": [DYRENFORTH_2010, MALOUFF_2010],
   "big-five-v-otnosheniyah": [DYRENFORTH_2010, MALOUFF_2010],
   "kak-ponyat-partnera": [DYRENFORTH_2010, MALOUFF_2010],
+  "raznye-tempy-v-pare": [DYRENFORTH_2010, MALOUFF_2010],
   "test-lichnosti": [IPIP_2006, ROBERTS_DELVECCHIO_2000, PITTENGER_2005],
   "mbti-i-socionika": [MCCRAE_COSTA_1989, PITTENGER_2005, GOLDBERG_1992],
   temperament: [EYSENCK_1991, ROTHBART_2007],
