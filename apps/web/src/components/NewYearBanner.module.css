@@ -1,0 +1,15 @@
+.banner { display: flex; align-items: center; justify-content: space-between; gap: 32px; width: min(1120px, calc(100% - 48px)); margin: 28px auto; padding: 28px 32px; border: 1px solid rgba(205, 181, 123, .32); border-radius: 4px; background: #0a1f17; color: #efe9da; }
+.copy { min-width: 0; max-width: 680px; }
+.kicker { margin: 0 0 10px; color: #cdb57b; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; }
+.title { margin: 0; font-family: var(--font-display); font-size: clamp(30px, 4vw, 42px); font-weight: 400; line-height: 1.05; color: #efe9da; }
+.text { margin: 12px 0 0; color: #bac4b8; font-size: 14px; line-height: 1.7; }
+/* The home page colours every link (.home-page a:not(.button)), so the button needs a more specific selector for its own text colour. */
+.banner a.action:any-link { color: #0a1f17; }
+.action { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; gap: 24px; min-height: 52px; padding: 14px 24px; border: 1px solid #efe9da; border-radius: 4px; background: #efe9da; font-size: 14px; text-decoration: none; transition: background 160ms ease; }
+.action:hover { background: #fffaf0; }
+.action:focus-visible { outline: 2px solid #cdb57b; outline-offset: 4px; }
+@media (max-width: 700px) {
+  .banner { flex-direction: column; align-items: stretch; gap: 20px; width: calc(100% - 32px); margin-block: 20px; padding: 24px 20px; }
+  .action { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .action { transition: none; } }
