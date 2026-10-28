@@ -64,6 +64,7 @@ export function PUBLIC_PATHS(): string[] {
     "/traits",
     ...TRAIT_PAGES.map((page) => `/traits/${page.slug}`),
     "/compatibility",
+    "/new-year-2027",
     "/together",
     "/articles",
     ...getArticles().map((article) => article.canonical),
