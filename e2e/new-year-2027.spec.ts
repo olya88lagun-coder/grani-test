@@ -262,3 +262,17 @@ test("a chosen word survives reload, and the result points to the Big Five test"
   await expect(page.getByText("Слово 2027 — Смелость", { exact: false }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Пройти тест Big Five/ })).toHaveAttribute("href", "/test");
 });
+
+test("home page links to the special project and the button text is readable", async ({ page }) => {
+  await page.goto("/");
+  const banner = page.getByRole("region", { name: "Мои грани 2027" });
+  await expect(banner).toBeVisible();
+  const link = banner.getByRole("link", { name: /Собрать карту/ });
+  await expect(link).toHaveAttribute("href", "/new-year-2027");
+  // The home page colours links globally; the button once rendered cream text on a cream background.
+  const [text, background] = await link.evaluate((el) => [getComputedStyle(el).color, getComputedStyle(el).backgroundColor]);
+  expect(text).not.toBe(background);
+  await link.click();
+  await expect(page).toHaveURL(/\/new-year-2027$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+});

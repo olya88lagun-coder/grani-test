@@ -1,7 +1,7 @@
 import { isAnalyticsReady, isOwnerDevice, readChoice, METRIKA_ID } from "./analytics";
 import { SITE_URL } from "./site";
 
-export type YearEvent = "new_year_start" | "new_year_complete" | "new_year_download" | "new_year_share" | "new_year_wallpaper" | "new_year_to_test";
+export type YearEvent = "new_year_start" | "new_year_complete" | "new_year_download" | "new_year_share" | "new_year_wallpaper" | "new_year_to_test" | "new_year_banner";
 // Fixed event names only. Reflections, profile values and result identifiers are never analytics parameters.
 export function trackYearEvent(event: YearEvent): void {
   try {

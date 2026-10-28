@@ -9,6 +9,7 @@ import { gemAssetDir } from "@/lib/gem-assets";
 import { HomeHeader } from "@/components/PublicHeader";
 import { TestAccessNote } from "@/components/TestAccessNote";
 import { JsonLd } from "@/components/JsonLd";
+import { NewYearBanner } from "@/components/NewYearBanner";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
 import styles from "./home-refined.module.css";
@@ -223,6 +224,8 @@ export default function HomePage() {
           <CrystalScene />
         </div>
       </section>
+
+      <NewYearBanner />
 
       <section className="home-feature-strip" data-band="night" aria-label="Что даёт тест">
         {FEATURES.map((feature) => (
