@@ -191,7 +191,17 @@ const GRANT_2013: Source = {
   note: "в исследовании продавцов лучший результат показали люди со средней экстраверсией",
 };
 
+const WILMOT_2019_EXTRAVERSION: Source = {
+  authors: "Michael P. Wilmot, Connie R. Wanberg, John D. Kammeyer-Mueller, Deniz S. Ones",
+  year: 2019,
+  title: "Extraversion advantages at work: A quantitative review and synthesis of the meta-analytic evidence.",
+  journal: "Journal of Applied Psychology",
+  url: "https://doi.org/10.1037/apl0000415",
+  note: "небольшая средняя связь экстраверсии с рабочими показателями; общительность сама по себе даёт ограниченные преимущества",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "ekstraversiya-v-rabote": [WILMOT_2019_EXTRAVERSION, GRANT_2013],
   "dobrosovestnost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
   "nizkaya-otkrytost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
   "big-five": [GOLDBERG_1992, MCCRAE_COSTA_1997, ROBERTS_2006, SOTO_2019, IPIP_2006],
