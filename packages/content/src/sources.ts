@@ -201,6 +201,7 @@ const WILMOT_2019_EXTRAVERSION: Source = {
 };
 
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "introvert-na-rabote": [CHEEK_BUSS_1981, FLEESON_2001],
   "ekstraversiya-v-rabote": [WILMOT_2019_EXTRAVERSION, GRANT_2013],
   "dobrosovestnost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
   "nizkaya-otkrytost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
