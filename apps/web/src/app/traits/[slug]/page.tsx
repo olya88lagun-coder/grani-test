@@ -11,7 +11,7 @@ import { PersonalityReading } from "@/components/PersonalityReading";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
 import { articleCard } from "@/lib/article-visuals";
-import { articleDate, faqJsonLd, firstSentences, publicMetadata, TRAIT_PAGES, traitPageBySlug, traitPath, typePath, webPageJsonLd } from "@/lib/seo";
+import { articleDate, descriptionWithTail, faqJsonLd, publicMetadata, TRAIT_PAGES, traitPageBySlug, traitPath, typePath, webPageJsonLd } from "@/lib/seo";
 import { oppositePole, traitPageTitle, typeDisplayName, typesWithPole } from "@/lib/seo-pages";
 import styles from "../../personality.module.css";
 import trait from "../traits.module.css";
@@ -30,7 +30,7 @@ function pageTexts(slug: string) {
   const page = traitPageBySlug(slug);
   if (!page) return null;
   const intro = traitPageIntro(getLibrary(), page.trait, page.pole);
-  return { ...page, intro, guide: getTraitGuide(slug), title: traitPageTitle(page.trait, page.pole), description: firstSentences(intro, 160) };
+  return { ...page, intro, guide: getTraitGuide(slug), title: traitPageTitle(page.trait, page.pole), description: descriptionWithTail(intro, "Как черта проявляется в работе, отношениях и под стрессом.", 160) };
 }
 
 // Статьи, которые сами ссылаются на эту черту (любой её полюс), — самые близкие по теме

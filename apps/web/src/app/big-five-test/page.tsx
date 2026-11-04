@@ -1,4 +1,5 @@
 import { METHOD_SOURCES, TRAIT_LABELS } from "@grani/content";
+import Image from "next/image";
 import Link from "next/link";
 import { TestAccessNote } from "@/components/TestAccessNote";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -100,7 +101,7 @@ export default function BigFiveTestPage() {
           </div>
           <article className={styles.preview} aria-label="Пример результата теста">
             <div className={styles.art}>
-              <img src="/home/hero-crystal.webp" alt="" width={908} height={1062} loading="eager" decoding="async" />
+              <Image src="/home/hero-crystal.webp" alt="" width={145} height={170} loading="eager" />
             </div>
             <p className={styles.example}>Пример результата</p>
             <h2>5 черт + тип</h2>

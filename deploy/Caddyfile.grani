@@ -1,5 +1,5 @@
 grani-test.ru {
-	encode gzip
+	encode zstd gzip
 	reverse_proxy grani-web:3000
 }
 

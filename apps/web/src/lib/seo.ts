@@ -220,6 +220,13 @@ export function firstSentences(text: string, max: number): string {
   return out || cutByWords(flat, max);
 }
 
+// Короткий текст даёт пустой сниппет: дописываем, о чём страница, если хвост влезает в лимит
+export function descriptionWithTail(text: string, tail: string, max: number): string {
+  const head = firstSentences(text, max);
+  const full = `${head} ${tail}`;
+  return full.length <= max ? full : head;
+}
+
 export function articleDate(date: string): string {
   return new Date(`${date}T12:00:00Z`).toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Moscow" });
 }

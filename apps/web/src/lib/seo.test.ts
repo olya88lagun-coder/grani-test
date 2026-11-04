@@ -7,6 +7,7 @@ import {
   siteJsonLd,
   breadcrumbs,
   faqJsonLd,
+  descriptionWithTail,
   firstSentences,
   lastModified,
   llmsTxt,
@@ -184,6 +185,13 @@ describe("llmsTxt", () => {
 describe("articleDate", () => {
   it("formats a date in Russian", () => {
     expect(articleDate("2026-09-22")).toBe("22 сентября 2026 г.");
+  });
+});
+
+describe("descriptionWithTail", () => {
+  it("adds the tail only when it fits", () => {
+    expect(descriptionWithTail("Коротко.", "Хвост.", 160)).toBe("Коротко. Хвост.");
+    expect(descriptionWithTail("Коротко.", "Хвост.", 12)).toBe("Коротко.");
   });
 });
 

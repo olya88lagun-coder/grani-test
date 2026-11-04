@@ -15,6 +15,7 @@ const SECURITY_HEADERS = [
 
 // Картинки из public без хэша в имени: день держим в кэше, неделю отдаём старую, пока браузер проверяет новую
 const PUBLIC_IMAGE_CACHE = [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }];
+const PUBLIC_IMAGE_DIRS = ["home", "images", "og", "gems", "chapters", "compatibility", "life", "new-year-2027", "pair-map", "practice", "pricing", "report-personal-edition", "together"];
 
 // `next build` запускается из apps/web (pnpm --filter), корень монорепо — на два уровня выше
 const nextConfig: NextConfig = {
@@ -26,9 +27,8 @@ const nextConfig: NextConfig = {
   async headers() {
     return [
       { source: "/:path*", headers: SECURITY_HEADERS },
-      { source: "/home/:file*", headers: PUBLIC_IMAGE_CACHE },
-      { source: "/images/articles/:file*", headers: PUBLIC_IMAGE_CACHE },
-      { source: "/og/:file*", headers: PUBLIC_IMAGE_CACHE },
+      // Только файлы с расширением картинки: часть папок совпадает с адресами страниц (/together, /pricing), их кэшировать нельзя
+      ...PUBLIC_IMAGE_DIRS.map((dir) => ({ source: `/${dir}/:file(.+\\.(?:webp|png|jpg))`, headers: PUBLIC_IMAGE_CACHE })),
     ];
   },
 };

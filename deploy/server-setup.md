@@ -85,7 +85,7 @@ docker logs --since 5m grani-worker-1 2>&1 | grep '"worker started"'
 ```bash
 cd /opt/food-tracker-bot
 cp Caddyfile Caddyfile.bak-$(date +%Y%m%d%H%M%S)
-grep -q "grani-web:3000" Caddyfile || printf "\ngrani-test.ru {\n\tencode gzip\n\treverse_proxy grani-web:3000\n}\n" >> Caddyfile
+grep -q "grani-web:3000" Caddyfile || printf "\ngrani-test.ru {\n\tencode zstd gzip\n\treverse_proxy grani-web:3000\n}\n" >> Caddyfile
 docker exec food-tracker-bot-caddy-1 caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile \
   && docker exec food-tracker-bot-caddy-1 caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile
 curl -fsS https://grani-test.ru/api/health

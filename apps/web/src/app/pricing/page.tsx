@@ -9,7 +9,7 @@ import { publicMetadata } from "@/lib/seo";
 
 const DESCRIPTION = "Тест, тип и пять шкал — бесплатно. Платно — подробные разборы по результату: личный портрет, главы о деньгах, конфликтах, стрессе и отношениях, разбор пары, пространство «Вдвоём».";
 
-export const metadata = publicMetadata({ title: "Разборы и цены", description: DESCRIPTION, path: "/pricing" });
+export const metadata = publicMetadata({ title: "Платные разборы личности и цены", description: DESCRIPTION, path: "/pricing" });
 
 const FULL_SECTIONS = [
   "Портрет: как сочетаются твои черты",

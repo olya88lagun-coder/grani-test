@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { GemStone } from "./GemStone";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
@@ -27,10 +28,11 @@ export function GemPortrait({ dir, size, priority = false }: { dir: GemAssetDir;
       <span className={styles.fallback}>
         <GemStone shape={visual.shape} family={visual.family} size={size} />
       </span>
-      <img ref={imageRef} className={styles.photo} src={source} width={640} height={640} alt="" loading={priority ? "eager" : "lazy"} decoding="async" fetchPriority={priority ? "high" : undefined}
+      {/* key: при смене камня монтируется новый img, поэтому onLoad старого источника не придёт */}
+      <Image key={source} ref={imageRef} className={styles.photo} src={source} width={size} height={size} alt="" loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined}
         onLoad={(event) => {
           const image = event.currentTarget;
-          image.decode().catch(() => undefined).then(() => { if (image.naturalWidth > 0 && image.getAttribute("src") === source) setDecodedSource(source); });
+          image.decode().catch(() => undefined).then(() => { if (image.naturalWidth > 0) setDecodedSource(source); });
         }}
         onError={() => setDecodedSource(null)} />
       {/* The same small spark set is shared by every stone, separate from the raster. */}

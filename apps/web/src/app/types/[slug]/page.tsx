@@ -1,4 +1,4 @@
-import { ALL_TYPE_CODES } from "@grani/core";
+import { ALL_TYPE_CODES, TYPE_NAMES } from "@grani/core";
 import { TRAIT_LABELS, typeCodeToDir, typeTexts } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import type { Metadata } from "next";
@@ -10,7 +10,7 @@ import { PersonalityReading } from "@/components/PersonalityReading";
 import { TestCta } from "@/components/TestCta";
 import { GemPortrait } from "@/components/GemPortrait";
 import { gemAssetDir } from "@/lib/gem-assets";
-import { firstSentences, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath, webPageJsonLd } from "@/lib/seo";
+import { descriptionWithTail, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath, webPageJsonLd } from "@/lib/seo";
 import { POLE_WORDS, typeDisplayName, typePoles } from "@/lib/seo-pages";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 import styles from "../../personality.module.css";
@@ -28,7 +28,10 @@ function pageTexts(slug: string) {
   const code = typeBySlug(slug);
   if (!code) return null;
   const texts = typeTexts(getLibrary(), code);
-  return { code, texts, title: `${typeDisplayName(code)} — тип личности по Big Five`, description: firstSentences(texts.short, 160) };
+  // Обе формы названия, пока title с « — Грани» не длиннее 65 знаков, иначе выдача его обрежет
+  const both = `${typeDisplayName(code)} — тип личности по Big Five`;
+  const title = both.length <= 57 ? both : `${TYPE_NAMES[code].name} — тип личности по Big Five`;
+  return { code, texts, title, description: descriptionWithTail(texts.short, "Сильные стороны, слепые зоны, работа, отношения и совместимость.", 160) };
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

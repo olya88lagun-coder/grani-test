@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return user
     ? { title: "Ваше пространство", robots: { index: false, follow: false } }
     : publicMetadata({
-        title: "Вдвоём",
+        title: "Вдвоём — пространство для пары",
         description: "Общее пространство для двоих: небольшие разговоры и совместные занятия. Тест личности проходить не нужно.",
         path: "/together",
       });

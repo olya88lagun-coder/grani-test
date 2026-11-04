@@ -2,6 +2,7 @@ import { formatRub, PRODUCT_PRICES, type TypeCode } from "@grani/core";
 import { typeCodeToDir } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { GemPortrait } from "@/components/GemPortrait";
@@ -171,7 +172,7 @@ function CrystalScene() {
         <circle cx="260" cy="260" r="202" />
       </svg>
       <div className={styles.heroGem}>
-        <img src="/home/hero-gem.webp" width={900} height={900} alt="" fetchPriority="high" decoding="async" />
+        <Image src="/home/hero-gem.webp" width={900} height={900} alt="" loading="eager" fetchPriority="high" sizes="380px" />
         <svg className={styles.sheenLayer} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id="home-gem-cut"><polygon points={HERO_GEM_OUTLINE} /></clipPath>
