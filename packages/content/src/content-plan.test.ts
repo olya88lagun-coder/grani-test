@@ -3,9 +3,10 @@ import { getAllArticles } from "./data";
 import { CONTENT_PLAN, QUALITY_RULES, internalLinksForTopic, publishedCanonicalUrls, seoMetadataForTopic, topicsByStatus, validateContentPlan } from "./content-plan";
 
 describe("CONTENT_PLAN", () => {
-  it("holds a 50-70 URL queue", () => {
+  // Тестовые запросы («тест характера», «тест на интроверта») сняты с очереди: их забирает /big-five-test
+  it("holds a 45-70 URL queue", () => {
     validateContentPlan();
-    expect(CONTENT_PLAN.length).toBeGreaterThanOrEqual(50);
+    expect(CONTENT_PLAN.length).toBeGreaterThanOrEqual(45);
     expect(CONTENT_PLAN.length).toBeLessThanOrEqual(70);
   });
 
