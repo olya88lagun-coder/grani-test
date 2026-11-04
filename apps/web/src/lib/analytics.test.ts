@@ -171,4 +171,18 @@ describe("goals", () => {
     reachGoal("login");
     expect(ym).toHaveBeenCalledWith(METRIKA_ID, "reachGoal", "login", undefined);
   });
+
+  it("counts funnel steps on the site except on the owner's device", () => {
+    const sendBeacon = vi.fn();
+    const storage = new Map<string, string>();
+    const localStorage = { getItem: (key: string) => storage.get(key) ?? null, setItem: (key: string, value: string) => void storage.set(key, value) };
+    vi.stubGlobal("window", { navigator: { sendBeacon }, localStorage });
+    reachGoal("test_finish");
+    reachGoal("purchase_full");
+    expect(sendBeacon).toHaveBeenCalledTimes(1);
+    expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "test_finish");
+    markOwnerDevice(localStorage);
+    reachGoal("test_finish");
+    expect(sendBeacon).toHaveBeenCalledTimes(1);
+  });
 });

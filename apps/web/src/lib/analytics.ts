@@ -1,4 +1,4 @@
-import type { Product } from "@grani/core";
+import { isFunnelStep, type Product } from "@grani/core";
 
 // Номер счётчика и код Вебмастера видны в коде страницы любому, это не секреты
 export const METRIKA_ID = 112931559;
@@ -147,6 +147,8 @@ export function withLoginMark(path: string): string {
 type Ym = (id: number, method: string, ...args: unknown[]) => void;
 
 export function reachGoal(goal: Goal, params?: Record<string, string | number>): void {
-  const ym = (globalThis as { window?: { ym?: Ym } }).window?.ym;
-  ym?.(METRIKA_ID, "reachGoal", goal, params);
+  const win = (globalThis as { window?: { ym?: Ym; localStorage?: Storage; navigator?: Navigator } }).window;
+  win?.ym?.(METRIKA_ID, "reachGoal", goal, params);
+  // Свой счётчик шагов не зависит от согласия на cookie: он не хранит ничего, кроме числа за день
+  if (isFunnelStep(goal) && win?.navigator?.sendBeacon && !(win.localStorage && isOwnerDevice(win.localStorage))) win.navigator.sendBeacon("/api/funnel", goal);
 }

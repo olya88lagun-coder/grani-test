@@ -464,3 +464,10 @@ export const pairMapAgreementConfirmations = pgTable("pair_map_agreement_confirm
   revision: integer("revision").notNull(),
   confirmedAt: timestamp("confirmed_at", { withTimezone: true }).notNull(),
 }, t => [unique("pair_map_agreement_confirmations_author").on(t.agreementId, t.userId), check("pair_map_agreement_confirmations_revision", sql`${t.revision} > 0`)]);
+
+// Суточные счётчики шагов воронки без cookie и идентификаторов: видно всех, а не только принявших Метрику
+export const funnelDaily = pgTable("funnel_daily", {
+  day: text("day").notNull(),
+  step: text("step").notNull(),
+  count: integer("count").notNull().default(0),
+}, t => [unique("funnel_daily_day_step").on(t.day, t.step)]);

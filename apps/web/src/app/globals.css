@@ -1803,6 +1803,8 @@ body .page--result.stack > * + * { margin-top: 44px; }
 
 .receipts-steps { margin: 0; padding-left: 20px; display: grid; gap: 4px; color: var(--ink-soft); font-size: 14px; }
 .receipts-summary { margin: 0; font-family: var(--font-display); font-size: 28px; color: var(--accent); }
+.funnel-table { width: 100%; border-collapse: collapse; font-size: 14px; display: block; overflow-x: auto; }
+.funnel-table th, .funnel-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
 .receipt__waiting { font-size: 14px; color: var(--ink-soft); }
 .receipt__waiting--late { color: #8a2d3a; font-weight: 600; }
 .receipt__copies { display: flex; flex-wrap: wrap; gap: 8px; }
