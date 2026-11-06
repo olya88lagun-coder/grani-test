@@ -3,8 +3,8 @@ title: Как восстанавливаться интроверту
 description: Что попробовать после насыщенного общения и как понять, подходит ли тебе тишина, спокойное занятие или время с близким человеком.
 date: 2026-11-06
 tag: Психология
-image: /home/article-friends.webp
-imageAlt: Крупный изумрудный кристалл и треугольные осколки среди тонких золотых дуг
+image: /images/articles/kak-vosstanavlivatsya-introvertu.webp
+imageAlt: Сидящая изумрудная фигура отдыхает в тихой тёмной оранжерее внутри мягкого золотого свечения
 status: published
 reviewed: true
 canonical: /articles/kak-vosstanavlivatsya-introvertu

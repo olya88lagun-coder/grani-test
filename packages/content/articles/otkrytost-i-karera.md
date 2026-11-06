@@ -3,8 +3,8 @@ title: Открытость и карьера: идеи против рутин�
 description: Как открытость опыту связана с рабочим обучением и как понять, сколько новых задач и привычной работы тебе подходит.
 date: 2026-11-06
 tag: Работа
-image: /home/cover-work.webp
-imageAlt: Прямоугольный изумрудный кристалл на тёмной каменной поверхности с тонкой золотой линией
+image: /images/articles/otkrytost-i-karera.webp
+imageAlt: Изумрудная фигура стоит между строгой рабочей сеткой и пространством новых светящихся форм
 status: published
 reviewed: true
 canonical: /articles/otkrytost-i-karera

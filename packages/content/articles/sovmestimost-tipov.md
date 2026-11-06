@@ -3,8 +3,8 @@ title: Совместимость типов личности: что важно
 description: Что на самом деле означает совпадение или несовпадение типов личности и почему сочетание черт важнее, чем совпадение названия типа.
 date: 2026-10-23
 tag: Отношения
-image: /home/article-relationship.webp
-imageAlt: Две изумрудные фигуры стоят рядом на тёмном фоне с золотыми нитями света
+image: /images/articles/sovmestimost-tipov.webp
+imageAlt: Две разные изумрудные многогранные фигуры соединены общей золотой окружностью
 status: published
 reviewed: true
 canonical: /articles/sovmestimost-tipov

@@ -4,8 +4,8 @@ seoTitle: Экстраверсия в работе: общение и резул
 description: Как экстраверсия связана с работой и почему разговорчивость не равна эффективности. Примеры для совещаний, переговоров и самостоятельных задач.
 date: 2026-11-03
 tag: Работа
-image: /home/cover-work.webp
-imageAlt: Прямоугольный изумрудный кристалл на тёмной каменной поверхности с тонкой золотой линией
+image: /images/articles/ekstraversiya-v-rabote.webp
+imageAlt: Команда из изумрудных фигур за круглым столом, соединённая расходящимися золотыми линиями
 status: published
 reviewed: true
 canonical: /articles/ekstraversiya-v-rabote

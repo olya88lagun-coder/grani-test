@@ -3,8 +3,8 @@ title: Разный темп в паре: как договориться
 description: Что делать, если один из партнёров любит планировать заранее, а другой решает на ходу, или один заряжается от компании, а другой — от тишины, и как договориться о разном темпе без ссор.
 date: 2026-10-27
 tag: Отношения
-image: /home/article-relationship.webp
-imageAlt: Две изумрудные фигуры стоят рядом на тёмном фоне с золотыми нитями света
+image: /images/articles/raznye-tempy-v-pare.webp
+imageAlt: Две изумрудные фигуры движутся по разным круговым траекториям и встречаются у золотого моста
 status: published
 reviewed: true
 canonical: /articles/raznye-tempy-v-pare

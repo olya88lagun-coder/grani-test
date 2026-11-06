@@ -3,8 +3,8 @@ title: Личность и стресс: почему реакции разны�
 description: Почему похожие события вызывают разное напряжение и как отличить нагрузку дня от своей реакции. Что об этом говорят исследования Big Five и дневники стресса.
 date: 2026-11-06
 tag: Психология
-image: /home/article-friends.webp
-imageAlt: Крупный изумрудный кристалл и треугольные осколки среди тонких золотых дуг
+image: /images/articles/lichnost-i-stress.webp
+imageAlt: Устойчивая изумрудная фигура стоит на камне среди напряжённых волн золотого света
 status: published
 reviewed: true
 canonical: /articles/lichnost-i-stress

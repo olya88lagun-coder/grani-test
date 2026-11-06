@@ -50,10 +50,10 @@
 - Consumes: approved composition and shared visual system from the spec
 - Produces: one selected source image for every target slug
 
-- [ ] Generate one landscape raster image per slug with the built-in image tool.
-- [ ] Inspect each image for subject accuracy, duplicate compositions, accidental text and crop safety.
-- [ ] Regenerate only failed images with one targeted prompt change.
-- [ ] Save all 12 selected sources and a labelled contact sheet.
+- [x] Generate one landscape raster image per slug with the built-in image tool.
+- [x] Inspect each image for subject accuracy, duplicate compositions, accidental text and crop safety.
+- [x] Regenerate only failed images with one targeted prompt change.
+- [x] Save all 12 selected sources and a labelled contact sheet.
 
 ### Task 3: Normalize assets and connect front matter
 
@@ -66,11 +66,11 @@
 - Consumes: selected source images from Task 2
 - Produces: optimized production assets and article data
 
-- [ ] Center-crop sources to 16:9 only when needed, resize to 1600 × 900, convert to sRGB and export WebP.
-- [ ] Validate format, dimensions, colour mode, size and SHA-256 uniqueness with a machine-readable manifest.
-- [ ] Change only `image` and `imageAlt` in the 12 Markdown files.
-- [ ] Run `pnpm build:library` and verify only the intended generated article fields changed.
-- [ ] Run the focused cover test and confirm it passes.
+- [x] Center-crop sources to 16:9 only when needed, resize to 1600 × 900, convert to sRGB and export WebP.
+- [x] Validate format, dimensions, colour mode, size and SHA-256 uniqueness with a machine-readable manifest.
+- [x] Change only `image` and `imageAlt` in the 12 Markdown files.
+- [x] Run `pnpm build:library` and verify only the intended generated article fields changed.
+- [x] Run the focused cover test and confirm it passes.
 - [ ] Commit assets, front matter, generated data and test.
 
 ### Task 4: Verify the finished catalogue
