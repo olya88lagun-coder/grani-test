@@ -71,7 +71,7 @@
 - [x] Change only `image` and `imageAlt` in the 12 Markdown files.
 - [x] Run `pnpm build:library` and verify only the intended generated article fields changed.
 - [x] Run the focused cover test and confirm it passes.
-- [ ] Commit assets, front matter, generated data and test.
+- [x] Commit assets, front matter, generated data and test.
 
 ### Task 4: Verify the finished catalogue
 
@@ -83,9 +83,9 @@
 - Consumes: production assets and article data from Task 3
 - Produces: code, build and browser evidence
 
-- [ ] Run the article/content focused Vitest suites.
-- [ ] Run `pnpm typecheck`.
-- [ ] Run the Next.js production build.
-- [ ] Check all 12 catalogue cards, heroes, OG/Twitter metadata and image responses at 390, 768 and 1440 px.
-- [ ] Inspect the final contact sheet and representative desktop/mobile screenshots.
-- [ ] Run `git diff --check` and review the complete branch diff.
+- [x] Run the article/content focused Vitest suites.
+- [x] Run `pnpm typecheck`.
+- [x] Run the Next.js production build.
+- [x] Check all 12 catalogue cards, heroes, OG/Twitter metadata and image responses at 390, 768 and 1440 px.
+- [x] Inspect the final contact sheet and representative desktop/mobile screenshots.
+- [x] Run `git diff --check` and review the complete branch diff.
