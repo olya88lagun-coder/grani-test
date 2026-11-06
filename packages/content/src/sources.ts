@@ -218,7 +218,26 @@ const HUANG_2014: Source = {
   note: "открытость не помогла предсказать общий показатель адаптивного поведения на работе",
 };
 
+const LUO_2023: Source = {
+  authors: "Jing Luo, Bo Zhang, Mengyang Cao, Brent W. Roberts",
+  year: 2023,
+  title: "The Stressful Personality: A Meta-Analytical Review of the Relation Between Personality and Stress",
+  journal: "Personality and Social Psychology Review",
+  url: "https://doi.org/10.1177/10888683221104002",
+  note: "связи черт Big Five со стрессом различаются для событий, субъективной оценки и физиологической реакции",
+};
+
+const BOLGER_SCHILLING_1991: Source = {
+  authors: "Niall Bolger, Elizabeth A. Schilling",
+  year: 1991,
+  title: "Personality and the Problems of Everyday Life: The Role of Neuroticism In Exposure and Reactivity to Daily Stressors",
+  journal: "Journal of Personality",
+  url: "https://doi.org/10.1111/j.1467-6494.1991.tb00253.x",
+  note: "дневниковое исследование разделяет частоту повседневных стрессоров и силу реакции на них",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
   "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
   "introvert-na-rabote": [CHEEK_BUSS_1981, FLEESON_2001],
   "ekstraversiya-v-rabote": [WILMOT_2019_EXTRAVERSION, GRANT_2013],
