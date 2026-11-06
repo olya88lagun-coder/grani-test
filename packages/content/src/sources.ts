@@ -236,7 +236,26 @@ const BOLGER_SCHILLING_1991: Source = {
   note: "дневниковое исследование разделяет частоту повседневных стрессоров и силу реакции на них",
 };
 
+const LEIKAS_ILMARINEN_2017: Source = {
+  authors: "Sointu Leikas, Ville‐Juhani Ilmarinen",
+  year: 2017,
+  title: "Happy Now, Tired Later? Extraverted and Conscientious Behavior Are Related to Immediate Mood Gains, but to Later Fatigue",
+  journal: "Journal of Personality",
+  url: "https://doi.org/10.1111/jopy.12264",
+  note: "общительное поведение было связано с хорошим настроением в моменте и большей усталостью позже",
+};
+
+const NGUYEN_RYAN_DECI_2018: Source = {
+  authors: "Thuy-vy T. Nguyen, Richard M. Ryan, Edward L. Deci",
+  year: 2018,
+  title: "Solitude as an Approach to Affective Self-Regulation",
+  journal: "Personality and Social Psychology Bulletin",
+  url: "https://doi.org/10.1177/0146167217733073",
+  note: "уединение снижало интенсивность активных эмоций, а желание побыть одному было связано с расслабленностью",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
   "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
   "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
   "introvert-na-rabote": [CHEEK_BUSS_1981, FLEESON_2001],
