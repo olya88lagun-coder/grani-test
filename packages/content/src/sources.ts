@@ -200,7 +200,26 @@ const WILMOT_2019_EXTRAVERSION: Source = {
   note: "небольшая средняя связь экстраверсии с рабочими показателями; общительность сама по себе даёт ограниченные преимущества",
 };
 
+const BARRICK_MOUNT_1991: Source = {
+  authors: "MURRAY R. BARRICK, MICHAEL K. MOUNT",
+  year: 1991,
+  title: "THE BIG FIVE PERSONALITY DIMENSIONS AND JOB PERFORMANCE: A META‐ANALYSIS",
+  journal: "Personnel Psychology",
+  url: "https://doi.org/10.1111/j.1744-6570.1991.tb00688.x",
+  note: "открытость была связана с результатами обучения сотрудников в метаанализе, но не с другими обобщёнными рабочими показателями",
+};
+
+const HUANG_2014: Source = {
+  authors: "Jason L. Huang, Ann Marie Ryan, Keith L. Zabel, Ashley Palmer",
+  year: 2014,
+  title: "Personality and adaptive performance at work: A meta-analytic investigation.",
+  journal: "Journal of Applied Psychology",
+  url: "https://doi.org/10.1037/a0034285",
+  note: "открытость не помогла предсказать общий показатель адаптивного поведения на работе",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
   "introvert-na-rabote": [CHEEK_BUSS_1981, FLEESON_2001],
   "ekstraversiya-v-rabote": [WILMOT_2019_EXTRAVERSION, GRANT_2013],
   "dobrosovestnost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],
