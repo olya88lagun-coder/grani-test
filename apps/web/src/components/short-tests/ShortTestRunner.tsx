@@ -12,6 +12,7 @@ import styles from "./short-tests.module.css";
 // Цели воронки по slug теста; новый тест добавляет сюда свою пару
 const GOALS: Readonly<Record<string, { start: Goal; finish: Goal }>> = {
   attachment: { start: "attachment_start", finish: "attachment_finish" },
+  temperament: { start: "temperament_start", finish: "temperament_finish" },
 };
 
 function read(key: string): string | null {

@@ -66,6 +66,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
                 <li key={word}>{word}</li>
               ))}
             </ul>
+            <p className="result-temperament">
+              Темперамент: <Link href={view.temperament.path}>{view.temperament.name}</Link> · <Link href="/temperament">пройти тест на темперамент</Link>
+            </p>
             <div className="result-hero__actions">
               {reportOpen ? (
                 <Link className="button" href={`/report/${result.id}`}>

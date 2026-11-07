@@ -9,9 +9,12 @@
 }
 .hero[data-band] {
   --hero-gutter: clamp(16px, 4vw, 48px);
+  border-bottom: 1px solid var(--line);
+  background: radial-gradient(ellipse at 76% 48%, var(--surface-3), transparent 56%), var(--bg);
+}
+.hero.heroWithImage[data-band] {
   position: relative;
   isolation: isolate;
-  border-bottom: 1px solid var(--line);
   background: var(--bg);
 }
 .heroWrap {
@@ -24,7 +27,6 @@
   grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
   align-items: center;
   gap: clamp(24px, 5vw, 72px);
-  min-block-size: calc(clamp(310px, 34vw, 396px) + clamp(24px, 4vw, 56px));
   padding-top: clamp(24px, 4vw, 56px);
 }
 .heroCopy {
@@ -47,23 +49,48 @@
 }
 .heroAction { margin-top: 6px; }
 .heroArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 396px);
+  aspect-ratio: 1;
+  justify-self: center;
+}
+.heroArt::before,
+.heroArt::after {
+  content: "";
+  position: absolute;
+  inset: 6%;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.heroArt::after { inset: 0; }
+.heroArt img {
+  z-index: 1;
+  width: 72%;
+  height: auto;
+  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 36%));
+}
+.heroWithImage .heroGrid {
+  min-block-size: calc(clamp(310px, 34vw, 396px) + clamp(24px, 4vw, 56px));
+}
+.heroPicture {
   position: absolute;
   inset: 0;
   z-index: -1;
   overflow: hidden;
 }
-.heroArt::after {
+.heroPicture::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(90deg, rgb(3 15 10 / 58%), rgb(3 15 10 / 32%) 47%, transparent 74%);
 }
-.heroArt img {
+.heroPicture img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
 }
 .test { scroll-margin-top: 24px; }
 .test:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
@@ -90,21 +117,19 @@
 .next a { color: var(--accent); }
 
 @media (max-width: 680px) {
-  .heroGrid {
-    grid-template-columns: minmax(0, 1fr);
-    min-block-size: 0;
-    gap: 12px;
-    padding-top: 12px;
-  }
-  .heroArt {
+  .heroGrid { grid-template-columns: minmax(0, 1fr); }
+  .heroArt { width: min(58vw, 222px); }
+  .heroAction { width: 100%; }
+  .heroWithImage .heroGrid { min-block-size: 0; gap: 12px; padding-top: 12px; }
+  .heroPicture {
     position: relative;
     z-index: 0;
     display: block;
+    grid-row: 1;
     margin-inline: calc(-1 * var(--hero-gutter));
     aspect-ratio: 1.78;
     max-block-size: 270px;
   }
-  .heroArt img { object-position: 88% center; }
-  .heroArt::after { background: linear-gradient(0deg, var(--bg), transparent 32%); }
-  .heroAction { width: 100%; }
+  .heroPicture img { object-position: 88% center; }
+  .heroPicture::after { background: linear-gradient(0deg, var(--bg), transparent 32%); }
 }

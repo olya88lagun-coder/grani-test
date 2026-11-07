@@ -145,6 +145,8 @@ describe("goals", () => {
       "checkout_start",
       "attachment_start",
       "attachment_finish",
+      "temperament_start",
+      "temperament_finish",
     ]);
   });
 
@@ -195,5 +197,7 @@ describe("goals", () => {
     reachGoal("attachment_finish");
     expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "attachment_start");
     expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "attachment_finish");
+    reachGoal("temperament_finish");
+    expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "temperament_finish");
   });
 });

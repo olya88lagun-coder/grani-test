@@ -1,5 +1,6 @@
-import { TRAITS, TYPE_TRAITS, traitLevel, typeName, isBorderline, type Gender, type Stability, type Trait, type TraitScores, type TypeCode } from "@grani/core";
+import { TRAITS, TYPE_TRAITS, temperamentFromBigFive, traitLevel, typeName, isBorderline, type Gender, type Stability, type Trait, type TraitScores, type TypeCode } from "@grani/core";
 import { stabilityText, TRAIT_LABELS, traitBlock, typeCodeToDir, typeTexts, type Library } from "@grani/content";
+import { getShortTest } from "@grani/content/short-tests";
 
 export { TRAIT_LABELS } from "@grani/content";
 
@@ -28,7 +29,17 @@ export type ResultView = {
   shortText: string;
   keywords: readonly string[];
   scales: readonly ScaleView[];
+  // Бонус из двух шкал Big Five; ведёт на страницу темперамента и на сам тест
+  temperament: { name: string; path: string };
 };
+
+function temperamentLink(scores: TraitScores): { name: string; path: string } {
+  const test = getShortTest("temperament");
+  const key = temperamentFromBigFive(scores);
+  const type = test?.types.find((t) => t.key === key);
+  if (!test || !type) throw new Error(`No temperament page for ${key}`);
+  return { name: type.name, path: `${test.path}/${type.slug}` };
+}
 
 type ResultInput = { typeCode: TypeCode; stability: Stability; scores: TraitScores };
 
@@ -41,6 +52,7 @@ export function buildResultView(library: Library, result: ResultInput, gender: G
     stabilityText: stabilityText(library, result.stability),
     shortText: typeTexts(library, result.typeCode).short,
     keywords: typeKeywords(result.typeCode),
+    temperament: temperamentLink(result.scores),
     scales: TRAITS.map((trait) => {
       const score = result.scores[trait];
       return {
