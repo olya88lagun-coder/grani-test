@@ -13,3 +13,4 @@ export * from "./pair-map";
 export * from "./practice";
 export * from "./funnel";
 export * from "./short-tests";
+export * from "./temperament";
