@@ -76,3 +76,16 @@ test("the pricing page and the offer list the attachment report at 199 rubles", 
   await expect(page.getByText(/Личный разбор типа привязанности «Грани» — 199/)).toBeVisible();
   await expect(page.getByText(/открывается сразу после оплаты/)).toBeVisible();
 });
+
+test("the paid report texts are not shipped in the test page's JavaScript", async ({ page }) => {
+  await page.goto("/privyazannost");
+  await expect(page.locator(".question-card").first()).toBeVisible();
+  const sources = await page.evaluate(() => [...document.scripts].map((script) => script.src).filter(Boolean));
+  expect(sources.length).toBeGreaterThan(0);
+  for (const src of sources) {
+    const body = await (await page.request.get(src)).text();
+    expect(body, src).not.toContain("заработанная надёжность");
+    expect(body, src).not.toContain("Факт и толкование");
+  }
+  expect(await page.content()).not.toContain("заработанная надёжность");
+});

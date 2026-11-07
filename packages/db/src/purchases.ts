@@ -96,6 +96,27 @@ export async function findOpenPurchase(
   return row ? toPurchaseRecord(row) : null;
 }
 
+// Продукт, который принадлежит пользователю целиком (личный разбор короткого теста): незавершённая оплата ищется
+// по пользователю и продукту, а не по результату — иначе после повторного прохождения можно оплатить дважды
+export async function findOpenPurchaseOfProduct(db: Database, p: { userId: string; product: Product; since: Date }): Promise<PurchaseRecord | null> {
+  if (!isUuid(p.userId)) return null;
+  const [row] = await db
+    .select()
+    .from(purchases)
+    .where(
+      and(
+        eq(purchases.userId, p.userId),
+        eq(purchases.product, p.product),
+        eq(purchases.status, "pending"),
+        isNotNull(purchases.confirmationUrl),
+        gte(purchases.createdAt, p.since),
+      ),
+    )
+    .orderBy(desc(purchases.createdAt))
+    .limit(1);
+  return row ? toPurchaseRecord(row) : null;
+}
+
 // Условный UPDATE: из двух одновременных уведомлений переход сделает только одно — и только оно поставит генерацию
 export async function markPurchaseSucceeded(db: Database, purchaseId: string, paidAt: Date): Promise<boolean> {
   const updated = await db

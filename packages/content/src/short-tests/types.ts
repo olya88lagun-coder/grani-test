@@ -43,6 +43,7 @@ export type ShortTestDefinition = {
   readonly faq: readonly { readonly question: string; readonly answer: string }[];
   readonly sources: readonly string[];
   readonly disclaimer: string;
-  // Нет поля — нет платного разбора
-  readonly report?: ShortReportBlocks;
+  // Что о платном разборе можно показать до оплаты. Сами тексты разбора — только на сервере (short-tests/report.ts):
+  // это определение уходит в браузер вместе с тестом
+  readonly reportOffer?: { readonly title: string; readonly preview: readonly string[] };
 };

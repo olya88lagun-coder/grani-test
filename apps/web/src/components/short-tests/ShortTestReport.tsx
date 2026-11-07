@@ -1,4 +1,4 @@
-import type { ShortReport } from "@grani/content/short-tests";
+import type { ShortReport } from "@grani/content/short-tests/report";
 import styles from "./short-tests.module.css";
 
 export function ShortTestReport({ report }: { report: ShortReport }) {

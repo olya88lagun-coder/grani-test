@@ -355,6 +355,16 @@ describe("attachment solo report", () => {
     expect(await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: short.id, email: EMAIL })).toEqual({ ok: false, error: "not_available" });
   });
 
+  test("reuses one open payment across retaken tests, so the user cannot be charged twice", async () => {
+    const { saveShortResult } = await import("@grani/db/testing");
+    const first = await saveShortResult(db, { userId: anna.userId, ...sample });
+    const retaken = await saveShortResult(db, { userId: anna.userId, ...sample });
+    const a = await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: first.id, email: EMAIL });
+    const b = await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: retaken.id, email: EMAIL });
+    expect(b).toEqual(a);
+    expect(store.size).toBe(1);
+  });
+
   test("is not sold again for a retaken test once the user has paid for it", async () => {
     const { saveShortResult } = await import("@grani/db/testing");
     const first = await saveShortResult(db, { userId: anna.userId, ...sample });

@@ -81,12 +81,12 @@ export function ShortTestResult({
         <p className={styles.summary}>{view.type.summary}</p>
         <p className={styles.disclaimer}>{test.disclaimer}</p>
       </div>
-      {!saved && test.report && onOpenReport && (
+      {!saved && test.reportOffer && onOpenReport && (
         <div className={styles.reportOffer}>
           <button type="button" className="button" onClick={openReport} disabled={opening}>
             {opening ? "Открываем…" : `Открыть личный разбор — ${formatRub(PRODUCT_PRICES.attachment_solo)}`}
           </button>
-          <p className={styles.disclaimer}>{test.report.preview.slice(0, 4).join(" · ")}</p>
+          <p className={styles.disclaimer}>{test.reportOffer.preview.slice(0, 4).join(" · ")}</p>
           {openError && (
             <p className="error" role="alert">
               {openError}

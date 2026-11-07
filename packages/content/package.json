@@ -9,7 +9,8 @@
     "./data": "./src/data.ts",
     "./together": "./src/together/catalog.ts",
     "./together-season": "./src/together/season.ts",
-    "./short-tests": "./src/short-tests/index.ts"
+    "./short-tests": "./src/short-tests/index.ts",
+    "./short-tests/report": "./src/short-tests/report.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",

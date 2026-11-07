@@ -17,7 +17,7 @@ export default async function ShortResultPage({ params }: { params: Promise<{ id
   const [{ id }, user] = await Promise.all([params, requireUser()]);
   const page = await shortResultPage({ db: getDb() }, { id, userId: user.id });
   if (!page) notFound();
-  const preview = page.test.report?.preview ?? [];
+  const preview = page.test.reportOffer?.preview ?? [];
   return (
     <main className="inner-page" data-palette="pair">
       <div className={styles.savedPage}>
@@ -27,7 +27,7 @@ export default async function ShortResultPage({ params }: { params: Promise<{ id
           <ShortTestReport report={page.report} />
         ) : page.canBuy && page.product ? (
           <section className={styles.offer} aria-labelledby="report-offer">
-            <h2 id="report-offer">{page.test.report?.title}</h2>
+            <h2 id="report-offer">{page.test.reportOffer?.title}</h2>
             <ul className={styles.preview} aria-label="Что внутри разбора">
               {preview.map((heading) => (
                 <li key={heading}>{heading}</li>

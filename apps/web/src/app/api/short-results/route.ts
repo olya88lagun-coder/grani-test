@@ -18,7 +18,8 @@ export async function POST(request: NextRequest) {
   const body: unknown = await request.json().catch(() => null);
   const { slug, answers } = typeof body === "object" && body !== null ? (body as { slug?: unknown; answers?: unknown }) : {};
   const test = typeof slug === "string" ? getShortTest(slug) : null;
-  const parsed = test ? parseShortAnswers(test, answers) : null;
+  // Тест без платного разбора не сохраняется: и гостю не выдаётся cookie с его ответами
+  const parsed = test?.reportOffer ? parseShortAnswers(test, answers) : null;
   if (!test || !parsed) return NextResponse.json({ ok: false, error: "invalid_answers" }, { status: 400 });
 
   const db = getDb();

@@ -4,6 +4,7 @@ import {
   countFriendResponses,
   createPurchase,
   findOpenPurchase,
+  findOpenPurchaseOfProduct,
   getInviteForResult,
   getPairForMember,
   getPurchase,
@@ -154,7 +155,10 @@ export async function startPurchase(
   if (!email) return { ok: false, error: "invalid_email" };
 
   const since = new Date(deps.now().getTime() - REUSE_WINDOW_MS);
-  const open = await findOpenPurchase(deps.db, { userId: p.userId, product, target, since });
+  const open =
+    product === "attachment_solo"
+      ? await findOpenPurchaseOfProduct(deps.db, { userId: p.userId, product, since })
+      : await findOpenPurchase(deps.db, { userId: p.userId, product, target, since });
   if (open?.confirmationUrl) {
     if (open.receiptEmail !== email) await setReceiptEmail(deps.db, open.id, email);
     return { ok: true, url: open.confirmationUrl };

@@ -1,5 +1,9 @@
 import type { ShortTestScore } from "@grani/core";
-import type { ShortReportExercise, ShortTestDefinition, ShortTestSection } from "./types";
+import { ATTACHMENT_REPORT } from "./attachment-report";
+import type { ShortReportBlocks, ShortReportExercise, ShortTestDefinition, ShortTestSection } from "./types";
+
+// Только для сервера: тексты платных разборов. Клиентский код импортирует short-tests/index, где их нет
+export const SHORT_REPORTS: Readonly<Record<string, ShortReportBlocks>> = { attachment: ATTACHMENT_REPORT };
 
 export type ShortReport = { readonly title: string; readonly sections: readonly ShortTestSection[]; readonly exercises: readonly ShortReportExercise[] };
 
@@ -11,7 +15,7 @@ export function axisLevel(value: number): "low" | "mid" | "high" {
 }
 
 export function buildShortReport(test: ShortTestDefinition, score: ShortTestScore): ShortReport | null {
-  const report = test.report;
+  const report = SHORT_REPORTS[test.slug];
   if (!report) return null;
   const byType = report.byType[score.typeKey];
   const exercises = report.exercises[score.typeKey];

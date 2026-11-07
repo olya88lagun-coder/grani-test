@@ -1,5 +1,6 @@
 import { isShortTestComplete, scoreShortTest, type Answers, type ShortTestScore } from "@grani/core";
-import { buildShortReport, getShortTest, type ShortReport, type ShortTestDefinition } from "@grani/content/short-tests";
+import { getShortTest, type ShortTestDefinition } from "@grani/content/short-tests";
+import { buildShortReport, type ShortReport } from "@grani/content/short-tests/report";
 import { getShortResultForOwner, hasPaidShortProduct, saveShortResult, type Database } from "@grani/db";
 
 export type ShortResultsDeps = { db: Database };
@@ -22,7 +23,8 @@ export function parseShortAnswers(test: ShortTestDefinition, raw: unknown): Answ
 
 export async function saveShortAnswers(deps: ShortResultsDeps, p: { userId: string; slug: string; answers: unknown }): Promise<{ ok: true; id: string } | { ok: false }> {
   const test = getShortTest(p.slug);
-  if (!test) return { ok: false };
+  // Политика обещает: ответы короткого теста попадают на сервер, только когда человек открывает по ним разбор
+  if (!test || !test.reportOffer) return { ok: false };
   const answers = parseShortAnswers(test, p.answers);
   if (!answers) return { ok: false };
   const score = scoreShortTest(test.scoring, answers);
@@ -41,7 +43,7 @@ export async function shortResultPage(deps: ShortResultsDeps, p: { id: string; u
   const answers = parseShortAnswers(test, record.answers);
   if (!answers) return null;
   const score = scoreShortTest(test.scoring, answers);
-  const product = test.report ? (SOLO_PRODUCT[test.slug] ?? null) : null;
+  const product = test.reportOffer ? (SOLO_PRODUCT[test.slug] ?? null) : null;
   const paid = product ? await hasPaidShortProduct(deps.db, { userId: p.userId, product }) : false;
   return { test, score, resultId: record.id, report: paid ? buildShortReport(test, score) : null, canBuy: product !== null && !paid, product };
 }

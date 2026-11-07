@@ -2,7 +2,7 @@ import { scoreShortTest, type Answer, type Answers } from "@grani/core";
 import { describe, expect, test } from "vitest";
 import { findStopWords } from "../safety";
 import { getShortTest } from "./index";
-import { axisLevel, buildShortReport } from "./report";
+import { axisLevel, buildShortReport, SHORT_REPORTS } from "./report";
 
 const attachment = getShortTest("attachment")!;
 const words = (text: string) => text.split(/\s+/).filter(Boolean).length;
@@ -14,7 +14,7 @@ function answersFor(levels: Record<string, "low" | "high">): Answers {
 }
 
 describe("attachment report blocks", () => {
-  const report = attachment.report!;
+  const report = SHORT_REPORTS.attachment!;
 
   test("cover every type with six sections and 3–4 exercises", () => {
     for (const type of attachment.types) {
@@ -45,6 +45,10 @@ describe("attachment report blocks", () => {
     }
   });
 
+  test("preview headings match the client offer", () => {
+    expect(report.preview).toEqual(attachment.reportOffer!.preview);
+  });
+
   test("has no stop words", () => {
     const texts = [
       report.title,
@@ -61,7 +65,7 @@ describe("buildShortReport", () => {
   test("assembles the anxious type with high anxiety and low avoidance blocks", () => {
     const score = scoreShortTest(attachment.scoring, answersFor({ anxiety: "high", avoidance: "low" }));
     const built = buildShortReport(attachment, score)!;
-    const report = attachment.report!;
+    const report = SHORT_REPORTS.attachment!;
     for (const section of report.byType.anxious!) expect(built.sections).toContainEqual(section);
     expect(built.sections).toContainEqual(report.byAxisLevel.anxiety!.high);
     expect(built.sections).toContainEqual(report.byAxisLevel.avoidance!.low);
@@ -81,5 +85,14 @@ describe("axisLevel", () => {
     expect(axisLevel(40)).toBe("mid");
     expect(axisLevel(60)).toBe("mid");
     expect(axisLevel(61)).toBe("high");
+  });
+});
+
+describe("paid report texts stay on the server", () => {
+  test("the client-facing test definition carries only the offer, not the report texts", () => {
+    const json = JSON.stringify(getShortTest("attachment"));
+    expect(json).not.toContain("заработанная надёжность");
+    expect(json).not.toContain("Факт и толкование");
+    expect(getShortTest("attachment")!.reportOffer?.preview.length).toBeGreaterThan(0);
   });
 });

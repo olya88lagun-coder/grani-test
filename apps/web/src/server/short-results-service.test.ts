@@ -56,10 +56,9 @@ describe("shortResultPage", () => {
     expect(again?.canBuy).toBe(false);
   });
 
-  test("a test without a paid report is never buyable", async () => {
+  test("answers of a test without a paid report are never stored", async () => {
     const temperament = getShortTest("temperament")!;
     const answers = Object.fromEntries(temperament.items.map((i) => [i.id, 3 as Answer]));
-    const saved = await saveShortAnswers({ db }, { userId: anna, slug: "temperament", answers });
-    expect(await shortResultPage({ db }, { id: saved.ok ? saved.id : "", userId: anna })).toMatchObject({ report: null, canBuy: false });
+    expect(await saveShortAnswers({ db }, { userId: anna, slug: "temperament", answers })).toEqual({ ok: false });
   });
 });
