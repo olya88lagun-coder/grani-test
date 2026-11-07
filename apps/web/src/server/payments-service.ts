@@ -9,6 +9,8 @@ import {
   getPurchase,
   getPurchaseByPaymentId,
   getResultForOwner,
+  getShortResultForOwner,
+  hasPaidShortProduct,
   listOwnedProducts,
   listReports,
   markPurchaseCanceled,
@@ -16,8 +18,8 @@ import {
   setReceiptEmail,
   type Database,
   type PurchaseRecord,
+  type OwnedTarget,
   type PurchaseStatus,
-  type ReportTarget,
 } from "@grani/db";
 import type { PaymentGateway } from "./payments/gateway";
 import { healTogetherAccess } from "./together-payments";
@@ -63,15 +65,32 @@ export const PRODUCT_DESCRIPTIONS: Readonly<Record<PurchaseProduct, string>> = {
   attachment_solo: "Личный разбор типа привязанности «Грани»",
 };
 
-async function resolveTarget(db: Database, userId: string, product: Product, targetId: string): Promise<ReportTarget | null> {
-  if (productTarget(product) === "pair") return (await getPairForMember(db, targetId, userId)) ? { pairId: targetId } : null;
+// Личный разбор короткого теста принадлежит пользователю по тесту, а не одному результату: после повторного
+// прохождения второй раз он не продаётся
+async function ownedFor(db: Database, userId: string, product: Product, target: OwnedTarget): Promise<Product[]> {
+  if (product === "attachment_solo") return (await hasPaidShortProduct(db, { userId, product })) ? [product] : [];
+  return listOwnedProducts(db, target);
+}
+
+async function resolveTarget(db: Database, userId: string, product: Product, targetId: string): Promise<OwnedTarget | null> {
+  const kind = productTarget(product);
+  if (kind === "short_result") return (await getShortResultForOwner(db, targetId, userId)) ? { shortResultId: targetId } : null;
+  if (kind === "pair") return (await getPairForMember(db, targetId, userId)) ? { pairId: targetId } : null;
   return (await getResultForOwner(db, targetId, userId)) ? { resultId: targetId } : null;
 }
 
-const purchaseTarget = (purchase: PurchaseRecord): ReportTarget | null =>
-  purchase.pairId ? { pairId: purchase.pairId } : purchase.resultId ? { resultId: purchase.resultId } : null;
+const purchaseTarget = (purchase: PurchaseRecord): OwnedTarget | null =>
+  purchase.shortResultId
+    ? { shortResultId: purchase.shortResultId }
+    : purchase.pairId
+      ? { pairId: purchase.pairId }
+      : purchase.resultId
+        ? { resultId: purchase.resultId }
+        : null;
 
-function jobsFor(product: Product, target: ReportTarget): GenerateJob[] {
+// Разборы коротких тестов собираются из готовых блоков при показе: генерировать нечего
+function jobsFor(product: Product, target: OwnedTarget): GenerateJob[] {
+  if ("shortResultId" in target) return [];
   if ("pairId" in target) return [{ kind: "pair", pairId: target.pairId }];
   return reportKindsFor(product).flatMap((kind): GenerateJob[] => (kind === "pair" ? [] : [{ kind, resultId: target.resultId }]));
 }
@@ -112,7 +131,7 @@ async function fulfillPaid(deps: PaymentsDeps, purchase: PurchaseRecord): Promis
 }
 
 // Покупка за 0 ₽ сразу оплачена: генерация ставится так же, как после настоящей оплаты
-async function grantFree(deps: PaymentsDeps, p: { userId: string; product: Product; target: ReportTarget }): Promise<string> {
+async function grantFree(deps: PaymentsDeps, p: { userId: string; product: Product; target: OwnedTarget }): Promise<string> {
   const purchase = await createPurchase(deps.db, { userId: p.userId, product: p.product, target: p.target, amountKopecks: 0 });
   if (await markPurchaseSucceeded(deps.db, purchase.id, deps.now())) await enqueuePaid(deps, purchase);
   return new URL(`/purchases/${purchase.id}`, deps.appUrl).toString();
@@ -126,7 +145,7 @@ export async function startPurchase(
   const product = p.product;
   const target = await resolveTarget(deps.db, p.userId, product, p.targetId);
   if (!target) return { ok: false, error: "not_found" };
-  if (!canBuy(product, await listOwnedProducts(deps.db, target))) return { ok: false, error: "not_available" };
+  if (!canBuy(product, await ownedFor(deps.db, p.userId, product, target))) return { ok: false, error: "not_available" };
   if (await deps.isOwner(p.userId)) return { ok: true, url: await grantFree(deps, { userId: p.userId, product, target }) };
 
   // Почту спрашиваем только тогда, когда покупка действительно пойдёт в ЮKassa
@@ -190,10 +209,18 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
   if (!isProduct(purchase.product)) return null;
 
   const target = purchaseTarget(purchase);
-  const reportUrl = !target ? "/me" : "pairId" in target ? `/pair/${target.pairId}` : `/report/${target.resultId}`;
+  const reportUrl = !target
+    ? "/me"
+    : "shortResultId" in target
+      ? `/short/${target.shortResultId}`
+      : "pairId" in target
+        ? `/pair/${target.pairId}`
+        : `/report/${target.resultId}`;
   const free = purchase.amountKopecks === 0;
   const since = (purchase.status === "succeeded" ? (purchase.paidAt ?? purchase.createdAt) : purchase.createdAt).toISOString();
   if (!target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: false, reportUrl, free, since };
+
+  if ("shortResultId" in target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: purchase.status === "succeeded", reportUrl, free, since };
 
   const kinds = new Set((await listReports(deps.db, target)).map((report) => report.kind));
   const ready = jobsFor(purchase.product, target).every((job) => kinds.has(job.kind));
