@@ -62,3 +62,10 @@ test("temperament page has no horizontal scroll on a phone", async ({ page }) =>
   const width = await page.evaluate(() => document.documentElement.clientWidth);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
 });
+
+test("the site footer links to both short tests from the home page", async ({ page }) => {
+  await page.goto("/");
+  const footer = page.getByRole("contentinfo");
+  await expect(footer.getByRole("link", { name: "Тест на тип привязанности", exact: true })).toHaveAttribute("href", "/privyazannost");
+  await expect(footer.getByRole("link", { name: "Тест на темперамент", exact: true })).toHaveAttribute("href", "/temperament");
+});
