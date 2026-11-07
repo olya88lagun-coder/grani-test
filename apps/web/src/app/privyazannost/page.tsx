@@ -19,6 +19,10 @@ export default function AttachmentTestPage() {
         <div className={styles.heroWrap}>
           <Breadcrumbs items={[{ name: TEST.h1, path: TEST.path }]} />
           <div className={styles.heroGrid}>
+            <picture className={styles.heroArt} aria-hidden="true">
+              <source media="(max-width: 680px)" srcSet="/attachment/hero-mobile.webp" />
+              <img src="/attachment/hero-desktop.webp" alt="" width={1600} height={800} fetchPriority="high" />
+            </picture>
             <div className={styles.heroCopy}>
               <h1 className={styles.title}>{TEST.h1}</h1>
               <p className={styles.heroLead}>
@@ -29,9 +33,6 @@ export default function AttachmentTestPage() {
                 Пройти тест <span aria-hidden="true">→</span>
               </a>
               <p className={styles.facts}>30 утверждений · около 5 минут · бесплатно · без регистрации</p>
-            </div>
-            <div className={styles.heroArt} aria-hidden="true">
-              <img src="/home/hero-gem.webp" alt="" width={900} height={900} fetchPriority="high" />
             </div>
           </div>
         </div>
