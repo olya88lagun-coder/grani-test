@@ -93,9 +93,22 @@ test("attachment type pages exist and unknown ones are 404", async ({ page }) =>
   expect(missing?.status()).toBe(404);
 });
 
-test("attachment page has no horizontal scroll on a phone", async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+test("the test and result map remain usable on a narrow phone", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 780 });
   await page.goto(PATH);
   const width = await page.evaluate(() => document.documentElement.clientWidth);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+
+  await page.getByRole("main").getByRole("link", { name: "Пройти тест", exact: true }).click();
+  await expect(page).toHaveURL(/#attachment-test$/);
+  await expect(page.locator(".question-card").first()).toBeInViewport();
+  await answerAll(page);
+
+  const result = page.getByTestId("short-result");
+  await expect(result.getByRole("img", { name: /Избегание.*Тревожность/i })).toBeVisible();
+  const longLabel = result.getByText("Тревожно-избегающий", { exact: true });
+  await expect(longLabel).toBeVisible();
+  const fontSize = await longLabel.evaluate((label) => Number.parseFloat(getComputedStyle(label).fontSize));
+  expect(fontSize).toBeGreaterThanOrEqual(14);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
 });
