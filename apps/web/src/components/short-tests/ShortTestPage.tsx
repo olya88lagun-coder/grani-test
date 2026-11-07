@@ -8,6 +8,16 @@ import { ShortTestRunner } from "./ShortTestRunner";
 import styles from "./short-test-page.module.css";
 
 export type RelatedLink = { href: string; label: string; text: string };
+type HeroImage = { desktop: string; mobile: string; width: number; height: number };
+
+type ShortTestPageProps = {
+  slug: string;
+  lead: string;
+  facts: string;
+  related: readonly RelatedLink[];
+  palette?: string;
+  heroImage?: HeroImage;
+};
 
 export function requireShortTest(slug: string): ShortTestDefinition {
   const test = getShortTest(slug);
@@ -22,14 +32,14 @@ export function shortTestPageMetadata(slug: string): Metadata {
 
 // Страница короткого теста. Первый экран и раскладка — по дизайну Codex для /privyazannost (PR #180),
 // вынесены сюда, чтобы все короткие тесты выглядели одинаково
-export function ShortTestPage({ slug, lead, facts, related, palette }: { slug: string; lead: string; facts: string; related: readonly RelatedLink[]; palette?: string }) {
+export function ShortTestPage({ slug, lead, facts, related, palette, heroImage }: ShortTestPageProps) {
   const test = requireShortTest(slug);
   const anchor = `${test.slug}-test`;
   return (
     <main className={styles.landing} data-palette={palette ?? "default"} data-night-entry>
       <JsonLd data={webPageJsonLd({ title: test.title, description: test.description, path: test.path })} />
       <JsonLd data={faqJsonLd(test.faq)} />
-      <header className={styles.hero} data-band="night">
+      <header className={heroImage ? `${styles.hero} ${styles.heroWithImage}` : styles.hero} data-band="night">
         <div className={styles.heroWrap}>
           <Breadcrumbs items={[{ name: test.h1, path: test.path }]} />
           <div className={styles.heroGrid}>
@@ -41,9 +51,16 @@ export function ShortTestPage({ slug, lead, facts, related, palette }: { slug: s
               </a>
               <p className={styles.facts}>{facts}</p>
             </div>
-            <div className={styles.heroArt} aria-hidden="true">
-              <img src="/home/hero-gem.webp" alt="" width={900} height={900} fetchPriority="high" />
-            </div>
+            {heroImage ? (
+              <picture className={styles.heroPicture} aria-hidden="true">
+                <source media="(max-width: 680px)" srcSet={heroImage.mobile} />
+                <img src={heroImage.desktop} alt="" width={heroImage.width} height={heroImage.height} fetchPriority="high" />
+              </picture>
+            ) : (
+              <div className={styles.heroArt} aria-hidden="true">
+                <img src="/home/hero-gem.webp" alt="" width={900} height={900} fetchPriority="high" />
+              </div>
+            )}
           </div>
         </div>
       </header>

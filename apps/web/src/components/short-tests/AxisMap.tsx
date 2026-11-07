@@ -7,7 +7,9 @@ export function AxisMap({ xLabel, yLabel, x, y, quadrantLabels }: { xLabel: stri
   const span = size - pad * 2;
   const cx = pad + (Math.min(100, Math.max(0, x)) / 100) * span;
   const cy = pad + (1 - Math.min(100, Math.max(0, y)) / 100) * span;
-  const mid = pad + span / 2;
+  const half = span / 2;
+  const mid = pad + half;
+  const cell = half - 1;
   const [lowLow, highLow, lowHigh, highHigh] = quadrantLabels;
   return (
     <figure className={styles.map}>
@@ -18,6 +20,12 @@ export function AxisMap({ xLabel, yLabel, x, y, quadrantLabels }: { xLabel: stri
       </div>
       <svg className={styles.plot} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${xLabel}: ${x}%, ${yLabel}: ${y}%`}>
         <rect x={pad} y={pad} width={span} height={span} rx="7" className={styles.plotField} />
+        <g className={styles.plotZones}>
+          <rect x={pad + 1} y={pad + 1} width={cell} height={cell} rx="5" />
+          <rect x={mid} y={pad + 1} width={cell} height={cell} rx="5" />
+          <rect x={pad + 1} y={mid} width={cell} height={cell} rx="5" />
+          <rect x={mid} y={mid} width={cell} height={cell} rx="5" />
+        </g>
         <line x1={mid} y1={pad} x2={mid} y2={size - pad} className={styles.plotLine} />
         <line x1={pad} y1={mid} x2={size - pad} y2={mid} className={styles.plotLine} />
         <circle cx={cx} cy={cy} r="9" className={styles.plotHalo} />

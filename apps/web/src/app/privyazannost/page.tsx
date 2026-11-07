@@ -16,6 +16,7 @@ export default function AttachmentTestPage() {
       facts="30 утверждений · около 5 минут · бесплатно · без регистрации"
       related={RELATED}
       palette="pair"
+      heroImage={{ desktop: "/attachment/hero-desktop.webp", mobile: "/attachment/hero-mobile.webp", width: 1600, height: 800 }}
     />
   );
 }

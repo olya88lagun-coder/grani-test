@@ -99,7 +99,12 @@ test("the test and result map remain usable on a narrow phone", async ({ page })
   const width = await page.evaluate(() => document.documentElement.clientWidth);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
 
-  await page.getByRole("main").getByRole("link", { name: "Пройти тест", exact: true }).click();
+  const hero = page.locator("main > header");
+  const art = hero.locator("img");
+  await expect.poll(() => art.evaluate((image: HTMLImageElement) => image.naturalWidth > 0 && image.naturalWidth <= 800)).toBe(true);
+  const start = hero.getByRole("link", { name: "Пройти тест", exact: true });
+  await expect(start).toBeInViewport({ ratio: 1 });
+  await start.click();
   await expect(page).toHaveURL(/#attachment-test$/);
   await expect(page.locator(".question-card").first()).toBeInViewport();
   await answerAll(page);

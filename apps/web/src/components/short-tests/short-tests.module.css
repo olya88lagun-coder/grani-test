@@ -163,6 +163,12 @@
 .mapLabels > :last-child { text-align: right; }
 .plot { display: block; width: 100%; height: auto; }
 .plotField { fill: var(--surface-2); stroke: var(--line); }
+.plotZones { display: none; }
+:global([data-palette="pair"]) .plotZones { display: block; }
+.plotZones rect:nth-child(1) { fill: color-mix(in srgb, var(--surface-2), var(--gold) 9%); }
+.plotZones rect:nth-child(2) { fill: color-mix(in srgb, var(--bg), var(--gold) 13%); }
+.plotZones rect:nth-child(3) { fill: var(--surface-3); }
+.plotZones rect:nth-child(4) { fill: color-mix(in srgb, var(--surface-2), var(--ink) 5%); }
 .plotLine { stroke: var(--gold); stroke-opacity: .46; stroke-dasharray: 3 4; }
 .plotHalo { fill: var(--bg); stroke: var(--gold); }
 .plotDot { fill: var(--gold); }
