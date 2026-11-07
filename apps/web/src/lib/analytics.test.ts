@@ -143,6 +143,8 @@ describe("goals", () => {
       "story_share",
       "report_click",
       "checkout_start",
+      "attachment_start",
+      "attachment_finish",
     ]);
   });
 
@@ -184,5 +186,14 @@ describe("goals", () => {
     markOwnerDevice(localStorage);
     reachGoal("test_finish");
     expect(sendBeacon).toHaveBeenCalledTimes(1);
+  });
+
+  it("counts attachment test start and finish as funnel steps", () => {
+    const sendBeacon = vi.fn();
+    vi.stubGlobal("window", { navigator: { sendBeacon } });
+    reachGoal("attachment_start");
+    reachGoal("attachment_finish");
+    expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "attachment_start");
+    expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "attachment_finish");
   });
 });

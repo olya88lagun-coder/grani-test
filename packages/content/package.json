@@ -8,7 +8,8 @@
     "./content-plan": "./src/content-plan.ts",
     "./data": "./src/data.ts",
     "./together": "./src/together/catalog.ts",
-    "./together-season": "./src/together/season.ts"
+    "./together-season": "./src/together/season.ts",
+    "./short-tests": "./src/short-tests/index.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",

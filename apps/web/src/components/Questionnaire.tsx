@@ -24,10 +24,9 @@ import {
 
 type Item = { id: string; text: string };
 
-export type QuestionnaireProps = {
+type QuestionnaireBase = {
   items: readonly Item[];
   storageKey: string;
-  submitUrl: string;
   submitLabel: string;
   pageSize?: number;
   startGoal?: Goal;
@@ -36,7 +35,12 @@ export type QuestionnaireProps = {
   trackProgress?: boolean;
   // Камень рядом со счётчиком: грани закрашиваются по мере ответов. Без него остаётся только полоса
   progressGem?: { shape: TypeShape; family: GemFamily };
+  // На странице со своим H1 (короткие тесты) заголовок экрана — h2
+  screenHeading?: "h1" | "h2";
 };
+
+// Либо ответы уходят на сервер, либо результат считает сам вызывающий (короткие тесты, без сервера)
+export type QuestionnaireProps = QuestionnaireBase & ({ submitUrl: string; onComplete?: never } | { onComplete: (answers: Answers) => void; submitUrl?: never });
 
 const ANSWER_VALUES = [1, 2, 3, 4, 5] as const satisfies readonly Answer[];
 
@@ -59,7 +63,7 @@ function writeStorage(key: string, value: string | null): boolean {
   }
 }
 
-export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, progressGem }: QuestionnaireProps) {
+export function Questionnaire({ items, storageKey, submitUrl, onComplete, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, progressGem, screenHeading = "h1" }: QuestionnaireProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [page, setPage] = useState(0);
@@ -106,8 +110,16 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
     sendingRef.current = true;
     setSending(true);
     setError(null);
+    if (onComplete) {
+      writeStorage(storageKey, null);
+      if (finishGoal) reachGoal(finishGoal);
+      onComplete(answers);
+      sendingRef.current = false;
+      setSending(false);
+      return;
+    }
     try {
-      const response = await fetch(submitUrl, {
+      const response = await fetch(submitUrl!, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ answers }),
@@ -127,6 +139,8 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
     setSending(false);
   }
 
+  const ScreenHeading = screenHeading;
+
   if (!restored) return <p className="muted questionnaire__loading" role="status">Загружаем вопросы…</p>;
 
   return (
@@ -143,9 +157,9 @@ export function Questionnaire({ items, storageKey, submitUrl, submitLabel, pageS
         </div>
       </div>
 
-      <h1 className="eyebrow questionnaire__screen" ref={headingRef} tabIndex={-1}>
+      <ScreenHeading className="eyebrow questionnaire__screen" ref={headingRef} tabIndex={-1}>
         Экран {page + 1} из {pages}
-      </h1>
+      </ScreenHeading>
 
       {pageItems(items, page, pageSize).map((item) => (
         <fieldset key={item.id} className="card question-card">

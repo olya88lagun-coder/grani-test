@@ -17,10 +17,11 @@ describe("funnel", () => {
     await countFunnelStep(db, "test_start", noon);
     await countFunnelStep(db, "test_finish", noon);
     await countFunnelStep(db, "login", late);
+    await countFunnelStep(db, "attachment_start", late);
 
     expect(await listFunnelDays(db, new Date("2026-11-01T00:00:00Z"))).toEqual([
-      { day: "2026-11-04", test_start: 0, test_finish: 0, login_consent: 0, login_start: 0, login: 1 },
-      { day: "2026-11-03", test_start: 2, test_finish: 1, login_consent: 0, login_start: 0, login: 0 },
+      { day: "2026-11-04", test_start: 0, test_finish: 0, login_consent: 0, login_start: 0, login: 1, attachment_start: 1, attachment_finish: 0 },
+      { day: "2026-11-03", test_start: 2, test_finish: 1, login_consent: 0, login_start: 0, login: 0, attachment_start: 0, attachment_finish: 0 },
     ]);
     expect(await listFunnelDays(db, new Date("2026-11-04T00:00:00Z"))).toHaveLength(1);
   });
