@@ -13,8 +13,10 @@ describe("temperamentFromBigFive", () => {
     expect(temperamentFromBigFive(with_(20, 20))).toBe("melancholic");
   });
 
-  // Эмоциональность = 100 − стабильность; 50 считается высокой, как в тесте темперамента
-  test("scores of exactly 50 give choleric, like the temperament test", () => {
-    expect(temperamentFromBigFive(with_(50, 50))).toBe("choleric");
+  // Стабильность 50 в Big Five — «спокойствие» (stabilityOf), поэтому темперамент на этой границе не может быть эмоциональным
+  test("stability of exactly 50 is calm, like the Big Five stability tag", () => {
+    expect(temperamentFromBigFive(with_(50, 50))).toBe("sanguine");
+    expect(temperamentFromBigFive(with_(49, 50))).toBe("phlegmatic");
+    expect(temperamentFromBigFive(with_(50, 49))).toBe("choleric");
   });
 });
