@@ -1,7 +1,8 @@
 import { SELF_ITEMS } from "@grani/content";
 import { createTestDb, getLatestResultId, getResultForOwner, getUser, type Database } from "@grani/db/testing";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { signPending, verifySession } from "./auth/tokens";
+import { signPending, signShortPending, verifySession } from "./auth/tokens";
+import { getShortTest } from "@grani/content/short-tests";
 import type { AppEnv } from "./env";
 import {
   completeLogin,
@@ -150,5 +151,34 @@ describe("getCurrentUser", () => {
     expect((await getCurrentUser(deps, token))?.displayName).toBe("Аня");
     expect(await getCurrentUser(deps, null)).toBeNull();
     expect(await getCurrentUser(deps, "forged")).toBeNull();
+  });
+});
+
+describe("completeLogin with short test answers", () => {
+  const attachment = getShortTest("attachment")!;
+  const answers = Object.fromEntries(attachment.items.map((item) => [item.id, 4]));
+
+  test("saves the short result and opens its page", async () => {
+    const consent = await giveConsent(deps);
+    const shortPending = await signShortPending({ slug: "attachment", answers }, ENV.SESSION_SECRET);
+    const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, shortPending });
+    expect(outcome.ok && outcome.redirectTo).toMatch(/^\/short\/[0-9a-f-]{36}$/);
+  });
+
+  test("ignores tampered, foreign-test and incomplete answers and logs in as before", async () => {
+    const consent = await giveConsent(deps);
+    const foreign = await signShortPending({ slug: "nope", answers }, ENV.SESSION_SECRET);
+    const incomplete = await signShortPending({ slug: "attachment", answers: { an01: 4 } }, ENV.SESSION_SECRET);
+    for (const shortPending of ["garbage", foreign, incomplete]) {
+      const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, shortPending });
+      expect(outcome.ok && outcome.redirectTo).toBe("/test");
+    }
+  });
+
+  test("a pair invite still wins over short test answers", async () => {
+    const consent = await giveConsent(deps);
+    const shortPending = await signShortPending({ slug: "attachment", answers }, ENV.SESSION_SECRET);
+    const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, shortPending, together: "space" });
+    expect(outcome.ok && outcome.redirectTo).toBe("/together/start");
   });
 });

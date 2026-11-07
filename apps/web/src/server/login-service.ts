@@ -1,18 +1,19 @@
 import { randomBytes } from "node:crypto";
 import { getLatestResultId, getUser, upsertUserFromIdentity, type Database, type IdentityInput, type UserRecord } from "@grani/db";
-import { signConsent, signSession, signVkState, verifyConsent, verifySession, verifyVkState } from "./auth/tokens";
+import { signConsent, signSession, signVkState, verifyConsent, verifySession, verifyShortPending, verifyVkState } from "./auth/tokens";
 import { buildVkAuthorizeUrl, createPkcePair, exchangeVkCode, fetchVkUser, type FetchFn } from "./auth/vk";
 import type { AppEnv } from "./env";
 import { pairReturnPath } from "./pairs-service";
 import { togetherReturnPath } from "./together-return";
 import { savePendingResult } from "./results-service";
+import { saveShortAnswers } from "./short-results-service";
 import { LEGAL_VERSIONS } from "../lib/legal";
 
 export const CONSENT_VERSION = LEGAL_VERSIONS.consent;
 const STATE_BYTES = 24;
 
 export type LoginDeps = { db: Database; env: AppEnv; now: () => Date; fetchFn: FetchFn };
-export type LoginCookies = { session: string | null; pending: string | null; consent: string | null; pairInvite?: string | null; together?: string | null };
+export type LoginCookies = { session: string | null; pending: string | null; consent: string | null; pairInvite?: string | null; together?: string | null; shortPending?: string | null };
 export type LoginOutcome = { ok: true; sessionToken: string; redirectTo: string } | { ok: false; error: string };
 
 const vkRedirectUri = (env: AppEnv) => new URL("/api/auth/vk/callback", env.APP_URL).toString();
@@ -22,6 +23,15 @@ export async function giveConsent(deps: Pick<LoginDeps, "env" | "now">): Promise
   return signConsent({ version: CONSENT_VERSION, at: deps.now() }, deps.env.SESSION_SECRET);
 }
 
+// Неверная, просроченная или чужая cookie не мешает входу: результат просто не сохраняется
+async function saveShortPending(deps: LoginDeps, userId: string, token: string | null): Promise<string | null> {
+  if (!token) return null;
+  const pending = await verifyShortPending(token, deps.env.SESSION_SECRET);
+  if (!pending) return null;
+  const saved = await saveShortAnswers({ db: deps.db }, { userId, slug: pending.slug, answers: pending.answers });
+  return saved.ok ? saved.id : null;
+}
+
 export async function completeLogin(deps: LoginDeps, identity: IdentityInput, cookies: LoginCookies): Promise<LoginOutcome> {
   const consent = cookies.consent ? await verifyConsent(cookies.consent, deps.env.SESSION_SECRET) : null;
   const upserted = await upsertUserFromIdentity(deps.db, identity, consent);
@@ -29,12 +39,15 @@ export async function completeLogin(deps: LoginDeps, identity: IdentityInput, co
   const userId = upserted.user.id;
   const secretDeps = { db: deps.db, secret: deps.env.SESSION_SECRET };
   const resultId = (await savePendingResult(secretDeps, userId, cookies.pending)) ?? (await getLatestResultId(deps.db, userId));
+  const shortId = await saveShortPending(deps, userId, cookies.shortPending ?? null);
   return {
     ok: true,
     sessionToken: await signSession(userId, deps.env.SESSION_SECRET),
     // Партнёр, пришедший по приглашению, возвращается к согласию; отложенные ответы уже сохранены выше
     // Пришедший из «Вдвоём» возвращается на свою страницу; без этой cookie вход работает как раньше
-    redirectTo: pairReturnPath(cookies.pairInvite) ?? togetherReturnPath(cookies.together) ?? (resultId ? `/result/${resultId}` : "/test"),
+    // Ответы короткого теста — свежее действие человека: после входа он попадает к сохранённому результату и разбору
+    redirectTo:
+      pairReturnPath(cookies.pairInvite) ?? togetherReturnPath(cookies.together) ?? (shortId ? `/short/${shortId}` : resultId ? `/result/${resultId}` : "/test"),
   };
 }
 

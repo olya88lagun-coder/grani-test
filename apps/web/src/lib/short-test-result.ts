@@ -35,6 +35,12 @@ export function parseStoredShortResult(raw: string | null, test: ShortTestDefini
   }
 }
 
+// Сами ответы сохранённого результата — для отправки на сервер, когда человек открывает платный разбор
+export function parseStoredShortAnswers(raw: string | null, test: ShortTestDefinition): Answers | null {
+  if (!parseStoredShortResult(raw, test)) return null;
+  return (JSON.parse(raw!) as StoredShortResult).answers;
+}
+
 export type ShortResultAxis = { info: ShortTestAxisInfo; value: number; mixed: boolean; text: string };
 export type ShortResultView = { type: ShortTestType; axes: ShortResultAxis[] };
 
