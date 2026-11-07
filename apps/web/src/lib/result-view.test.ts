@@ -48,3 +48,15 @@ describe("typeKeywords", () => {
     for (const code of ALL_TYPE_CODES) expect(new Set(typeKeywords(code)).size).toBe(4);
   });
 });
+
+describe("temperament line", () => {
+  test("shows the temperament from extraversion and stability with a link to its page", () => {
+    const view = buildResultView(getLibrary(), { ...result, scores: { ...scores, extraversion: 80, stability: 80 } }, null);
+    expect(view.temperament).toEqual({ name: "Сангвиник", path: "/temperament/sangvinik" });
+  });
+
+  test("low extraversion and low stability give melancholic", () => {
+    const view = buildResultView(getLibrary(), { ...result, scores: { ...scores, extraversion: 20, stability: 20 } }, null);
+    expect(view.temperament).toEqual({ name: "Меланхолик", path: "/temperament/melankholik" });
+  });
+});

@@ -105,3 +105,23 @@ describe("attachment test", () => {
 test("getShortTest returns null for unknown slug", () => {
   expect(getShortTest("nope")).toBeNull();
 });
+
+describe("temperament test", () => {
+  const t = getShortTest("temperament")!;
+
+  test("has 24 items, 12 per axis, 4–7 reversed per axis", () => {
+    expect(t.items).toHaveLength(24);
+    for (const axis of ["emotionality", "extraversion"]) {
+      const onAxis = t.scoring.items.filter((i) => i.axis === axis);
+      expect(onAxis).toHaveLength(12);
+      const reversed = onAxis.filter((i) => i.reverse).length;
+      expect(reversed).toBeGreaterThanOrEqual(4);
+      expect(reversed).toBeLessThanOrEqual(7);
+    }
+  });
+
+  test("type slugs resolve", () => {
+    expect(shortTestTypeBySlug(t, "kholerik")?.key).toBe("choleric");
+    expect(shortTestTypeBySlug(t, "melankholik")?.key).toBe("melancholic");
+  });
+});
