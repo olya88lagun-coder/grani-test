@@ -163,6 +163,13 @@ export default function CompatibilityPage() {
           </details>
         </section>
 
+        <section className={styles.more} aria-label="Тест на тип привязанности">
+          <p>
+            Совместимость по чертам показывает, насколько вам легко вместе в обычные дни. Что происходит в ссоре и на расстоянии, лучше объясняет тип
+            привязанности — пройдите <Link href="/privyazannost">тест на тип привязанности</Link>, это около пяти минут и без регистрации.
+          </p>
+        </section>
+
         <section className={`${styles.more} ${styles.faq}`} aria-label="Вопросы о тесте на совместимость">
           {FAQ.map((item) => (
             <details key={item.question}>
