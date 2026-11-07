@@ -13,6 +13,7 @@ import {
   llmsTxt,
   OG_IMAGE,
   PUBLIC_PATHS,
+  shortTestPaths,
   publicMetadata,
   SITE_URL,
   TRAIT_PAGES,
@@ -60,7 +61,7 @@ describe("PUBLIC_PATHS", () => {
     // Статьи публикует автопилот: их число выводится из данных, а не записано в тест
     const articles = getArticles().length;
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(articles + 1);
-    expect(paths).toHaveLength(40 + articles);
+    expect(paths).toHaveLength(40 + articles + shortTestPaths().length);
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).toEqual(expect.arrayContaining(getArticles().map((article) => article.canonical)));
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
@@ -209,5 +210,29 @@ describe("firstSentences", () => {
 
   it("treats text without a full stop as one sentence", () => {
     expect(firstSentences("Без точки в конце", 160)).toBe("Без точки в конце…");
+  });
+});
+
+describe("short test paths", () => {
+  it("lists the attachment test and its four type pages", () => {
+    expect(shortTestPaths()).toEqual([
+      "/privyazannost",
+      "/privyazannost/nadezhnyy",
+      "/privyazannost/trevozhnyy",
+      "/privyazannost/izbegayushchiy",
+      "/privyazannost/trevozhno-izbegayushchiy",
+    ]);
+  });
+
+  it("puts short test pages into the sitemap list", () => {
+    expect(PUBLIC_PATHS()).toEqual(expect.arrayContaining(shortTestPaths()));
+  });
+
+  it("keeps short test pages out of robots Disallow: /test", () => {
+    for (const path of shortTestPaths()) expect(path.startsWith("/test")).toBe(false);
+  });
+
+  it("mentions the attachment test in llms.txt", () => {
+    expect(llmsTxt()).toContain("/privyazannost");
   });
 });

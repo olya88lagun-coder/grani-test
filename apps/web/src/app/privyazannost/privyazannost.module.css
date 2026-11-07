@@ -1,0 +1,24 @@
+/* Тест на тип привязанности и страницы типов: палитра «Глина» (data-palette="pair") задаёт цвета и тёмную тему */
+.page { color: var(--ink); background: var(--bg); }
+.container { width: 100%; max-width: 880px; margin-inline: auto; padding: 24px 16px 64px; display: flex; flex-direction: column; gap: 40px; }
+.header { display: grid; gap: 16px; }
+.title { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: clamp(40px, 5vw, 62px); line-height: 1.07; letter-spacing: -.02em; }
+.lead { margin: 0; font-size: 18px; line-height: 1.6; }
+.facts { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.brief { padding: 20px 22px; border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; background: var(--surface); }
+.brief h2 { margin: 0 0 8px; font-family: var(--font-body); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.brief p { margin: 0; font-size: 16px; line-height: 1.7; }
+.reading { display: grid; gap: 32px; }
+.reading h2 { margin: 0 0 14px; font-size: clamp(28px, 3vw, 38px); line-height: 1.15; }
+.reading p { margin: 0; font-size: 16px; line-height: 1.8; }
+.types { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.types li { display: grid; gap: 4px; padding: 16px 18px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.types a { font-weight: 600; color: var(--accent); }
+.types span { font-size: 15px; color: var(--ink-soft); }
+.faq { border-top: 1px solid var(--line); }
+.faq:last-child { border-bottom: 1px solid var(--line); }
+.faq summary { padding: 16px 0; cursor: pointer; font-weight: 600; font-size: 16px; line-height: 1.5; }
+.faq p { padding: 0 0 18px; }
+.sources { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.disclaimer { font-size: 14px !important; color: var(--ink-soft); }
+.next a { color: var(--accent); }

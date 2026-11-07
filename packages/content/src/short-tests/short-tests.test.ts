@@ -71,6 +71,13 @@ describe.each(SHORT_TESTS.map((t) => [t.slug, t] as const))("short test %s", (_s
 
   test("description fits a snippet", () => {
     expect(t.description.length).toBeLessThanOrEqual(160);
+    for (const ty of t.types) expect(ty.page.description.length, ty.slug).toBeLessThanOrEqual(160);
+  });
+
+  // Layout дописывает « — Грани»: вместе с ним title не длиннее 65 знаков, иначе выдача его обрежет
+  test("titles fit with the site suffix", () => {
+    expect(t.title.length).toBeLessThanOrEqual(57);
+    for (const ty of t.types) expect(ty.page.title.length, ty.slug).toBeLessThanOrEqual(57);
   });
 });
 

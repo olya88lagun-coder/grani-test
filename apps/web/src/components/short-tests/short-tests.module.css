@@ -24,7 +24,7 @@
 .result :global(.axis-map) { width: 100%; height: auto; }
 .result :global(.axis-map__field) { fill: var(--bg); stroke: var(--line); }
 .result :global(.axis-map__line) { stroke: var(--surface-3); stroke-dasharray: 4 4; }
-.result :global(.axis-map__quadrant) { fill: var(--ink-soft); font-size: 12px; text-anchor: middle; }
+.result :global(.axis-map__quadrant) { fill: var(--ink-soft); font-size: 11px; }
 .result :global(.axis-map__axis) { fill: var(--ink-soft); font-size: 11px; text-anchor: middle; }
 .result :global(.axis-map__dot) { fill: var(--accent); stroke: var(--bg); stroke-width: 3; }
 

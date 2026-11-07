@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { OPERATOR } from "./legal";
 import { traitPageTitle, typeDisplayName } from "./seo-pages";
 import { SITE_NAME, SITE_URL } from "./site";
+import { SHORT_TESTS } from "@grani/content/short-tests";
 
 export { SITE_NAME, SITE_URL } from "./site";
 
@@ -55,6 +56,11 @@ export function traitPath(trait: Trait, pole: PagePole): string {
 
 const DOCUMENT_PATHS = ["/contacts", "/offer", "/privacy", "/consent"] as const;
 
+// Короткие тесты и страницы их типов; адреса не под /test — он закрыт в robots.txt
+export function shortTestPaths(): string[] {
+  return SHORT_TESTS.flatMap((test) => [test.path, ...test.types.map((type) => `${test.path}/${type.slug}`)]);
+}
+
 export function PUBLIC_PATHS(): string[] {
   return [
     "/",
@@ -64,6 +70,7 @@ export function PUBLIC_PATHS(): string[] {
     "/traits",
     ...TRAIT_PAGES.map((page) => `/traits/${page.slug}`),
     "/compatibility",
+    ...shortTestPaths(),
     "/new-year-2027",
     "/together",
     "/articles",
@@ -188,7 +195,7 @@ export function llmsTxt(): string {
   return [
     `# ${SITE_NAME}`,
     `> ${LLMS_INTRO}`,
-    ["## Тест", llmsLink("Big Five тест", "/big-five-test"), llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility")].join("\n"),
+    ["## Тест", llmsLink("Big Five тест", "/big-five-test"), llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility"), ...SHORT_TESTS.map((test) => llmsLink(test.h1, test.path))].join("\n"),
     ["## 16 типов личности", llmsLink("Все типы", "/types"), ...ALL_TYPE_CODES.map((code) => llmsLink(typeDisplayName(code), typePath(code)))].join("\n"),
     ["## Черты Большой пятёрки", ...TRAIT_PAGES.map((page) => llmsLink(traitPageTitle(page.trait, page.pole), traitPath(page.trait, page.pole)))].join("\n"),
     ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, article.canonical))].join("\n"),
