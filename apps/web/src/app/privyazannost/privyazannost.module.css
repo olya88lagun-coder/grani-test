@@ -1,14 +1,80 @@
-/* Тест на тип привязанности и страницы типов: палитра «Глина» (data-palette="pair") задаёт цвета и тёмную тему */
 .page { color: var(--ink); background: var(--bg); }
 .container { width: 100%; max-width: 880px; margin-inline: auto; padding: 24px 16px 64px; display: flex; flex-direction: column; gap: 40px; }
+.landing[data-palette] {
+  background: var(--page-start) url('/compatibility/texture-light.webp') center top / 720px repeat;
+}
+.landing .container {
+  gap: clamp(56px, 8vw, 96px);
+  padding: clamp(36px, 6vw, 80px) clamp(16px, 4vw, 28px) clamp(56px, 8vw, 96px);
+}
+.hero[data-band] {
+  border-bottom: 1px solid var(--line);
+  background: radial-gradient(ellipse at 76% 48%, var(--surface-3), transparent 56%), var(--bg);
+}
+.heroWrap {
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 26px clamp(16px, 4vw, 48px) clamp(36px, 5.5vw, 76px);
+}
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.12fr) minmax(0, .88fr);
+  align-items: center;
+  gap: clamp(24px, 5vw, 72px);
+  padding-top: clamp(24px, 4vw, 56px);
+}
+.heroCopy {
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+}
+.hero .title {
+  max-width: 13ch;
+  color: var(--ink);
+  font-size: clamp(43px, 6.1vw, 84px);
+  line-height: .98;
+  text-wrap: balance;
+}
+.heroLead {
+  max-width: 43ch;
+  margin: 0;
+  font-size: clamp(16px, 1.55vw, 19px);
+  line-height: 1.6;
+}
+.heroAction { margin-top: 6px; }
+.heroArt {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 396px);
+  aspect-ratio: 1;
+  justify-self: center;
+}
+.heroArt::before,
+.heroArt::after {
+  content: "";
+  position: absolute;
+  inset: 6%;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+}
+.heroArt::after { inset: 0; }
+.heroArt img {
+  z-index: 1;
+  width: 72%;
+  height: auto;
+  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 36%));
+}
+.test { scroll-margin-top: 24px; }
+.test:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .header { display: grid; gap: 16px; }
 .title { margin: 0; font-family: var(--font-display); font-weight: 300; font-size: clamp(40px, 5vw, 62px); line-height: 1.07; letter-spacing: -.02em; }
 .lead { margin: 0; font-size: 18px; line-height: 1.6; }
 .facts { margin: 0; font-size: 14px; color: var(--ink-soft); }
-.brief { padding: 20px 22px; border-left: 3px solid var(--accent); border-radius: 0 var(--radius) var(--radius) 0; background: var(--surface); }
-.brief h2 { margin: 0 0 8px; font-family: var(--font-body); font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); }
+.brief { padding-block: 20px; border-block: 1px solid var(--page-rule); }
 .brief p { margin: 0; font-size: 16px; line-height: 1.7; }
 .reading { display: grid; gap: 32px; }
+.landing .reading { gap: 36px; max-width: 72ch; }
 .reading h2 { margin: 0 0 14px; font-size: clamp(28px, 3vw, 38px); line-height: 1.15; }
 .reading p { margin: 0; font-size: 16px; line-height: 1.8; }
 .types { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
@@ -22,3 +88,9 @@
 .sources { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
 .disclaimer { font-size: 14px !important; color: var(--ink-soft); }
 .next a { color: var(--accent); }
+
+@media (max-width: 680px) {
+  .heroGrid { grid-template-columns: minmax(0, 1fr); }
+  .heroArt { width: min(58vw, 222px); }
+  .heroAction { width: 100%; }
+}

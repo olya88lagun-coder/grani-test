@@ -12,23 +12,41 @@ export const metadata = publicMetadata({ title: TEST.title, description: TEST.de
 
 export default function AttachmentTestPage() {
   return (
-    <main className={`inner-page ${styles.page}`} data-palette="pair">
+    <main className={styles.landing} data-palette="pair" data-night-entry>
       <JsonLd data={webPageJsonLd({ title: TEST.title, description: TEST.description, path: TEST.path })} />
       <JsonLd data={faqJsonLd(TEST.faq)} />
+      <header className={styles.hero} data-band="night">
+        <div className={styles.heroWrap}>
+          <Breadcrumbs items={[{ name: TEST.h1, path: TEST.path }]} />
+          <div className={styles.heroGrid}>
+            <div className={styles.heroCopy}>
+              <h1 className={styles.title}>{TEST.h1}</h1>
+              <p className={styles.heroLead}>
+                Посмотрите, как вы реагируете на близость и дистанцию в отношениях.
+                В результате вы увидите свою точку на карте четырёх типов.
+              </p>
+              <a className={`button ${styles.heroAction}`} href="#attachment-test">
+                Пройти тест <span aria-hidden="true">→</span>
+              </a>
+              <p className={styles.facts}>30 утверждений · около 5 минут · бесплатно · без регистрации</p>
+            </div>
+            <div className={styles.heroArt} aria-hidden="true">
+              <img src="/home/hero-gem.webp" alt="" width={900} height={900} fetchPriority="high" />
+            </div>
+          </div>
+        </div>
+      </header>
+
       <div className={styles.container}>
-        <Breadcrumbs items={[{ name: TEST.h1, path: TEST.path }]} />
-        <header className={styles.header}>
-          <h1 className={styles.title}>{TEST.h1}</h1>
-          <p className={styles.facts}>30 утверждений · около 5 минут · бесплатно · без регистрации</p>
-          <div className={styles.brief}>
+        <div className={styles.test} id="attachment-test" tabIndex={-1}>
+          <ShortTestRunner slug={TEST.slug} />
+        </div>
+        <article className={styles.reading}>
+          <section className={styles.brief}>
             <h2>Кратко</h2>
             <p>{TEST.brief}</p>
-          </div>
-        </header>
+          </section>
 
-        <ShortTestRunner slug={TEST.slug} />
-
-        <article className={styles.reading}>
           {TEST.sections.map((section) => (
             <section key={section.heading}>
               <h2>{section.heading}</h2>
