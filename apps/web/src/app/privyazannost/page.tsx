@@ -9,5 +9,13 @@ const RELATED = [
 ];
 
 export default function AttachmentTestPage() {
-  return <ShortTestPage slug="attachment" facts="30 утверждений · около 5 минут · бесплатно · без регистрации" related={RELATED} palette="pair" />;
+  return (
+    <ShortTestPage
+      slug="attachment"
+      lead="Посмотрите, как вы реагируете на близость и дистанцию в отношениях. В результате вы увидите свою точку на карте четырёх типов."
+      facts="30 утверждений · около 5 минут · бесплатно · без регистрации"
+      related={RELATED}
+      palette="pair"
+    />
+  );
 }

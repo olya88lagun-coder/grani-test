@@ -27,10 +27,11 @@ export function ShortTestResult({ test, view, onRestart, focusOnMount = false }:
   // Ось X — вторая ось теста, ось Y — первая: у привязанности это избегание и тревожность
   const [yAxis, xAxis] = view.axes as [ShortResultView["axes"][number], ShortResultView["axes"][number]];
   return (
-    <section className={styles.result} aria-labelledby="short-result-title" data-testid="short-result">
-      <p className={styles.eyebrow}>Ваш результат</p>
-      <h2 id="short-result-title" className={styles.resultTitle} ref={titleRef} tabIndex={-1}>{view.type.name}</h2>
-      <p className={styles.tagline}>{view.type.tagline}</p>
+    <section className={styles.result} data-band="night" aria-labelledby="short-result-title" data-testid="short-result">
+      <header className={styles.resultHeader}>
+        <h2 id="short-result-title" className={styles.resultTitle} ref={titleRef} tabIndex={-1}>{view.type.name}</h2>
+        <p className={styles.tagline}>{view.type.tagline}</p>
+      </header>
       <div className={styles.resultGrid}>
         <AxisMap xLabel={xAxis.info.label} yLabel={yAxis.info.label} x={xAxis.value} y={yAxis.value} quadrantLabels={quadrantLabels(test, xAxis.info.key, yAxis.info.key)} />
         <div className={styles.axes}>
@@ -48,8 +49,10 @@ export function ShortTestResult({ test, view, onRestart, focusOnMount = false }:
           ))}
         </div>
       </div>
-      <p className={styles.summary}>{view.type.summary}</p>
-      <p className={styles.disclaimer}>{test.disclaimer}</p>
+      <div className={styles.explanation}>
+        <p className={styles.summary}>{view.type.summary}</p>
+        <p className={styles.disclaimer}>{test.disclaimer}</p>
+      </div>
       <div className={styles.actions}>
         <Link className="button" href={`${test.path}/${view.type.slug}`}>
           Подробнее о своём типе

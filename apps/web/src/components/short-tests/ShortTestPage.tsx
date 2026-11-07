@@ -20,27 +20,44 @@ export function shortTestPageMetadata(slug: string): Metadata {
   return publicMetadata({ title: test.title, description: test.description, path: test.path });
 }
 
-// Страница короткого теста: H1, «Кратко», сам тест, серверный текст для поиска, типы, FAQ, источники
-export function ShortTestPage({ slug, facts, related, palette }: { slug: string; facts: string; related: readonly RelatedLink[]; palette?: string }) {
+// Страница короткого теста. Первый экран и раскладка — по дизайну Codex для /privyazannost (PR #180),
+// вынесены сюда, чтобы все короткие тесты выглядели одинаково
+export function ShortTestPage({ slug, lead, facts, related, palette }: { slug: string; lead: string; facts: string; related: readonly RelatedLink[]; palette?: string }) {
   const test = requireShortTest(slug);
+  const anchor = `${test.slug}-test`;
   return (
-    <main className={`inner-page ${styles.page}`} data-palette={palette}>
+    <main className={styles.landing} data-palette={palette ?? "default"} data-night-entry>
       <JsonLd data={webPageJsonLd({ title: test.title, description: test.description, path: test.path })} />
       <JsonLd data={faqJsonLd(test.faq)} />
+      <header className={styles.hero} data-band="night">
+        <div className={styles.heroWrap}>
+          <Breadcrumbs items={[{ name: test.h1, path: test.path }]} />
+          <div className={styles.heroGrid}>
+            <div className={styles.heroCopy}>
+              <h1 className={styles.title}>{test.h1}</h1>
+              <p className={styles.heroLead}>{lead}</p>
+              <a className={`button ${styles.heroAction}`} href={`#${anchor}`}>
+                Пройти тест <span aria-hidden="true">→</span>
+              </a>
+              <p className={styles.facts}>{facts}</p>
+            </div>
+            <div className={styles.heroArt} aria-hidden="true">
+              <img src="/home/hero-gem.webp" alt="" width={900} height={900} fetchPriority="high" />
+            </div>
+          </div>
+        </div>
+      </header>
+
       <div className={styles.container}>
-        <Breadcrumbs items={[{ name: test.h1, path: test.path }]} />
-        <header className={styles.header}>
-          <h1 className={styles.title}>{test.h1}</h1>
-          <p className={styles.facts}>{facts}</p>
-          <div className={styles.brief}>
+        <div className={styles.test} id={anchor} tabIndex={-1}>
+          <ShortTestRunner slug={test.slug} />
+        </div>
+        <article className={styles.reading}>
+          <section className={styles.brief}>
             <h2>Кратко</h2>
             <p>{test.brief}</p>
-          </div>
-        </header>
+          </section>
 
-        <ShortTestRunner slug={test.slug} />
-
-        <article className={styles.reading}>
           {test.sections.map((section) => (
             <section key={section.heading}>
               <h2>{section.heading}</h2>

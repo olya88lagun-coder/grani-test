@@ -9,5 +9,12 @@ const RELATED = [
 ];
 
 export default function TemperamentTestPage() {
-  return <ShortTestPage slug="temperament" facts="24 утверждения · около 4 минут · бесплатно · без регистрации" related={RELATED} />;
+  return (
+    <ShortTestPage
+      slug="temperament"
+      lead="Узнайте, как быстро вы загораетесь, сколько вам нужно общения и насколько сильно вы переживаете. В результате вы увидите свой темперамент на карте двух осей."
+      facts="24 утверждения · около 4 минут · бесплатно · без регистрации"
+      related={RELATED}
+    />
+  );
 }
