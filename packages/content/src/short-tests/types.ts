@@ -13,6 +13,17 @@ export type ShortTestType = {
   readonly page: { readonly title: string; readonly description: string; readonly sections: readonly ShortTestSection[] };
 };
 
+// Платный разбор из готовых блоков: по типу, по уровню каждой оси и упражнения
+export type ShortReportExercise = { readonly title: string; readonly text: string };
+export type ShortReportBlocks = {
+  readonly title: string;
+  // Заголовки разделов для размытого превью до оплаты
+  readonly preview: readonly string[];
+  readonly byType: Readonly<Record<string, readonly ShortTestSection[]>>;
+  readonly byAxisLevel: Readonly<Record<string, Readonly<Record<"low" | "mid" | "high", ShortTestSection>>>>;
+  readonly exercises: Readonly<Record<string, readonly ShortReportExercise[]>>;
+};
+
 export type ShortTestAxisInfo = { readonly key: string; readonly label: string; readonly low: string; readonly high: string; readonly mixed: string };
 
 export type ShortTestDefinition = {
@@ -32,4 +43,6 @@ export type ShortTestDefinition = {
   readonly faq: readonly { readonly question: string; readonly answer: string }[];
   readonly sources: readonly string[];
   readonly disclaimer: string;
+  // Нет поля — нет платного разбора
+  readonly report?: ShortReportBlocks;
 };

@@ -1,3 +1,4 @@
+import { ATTACHMENT_REPORT } from "./attachment-report";
 import type { ShortTestDefinition } from "./types";
 
 // Структура осей — как в опросниках ECR и ECR-R; формулировки утверждений собственные
@@ -419,4 +420,5 @@ export const ATTACHMENT_TEST: ShortTestDefinition = {
     "Hazan C., Shaver P. Romantic love conceptualized as an attachment process // Journal of Personality and Social Psychology. 1987. Vol. 52, № 3.",
   ],
   disclaimer: "Это описание поведения в отношениях, а не диагноз и не оценка психического здоровья.",
+  report: ATTACHMENT_REPORT,
 };
