@@ -39,6 +39,12 @@ test("attachment test shows a result without login and keeps answers in the brow
   await expect(page.locator(".question-card").first()).toBeVisible();
 });
 
+test("keyboard focus moves to the result heading when the result appears", async ({ page }) => {
+  await page.goto(PATH);
+  await answerAll(page);
+  await expect(page.getByTestId("short-result").getByRole("heading", { level: 2 })).toBeFocused();
+});
+
 test("attachment test works when localStorage is blocked", async ({ page }) => {
   await page.addInitScript(() => {
     const deny = () => {

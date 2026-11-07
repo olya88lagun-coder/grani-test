@@ -37,6 +37,7 @@ export function ShortTestRunner({ slug }: { slug: string }) {
   const [score, setScore] = useState<ShortTestScore | null>(null);
   const [restored, setRestored] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [justCompleted, setJustCompleted] = useState(false);
 
   // Сохранённый результат читается после гидратации: на сервере localStorage нет
   useEffect(() => {
@@ -47,6 +48,7 @@ export function ShortTestRunner({ slug }: { slug: string }) {
   function complete(answers: Answers) {
     try {
       setScore(scoreShortTest(test!.scoring, answers));
+      setJustCompleted(true);
       write(shortResultStorageKey(test!.slug), serializeShortResult(test!.slug, answers, new Date()));
     } catch {
       // Испорченные ответы (подделанное хранилище) — начинаем заново
@@ -63,7 +65,7 @@ export function ShortTestRunner({ slug }: { slug: string }) {
   }
 
   if (!restored) return <p className="muted" role="status">Загружаем тест…</p>;
-  if (score) return <ShortTestResult test={test} view={shortResultView(test, score)} onRestart={restart} />;
+  if (score) return <ShortTestResult test={test} view={shortResultView(test, score)} onRestart={restart} focusOnMount={justCompleted} />;
 
   const goals = GOALS[test.slug];
   return (

@@ -1,4 +1,4 @@
-import { FUNNEL_STEPS, type FunnelStep } from "@grani/core";
+import { FUNNEL_STEPS, funnelBase, type FunnelStep } from "@grani/core";
 import { listFunnelDays } from "@grani/db";
 import type { Metadata } from "next";
 import { getDb } from "@/server/db";
@@ -23,8 +23,12 @@ export default async function FunnelPage() {
   await requireOwner();
   const days = await listFunnelDays(getDb(), new Date(Date.now() - (DAYS - 1) * 86_400_000));
   const total = Object.fromEntries(FUNNEL_STEPS.map((step) => [step, days.reduce((sum, day) => sum + day[step], 0)])) as Record<FunnelStep, number>;
-  // Доля от закончивших тест: именно они упираются во вход
-  const share = (step: FunnelStep) => (total.test_finish ? `${Math.round((total[step] * 100) / total.test_finish)}%` : "—");
+  // Доля от предыдущего значимого шага: вход — от закончивших Big Five, конец теста привязанности — от его начала
+  const share = (step: FunnelStep) => {
+    const base = funnelBase(step);
+    if (!base) return "";
+    return total[base] ? `${Math.round((total[step] * 100) / total[base])}%` : "—";
+  };
 
   return (
     <main className="inner-page">
@@ -36,11 +40,11 @@ export default async function FunnelPage() {
         </header>
         <table className="funnel-table">
           <thead>
-            <tr><th>Шаг</th><th>Всего</th><th>От закончивших</th></tr>
+            <tr><th>Шаг</th><th>Всего</th><th>Доля</th></tr>
           </thead>
           <tbody>
             {FUNNEL_STEPS.map((step) => (
-              <tr key={step}><td>{STEP_LABELS[step]}</td><td>{total[step]}</td><td>{step === "test_start" ? "" : share(step)}</td></tr>
+              <tr key={step}><td>{STEP_LABELS[step]}</td><td>{total[step]}</td><td>{share(step)}</td></tr>
             ))}
           </tbody>
         </table>

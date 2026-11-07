@@ -1,5 +1,8 @@
+"use client";
+
 import type { ShortTestDefinition } from "@grani/content/short-tests";
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import type { ShortResultView } from "@/lib/short-test-result";
 import { AxisMap } from "./AxisMap";
 import styles from "./short-tests.module.css";
@@ -14,13 +17,19 @@ function quadrantLabels(test: ShortTestDefinition, xKey: string, yKey: string): 
   return [name("low", "low"), name("high", "low"), name("low", "high"), name("high", "high")];
 }
 
-export function ShortTestResult({ test, view, onRestart }: { test: ShortTestDefinition; view: ShortResultView; onRestart: () => void }) {
+export function ShortTestResult({ test, view, onRestart, focusOnMount = false }: { test: ShortTestDefinition; view: ShortResultView; onRestart: () => void; focusOnMount?: boolean }) {
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  // Кнопка отправки исчезла вместе с тестом: фокус переводим на результат, чтобы клавиатура и читалка не потерялись.
+  // При открытии сохранённого результата фокус не трогаем — человек только зашёл на страницу
+  useEffect(() => {
+    if (focusOnMount) titleRef.current?.focus();
+  }, [focusOnMount]);
   // Ось X — вторая ось теста, ось Y — первая: у привязанности это избегание и тревожность
   const [yAxis, xAxis] = view.axes as [ShortResultView["axes"][number], ShortResultView["axes"][number]];
   return (
     <section className={styles.result} aria-labelledby="short-result-title" data-testid="short-result">
       <p className={styles.eyebrow}>Ваш результат</p>
-      <h2 id="short-result-title" className={styles.resultTitle}>{view.type.name}</h2>
+      <h2 id="short-result-title" className={styles.resultTitle} ref={titleRef} tabIndex={-1}>{view.type.name}</h2>
       <p className={styles.tagline}>{view.type.tagline}</p>
       <div className={styles.resultGrid}>
         <AxisMap xLabel={xAxis.info.label} yLabel={yAxis.info.label} x={xAxis.value} y={yAxis.value} quadrantLabels={quadrantLabels(test, xAxis.info.key, yAxis.info.key)} />
