@@ -147,6 +147,7 @@ describe("goals", () => {
       "attachment_finish",
       "temperament_start",
       "temperament_finish",
+      "purchase_attachment",
     ]);
   });
 
@@ -199,5 +200,11 @@ describe("goals", () => {
     expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "attachment_finish");
     reachGoal("temperament_finish");
     expect(sendBeacon).toHaveBeenCalledWith("/api/funnel", "temperament_finish");
+  });
+});
+
+describe("goalForProduct for short test reports", () => {
+  it("maps the attachment solo report to its own purchase goal", () => {
+    expect(goalForProduct("attachment_solo")).toBe("purchase_attachment");
   });
 });

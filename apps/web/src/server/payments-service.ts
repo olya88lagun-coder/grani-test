@@ -60,6 +60,7 @@ export const PRODUCT_DESCRIPTIONS: Readonly<Record<PurchaseProduct, string>> = {
   chapters_all: "Четыре главы к разбору личности «Грани»",
   pair: "Разбор совместимости пары «Грани»",
   together_30d: "Доступ к «Грани. Вдвоём» на 30 дней для двоих",
+  attachment_solo: "Личный разбор типа привязанности «Грани»",
 };
 
 async function resolveTarget(db: Database, userId: string, product: Product, targetId: string): Promise<ReportTarget | null> {

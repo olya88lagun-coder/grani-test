@@ -85,3 +85,16 @@ test("recognizes report kinds", () => {
   expect(isReportKind("friends")).toBe(true);
   expect(isReportKind("chapters_all")).toBe(false);
 });
+
+describe("attachment_solo product", () => {
+  test("targets a short test result and has no generated report kinds", () => {
+    expect(productTarget("attachment_solo")).toBe("short_result");
+    expect(reportKindsFor("attachment_solo")).toEqual([]);
+  });
+
+  test("can be bought once and does not depend on Big Five products", () => {
+    expect(canBuy("attachment_solo", [])).toBe(true);
+    expect(canBuy("attachment_solo", ["attachment_solo"])).toBe(false);
+    expect(canBuy("full", ["attachment_solo"])).toBe(true);
+  });
+});

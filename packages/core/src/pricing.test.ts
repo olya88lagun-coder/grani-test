@@ -13,6 +13,7 @@ describe("PRODUCT_PRICES", () => {
       chapter_relationships: 9900,
       chapters_all: 24900,
       pair: 39900,
+      attachment_solo: 19900,
     });
   });
 
@@ -46,4 +47,8 @@ describe("formatRub", () => {
   test.each([29950, -100, 1.5])("rejects %d kopecks", (kopecks) => {
     expect(() => formatRub(kopecks)).toThrow();
   });
+});
+
+test("attachment solo report costs 199 rubles", () => {
+  expect(PRODUCT_PRICES.attachment_solo).toBe(19900);
 });

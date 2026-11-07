@@ -30,6 +30,7 @@ export const GOALS = [
   "attachment_finish",
   "temperament_start",
   "temperament_finish",
+  "purchase_attachment",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 
@@ -137,6 +138,7 @@ export function sanitizeReferrer(referrer: string, origin: string): string | und
 export function goalForProduct(product: Product): Goal {
   if (product === "full") return "purchase_full";
   if (product === "pair") return "purchase_pair";
+  if (product === "attachment_solo") return "purchase_attachment";
   return "purchase_chapter";
 }
 
