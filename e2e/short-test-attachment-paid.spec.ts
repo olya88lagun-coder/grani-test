@@ -67,3 +67,12 @@ test("someone else's saved short result is not found", async ({ page, browser })
   expect(response?.status()).toBe(404);
   await other.close();
 });
+
+test("the pricing page and the offer list the attachment report at 199 rubles", async ({ page }) => {
+  await page.goto("/pricing");
+  await expect(page.getByRole("heading", { name: "Личный разбор типа привязанности" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Личный разбор типа привязанности" })).toContainText("199");
+  await page.goto("/offer");
+  await expect(page.getByText(/Личный разбор типа привязанности «Грани» — 199/)).toBeVisible();
+  await expect(page.getByText(/открывается сразу после оплаты/)).toBeVisible();
+});
