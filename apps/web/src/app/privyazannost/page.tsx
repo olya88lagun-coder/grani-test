@@ -1,83 +1,13 @@
-import { getShortTest } from "@grani/content/short-tests";
-import Link from "next/link";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { JsonLd } from "@/components/JsonLd";
-import { ShortTestRunner } from "@/components/short-tests/ShortTestRunner";
-import { faqJsonLd, publicMetadata, webPageJsonLd } from "@/lib/seo";
-import styles from "./privyazannost.module.css";
+import { ShortTestPage, shortTestPageMetadata } from "@/components/short-tests/ShortTestPage";
 
-const TEST = getShortTest("attachment")!;
+export const metadata = shortTestPageMetadata("attachment");
 
-export const metadata = publicMetadata({ title: TEST.title, description: TEST.description, path: TEST.path });
+const RELATED = [
+  { href: "/big-five-test", label: "Тест Big Five", text: "Покажет пять черт личности и объяснит, откуда берутся ваши реакции." },
+  { href: "/compatibility", label: "Тест на совместимость пары", text: "Сравнит вас с партнёром по тем же чертам." },
+  { href: "/temperament", label: "Тест на темперамент", text: "Холерик, сангвиник, флегматик или меланхолик — за 4 минуты." },
+];
 
 export default function AttachmentTestPage() {
-  return (
-    <main className={`inner-page ${styles.page}`} data-palette="pair">
-      <JsonLd data={webPageJsonLd({ title: TEST.title, description: TEST.description, path: TEST.path })} />
-      <JsonLd data={faqJsonLd(TEST.faq)} />
-      <div className={styles.container}>
-        <Breadcrumbs items={[{ name: TEST.h1, path: TEST.path }]} />
-        <header className={styles.header}>
-          <h1 className={styles.title}>{TEST.h1}</h1>
-          <p className={styles.facts}>30 утверждений · около 5 минут · бесплатно · без регистрации</p>
-          <div className={styles.brief}>
-            <h2>Кратко</h2>
-            <p>{TEST.brief}</p>
-          </div>
-        </header>
-
-        <ShortTestRunner slug={TEST.slug} />
-
-        <article className={styles.reading}>
-          {TEST.sections.map((section) => (
-            <section key={section.heading}>
-              <h2>{section.heading}</h2>
-              <p>{section.text}</p>
-            </section>
-          ))}
-
-          <section>
-            <h2>Четыре типа подробно</h2>
-            <ul className={styles.types}>
-              {TEST.types.map((type) => (
-                <li key={type.key}>
-                  <Link href={`${TEST.path}/${type.slug}`}>{type.name}</Link>
-                  <span>{type.tagline}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h2>Вопросы и ответы</h2>
-            {TEST.faq.map((item) => (
-              <details key={item.question} className={styles.faq}>
-                <summary>{item.question}</summary>
-                <p>{item.answer}</p>
-              </details>
-            ))}
-          </section>
-
-          <section>
-            <h2>Источники</h2>
-            <ol className={styles.sources}>
-              {TEST.sources.map((source) => (
-                <li key={source}>{source}</li>
-              ))}
-            </ol>
-          </section>
-
-          <p className={styles.disclaimer}>{TEST.disclaimer}</p>
-
-          <section className={styles.next}>
-            <h2>Что ещё пройти</h2>
-            <p>
-              <Link href="/big-five-test">Тест Big Five</Link> покажет пять черт личности и объяснит, откуда берутся ваши реакции. А{" "}
-              <Link href="/compatibility">тест на совместимость пары</Link> сравнит вас с партнёром по тем же чертам.
-            </p>
-          </section>
-        </article>
-      </div>
-    </main>
-  );
+  return <ShortTestPage slug="attachment" facts="30 утверждений · около 5 минут · бесплатно · без регистрации" related={RELATED} palette="pair" />;
 }
