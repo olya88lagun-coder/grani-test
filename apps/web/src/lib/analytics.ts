@@ -25,6 +25,9 @@ export const GOALS = [
   "story_share",
   "report_click",
   "checkout_start",
+  // Короткие тесты: старт и завершение считаются и в Метрике, и на сервере
+  "attachment_start",
+  "attachment_finish",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 
