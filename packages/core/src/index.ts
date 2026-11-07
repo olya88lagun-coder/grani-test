@@ -12,3 +12,4 @@ export * from "./together-care";
 export * from "./pair-map";
 export * from "./practice";
 export * from "./funnel";
+export * from "./short-tests";
