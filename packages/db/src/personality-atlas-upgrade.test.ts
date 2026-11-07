@@ -9,6 +9,7 @@ import {tmpdir} from "node:os";
 import {seedUserWithResult,type Database} from "./testing";
 import {loadAtlasDraft,writeAtlasDraft} from "./personality-atlas";
 import * as schema from "./schema";
+import {sql} from "drizzle-orm";
 
 test("atlas upgrade preserves existing results and purchases; before/after backups restore",async()=>{
  // No URL or disk data directory: every database in this test is newly created in memory.
@@ -22,8 +23,9 @@ test("atlas upgrade preserves existing results and purchases; before/after backu
   for(const entry of journal.entries)await cp(join(migrationsFolder,entry.tag+".sql"),join(baseFolder,entry.tag+".sql"));
   await migrate(db as never,{migrationsFolder:baseFolder});
   const owner=await seedUserWithResult(db,{externalId:"atlas-upgrade-only",displayName:"Условный владелец"});
-  await db.insert(schema.purchases).values({userId:owner.userId,resultId:owner.resultId,product:"full",amountKopecks:29900,status:"succeeded",paidAt:new Date("2026-10-10T12:00:00Z")});
-  const rows=async(database:Database)=>({users:await database.select().from(schema.users),results:await database.select().from(schema.results),purchases:await database.select().from(schema.purchases)});
+  // Старая версия базы: вставка и чтение покупок — только колонками той версии, иначе новые колонки ломают тест
+  await db.execute(sql`insert into purchases (user_id, result_id, product, amount_kopecks, status, paid_at) values (${owner.userId}, ${owner.resultId}, 'full', 29900, 'succeeded', ${"2026-10-10T12:00:00Z"})`);
+  const rows=async(database:Database)=>({users:await database.select().from(schema.users),results:await database.select().from(schema.results),purchases:await database.select({id:schema.purchases.id,userId:schema.purchases.userId,product:schema.purchases.product,resultId:schema.purchases.resultId,pairId:schema.purchases.pairId,amountKopecks:schema.purchases.amountKopecks,status:schema.purchases.status,paidAt:schema.purchases.paidAt}).from(schema.purchases)});
   const before=await rows(db),preUpgrade=await client.dumpDataDir();
   await migrate(db as never,{migrationsFolder});expect(await rows(db)).toEqual(before);
   const data={done:Array(7).fill(false),notes:Array(7).fill(""),decision:"Приватная заметка",interaction:["Первая фраза","Вторая фраза","Третья фраза"],memo:{quote:"Сохранённая памятка",items:["1","2","3","4","5"]}};

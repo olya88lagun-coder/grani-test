@@ -8,6 +8,7 @@ import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { seedUserWithResult, type Database } from "./testing";
 import * as schema from "./schema";
+import { sql } from "drizzle-orm";
 import { loadPracticeDraft, writePracticeDraft } from "./practice";
 
 test("practice migration preserves old purchases, generated JSON and atlas progress; backups restore", async () => {
@@ -22,10 +23,11 @@ test("practice migration preserves old purchases, generated JSON and atlas progr
     for (const e of journal.entries) await cp(join(folder, e.tag + ".sql"), join(temporary, e.tag + ".sql"));
     await migrate(db as never, { migrationsFolder: temporary });
     const owner = await seedUserWithResult(db, { externalId: "practice-before-upgrade" });
-    await db.insert(schema.purchases).values({ ...owner, product: "chapter_money", amountKopecks: 9900, status: "succeeded", paidAt: new Date("2026-09-20") });
+    // Старая версия базы: вставка и чтение покупок — только колонками той версии, иначе новые колонки ломают тест
+    await db.execute(sql`insert into purchases (user_id, result_id, product, amount_kopecks, status, paid_at) values (${owner.userId}, ${owner.resultId}, 'chapter_money', 9900, 'succeeded', ${"2026-09-20T00:00:00Z"})`);
     await db.insert(schema.reports).values({ resultId: owner.resultId, kind: "chapter_money", sections: { text: "Старый текст", tips: ["Первый совет"] }, source: "fallback" });
     await db.insert(schema.personalityAtlasDrafts).values({ resultId: owner.resultId, data: { done: Array(7).fill(false), notes: Array(7).fill("Личная заметка"), decision: "Решение", interaction: ["1", "2", "3"], memo: { quote: "Памятка", items: ["1", "2", "3", "4", "5"] } } });
-    const rows = async (database: Database) => ({ results: await database.select().from(schema.results), purchases: await database.select().from(schema.purchases), reports: await database.select().from(schema.reports), atlas: await database.select().from(schema.personalityAtlasDrafts) });
+    const rows = async (database: Database) => ({ results: await database.select().from(schema.results), purchases: await database.select({id:schema.purchases.id,userId:schema.purchases.userId,product:schema.purchases.product,resultId:schema.purchases.resultId,pairId:schema.purchases.pairId,amountKopecks:schema.purchases.amountKopecks,status:schema.purchases.status,paidAt:schema.purchases.paidAt}).from(schema.purchases), reports: await database.select().from(schema.reports), atlas: await database.select().from(schema.personalityAtlasDrafts) });
     const before = await rows(db), backup = await client.dumpDataDir();
     await migrate(db as never, { migrationsFolder: folder });
     expect(await rows(db)).toEqual(before);
