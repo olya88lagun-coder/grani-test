@@ -45,7 +45,7 @@ Automated gates that replace manual review:
 - stop topics, length, headings, unique canonicals, no future dates;
 - the content plan is marked `published` exactly when the article is.
 
-After merge the deploy workflow sends changed article URLs to Yandex via IndexNow (key in `apps/web/public/indexnow.txt`).
+After merge the deploy workflow sends all URLs from the live sitemap.xml to Yandex via IndexNow (key in `apps/web/public/indexnow.txt`).
 
 To write or fix an article by hand, follow the same steps from `docs/seo-article-writer.md`.
 
