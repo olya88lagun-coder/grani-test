@@ -221,6 +221,11 @@ describe("short test paths", () => {
       "/privyazannost/trevozhnyy",
       "/privyazannost/izbegayushchiy",
       "/privyazannost/trevozhno-izbegayushchiy",
+      "/temperament",
+      "/temperament/sangvinik",
+      "/temperament/kholerik",
+      "/temperament/flegmatik",
+      "/temperament/melankholik",
     ]);
   });
 

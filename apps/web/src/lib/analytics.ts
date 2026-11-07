@@ -28,6 +28,8 @@ export const GOALS = [
   // Короткие тесты: старт и завершение считаются и в Метрике, и на сервере
   "attachment_start",
   "attachment_finish",
+  "temperament_start",
+  "temperament_finish",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 
