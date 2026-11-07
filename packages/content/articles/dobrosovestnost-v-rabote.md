@@ -4,8 +4,8 @@ seoTitle: Добросовестность в работе: сила систе�
 description: Как добросовестность проявляется именно в работе: не как старание, а как система напоминаний и процессов, где она даёт запас прочности и где создаёт риск переработки.
 date: 2026-10-30
 tag: Работа
-image: /home/cover-work.webp
-imageAlt: Ряд ровно выстроенных изумрудных кубов на тёмном столе под золотой настольной лампой
+image: /images/articles/dobrosovestnost-v-rabote.webp
+imageAlt: Упорядоченные изумрудные блоки и повторяющиеся золотые линии под направленным рабочим светом
 status: published
 reviewed: true
 canonical: /articles/dobrosovestnost-v-rabote

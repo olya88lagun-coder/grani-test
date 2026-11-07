@@ -4,8 +4,8 @@ seoTitle: Конфликты и Big Five: почему ссоры повторя
 description: Почему в паре раз за разом повторяется один и тот же спор, какие черты Big Five делают ссоры острее или мягче и что обсудить, чтобы разговор не скатывался в обвинения.
 date: 2026-10-30
 tag: Отношения
-image: /home/article-relationship.webp
-imageAlt: Две изумрудные фигуры стоят друг против друга на тёмном фоне с рассечённой золотой нитью света
+image: /images/articles/konflikty-i-big-five.webp
+imageAlt: Две изумрудные фигуры стоят по сторонам трещины, над которой снова соединяются пять золотых нитей
 status: published
 reviewed: true
 canonical: /articles/konflikty-i-big-five

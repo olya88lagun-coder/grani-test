@@ -3,8 +3,8 @@ title: Как понять партнера через пять черт
 description: Как читать поведение партнёра через пять черт личности вместо догадок о мотивах, и почему молчание, прямота или спонтанность чаще связаны с характером, а не с отношением к тебе.
 date: 2026-10-27
 tag: Отношения
-image: /home/article-relationship.webp
-imageAlt: Две изумрудные фигуры стоят рядом на тёмном фоне с золотыми нитями света
+image: /images/articles/kak-ponyat-partnera.webp
+imageAlt: Два изумрудных бюста смотрят друг на друга через призму, разделяющую золотой свет на пять лучей
 status: published
 reviewed: true
 canonical: /articles/kak-ponyat-partnera

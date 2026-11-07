@@ -200,7 +200,64 @@ const WILMOT_2019_EXTRAVERSION: Source = {
   note: "небольшая средняя связь экстраверсии с рабочими показателями; общительность сама по себе даёт ограниченные преимущества",
 };
 
+const BARRICK_MOUNT_1991: Source = {
+  authors: "MURRAY R. BARRICK, MICHAEL K. MOUNT",
+  year: 1991,
+  title: "THE BIG FIVE PERSONALITY DIMENSIONS AND JOB PERFORMANCE: A META‐ANALYSIS",
+  journal: "Personnel Psychology",
+  url: "https://doi.org/10.1111/j.1744-6570.1991.tb00688.x",
+  note: "открытость была связана с результатами обучения сотрудников в метаанализе, но не с другими обобщёнными рабочими показателями",
+};
+
+const HUANG_2014: Source = {
+  authors: "Jason L. Huang, Ann Marie Ryan, Keith L. Zabel, Ashley Palmer",
+  year: 2014,
+  title: "Personality and adaptive performance at work: A meta-analytic investigation.",
+  journal: "Journal of Applied Psychology",
+  url: "https://doi.org/10.1037/a0034285",
+  note: "открытость не помогла предсказать общий показатель адаптивного поведения на работе",
+};
+
+const LUO_2023: Source = {
+  authors: "Jing Luo, Bo Zhang, Mengyang Cao, Brent W. Roberts",
+  year: 2023,
+  title: "The Stressful Personality: A Meta-Analytical Review of the Relation Between Personality and Stress",
+  journal: "Personality and Social Psychology Review",
+  url: "https://doi.org/10.1177/10888683221104002",
+  note: "связи черт Big Five со стрессом различаются для событий, субъективной оценки и физиологической реакции",
+};
+
+const BOLGER_SCHILLING_1991: Source = {
+  authors: "Niall Bolger, Elizabeth A. Schilling",
+  year: 1991,
+  title: "Personality and the Problems of Everyday Life: The Role of Neuroticism In Exposure and Reactivity to Daily Stressors",
+  journal: "Journal of Personality",
+  url: "https://doi.org/10.1111/j.1467-6494.1991.tb00253.x",
+  note: "дневниковое исследование разделяет частоту повседневных стрессоров и силу реакции на них",
+};
+
+const LEIKAS_ILMARINEN_2017: Source = {
+  authors: "Sointu Leikas, Ville‐Juhani Ilmarinen",
+  year: 2017,
+  title: "Happy Now, Tired Later? Extraverted and Conscientious Behavior Are Related to Immediate Mood Gains, but to Later Fatigue",
+  journal: "Journal of Personality",
+  url: "https://doi.org/10.1111/jopy.12264",
+  note: "общительное поведение было связано с хорошим настроением в моменте и большей усталостью позже",
+};
+
+const NGUYEN_RYAN_DECI_2018: Source = {
+  authors: "Thuy-vy T. Nguyen, Richard M. Ryan, Edward L. Deci",
+  year: 2018,
+  title: "Solitude as an Approach to Affective Self-Regulation",
+  journal: "Personality and Social Psychology Bulletin",
+  url: "https://doi.org/10.1177/0146167217733073",
+  note: "уединение снижало интенсивность активных эмоций, а желание побыть одному было связано с расслабленностью",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
+  "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
+  "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
   "introvert-na-rabote": [CHEEK_BUSS_1981, FLEESON_2001],
   "ekstraversiya-v-rabote": [WILMOT_2019_EXTRAVERSION, GRANT_2013],
   "dobrosovestnost": [DEYOUNG_2007, SOTO_2019, ROBERTS_2006],

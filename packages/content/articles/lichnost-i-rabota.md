@@ -4,8 +4,8 @@ seoTitle: Личность и работа: какие черты помогаю
 description: Какие черты Big Five связаны с успехом на работе, почему эффект каждой черты умеренный и почему подходящий профиль важнее несуществующего идеального.
 date: 2026-10-30
 tag: Работа
-image: /home/cover-work.webp
-imageAlt: Изумрудная фигура держит на весу светящийся кристалл среди ровных золотых линий, похожих на рабочий план
+image: /images/articles/lichnost-i-rabota.webp
+imageAlt: Изумрудная фигура окружена пятью разными скульптурами, соединёнными золотыми линиями
 status: published
 reviewed: true
 canonical: /articles/lichnost-i-rabota

@@ -3,8 +3,8 @@ title: Big Five в отношениях: где вы похожи
 description: Какие из пяти черт личности заметнее всего влияют на пару, через что они проявляются в быту и о чём стоит договориться, когда вы не совпадаете.
 date: 2026-10-27
 tag: Отношения
-image: /home/article-relationship.webp
-imageAlt: Две изумрудные фигуры стоят рядом на тёмном фоне с золотыми нитями света
+image: /images/articles/big-five-v-otnosheniyah.webp
+imageAlt: Две изумрудные фигуры партнёров рядом с пятью парами кристаллов, соединённых золотыми дугами
 status: published
 reviewed: true
 canonical: /articles/big-five-v-otnosheniyah
