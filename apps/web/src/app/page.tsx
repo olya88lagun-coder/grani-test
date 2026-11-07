@@ -86,6 +86,27 @@ const ARTICLE_CARDS = [
   { slug: "sovmestimost-par", tag: "Отношения", tone: "arch", image: "/home/article-relationship.webp" },
 ] as const;
 
+const SHORT_TEST_CARDS = [
+  {
+    href: "/privyazannost",
+    title: "Тест на тип привязанности",
+    description: "Как ты реагируешь на близость и дистанцию в отношениях.",
+    duration: "Около 5 минут",
+    image: "/attachment/hero-mobile.webp",
+    width: 800,
+    height: 400,
+  },
+  {
+    href: "/temperament",
+    title: "Тест на темперамент",
+    description: "Как быстро ты загораешься, сколько общения тебе нужно и как сильно ты переживаешь.",
+    duration: "Около 4 минут",
+    image: "/home/types-night-mobile.webp",
+    width: 900,
+    height: 1400,
+  },
+] as const;
+
 // Карточки — настоящие статьи; пропавший slug роняет сборку, а не прячет карточку
 function homeArticles() {
   const articles = getArticles();
@@ -355,6 +376,23 @@ export default function HomePage() {
             <em>темпе жизни</em>
             <em>распределении обязанностей</em>
           </div>
+        </div>
+      </section>
+
+      <section className={`home-section ${styles.shortTests}`} aria-labelledby="short-tests-title">
+        <div className="home-section__copy">
+          <h2 id="short-tests-title">Ещё тесты</h2>
+          <p>Бесплатные короткие тесты. Результат сразу, без регистрации.</p>
+        </div>
+        <div className={styles.shortTestGrid}>
+          {SHORT_TEST_CARDS.map((test) => (
+            <Link key={test.href} className={styles.shortTestCard} href={test.href} data-band="night">
+              <img src={test.image} alt="" width={test.width} height={test.height} loading="lazy" decoding="async" />
+              <h3>{test.title}</h3>
+              <p>{test.description}</p>
+              <span className={styles.shortTestMeta}>{test.duration} <span aria-hidden="true">→</span></span>
+            </Link>
+          ))}
         </div>
       </section>
 
