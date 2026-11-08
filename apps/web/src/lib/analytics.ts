@@ -32,6 +32,8 @@ export const GOALS = [
   "temperament_finish",
   "purchase_attachment",
   "purchase_attachment_pair",
+  "attachment_invite",
+  "attachment_pair",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 

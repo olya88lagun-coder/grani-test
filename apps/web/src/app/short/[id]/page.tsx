@@ -4,7 +4,10 @@ import { BuyButton } from "@/components/BuyButton";
 import { ShortTestReport } from "@/components/short-tests/ShortTestReport";
 import { ShortTestSavedResult } from "@/components/short-tests/ShortTestSavedResult";
 import { formatRub, PRODUCT_PRICES } from "@grani/core";
+import { listActiveShortPairs } from "@grani/db";
+import { ShortPairInvite } from "@/components/short-tests/ShortPairInvite";
 import { getDb } from "@/server/db";
+import { firstName } from "@/server/friends-service";
 import { shortResultPage } from "@/server/short-results-service";
 import { requireUser } from "@/server/viewer";
 import styles from "@/components/short-tests/short-tests.module.css";
@@ -17,6 +20,7 @@ export default async function ShortResultPage({ params }: { params: Promise<{ id
   const [{ id }, user] = await Promise.all([params, requireUser()]);
   const page = await shortResultPage({ db: getDb() }, { id, userId: user.id });
   if (!page) notFound();
+  const pairs = page.test.pairOffer ? await listActiveShortPairs(getDb(), { userId: user.id, testSlug: page.test.slug }) : [];
   const preview = page.test.reportOffer?.preview ?? [];
   return (
     <main className="inner-page" data-palette="pair">
@@ -36,6 +40,14 @@ export default async function ShortResultPage({ params }: { params: Promise<{ id
             <BuyButton product={page.product} targetId={page.resultId} label={`Открыть за ${formatRub(PRODUCT_PRICES[page.product])}`} />
           </section>
         ) : null}
+        {page.test.pairOffer && (
+          <ShortPairInvite
+            shortResultId={page.resultId}
+            title={page.test.pairOffer.title}
+            lead={page.test.pairOffer.lead}
+            pairs={pairs.map((pair) => ({ id: pair.id, partnerFirstName: firstName(pair.partner.displayName) }))}
+          />
+        )}
       </div>
     </main>
   );

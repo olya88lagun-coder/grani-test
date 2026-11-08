@@ -149,6 +149,8 @@ describe("goals", () => {
       "temperament_finish",
       "purchase_attachment",
       "purchase_attachment_pair",
+      "attachment_invite",
+      "attachment_pair",
     ]);
   });
 

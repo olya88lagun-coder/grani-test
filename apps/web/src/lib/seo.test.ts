@@ -221,6 +221,7 @@ describe("short test paths", () => {
       "/privyazannost/trevozhnyy",
       "/privyazannost/izbegayushchiy",
       "/privyazannost/trevozhno-izbegayushchiy",
+      "/privyazannost/sochetaniya",
       "/temperament",
       "/temperament/sangvinik",
       "/temperament/kholerik",

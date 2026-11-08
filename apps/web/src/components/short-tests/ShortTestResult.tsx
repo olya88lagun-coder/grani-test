@@ -9,7 +9,7 @@ import { AxisMap } from "./AxisMap";
 import styles from "./short-tests.module.css";
 
 // Подписи квадрантов карты: [низкое x, низкое y], [высокое x, низкое y], [низкое x, высокое y], [высокое x, высокое y]
-function quadrantLabels(test: ShortTestDefinition, xKey: string, yKey: string): [string, string, string, string] {
+export function quadrantLabels(test: ShortTestDefinition, xKey: string, yKey: string): [string, string, string, string] {
   const name = (x: "low" | "high", y: "low" | "high") => {
     const rule = test.scoring.types.find((r) => r.when[xKey] === x && r.when[yKey] === y);
     const type = test.types.find((t) => t.key === rule?.key);
@@ -26,22 +26,26 @@ export function ShortTestResult({
   onOpenReport,
   focusOnMount = false,
   saved = false,
+  partnerInvite = false,
 }: {
   test: ShortTestDefinition;
   view: ShortResultView;
   onRestart?: () => void;
-  onOpenReport?: () => Promise<string | null>;
+  // intent: личный разбор или позвать партнёра; ответы уходят на сервер только по этим кнопкам
+  onOpenReport?: (intent: "report" | "pair") => Promise<string | null>;
   focusOnMount?: boolean;
   saved?: boolean;
+  // Результат партнёра, пришедшего по приглашению: вместо покупки и приглашения — переход к общей карте
+  partnerInvite?: boolean;
 }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [opening, setOpening] = useState(false);
   const [openError, setOpenError] = useState<string | null>(null);
-  async function openReport() {
+  async function openReport(intent: "report" | "pair") {
     if (!onOpenReport || opening) return;
     setOpening(true);
     setOpenError(null);
-    const error = await onOpenReport();
+    const error = await onOpenReport(intent);
     if (error) {
       setOpenError(error);
       setOpening(false);
@@ -81,18 +85,34 @@ export function ShortTestResult({
         <p className={styles.summary}>{view.type.summary}</p>
         <p className={styles.disclaimer}>{test.disclaimer}</p>
       </div>
-      {!saved && test.reportOffer && onOpenReport && (
+      {!saved && partnerInvite && onOpenReport && (
         <div className={styles.reportOffer}>
-          <button type="button" className="button" onClick={openReport} disabled={opening}>
+          <button type="button" className="button" onClick={() => openReport("pair")} disabled={opening}>
+            {opening ? "Открываем…" : "Увидеть общую карту"}
+          </button>
+          <p className={styles.disclaimer}>Нужно войти через VK и согласиться объединить результаты.</p>
+        </div>
+      )}
+      {!saved && !partnerInvite && test.reportOffer && onOpenReport && (
+        <div className={styles.reportOffer}>
+          <button type="button" className="button" onClick={() => openReport("report")} disabled={opening}>
             {opening ? "Открываем…" : `Открыть личный разбор — ${formatRub(PRODUCT_PRICES.attachment_solo)}`}
           </button>
           <p className={styles.disclaimer}>{test.reportOffer.preview.slice(0, 4).join(" · ")}</p>
-          {openError && (
-            <p className="error" role="alert">
-              {openError}
-            </p>
-          )}
         </div>
+      )}
+      {!saved && !partnerInvite && test.pairOffer && onOpenReport && (
+        <div className={styles.reportOffer}>
+          <button type="button" className="button button--ghost" onClick={() => openReport("pair")} disabled={opening}>
+            Пройти вдвоём с партнёром
+          </button>
+          <p className={styles.disclaimer}>{test.pairOffer.lead}</p>
+        </div>
+      )}
+      {openError && (
+        <p className="error" role="alert">
+          {openError}
+        </p>
       )}
       <div className={styles.actions}>
         <Link className={saved ? "button button--ghost" : "button"} href={`${test.path}/${view.type.slug}`}>
