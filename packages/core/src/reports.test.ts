@@ -98,3 +98,19 @@ describe("attachment_solo product", () => {
     expect(canBuy("full", ["attachment_solo"])).toBe(true);
   });
 });
+
+describe("attachment pair products", () => {
+  test("target a short test pair and generate nothing", () => {
+    expect(productTarget("attachment_pair")).toBe("short_pair");
+    expect(productTarget("attachment_pair_discount")).toBe("short_pair");
+    expect(reportKindsFor("attachment_pair")).toEqual([]);
+    expect(reportKindsFor("attachment_pair_discount")).toEqual([]);
+  });
+
+  test("are sold once per pair, whichever price was paid", () => {
+    expect(canBuy("attachment_pair", [])).toBe(true);
+    expect(canBuy("attachment_pair_discount", [])).toBe(true);
+    expect(canBuy("attachment_pair", ["attachment_pair_discount"])).toBe(false);
+    expect(canBuy("attachment_pair_discount", ["attachment_pair"])).toBe(false);
+  });
+});

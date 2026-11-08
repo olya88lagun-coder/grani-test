@@ -51,3 +51,9 @@ export function scoreShortTest(scoring: ShortTestScoring, answers: Answers): Sho
   const mixedAxes = scoring.axes.filter((axis) => (axes[axis] ?? 0) >= low && (axes[axis] ?? 0) <= high);
   return { axes, typeKey: matches[0]!.key, mixedAxes };
 }
+
+// Ключ сочетания двух типов: порядок участников не важен, типы идут в порядке списка
+export function combinationKey(order: readonly string[], a: string, b: string): string {
+  const [first, second] = order.indexOf(a) <= order.indexOf(b) ? [a, b] : [b, a];
+  return `${first}+${second}`;
+}

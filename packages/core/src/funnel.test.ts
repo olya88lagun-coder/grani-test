@@ -24,3 +24,10 @@ describe("funnelBase for temperament", () => {
     expect(funnelBase("temperament_start")).toBeNull();
   });
 });
+
+describe("funnelBase for attachment pairs", () => {
+  test("an invite is a share of attachment finishes, a pair is a share of invites", () => {
+    expect(funnelBase("attachment_invite")).toBe("attachment_finish");
+    expect(funnelBase("attachment_pair")).toBe("attachment_invite");
+  });
+});

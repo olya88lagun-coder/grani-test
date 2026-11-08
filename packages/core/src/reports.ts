@@ -1,11 +1,13 @@
 import { MIN_FRIENDS } from "./friends";
-import { CHAPTER_PRODUCTS, type Product } from "./pricing";
+import { ATTACHMENT_PAIR_PRODUCTS, CHAPTER_PRODUCTS, type AttachmentPairProduct, type Product } from "./pricing";
 
 export const REPORT_KINDS = ["full", "friends", "chapter_money", "chapter_conflict", "chapter_stress", "chapter_relationships", "pair", "life", "portrait"] as const;
 export type ReportKind = (typeof REPORT_KINDS)[number];
 export type ChapterKind = (typeof CHAPTER_PRODUCTS)[number];
 export const CHAPTER_KINDS: readonly ChapterKind[] = CHAPTER_PRODUCTS;
-export type ProductTarget = "result" | "pair" | "short_result";
+export type ProductTarget = "result" | "pair" | "short_result" | "short_pair";
+
+const isAttachmentPair = (product: Product): product is AttachmentPairProduct => (ATTACHMENT_PAIR_PRODUCTS as readonly Product[]).includes(product);
 
 export function isReportKind(value: unknown): value is ReportKind {
   return typeof value === "string" && (REPORT_KINDS as readonly string[]).includes(value);
@@ -21,13 +23,14 @@ export function isExtraKind(value: unknown): value is ExtraKind {
 
 export function productTarget(product: Product): ProductTarget {
   if (product === "attachment_solo") return "short_result";
+  if (isAttachmentPair(product)) return "short_pair";
   return product === "pair" ? "pair" : "result";
 }
 
 // Имена продуктов и разборов совпадают, кроме набора из четырёх глав
 // Разборы коротких тестов не генерируются: у них нет видов отчёта
 export function reportKindsFor(product: Product): readonly ReportKind[] {
-  if (product === "attachment_solo") return [];
+  if (product === "attachment_solo" || isAttachmentPair(product)) return [];
   return product === "chapters_all" ? CHAPTER_KINDS : [product];
 }
 
@@ -40,6 +43,8 @@ export function unlockedKinds(owned: readonly Product[]): ReadonlySet<ReportKind
 
 export function canBuy(product: Product, owned: readonly Product[]): boolean {
   if (product === "attachment_solo") return !owned.includes(product);
+  // Разбор пары продаётся паре один раз, по какой бы цене его ни купили
+  if (isAttachmentPair(product)) return !owned.some(isAttachmentPair);
   const unlocked = unlockedKinds(owned);
   if (product === "full" || product === "pair") return !unlocked.has(product);
   if (!unlocked.has("full")) return false;

@@ -34,3 +34,7 @@ test("the reminder is delayed to the end of its window so it also counts payment
   // Ровно на границе окна задача уходит в следующее окно: ждём целое окно, а не ноль секунд
   expect(receiptsReminderWindow(new Date("2026-10-07T10:10:00Z")).delaySeconds).toBe(600);
 });
+
+test("a short test pair notification has its own key", () => {
+  expect(notifyJobKey({ kind: "short_pair_created", shortPairId: "x" })).toBe("short_pair_created:x");
+});

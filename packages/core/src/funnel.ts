@@ -1,5 +1,5 @@
 // Шаги от начала теста до входа, которые сайт считает сам; остальные цели есть только в Метрике
-export const FUNNEL_STEPS = ["test_start", "test_finish", "login_consent", "login_start", "login", "attachment_start", "attachment_finish", "temperament_start", "temperament_finish"] as const;
+export const FUNNEL_STEPS = ["test_start", "test_finish", "login_consent", "login_start", "login", "attachment_start", "attachment_finish", "temperament_start", "temperament_finish", "attachment_invite", "attachment_pair"] as const;
 export type FunnelStep = (typeof FUNNEL_STEPS)[number];
 
 export function isFunnelStep(value: string): value is FunnelStep {
@@ -17,6 +17,9 @@ const FUNNEL_BASE: Readonly<Record<FunnelStep, FunnelStep | null>> = {
   attachment_finish: "attachment_start",
   temperament_start: null,
   temperament_finish: "temperament_start",
+  // Пару зовут после своего результата; пара создаётся по ссылке
+  attachment_invite: "attachment_finish",
+  attachment_pair: "attachment_invite",
 };
 
 export function funnelBase(step: FunnelStep): FunnelStep | null {

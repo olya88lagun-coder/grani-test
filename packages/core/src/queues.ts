@@ -7,6 +7,8 @@ export const RETENTION_CRON = "0 3 * * *";
 export type NotifyJob =
   | { kind: "friend_answered"; inviteId: string; friendsCount: number }
   | { kind: "pair_created"; pairId: string }
+  // Партнёр принял приглашение в короткий тест: пригласившему сообщаем, что общая карта готова
+  | { kind: "short_pair_created"; shortPairId: string }
   | { kind: "report_ready"; reportId: string }
   // Набор из четырёх глав объявляется одним сообщением, когда готова последняя
   | { kind: "chapters_ready"; resultId: string }
@@ -23,6 +25,7 @@ export const GENERATE_JOB_OPTIONS = { retryLimit: 2, retryDelay: 30, retryBackof
 export function notifyJobKey(job: NotifyJob): string {
   if (job.kind === "friend_answered") return `friend_answered:${job.inviteId}:${job.friendsCount}`;
   if (job.kind === "pair_created") return `pair_created:${job.pairId}`;
+  if (job.kind === "short_pair_created") return `short_pair_created:${job.shortPairId}`;
   if (job.kind === "report_ready") return `report_ready:${job.reportId}`;
   if (job.kind === "receipts_pending") return `receipts_pending:${job.bucket}`;
   return `chapters_ready:${job.resultId}`;
