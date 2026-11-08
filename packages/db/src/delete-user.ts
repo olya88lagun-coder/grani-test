@@ -1,5 +1,5 @@
-import { and, eq, isNull } from "drizzle-orm";
-import { authIdentities, purchases, results, shortTestResults, togetherInvites, togetherPilotPasses, users } from "./schema";
+import { and, eq, isNull, or } from "drizzle-orm";
+import { authIdentities, purchases, results, shortPairInvites, shortPairs, shortTestResults, togetherInvites, togetherPilotPasses, users } from "./schema";
 import { closeSpaceForUser } from "./together";
 import { deleteUserAnswers } from "./together-cards";
 import type { Database } from "./types";
@@ -18,6 +18,9 @@ export async function deleteUserData(db: Database, userId: string, now: Date = n
     if (!marked) return { deleted: false };
     await tx.delete(results).where(eq(results.userId, userId));
     // Пользователь помечается удалённым, каскад не сработает: короткие тесты удаляются явно, ссылки покупок обнуляются схемой
+    // Пары и приглашения коротких тестов — явно: в них результаты обоих, и партнёр перестаёт видеть общую карту
+    await tx.delete(shortPairs).where(or(eq(shortPairs.userAId, userId), eq(shortPairs.userBId, userId)));
+    await tx.delete(shortPairInvites).where(eq(shortPairInvites.inviterUserId, userId));
     await tx.delete(shortTestResults).where(eq(shortTestResults.userId, userId));
     // Совместное пространство закрывается: партнёр освобождается, записи об оплатах остаются
     await closeSpaceForUser(tx, { userId, now, reason: "account_deleted" });

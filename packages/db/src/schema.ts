@@ -168,6 +168,59 @@ export const pairs = pgTable(
   ],
 );
 
+// Приглашение в пару по короткому тесту — по образцу pair_invites, но с результатом короткого теста
+export const shortPairInvites = pgTable(
+  "short_pair_invites",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    token: text("token").notNull().unique(),
+    testSlug: text("test_slug").notNull(),
+    inviterUserId: uuid("inviter_user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    inviterShortResultId: uuid("inviter_short_result_id")
+      .notNull()
+      .references(() => shortTestResults.id, { onDelete: "cascade" }),
+    status: pairInviteStatusEnum("status").notNull().default("open"),
+    createdAt: createdAt(),
+  },
+  (t) => [index("short_pair_invites_result_idx").on(t.inviterShortResultId)],
+);
+
+// Пара по короткому тесту: результаты на момент объединения, согласие приглашённого с версией, выход любого из двоих
+export const shortPairs = pgTable(
+  "short_pairs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    inviteId: uuid("invite_id")
+      .notNull()
+      .unique()
+      .references(() => shortPairInvites.id, { onDelete: "cascade" }),
+    testSlug: text("test_slug").notNull(),
+    userAId: uuid("user_a_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    shortResultAId: uuid("short_result_a_id")
+      .notNull()
+      .references(() => shortTestResults.id, { onDelete: "cascade" }),
+    userBId: uuid("user_b_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    shortResultBId: uuid("short_result_b_id")
+      .notNull()
+      .references(() => shortTestResults.id, { onDelete: "cascade" }),
+    partnerConsentAt: timestamp("partner_consent_at", { withTimezone: true }).notNull(),
+    partnerConsentVersion: text("partner_consent_version").notNull(),
+    leftAt: timestamp("left_at", { withTimezone: true }),
+    createdAt: createdAt(),
+  },
+  (t) => [
+    index("short_pairs_user_a_idx").on(t.userAId),
+    index("short_pairs_user_b_idx").on(t.userBId),
+    check("short_pairs_different_users", sql`${t.userAId} <> ${t.userBId}`),
+  ],
+);
+
 export const togetherSpaceStatusEnum = pgEnum("together_space_status", ["pending", "active", "closed"]);
 export const togetherClosedReasonEnum = pgEnum("together_closed_reason", ["left", "account_deleted"]);
 export const togetherRoleEnum = pgEnum("together_role", ["initiator", "partner"]);
@@ -274,6 +327,8 @@ export const productEnum = pgEnum("product", [
   "pair",
   "together_30d",
   "attachment_solo",
+  "attachment_pair",
+  "attachment_pair_discount",
 ]);
 export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled", "refunded"]);
 export const reportKindEnum = pgEnum("report_kind", REPORT_KINDS);
@@ -295,6 +350,7 @@ export const purchases = pgTable(
     pairId: uuid("pair_id").references(() => pairs.id, { onDelete: "set null" }),
     spaceId: uuid("space_id").references(() => togetherSpaces.id, { onDelete: "set null" }),
     shortResultId: uuid("short_result_id").references(() => shortTestResults.id, { onDelete: "set null" }),
+    shortPairId: uuid("short_pair_id").references(() => shortPairs.id, { onDelete: "set null" }),
     amountKopecks: integer("amount_kopecks").notNull(),
     status: purchaseStatusEnum("status").notNull().default("pending"),
     yookassaPaymentId: text("yookassa_payment_id").unique(),
@@ -311,7 +367,8 @@ export const purchases = pgTable(
     index("purchases_space_idx").on(t.spaceId),
     index("purchases_user_idx").on(t.userId, t.createdAt),
     index("purchases_short_result_idx").on(t.shortResultId),
-    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}, ${t.spaceId}, ${t.shortResultId}) <= 1`),
+    index("purchases_short_pair_idx").on(t.shortPairId),
+    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}, ${t.spaceId}, ${t.shortResultId}, ${t.shortPairId}) <= 1`),
   ],
 );
 
