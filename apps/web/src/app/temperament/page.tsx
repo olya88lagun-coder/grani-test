@@ -12,9 +12,11 @@ export default function TemperamentTestPage() {
   return (
     <ShortTestPage
       slug="temperament"
-      lead="Узнайте, как быстро вы загораетесь, сколько вам нужно общения и насколько сильно вы переживаете. В результате вы увидите свой темперамент на карте двух осей."
+      lead="Сангвиник, холерик, флегматик или меланхолик? Узнайте, где вы на карте экстраверсии и эмоциональности."
       facts="24 утверждения · около 4 минут · бесплатно · без регистрации"
       related={RELATED}
+      heroImage={{ desktop: "/temperament/hero-desktop.webp", mobile: "/temperament/hero-mobile.webp", width: 1600, height: 800 }}
+      showContents
     />
   );
 }

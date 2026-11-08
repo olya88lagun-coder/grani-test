@@ -116,6 +116,67 @@
 .disclaimer { font-size: 14px !important; color: var(--ink-soft); }
 .next a { color: var(--accent); }
 
+.landing.editorial[data-palette] {
+  background: linear-gradient(180deg, transparent 560px, var(--page-start) 1250px),
+    var(--page-start) url('/compatibility/texture-light.webp') center top / 720px repeat;
+}
+.editorial .container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(184px, 228px);
+  align-items: start;
+  column-gap: clamp(28px, 6vw, 100px);
+  max-width: 1016px;
+}
+.editorial .test { grid-column: 1 / -1; }
+.editorial .reading { grid-area: 2 / 1; gap: 28px; }
+.editorial .reading > section { scroll-margin-top: 24px; }
+.editorial .reading > section:not(.brief) {
+  padding-top: 24px;
+  border-top: 1px solid var(--page-rule);
+}
+.editorial .brief {
+  padding: clamp(20px, 4vw, 36px);
+  border: 1px solid var(--page-rule);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--bg), var(--page-start) 35%);
+}
+.contents {
+  position: sticky;
+  top: 24px;
+  grid-area: 2 / 2;
+  padding: 18px 0;
+  border-block: 1px solid var(--page-rule);
+}
+.contents p { margin: 0 0 8px; color: var(--accent); font-family: var(--font-display); font-size: 27px; line-height: 1.1; }
+.contents ul { margin: 0; padding: 0; list-style: none; }
+.contents a { display: flex; align-items: center; min-height: 40px; color: var(--accent); font-size: 14px; line-height: 1.4; text-underline-offset: .22em; }
+.contents a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.editorial .types { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.editorial .types li {
+  padding: 16px 18px 18px;
+  border-color: var(--page-rule);
+  background: color-mix(in srgb, var(--bg), var(--surface-2) 26%);
+}
+.editorial .types a {
+  font-family: var(--font-display);
+  font-size: 25px;
+  font-weight: 400;
+  line-height: 1.15;
+  text-underline-offset: .15em;
+}
+.editorial .next .types { grid-template-columns: minmax(0, 1fr); }
+.editorial .faq summary { font-weight: 500; }
+
+@media (max-width: 759px) {
+  .editorial .container { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .contents { position: static; grid-area: auto; }
+  .contents ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+  .editorial .reading { grid-area: auto; }
+}
+@media (max-width: 420px) {
+  .editorial .types { grid-template-columns: minmax(0, 1fr); }
+}
+
 @media (max-width: 680px) {
   .heroGrid { grid-template-columns: minmax(0, 1fr); }
   .heroArt { width: min(58vw, 222px); }
