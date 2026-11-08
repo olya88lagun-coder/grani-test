@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { InviteLink } from "@/components/InviteLink";
+import { AttachmentPairArt } from "@/components/short-tests/AttachmentPairArt";
+import styles from "@/components/short-tests/attachment-pair.module.css";
 import { ShortTestRunner } from "@/components/short-tests/ShortTestRunner";
 import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
@@ -17,45 +19,54 @@ export default async function ShortPairInvitePage({ params }: { params: Promise<
   const { token } = await params;
   const page = await getShortPairInvitePage(getDb(), token, await currentUser());
 
+  const invited = page.state === "needs_result" || page.state === "ready";
+  const showArt = invited || page.state === "own";
+
   return (
-    <main className="inner-page" data-palette="pair">
-      <div className="page stack">
-        <p className="eyebrow">Грани · тест на тип привязанности вдвоём</p>
-        {page.state === "not_found" && (
-          <>
-            <h1 className="display">Ссылка не работает</h1>
-            <p className="lead">Попросите прислать её ещё раз. А пока можно пройти тест самому.</p>
-            <div>
-              <Link className="button" href="/privyazannost">
-                Пройти тест
-              </Link>
-            </div>
-          </>
-        )}
-        {page.state === "used" && (
-          <>
-            <h1 className="display">Ссылка уже использована</h1>
-            <p className="lead">Приглашение одноразовое, и по нему уже создана пара. Если это были не вы, попросите новую ссылку.</p>
-          </>
-        )}
+    <main className={styles.page} data-palette="pair" data-night-entry>
+      <header className={styles.cover} data-band="night">
+        <div className={showArt ? `${styles.wrap} ${styles.coverSplit}` : styles.wrap}>
+          <div className={styles.coverCopy}>
+            <p className="eyebrow">Грани · тест на тип привязанности вдвоём</p>
+            {page.state === "not_found" && (
+              <>
+                <h1 className="display">Ссылка не работает</h1>
+                <p className="lead">Попросите прислать её ещё раз. А пока можно пройти тест самому.</p>
+                <Link className="button" href="/privyazannost">Пройти тест</Link>
+              </>
+            )}
+            {page.state === "used" && (
+              <>
+                <h1 className="display">Ссылка уже использована</h1>
+                <p className="lead">Приглашение одноразовое, и по нему уже создана пара. Если это были не вы, попросите новую ссылку.</p>
+                <Link className="button" href="/privyazannost">Пройти тест</Link>
+              </>
+            )}
+            {page.state === "own" && (
+              <>
+                <h1 className="display">Это ваша ссылка</h1>
+                <p className="lead">Отправьте её партнёру: когда он пройдёт тест и согласится, вы оба увидите общую карту.</p>
+              </>
+            )}
+            {invited && (
+              <h1 className="display">{page.inviterFirstName} зовёт вас пройти тест на тип привязанности вдвоём</h1>
+            )}
+            {page.state === "needs_result" && (
+              <p className="lead">30 утверждений, около 5 минут. Свой результат вы увидите сразу, без регистрации. Чтобы открыть общую карту, нужно будет войти и согласиться объединить результаты.</p>
+            )}
+          </div>
+          {showArt && <AttachmentPairArt />}
+        </div>
+      </header>
+      <div className={styles.flow}>
         {page.state === "own" && (
-          <>
-            <h1 className="display">Это ваша ссылка</h1>
-            <p className="lead">Отправьте её партнёру: когда он пройдёт тест и согласится, вы оба увидите общую карту.</p>
+          <div className={styles.lightPanel}>
             <InviteLink endpoint="" body={{}} initialUrl={new URL(`/sp/${page.token}`, getEnv().APP_URL).toString()} getLabel="" shareTitle="Пройдём тест на тип привязанности вдвоём?" />
-          </>
+          </div>
         )}
-        {(page.state === "needs_result" || page.state === "ready") && (
-          <h1 className="display">{page.inviterFirstName} зовёт вас пройти тест на тип привязанности вдвоём</h1>
-        )}
-        {page.state === "needs_result" && (
-          <>
-            <p className="lead">30 утверждений, около 5 минут. Свой результат вы увидите сразу, без регистрации. Чтобы открыть общую карту, нужно будет войти и согласиться объединить результаты.</p>
-            <ShortTestRunner slug={page.slug} invite={page.token} />
-          </>
-        )}
+        {page.state === "needs_result" && <ShortTestRunner slug={page.slug} invite={page.token} />}
         {page.state === "ready" && (
-          <section className="card stack">
+          <section className={styles.lightPanel}>
             <p className="lead">Ваш результат: {page.typeName.toLowerCase()}. Подтвердите, что готовы объединить результаты. Из пары можно выйти в любой момент — карта скроется у обоих.</p>
             <AcceptShortPairForm token={page.token} inviterFirstName={page.inviterFirstName} />
           </section>

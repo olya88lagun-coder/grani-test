@@ -60,6 +60,10 @@ test("two partners build a pair map, one pays, both see the report, leaving hide
   await page.goto(pairUrl);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Карта пары");
   await expect(page.getByTestId("short-report")).toHaveCount(0);
+  const map = boris.page.getByRole("img", { name: /Вы.*Аня/ });
+  await expect(map).toBeVisible();
+  const legend = boris.page.locator("figure figcaption").getByRole("list");
+  await expect(legend.getByRole("listitem")).toHaveText(["Вы", "Аня"]);
 
   await boris.page.getByRole("button", { name: /^Открыть обоим за 349/ }).click();
   await boris.page.getByLabel("Почта для чека").fill(EMAIL);
@@ -119,7 +123,9 @@ test("own invite, a stranger on the pair page and the combinations page", async 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Сочетания типов привязанности в паре");
   // 10 сочетаний, «Кратко» и «Вопросы и ответы»
   await expect(page.getByRole("heading", { level: 2 })).toHaveCount(12);
-  await expect(page.getByRole("heading", { name: /погоня и побег/ })).toBeVisible();
+  await page.getByRole("navigation", { name: "Сочетания типов" }).getByRole("link", { name: /погоня и побег/ }).click();
+  await expect(page).toHaveURL(/#anxious\+avoidant$/);
+  await expect(page.getByRole("heading", { name: /погоня и побег/ })).toBeInViewport();
 });
 
 test("the pricing page and the offer list the pair report at 349 and 249 rubles", async ({ page }) => {

@@ -58,13 +58,13 @@ export function AxisMap({ xLabel, yLabel, x = 0, y = 0, points, quadrantLabels, 
         <line x1={mid} y1={pad} x2={mid} y2={edge} className={styles.plotLine} />
         <line x1={pad} y1={mid} x2={edge} y2={mid} className={styles.plotLine} />
         {points ? (
-          points.map((point) => (
-            <g key={point.label}>
-              <circle cx={px(point.x)} cy={py(point.y)} r="9" className={styles.plotHalo} />
-              <circle cx={px(point.x)} cy={py(point.y)} r="4.5" className={styles.plotDot} />
-              <text x={px(point.x)} y={py(point.y) - 13} textAnchor="middle" className={styles.plotLabel}>
-                {point.label}
-              </text>
+          points.map((point, index) => (
+            <g key={`${index}-${point.label}`} transform={`translate(${px(point.x)} ${py(point.y)})`}>
+              {index === 0 ? (
+                <circle r="9" className={styles.pairPlotRing} />
+              ) : (
+                <path d="M0 -5.5 5.5 0 0 5.5 -5.5 0Z" className={styles.pairPlotDiamond} />
+              )}
             </g>
           ))
         ) : (
@@ -79,9 +79,21 @@ export function AxisMap({ xLabel, yLabel, x = 0, y = 0, points, quadrantLabels, 
         <span>{lowLow}</span>
         <span>{highLow}</span>
       </div>
-      {texture ? (
+      {points ? (
+        <figcaption className={styles.pairMapFooter}>
+          <p className={`${styles.mapAxis} ${styles.mapAxisX}`}>{xLabel} <span aria-hidden="true">→</span></p>
+          <ul className={styles.pairMapLegend} role="list">
+            {points.map((point, index) => (
+              <li key={`${index}-${point.label}`}>
+                <span className={index === 0 ? styles.pairLegendRing : styles.pairLegendDiamond} aria-hidden="true" />
+                {point.label}
+              </li>
+            ))}
+          </ul>
+        </figcaption>
+      ) : texture ? (
         <figcaption className={styles.mapFooter}>
-          <span className={styles.mapLegend}>{points ? "Ваши точки" : "Ваша точка"}</span>
+          <span className={styles.mapLegend}>Ваша точка</span>
           <span className={styles.mapAxis}>{xLabel} <span aria-hidden="true">→</span></span>
         </figcaption>
       ) : (

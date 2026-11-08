@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { reachGoal } from "@/lib/analytics";
+import styles from "@/components/short-tests/attachment-pair.module.css";
 
 const ERRORS: Record<string, string> = {
   consent_required: "Отметьте согласие — без него общая карта не создаётся.",
@@ -40,8 +41,8 @@ export function AcceptShortPairForm({ token, inviterFirstName }: { token: string
   }
 
   return (
-    <div className="stack">
-      <label className="choice">
+    <div className={styles.consentForm}>
+      <label className={styles.consentChoice}>
         <input type="checkbox" checked={consent} onChange={(event) => setConsent(event.target.checked)} />
         {/* Текст согласия связан с SHORT_PAIR_CONSENT_VERSION: при изменении формулировки поднять версию */}
         <span>{inviterFirstName} и я увидим типы привязанности и баллы друг друга на общей карте</span>

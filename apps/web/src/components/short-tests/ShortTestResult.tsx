@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { quadrantLabels, type ShortResultView } from "@/lib/short-test-result";
 import { AxisMap } from "./AxisMap";
+import { AttachmentPairArt } from "./AttachmentPairArt";
+import pairStyles from "./attachment-pair.module.css";
 import styles from "./short-tests.module.css";
 
 // saved — сохранённый результат на /short/[id]: без «Пройти заново» и без кнопки разбора (покупка там своя)
@@ -85,27 +87,36 @@ export function ShortTestResult({
         <p className={styles.disclaimer}>{test.disclaimer}</p>
       </div>
       {!saved && partnerInvite && onOpenReport && (
-        <div className={styles.reportOffer}>
+        <div className={pairStyles.partnerAction}>
           <button type="button" className="button" onClick={() => openReport("pair")} disabled={opening}>
             {opening ? "Открываем…" : "Увидеть общую карту"}
           </button>
           <p className={styles.disclaimer}>Нужно войти через VK и согласиться объединить результаты.</p>
         </div>
       )}
-      {!saved && !partnerInvite && test.reportOffer && onOpenReport && (
-        <div className={styles.reportOffer}>
-          <button type="button" className="button" onClick={() => openReport("report")} disabled={opening}>
-            {opening ? "Открываем…" : `Открыть личный разбор — ${formatRub(PRODUCT_PRICES.attachment_solo)}`}
-          </button>
-          <p className={styles.disclaimer}>{test.reportOffer.preview.slice(0, 4).join(" · ")}</p>
-        </div>
-      )}
-      {!saved && !partnerInvite && test.pairOffer && onOpenReport && (
-        <div className={styles.reportOffer}>
-          <button type="button" className="button button--ghost" onClick={() => openReport("pair")} disabled={opening}>
-            Пройти вдвоём с партнёром
-          </button>
-          <p className={styles.disclaimer}>{test.pairOffer.lead}</p>
+      {!saved && !partnerInvite && onOpenReport && (test.reportOffer || test.pairOffer) && (
+        <div className={pairStyles.resultOffers}>
+          {test.pairOffer && (
+            <section className={`${pairStyles.resultOffer} ${pairStyles.resultPairOffer}`}>
+              <AttachmentPairArt />
+              <h3>{test.pairOffer.title}</h3>
+              <p>{test.pairOffer.lead}</p>
+              <button type="button" className="button" onClick={() => openReport("pair")} disabled={opening}>
+                Пройти вдвоём с партнёром
+              </button>
+            </section>
+          )}
+          {test.reportOffer && (
+            <section className={pairStyles.resultOffer}>
+              <h3>{test.reportOffer.title}</h3>
+              <ul className={pairStyles.soloPreview} role="list">
+                {test.reportOffer.preview.slice(0, 4).map((item) => <li key={item}>{item}</li>)}
+              </ul>
+              <button type="button" className="button button--ghost" onClick={() => openReport("report")} disabled={opening}>
+                {opening ? "Открываем…" : `Открыть личный разбор — ${formatRub(PRODUCT_PRICES.attachment_solo)}`}
+              </button>
+            </section>
+          )}
         </div>
       )}
       {openError && (
@@ -114,7 +125,7 @@ export function ShortTestResult({
         </p>
       )}
       <div className={styles.actions}>
-        <Link className={saved ? "button button--ghost" : "button"} href={`${test.path}/${view.type.slug}`}>
+        <Link className={saved || test.pairOffer ? "button button--ghost" : "button"} href={`${test.path}/${view.type.slug}`}>
           Подробнее о своём типе
         </Link>
         <Link className="button button--ghost" href="/big-five-test">
