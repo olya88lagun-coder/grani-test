@@ -173,8 +173,32 @@
 .plotHalo { fill: var(--bg); stroke: var(--gold); }
 .plotDot { fill: var(--gold); }
 
+.facetedResult[data-band] {
+  border-color: color-mix(in srgb, var(--gold), transparent 68%);
+  background: radial-gradient(ellipse at 88% 0%, var(--surface-3), transparent 48%), var(--bg);
+}
+.facetedResult .resultGrid { grid-template-columns: minmax(0, 380px) minmax(0, 1fr); }
+.mapFaceted {
+  width: 100%;
+  padding: clamp(12px, 2.4vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface), var(--bg) 30%);
+}
+.mapFaceted .plotZones { display: block; }
+.mapFaceted .plotZones rect:nth-child(1) { fill: #254943; }
+.mapFaceted .plotZones rect:nth-child(2) { fill: #494732; }
+.mapFaceted .plotZones rect:nth-child(3) { fill: #264637; }
+.mapFaceted .plotZones rect:nth-child(4) { fill: #345337; }
+.plotFacets { fill: var(--ink); opacity: .07; }
+.plotGuides { fill: none; stroke: var(--gold); stroke-opacity: .72; vector-effect: non-scaling-stroke; }
+.mapFooter { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: center; margin-top: 8px; }
+.mapFooter .mapAxis { margin: 0; }
+.mapLegend { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-size: 13px; }
+.mapLegend::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+
 @media (max-width: 680px) {
-  .resultGrid { grid-template-columns: minmax(0, 1fr); }
+  .resultGrid, .facetedResult .resultGrid { grid-template-columns: minmax(0, 1fr); }
   .runner :global(.choices) { grid-template-columns: minmax(0, 1fr); }
   .runner :global(.choice) {
     flex-direction: row;
