@@ -240,6 +240,47 @@
 .mapLegend { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-size: 13px; }
 .mapLegend::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
 
+.attachmentResult[data-band] {
+  background: radial-gradient(ellipse at 95% 0%, var(--surface-3), transparent 52%), var(--bg);
+}
+.attachmentResult .resultTitle {
+  max-width: 20ch;
+  font-size: clamp(36px, 7vw, 74px);
+  letter-spacing: -.025em;
+}
+.attachmentResult .resultGrid {
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 1fr);
+  padding-block: clamp(18px, 3.4vw, 32px);
+}
+.attachmentResult .map {
+  width: min(100%, 390px);
+  padding: clamp(12px, 2.4vw, 20px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.attachmentResult .mapFooter {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.attachmentResult .plotHalo { stroke-width: 1.4; }
+.attachmentResult .axes { gap: 20px; }
+.attachmentResult .axis + .axis {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.attachmentResult .axisHead b {
+  font-size: clamp(44px, 5.2vw, 60px);
+  font-weight: 300;
+  letter-spacing: -.025em;
+}
+.attachmentResult .meter { height: 6px; }
+.attachmentResult .summary { font-size: clamp(16px, 2vw, 18px); }
+
+@media (max-width: 740px) {
+  .attachmentResult .resultGrid { grid-template-columns: minmax(0, 1fr); }
+}
+
 @media (max-width: 680px) {
   .resultGrid, .facetedResult[data-band] { grid-template-columns: minmax(0, 1fr); }
   .facetedResult::before { grid-area: 1 / 1 / 5 / -1; }

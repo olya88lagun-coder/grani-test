@@ -51,8 +51,11 @@ export function ShortTestResult({
   // Ось X — вторая ось теста, ось Y — первая: у привязанности это избегание и тревожность
   const [yAxis, xAxis] = view.axes as [ShortResultView["axes"][number], ShortResultView["axes"][number]];
   const faceted = test.slug === "temperament";
+  const attachment = test.slug === "attachment";
+  const resultVariant = faceted ? styles.facetedResult : attachment ? styles.attachmentResult : "";
+  const mapTexture = faceted ? "/temperament/result-map.webp" : attachment ? "/attachment/pair-map.webp" : undefined;
   return (
-    <section className={faceted ? `${styles.result} ${styles.facetedResult}` : styles.result} data-band="night" aria-labelledby="short-result-title" data-testid="short-result">
+    <section className={`${styles.result} ${resultVariant}`} data-band="night" aria-labelledby="short-result-title" data-testid="short-result">
       <header className={styles.resultHeader}>
         <h2 id="short-result-title" className={styles.resultTitle} ref={titleRef} tabIndex={-1}>{view.type.name}</h2>
         <p className={styles.tagline}>{view.type.tagline}</p>
@@ -65,7 +68,7 @@ export function ShortTestResult({
           x={xAxis.value}
           y={yAxis.value}
           quadrantLabels={quadrantLabels(test, xAxis.info.key, yAxis.info.key)}
-          texture={faceted ? "/temperament/result-map.webp" : undefined}
+          texture={mapTexture}
         />
         <div className={styles.axes}>
           {view.axes.map((axis) => (
