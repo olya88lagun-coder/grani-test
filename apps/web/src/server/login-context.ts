@@ -14,10 +14,12 @@ export async function confirmPendingResult(pending: string | null | undefined, s
 
 export async function resolveLoginContext(cookies: LoginContextCookies, secret: string): Promise<LoginContext> {
   const pendingResult = await confirmPendingResult(cookies.pending, secret);
+  const shortPending = cookies.shortPending ? await verifyShortPending(cookies.shortPending, secret) : null;
   return pickLoginContext({
     pairInvite: pairReturnPath(cookies.pairInvite) !== null,
     together: togetherReturnPath(cookies.together) !== null,
     pendingResult,
-    shortResult: cookies.shortPending ? (await verifyShortPending(cookies.shortPending, secret)) !== null : false,
+    shortResult: shortPending !== null,
+    ...(shortPending?.invite ? { shortKind: "invite" as const } : shortPending?.intent === "pair" ? { shortKind: "pair" as const } : {}),
   });
 }

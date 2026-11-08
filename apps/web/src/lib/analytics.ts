@@ -31,6 +31,7 @@ export const GOALS = [
   "temperament_start",
   "temperament_finish",
   "purchase_attachment",
+  "purchase_attachment_pair",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 
@@ -139,6 +140,7 @@ export function goalForProduct(product: Product): Goal {
   if (product === "full") return "purchase_full";
   if (product === "pair") return "purchase_pair";
   if (product === "attachment_solo") return "purchase_attachment";
+  if (product === "attachment_pair" || product === "attachment_pair_discount") return "purchase_attachment_pair";
   return "purchase_chapter";
 }
 

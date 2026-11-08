@@ -23,8 +23,8 @@ export function parseShortAnswers(test: ShortTestDefinition, raw: unknown): Answ
 
 export async function saveShortAnswers(deps: ShortResultsDeps, p: { userId: string; slug: string; answers: unknown }): Promise<{ ok: true; id: string } | { ok: false }> {
   const test = getShortTest(p.slug);
-  // Политика обещает: ответы короткого теста попадают на сервер, только когда человек открывает по ним разбор
-  if (!test || !test.reportOffer) return { ok: false };
+  // Политика обещает: ответы короткого теста попадают на сервер, только когда человек открывает по ним разбор или зовёт партнёра
+  if (!test || (!test.reportOffer && !test.pairOffer)) return { ok: false };
   const answers = parseShortAnswers(test, p.answers);
   if (!answers) return { ok: false };
   const score = scoreShortTest(test.scoring, answers);

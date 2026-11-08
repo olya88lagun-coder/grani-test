@@ -24,12 +24,15 @@ export async function giveConsent(deps: Pick<LoginDeps, "env" | "now">): Promise
 }
 
 // Неверная, просроченная или чужая cookie не мешает входу: результат просто не сохраняется
+// Куда вести после входа с ответами короткого теста: партнёра — к приглашению, позвавшего — к блоку ссылки
 async function saveShortPending(deps: LoginDeps, userId: string, token: string | null): Promise<string | null> {
   if (!token) return null;
   const pending = await verifyShortPending(token, deps.env.SESSION_SECRET);
   if (!pending) return null;
   const saved = await saveShortAnswers({ db: deps.db }, { userId, slug: pending.slug, answers: pending.answers });
-  return saved.ok ? saved.id : null;
+  if (!saved.ok) return null;
+  if (pending.invite) return `/sp/${pending.invite}`;
+  return pending.intent === "pair" ? `/short/${saved.id}#pair` : `/short/${saved.id}`;
 }
 
 export async function completeLogin(deps: LoginDeps, identity: IdentityInput, cookies: LoginCookies): Promise<LoginOutcome> {
@@ -39,7 +42,7 @@ export async function completeLogin(deps: LoginDeps, identity: IdentityInput, co
   const userId = upserted.user.id;
   const secretDeps = { db: deps.db, secret: deps.env.SESSION_SECRET };
   const resultId = (await savePendingResult(secretDeps, userId, cookies.pending)) ?? (await getLatestResultId(deps.db, userId));
-  const shortId = await saveShortPending(deps, userId, cookies.shortPending ?? null);
+  const shortPath = await saveShortPending(deps, userId, cookies.shortPending ?? null);
   return {
     ok: true,
     sessionToken: await signSession(userId, deps.env.SESSION_SECRET),
@@ -47,7 +50,7 @@ export async function completeLogin(deps: LoginDeps, identity: IdentityInput, co
     // Пришедший из «Вдвоём» возвращается на свою страницу; без этой cookie вход работает как раньше
     // Ответы короткого теста — свежее действие человека: после входа он попадает к сохранённому результату и разбору
     redirectTo:
-      pairReturnPath(cookies.pairInvite) ?? togetherReturnPath(cookies.together) ?? (shortId ? `/short/${shortId}` : resultId ? `/result/${resultId}` : "/test"),
+      pairReturnPath(cookies.pairInvite) ?? togetherReturnPath(cookies.together) ?? shortPath ?? (resultId ? `/result/${resultId}` : "/test"),
   };
 }
 

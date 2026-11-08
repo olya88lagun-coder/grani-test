@@ -1,4 +1,4 @@
-import { canBuy, EXTRA_KINDS, friendsReportDue, isProduct, isTogetherProduct, PRODUCT_PRICES, productTarget, reportKindsFor, type ExtraKind, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
+import { ATTACHMENT_PAIR_PRODUCTS, canBuy, EXTRA_KINDS, friendsReportDue, isProduct, isTogetherProduct, pairProductFor, PRODUCT_PRICES, productTarget, reportKindsFor, type ExtraKind, type GenerateJob, type Product, type PurchaseProduct } from "@grani/core";
 import {
   attachPayment,
   countFriendResponses,
@@ -7,6 +7,7 @@ import {
   findOpenPurchaseOfProduct,
   getInviteForResult,
   getPairForMember,
+  getShortPairForMember,
   getPurchase,
   getPurchaseByPaymentId,
   getResultForOwner,
@@ -64,6 +65,8 @@ export const PRODUCT_DESCRIPTIONS: Readonly<Record<PurchaseProduct, string>> = {
   pair: "Разбор совместимости пары «Грани»",
   together_30d: "Доступ к «Грани. Вдвоём» на 30 дней для двоих",
   attachment_solo: "Личный разбор типа привязанности «Грани»",
+  attachment_pair: "Разбор пары по типу привязанности «Грани»",
+  attachment_pair_discount: "Разбор пары по типу привязанности «Грани»",
 };
 
 // Личный разбор короткого теста принадлежит пользователю по тесту, а не одному результату: после повторного
@@ -76,6 +79,7 @@ async function ownedFor(db: Database, userId: string, product: Product, target: 
 async function resolveTarget(db: Database, userId: string, product: Product, targetId: string): Promise<OwnedTarget | null> {
   const kind = productTarget(product);
   if (kind === "short_result") return (await getShortResultForOwner(db, targetId, userId)) ? { shortResultId: targetId } : null;
+  if (kind === "short_pair") return (await getShortPairForMember(db, targetId, userId)) ? { shortPairId: targetId } : null;
   if (kind === "pair") return (await getPairForMember(db, targetId, userId)) ? { pairId: targetId } : null;
   return (await getResultForOwner(db, targetId, userId)) ? { resultId: targetId } : null;
 }
@@ -83,7 +87,9 @@ async function resolveTarget(db: Database, userId: string, product: Product, tar
 const purchaseTarget = (purchase: PurchaseRecord): OwnedTarget | null =>
   purchase.shortResultId
     ? { shortResultId: purchase.shortResultId }
-    : purchase.pairId
+    : purchase.shortPairId
+      ? { shortPairId: purchase.shortPairId }
+      : purchase.pairId
       ? { pairId: purchase.pairId }
       : purchase.resultId
         ? { resultId: purchase.resultId }
@@ -91,7 +97,7 @@ const purchaseTarget = (purchase: PurchaseRecord): OwnedTarget | null =>
 
 // Разборы коротких тестов собираются из готовых блоков при показе: генерировать нечего
 function jobsFor(product: Product, target: OwnedTarget): GenerateJob[] {
-  if ("shortResultId" in target) return [];
+  if ("shortResultId" in target || "shortPairId" in target) return [];
   if ("pairId" in target) return [{ kind: "pair", pairId: target.pairId }];
   return reportKindsFor(product).flatMap((kind): GenerateJob[] => (kind === "pair" ? [] : [{ kind, resultId: target.resultId }]));
 }
@@ -143,7 +149,10 @@ export async function startPurchase(
   p: { userId: string; product: unknown; targetId: unknown; email: unknown },
 ): Promise<StartPurchaseOutcome> {
   if (!isProduct(p.product) || typeof p.targetId !== "string") return { ok: false, error: "not_found" };
-  const product = p.product;
+  // Цену разбора пары выбирает сервер: скидка положена, только если плательщик купил личный разбор
+  const product = (ATTACHMENT_PAIR_PRODUCTS as readonly Product[]).includes(p.product)
+    ? pairProductFor(await hasPaidShortProduct(deps.db, { userId: p.userId, product: "attachment_solo" }))
+    : p.product;
   const target = await resolveTarget(deps.db, p.userId, product, p.targetId);
   if (!target) return { ok: false, error: "not_found" };
   if (!canBuy(product, await ownedFor(deps.db, p.userId, product, target))) return { ok: false, error: "not_available" };
@@ -217,14 +226,17 @@ export async function getPurchaseView(deps: PaymentsDeps, p: { purchaseId: strin
     ? "/me"
     : "shortResultId" in target
       ? `/short/${target.shortResultId}`
-      : "pairId" in target
+      : "shortPairId" in target
+        ? `/short-pair/${target.shortPairId}`
+        : "pairId" in target
         ? `/pair/${target.pairId}`
         : `/report/${target.resultId}`;
   const free = purchase.amountKopecks === 0;
   const since = (purchase.status === "succeeded" ? (purchase.paidAt ?? purchase.createdAt) : purchase.createdAt).toISOString();
   if (!target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: false, reportUrl, free, since };
 
-  if ("shortResultId" in target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: purchase.status === "succeeded", reportUrl, free, since };
+  // Разборы коротких тестов собираются при показе: готовы сразу после оплаты
+  if ("shortResultId" in target || "shortPairId" in target) return { id: purchase.id, product: purchase.product, status: purchase.status, ready: purchase.status === "succeeded", reportUrl, free, since };
 
   const kinds = new Set((await listReports(deps.db, target)).map((report) => report.kind));
   const ready = jobsFor(purchase.product, target).every((job) => kinds.has(job.kind));

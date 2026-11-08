@@ -175,6 +175,21 @@ describe("completeLogin with short test answers", () => {
     }
   });
 
+  test("a partner with an invite returns to the invite after login", async () => {
+    const consent = await giveConsent(deps);
+    const invite = "b".repeat(24);
+    const shortPending = await signShortPending({ slug: "attachment", answers, invite }, ENV.SESSION_SECRET);
+    const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, shortPending });
+    expect(outcome.ok && outcome.redirectTo).toBe(`/sp/${invite}`);
+  });
+
+  test("someone inviting a partner lands on the invite block of the saved result", async () => {
+    const consent = await giveConsent(deps);
+    const shortPending = await signShortPending({ slug: "attachment", answers, intent: "pair" }, ENV.SESSION_SECRET);
+    const outcome = await completeLogin(deps, ANNA, { ...NO_COOKIES, consent, shortPending });
+    expect(outcome.ok && outcome.redirectTo).toMatch(/^\/short\/[0-9a-f-]{36}#pair$/);
+  });
+
   test("a pair invite still wins over short test answers", async () => {
     const consent = await giveConsent(deps);
     const shortPending = await signShortPending({ slug: "attachment", answers }, ENV.SESSION_SECRET);
