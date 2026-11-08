@@ -60,6 +60,7 @@ export function ShortTestResult({
       <header className={styles.resultHeader}>
         <h2 id="short-result-title" className={styles.resultTitle} ref={titleRef} tabIndex={-1}>{view.type.name}</h2>
         <p className={styles.tagline}>{view.type.tagline}</p>
+        {faceted && <p className={styles.summary}>{view.type.summary}</p>}
       </header>
       <div className={styles.resultGrid}>
         <AxisMap
@@ -68,7 +69,7 @@ export function ShortTestResult({
           x={xAxis.value}
           y={yAxis.value}
           quadrantLabels={quadrantLabels(test, xAxis.info.key, yAxis.info.key)}
-          faceted={faceted}
+          texture={faceted ? "/temperament/result-map.webp" : undefined}
         />
         <div className={styles.axes}>
           {view.axes.map((axis) => (
@@ -86,7 +87,7 @@ export function ShortTestResult({
         </div>
       </div>
       <div className={styles.explanation}>
-        <p className={styles.summary}>{view.type.summary}</p>
+        {!faceted && <p className={styles.summary}>{view.type.summary}</p>}
         <p className={styles.disclaimer}>{test.disclaimer}</p>
       </div>
       {!saved && test.reportOffer && onOpenReport && (
