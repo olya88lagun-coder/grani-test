@@ -4,6 +4,7 @@ import {
   countFriendResponses,
   createPurchase,
   findOpenPurchase,
+  findOpenPurchaseForShortPair,
   findOpenPurchaseOfProduct,
   getInviteForResult,
   getPairForMember,
@@ -39,7 +40,7 @@ export type PaymentsDeps = {
   // Дополнительные отчёты ставятся вместе с полным разбором только при включённом флаге: задача, завершённая как «пропущено», заняла бы id
   extras?: Readonly<Partial<Record<ExtraKind, boolean>>>;
 };
-export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "email_required" | "invalid_email" | "not_found" | "not_available" | "payment_failed" };
+export type StartPurchaseOutcome = { ok: true; url: string } | { ok: false; error: "email_required" | "invalid_email" | "not_found" | "not_available" | "partner_paying" | "payment_failed" };
 // since — с какого момента считать ожидание: создание покупки, а у оплаченной время оплаты (ISO-строка)
 export type PurchaseView = { id: string; product: Product; status: PurchaseStatus; ready: boolean; reportUrl: string; free: boolean; since: string };
 
@@ -167,7 +168,11 @@ export async function startPurchase(
   const open =
     product === "attachment_solo"
       ? await findOpenPurchaseOfProduct(deps.db, { userId: p.userId, product, since })
-      : await findOpenPurchase(deps.db, { userId: p.userId, product, target, since });
+      : "shortPairId" in target
+        ? await findOpenPurchaseForShortPair(deps.db, { shortPairId: target.shortPairId, products: ATTACHMENT_PAIR_PRODUCTS, since })
+        : await findOpenPurchase(deps.db, { userId: p.userId, product, target, since });
+  // Партнёр уже оплачивает разбор пары: второй оплаты не открываем
+  if (open && open.userId !== p.userId) return { ok: false, error: "partner_paying" };
   if (open?.confirmationUrl) {
     if (open.receiptEmail !== email) await setReceiptEmail(deps.db, open.id, email);
     return { ok: true, url: open.confirmationUrl };

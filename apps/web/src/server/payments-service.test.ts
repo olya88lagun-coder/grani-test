@@ -432,6 +432,20 @@ describe("attachment pair report", () => {
     expect(await startPurchase(deps, { userId: vera, product: "attachment_pair", targetId: pairId, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
   });
 
+  test("while one member's payment is open, the other cannot open a second one", async () => {
+    const { pairId, boris } = await shortPair();
+    expect((await startPurchase(deps, { userId: anna.userId, product: "attachment_pair", targetId: pairId, email: EMAIL })).ok).toBe(true);
+    expect(await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL })).toEqual({ ok: false, error: "partner_paying" });
+  });
+
+  test("the same payer gets the open payment back even after buying the solo report in between", async () => {
+    const { pairId, boris, borisResult } = await shortPair();
+    const first = await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL });
+    await buyAndPay("attachment_solo", borisResult, boris);
+    const again = await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL });
+    expect(again).toEqual(first);
+  });
+
   test("leads to the pair page and is ready right after payment, with nothing to generate", async () => {
     const { pairId } = await shortPair();
     const paid = await buyAndPay("attachment_pair", pairId);

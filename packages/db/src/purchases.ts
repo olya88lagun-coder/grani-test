@@ -1,5 +1,5 @@
 import type { Product, PurchaseProduct } from "@grani/core";
-import { and, asc, desc, eq, gt, gte, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull } from "drizzle-orm";
 import { targetColumns, targetId, type ReportTarget } from "./reports";
 import { purchases, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
@@ -114,6 +114,27 @@ export async function findOpenPurchaseOfProduct(db: Database, p: { userId: strin
       and(
         eq(purchases.userId, p.userId),
         eq(purchases.product, p.product),
+        eq(purchases.status, "pending"),
+        isNotNull(purchases.confirmationUrl),
+        gte(purchases.createdAt, p.since),
+      ),
+    )
+    .orderBy(desc(purchases.createdAt))
+    .limit(1);
+  return row ? toPurchaseRecord(row) : null;
+}
+
+// Разбор пары короткого теста оплачивается один раз на пару: незавершённая оплата ищется по паре и обоим продуктам цены,
+// а не по плательщику — иначе оба партнёра (или один по двум ценам) могут заплатить одновременно
+export async function findOpenPurchaseForShortPair(db: Database, p: { shortPairId: string; products: readonly Product[]; since: Date }): Promise<PurchaseRecord | null> {
+  if (!isUuid(p.shortPairId)) return null;
+  const [row] = await db
+    .select()
+    .from(purchases)
+    .where(
+      and(
+        eq(purchases.shortPairId, p.shortPairId),
+        inArray(purchases.product, [...p.products]),
         eq(purchases.status, "pending"),
         isNotNull(purchases.confirmationUrl),
         gte(purchases.createdAt, p.since),
