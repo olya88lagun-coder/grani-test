@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BuyButton } from "@/components/BuyButton";
 import { AxisMap } from "@/components/short-tests/AxisMap";
-import { quadrantLabels } from "@/components/short-tests/ShortTestResult";
+import { quadrantLabels } from "@/lib/short-test-result";
 import { ShortTestReport } from "@/components/short-tests/ShortTestReport";
 import { getDb } from "@/server/db";
 import { shortPairPage } from "@/server/short-pairs-service";
