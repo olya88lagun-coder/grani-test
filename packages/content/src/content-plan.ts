@@ -150,6 +150,10 @@ export const CONTENT_PLAN: readonly ContentTopic[] = [
   //   tvorchestvo — Feist 1998, 10.1207/s15327957pspr0204_5; schaste — DeNeve, Cooper 1998, 10.1037/0033-2909.124.2.197 и Steel, Schmidt, Shultz 2008, 10.1037/0033-2909.134.1.138;
   //   nasledstvennost — Vukasović, Bratko 2015, 10.1037/bul0000017; hronotip — Tsaousis 2010, 10.1002/per.754; muzyka — Rentfrow, Gosling 2003, 10.1037/0022-3514.84.6.1236;
   //   emotsionalnyj intellekt — Joseph, Newman 2010, 10.1037/a0017286; dlina testa — Johnson 2014, 10.1016/j.jrp.2014.05.003 и Gosling, Rentfrow, Swann 2003, 10.1016/S0092-6566(03)00046-1.
+  // Сверено через Crossref 09.11.2026 (метаданные ниже — из ответов Crossref):
+  //   prokrastinatsiya-i-lichnost — Steel 2007, Psychological Bulletin, 10.1037/0033-2909.133.1.65; Sirois, Pychyl 2013, Social and Personality Psychology Compass, 10.1111/spc3.12011.
+  //   trevozhnost-i-cherty — Kotov, Gamez, Schmidt, Watson 2010, Psychological Bulletin, 10.1037/a0020327; Lahey 2009, American Psychologist, 10.1037/a0015309.
+  //   perfektsionizm-i-lichnost — Stoeber, Otto 2006, Personality and Social Psychology Review, 10.1207/s15327957pspr1004_2; Egan, Wade, Shafran 2011, Clinical Psychology Review, 10.1016/j.cpr.2010.04.009; запасной: Curran, Hill 2019, Psychological Bulletin, 10.1037/bul0000138.
   // Декабрь: деньги и стресс (сезон трат, «Вдвоём», главы «Деньги»/«Стресс»).
   topic({ slug: "prokrastinatsiya-i-lichnost", primaryQuery: "прокрастинация и личность", title: "Прокрастинация и личность: при чём тут добросовестность", cluster: "wellbeing", intent: "Понять, как откладывание дел связано с чертами, а не с ленью или слабой волей", links: ["/traits/conscientiousness-low", "/traits/conscientiousness-high", "/articles/dobrosovestnost"], sourceKeys: ["needs-research"] }),
   topic({ slug: "trevozhnost-i-cherty", primaryQuery: "тревожность и черты характера", title: "Тревожность и черты: что говорит Big Five", cluster: "stress", intent: "Отделить черту (эмоциональная чувствительность) от состояния; чёткая граница «не диагноз»", links: ["/articles/neyrotizm-big-five", "/traits/stability-low"], sourceKeys: ["needs-research"] }),
