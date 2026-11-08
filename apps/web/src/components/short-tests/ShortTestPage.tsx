@@ -111,6 +111,11 @@ export function ShortTestPage({ slug, lead, facts, related, palette, heroImage, 
                 </li>
               ))}
             </ul>
+            {test.pairOffer && (
+              <p>
+                <Link href={`${test.path}/sochetaniya`}>Сочетания типов в паре: все десять</Link>
+              </p>
+            )}
           </section>
 
           <section id={showContents ? `${slug}-faq` : undefined}>

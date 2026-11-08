@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import type { Answer, Answers } from "./scoring";
-import { isShortTestComplete, scoreShortTest, type ShortTestScoring } from "./short-tests";
+import { combinationKey, isShortTestComplete, scoreShortTest, type ShortTestScoring } from "./short-tests";
 
 const SCORING: ShortTestScoring = {
   axes: ["a", "b"],
@@ -76,5 +76,20 @@ describe("isShortTestComplete", () => {
 
   test("true for a full set", () => {
     expect(isShortTestComplete(SCORING, quadrant("low", "low"))).toBe(true);
+  });
+});
+
+describe("combinationKey", () => {
+  const order = ["secure", "anxious", "avoidant", "fearful"];
+
+  test("does not depend on the order of the two types", () => {
+    expect(combinationKey(order, "avoidant", "anxious")).toBe("anxious+avoidant");
+    expect(combinationKey(order, "anxious", "avoidant")).toBe("anxious+avoidant");
+    expect(combinationKey(order, "secure", "secure")).toBe("secure+secure");
+  });
+
+  test("four types give exactly ten combinations", () => {
+    const keys = new Set(order.flatMap((a) => order.map((b) => combinationKey(order, a, b))));
+    expect(keys.size).toBe(10);
   });
 });

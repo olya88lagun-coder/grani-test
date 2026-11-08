@@ -390,3 +390,67 @@ describe("attachment solo report", () => {
     expect(store.size).toBe(0);
   });
 });
+
+describe("attachment pair report", () => {
+  const sample = (typeKey: string) => ({ testSlug: "attachment", answers: { an01: 4 }, scores: { anxiety: 75, avoidance: 25 }, typeKey });
+
+  async function shortPair() {
+    const { saveShortResult, getOrCreateShortPairInvite, acceptShortPairInvite, seedUser } = await import("@grani/db/testing");
+    const boris = await seedUser(db, { externalId: "boris" });
+    const a = await saveShortResult(db, { userId: anna.userId, ...sample("anxious") });
+    const b = await saveShortResult(db, { userId: boris, ...sample("avoidant") });
+    const { token } = await getOrCreateShortPairInvite(db, { userId: anna.userId, shortResultId: a.id });
+    const outcome = await acceptShortPairInvite(db, { token, partnerUserId: boris, partnerShortResultId: b.id, consentAt: NOW, consentVersion: "v1" });
+    if (!outcome.ok) throw new Error(outcome.reason);
+    return { pairId: outcome.pairId, boris, borisResult: b.id };
+  }
+
+  const amountOf = (outcome: Awaited<ReturnType<typeof startPurchase>>) => store.get(paymentOf(outcome.ok ? outcome.url : ""))?.amountKopecks;
+
+  test("costs 349 rubles even if the client asks for the discounted product", async () => {
+    const { pairId } = await shortPair();
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "attachment_pair_discount", targetId: pairId, email: EMAIL });
+    expect(amountOf(outcome)).toBe(34900);
+    const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ product: "attachment_pair", shortPairId: pairId });
+  });
+
+  test("costs 249 rubles for a payer who owns the solo report", async () => {
+    const { pairId, boris, borisResult } = await shortPair();
+    await buyAndPay("attachment_solo", borisResult, boris);
+    const outcome = await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL });
+    expect(amountOf(outcome)).toBe(24900);
+  });
+
+  test("is not sold again once either member paid, and not to strangers", async () => {
+    const { pairId, boris } = await shortPair();
+    const paid = await buyAndPay("attachment_pair", pairId, boris);
+    expect(paid?.status).toBe("succeeded");
+    expect(await startPurchase(deps, { userId: anna.userId, product: "attachment_pair", targetId: pairId, email: EMAIL })).toEqual({ ok: false, error: "not_available" });
+    const { seedUser } = await import("@grani/db/testing");
+    const vera = await seedUser(db, { externalId: "vera" });
+    expect(await startPurchase(deps, { userId: vera, product: "attachment_pair", targetId: pairId, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
+  });
+
+  test("while one member's payment is open, the other cannot open a second one", async () => {
+    const { pairId, boris } = await shortPair();
+    expect((await startPurchase(deps, { userId: anna.userId, product: "attachment_pair", targetId: pairId, email: EMAIL })).ok).toBe(true);
+    expect(await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL })).toEqual({ ok: false, error: "partner_paying" });
+  });
+
+  test("the same payer gets the open payment back even after buying the solo report in between", async () => {
+    const { pairId, boris, borisResult } = await shortPair();
+    const first = await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL });
+    await buyAndPay("attachment_solo", borisResult, boris);
+    const again = await startPurchase(deps, { userId: boris, product: "attachment_pair", targetId: pairId, email: EMAIL });
+    expect(again).toEqual(first);
+  });
+
+  test("leads to the pair page and is ready right after payment, with nothing to generate", async () => {
+    const { pairId } = await shortPair();
+    const paid = await buyAndPay("attachment_pair", pairId);
+    const view = await getPurchaseView(deps, { purchaseId: paid!.id, userId: anna.userId });
+    expect(view).toMatchObject({ ready: true, reportUrl: `/short-pair/${pairId}` });
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+});

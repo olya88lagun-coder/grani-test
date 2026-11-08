@@ -32,7 +32,8 @@ function write(key: string, value: string | null): void {
   }
 }
 
-export function ShortTestRunner({ slug }: { slug: string }) {
+// invite — токен приглашения: тест проходит партнёр, после результата он идёт к общей карте
+export function ShortTestRunner({ slug, invite }: { slug: string; invite?: string }) {
   const test = getShortTest(slug);
   if (!test) throw new Error(`Unknown short test ${slug}`);
   const [score, setScore] = useState<ShortTestScore | null>(null);
@@ -73,23 +74,24 @@ export function ShortTestRunner({ slug }: { slug: string }) {
 
   if (!restored) return <p className="muted" role="status">Загружаем тест…</p>;
   // Платный разбор: ответы уходят на сервер, гость сначала входит — после входа он попадает на /short/[id]
-  async function openReport(): Promise<string | null> {
+  async function openReport(intent: "report" | "pair"): Promise<string | null> {
     if (!answers) return "Не нашли ответы. Пройдите тест ещё раз.";
     try {
-      const response = await fetch("/api/short-results", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ slug: test!.slug, answers }) });
-      const body = (await response.json()) as { ok: boolean; redirect?: string };
-      if (body.ok && body.redirect) {
-        window.location.assign(body.redirect);
+      const payload = JSON.stringify({ slug: test!.slug, answers, intent, ...(invite ? { invite } : {}) });
+      const response = await fetch("/api/short-results", { method: "POST", headers: { "content-type": "application/json" }, body: payload });
+      const reply = (await response.json()) as { ok: boolean; redirect?: string };
+      if (reply.ok && reply.redirect) {
+        window.location.assign(reply.redirect);
         return null;
       }
     } catch {
       // ниже — общий текст ошибки
     }
-    return "Не получилось открыть разбор. Проверьте интернет и попробуйте ещё раз.";
+    return "Не получилось. Проверьте интернет и попробуйте ещё раз.";
   }
 
   if (score)
-    return <ShortTestResult test={test} view={shortResultView(test, score)} onRestart={restart} onOpenReport={answers ? openReport : undefined} focusOnMount={justCompleted} />;
+    return <ShortTestResult test={test} view={shortResultView(test, score)} onRestart={restart} onOpenReport={answers ? openReport : undefined} focusOnMount={justCompleted} partnerInvite={Boolean(invite)} />;
 
   const goals = GOALS[test.slug];
   return (

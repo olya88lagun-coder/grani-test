@@ -77,3 +77,16 @@ describe("short test pending tokens", () => {
     expect(await verifyShortPending("garbage", SECRET)).toBeNull();
   });
 });
+
+describe("short test pending tokens for pairs", () => {
+  test("carry the intent and a valid invite token", async () => {
+    const invite = "a".repeat(24);
+    const token = await signShortPending({ slug: "attachment", answers: { an01: 4 }, intent: "pair", invite }, SECRET);
+    expect(await verifyShortPending(token, SECRET)).toEqual({ slug: "attachment", answers: { an01: 4 }, intent: "pair", invite });
+  });
+
+  test("drop a malformed invite and an unknown intent but keep the answers", async () => {
+    const token = await signShortPending({ slug: "attachment", answers: { an01: 4 }, intent: "x" as never, invite: "../evil" }, SECRET);
+    expect(await verifyShortPending(token, SECRET)).toEqual({ slug: "attachment", answers: { an01: 4 } });
+  });
+});

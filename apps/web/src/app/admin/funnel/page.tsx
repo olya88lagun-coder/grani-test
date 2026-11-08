@@ -19,6 +19,8 @@ const STEP_LABELS: Readonly<Record<FunnelStep, string>> = {
   attachment_finish: "Закончили тест привязанности",
   temperament_start: "Начали тест темперамента",
   temperament_finish: "Закончили тест темперамента",
+  attachment_invite: "Позвали партнёра в тест привязанности",
+  attachment_pair: "Партнёр принял приглашение",
 };
 
 export default async function FunnelPage() {

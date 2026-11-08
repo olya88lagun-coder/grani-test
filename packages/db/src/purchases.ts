@@ -1,5 +1,5 @@
 import type { Product, PurchaseProduct } from "@grani/core";
-import { and, asc, desc, eq, gt, gte, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, gt, gte, inArray, isNotNull, isNull } from "drizzle-orm";
 import { targetColumns, targetId, type ReportTarget } from "./reports";
 import { purchases, type PurchaseStatus } from "./schema";
 import type { Database } from "./types";
@@ -7,8 +7,9 @@ import { isUuid } from "./uuid";
 
 export type { PurchaseStatus } from "./schema";
 export type ShortResultTarget = { shortResultId: string };
-// Цели, за которые продаются разборы: результат Big Five, пара или результат короткого теста
-export type OwnedTarget = ReportTarget | ShortResultTarget;
+export type ShortPairTarget = { shortPairId: string };
+// Цели, за которые продаются разборы: результат Big Five, пара, результат или пара короткого теста
+export type OwnedTarget = ReportTarget | ShortResultTarget | ShortPairTarget;
 export type PurchaseTarget = OwnedTarget | { spaceId: string };
 export type PurchaseRecord = {
   id: string;
@@ -18,6 +19,7 @@ export type PurchaseRecord = {
   pairId: string | null;
   spaceId: string | null;
   shortResultId: string | null;
+  shortPairId: string | null;
   amountKopecks: number;
   status: PurchaseStatus;
   yookassaPaymentId: string | null;
@@ -34,17 +36,22 @@ export const toPurchaseRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row,
 
 function targetWhere(target: OwnedTarget) {
   if ("shortResultId" in target) return eq(purchases.shortResultId, target.shortResultId);
+  if ("shortPairId" in target) return eq(purchases.shortPairId, target.shortPairId);
   return "resultId" in target ? eq(purchases.resultId, target.resultId) : eq(purchases.pairId, target.pairId);
 }
 
-const ownedTargetId = (target: OwnedTarget): string => ("shortResultId" in target ? target.shortResultId : targetId(target));
+const ownedTargetId = (target: OwnedTarget): string =>
+  "shortResultId" in target ? target.shortResultId : "shortPairId" in target ? target.shortPairId : targetId(target);
 
-type TargetColumns = { resultId: string | null; pairId: string | null; spaceId: string | null; shortResultId: string | null };
+type TargetColumns = { resultId: string | null; pairId: string | null; spaceId: string | null; shortResultId: string | null; shortPairId: string | null };
+
+const NO_TARGET: TargetColumns = { resultId: null, pairId: null, spaceId: null, shortResultId: null, shortPairId: null };
 
 function purchaseTargetColumns(target: PurchaseTarget): TargetColumns {
-  if ("spaceId" in target) return { resultId: null, pairId: null, spaceId: target.spaceId, shortResultId: null };
-  if ("shortResultId" in target) return { resultId: null, pairId: null, spaceId: null, shortResultId: target.shortResultId };
-  return { ...targetColumns(target), spaceId: null, shortResultId: null };
+  if ("spaceId" in target) return { ...NO_TARGET, spaceId: target.spaceId };
+  if ("shortResultId" in target) return { ...NO_TARGET, shortResultId: target.shortResultId };
+  if ("shortPairId" in target) return { ...NO_TARGET, shortPairId: target.shortPairId };
+  return { ...NO_TARGET, ...targetColumns(target) };
 }
 
 export async function createPurchase(
@@ -107,6 +114,27 @@ export async function findOpenPurchaseOfProduct(db: Database, p: { userId: strin
       and(
         eq(purchases.userId, p.userId),
         eq(purchases.product, p.product),
+        eq(purchases.status, "pending"),
+        isNotNull(purchases.confirmationUrl),
+        gte(purchases.createdAt, p.since),
+      ),
+    )
+    .orderBy(desc(purchases.createdAt))
+    .limit(1);
+  return row ? toPurchaseRecord(row) : null;
+}
+
+// Разбор пары короткого теста оплачивается один раз на пару: незавершённая оплата ищется по паре и обоим продуктам цены,
+// а не по плательщику — иначе оба партнёра (или один по двум ценам) могут заплатить одновременно
+export async function findOpenPurchaseForShortPair(db: Database, p: { shortPairId: string; products: readonly Product[]; since: Date }): Promise<PurchaseRecord | null> {
+  if (!isUuid(p.shortPairId)) return null;
+  const [row] = await db
+    .select()
+    .from(purchases)
+    .where(
+      and(
+        eq(purchases.shortPairId, p.shortPairId),
+        inArray(purchases.product, [...p.products]),
         eq(purchases.status, "pending"),
         isNotNull(purchases.confirmationUrl),
         gte(purchases.createdAt, p.since),

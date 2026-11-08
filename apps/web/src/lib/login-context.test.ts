@@ -42,3 +42,12 @@ describe("short test login context", () => {
     expect(LOGIN_INTRO.short.lead).toContain("разбор");
   });
 });
+
+describe("short test pair login contexts", () => {
+  test("a partner from an invite and an inviter get their own intro", () => {
+    expect(pickLoginContext({ pairInvite: false, together: false, pendingResult: false, shortResult: true, shortKind: "invite" })).toBe("short_pair");
+    expect(pickLoginContext({ pairInvite: false, together: false, pendingResult: false, shortResult: true, shortKind: "pair" })).toBe("short_invite");
+    expect(LOGIN_INTRO.short_pair.title).toBe("Откроем карту пары");
+    expect(LOGIN_INTRO.short_invite.title).toBe("Позовём партнёра");
+  });
+});

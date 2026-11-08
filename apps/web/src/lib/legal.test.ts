@@ -21,8 +21,8 @@ describe("legal", () => {
   });
 
   it("uses the new document versions", () => {
-    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-11-v4", privacy: "2026-11-v4", offer: "2026-11-v4" });
-    expect(OFFER_VERSION).toBe("2026-11-v4");
+    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-11-v5", privacy: "2026-11-v5", offer: "2026-11-v5" });
+    expect(OFFER_VERSION).toBe("2026-11-v5");
     expect(LEGAL_DATE).toBe("8 ноября 2026 года");
   });
 

@@ -58,7 +58,8 @@ const DOCUMENT_PATHS = ["/contacts", "/offer", "/privacy", "/consent"] as const;
 
 // Короткие тесты и страницы их типов; адреса не под /test — он закрыт в robots.txt
 export function shortTestPaths(): string[] {
-  return SHORT_TESTS.flatMap((test) => [test.path, ...test.types.map((type) => `${test.path}/${type.slug}`)]);
+  // У теста с режимом пары есть ещё страница всех сочетаний типов
+  return SHORT_TESTS.flatMap((test) => [test.path, ...test.types.map((type) => `${test.path}/${type.slug}`), ...(test.pairOffer ? [`${test.path}/sochetaniya`] : [])]);
 }
 
 export function PUBLIC_PATHS(): string[] {

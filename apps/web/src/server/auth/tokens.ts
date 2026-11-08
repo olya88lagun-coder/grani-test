@@ -58,17 +58,25 @@ export async function verifyPending(token: string, secret: string): Promise<Reco
 }
 
 // Ответы короткого теста на время входа: отдельная аудитория, чтобы их нельзя было подставить вместо ответов Big Five
-export type ShortPending = { slug: string; answers: Record<string, number> };
+// intent: зачем человек сохраняет результат (разбор или позвать партнёра); invite: приглашение, по которому пришёл партнёр
+export type ShortPending = { slug: string; answers: Record<string, number>; intent?: "report" | "pair"; invite?: string };
+
+const INVITE_TOKEN = /^[A-Za-z0-9_-]{24}$/;
 
 export async function signShortPending(pending: ShortPending, secret: string): Promise<string> {
-  return sign({ slug: pending.slug, answers: pending.answers }, AUDIENCE.shortPending, PENDING_TTL, secret);
+  return sign({ slug: pending.slug, answers: pending.answers, intent: pending.intent, invite: pending.invite }, AUDIENCE.shortPending, PENDING_TTL, secret);
 }
 
 export async function verifyShortPending(token: string, secret: string): Promise<ShortPending | null> {
   const payload = await verify(token, AUDIENCE.shortPending, secret);
-  const { slug, answers } = payload ?? {};
+  const { slug, answers, intent, invite } = payload ?? {};
   if (typeof slug !== "string" || typeof answers !== "object" || answers === null || Array.isArray(answers)) return null;
-  return { slug, answers: answers as Record<string, number> };
+  return {
+    slug,
+    answers: answers as Record<string, number>,
+    ...(intent === "report" || intent === "pair" ? { intent } : {}),
+    ...(typeof invite === "string" && INVITE_TOKEN.test(invite) ? { invite } : {}),
+  };
 }
 
 export async function signConsent(consent: Consent, secret: string): Promise<string> {

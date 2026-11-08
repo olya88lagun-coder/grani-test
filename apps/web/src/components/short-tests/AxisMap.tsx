@@ -1,23 +1,32 @@
 import { useId } from "react";
 import styles from "./short-tests.module.css";
 
+// points — несколько подписанных точек (карта пары); без них рисуется одна точка x, y
+export type AxisMapPoint = { x: number; y: number; label: string };
+
 type AxisMapProps = {
   xLabel: string;
   yLabel: string;
-  x: number;
-  y: number;
+  x?: number;
+  y?: number;
+  points?: readonly AxisMapPoint[];
   quadrantLabels: readonly [string, string, string, string];
   texture?: string;
 };
 
 // Карта двух осей: x — вправо, y — вверх; подписи квадрантов — [левый низ, правый низ, левый верх, правый верх]
-export function AxisMap({ xLabel, yLabel, x, y, quadrantLabels, texture }: AxisMapProps) {
+export function AxisMap({ xLabel, yLabel, x = 0, y = 0, points, quadrantLabels, texture }: AxisMapProps) {
   const clipId = useId();
   const size = 260;
   const pad = 11;
   const span = size - pad * 2;
-  const cx = pad + (Math.min(100, Math.max(0, x)) / 100) * span;
-  const cy = pad + (1 - Math.min(100, Math.max(0, y)) / 100) * span;
+  const px = (value: number) => pad + (Math.min(100, Math.max(0, value)) / 100) * span;
+  const py = (value: number) => pad + (1 - Math.min(100, Math.max(0, value)) / 100) * span;
+  const cx = px(x);
+  const cy = py(y);
+  const label = points
+    ? points.map((point) => `${point.label} — ${xLabel}: ${point.x}%, ${yLabel}: ${point.y}%`).join("; ")
+    : `${xLabel}: ${x}%, ${yLabel}: ${y}%`;
   const half = span / 2;
   const mid = pad + half;
   const edge = size - pad;
@@ -30,7 +39,7 @@ export function AxisMap({ xLabel, yLabel, x, y, quadrantLabels, texture }: AxisM
         <span>{lowHigh}</span>
         <span>{highHigh}</span>
       </div>
-      <svg className={styles.plot} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${xLabel}: ${x}%, ${yLabel}: ${y}%`}>
+      <svg className={styles.plot} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label}>
         <rect x={pad} y={pad} width={span} height={span} rx="7" className={styles.plotField} />
         {texture ? (
           <>
@@ -48,9 +57,23 @@ export function AxisMap({ xLabel, yLabel, x, y, quadrantLabels, texture }: AxisM
         )}
         <line x1={mid} y1={pad} x2={mid} y2={edge} className={styles.plotLine} />
         <line x1={pad} y1={mid} x2={edge} y2={mid} className={styles.plotLine} />
-        {texture && <path d={`M${pad} ${cy} H${cx} V${edge}`} className={styles.plotGuides} />}
-        <circle cx={cx} cy={cy} r="9" className={styles.plotHalo} />
-        <circle cx={cx} cy={cy} r="4.5" className={styles.plotDot} />
+        {points ? (
+          points.map((point) => (
+            <g key={point.label}>
+              <circle cx={px(point.x)} cy={py(point.y)} r="9" className={styles.plotHalo} />
+              <circle cx={px(point.x)} cy={py(point.y)} r="4.5" className={styles.plotDot} />
+              <text x={px(point.x)} y={py(point.y) - 13} textAnchor="middle" className={styles.plotLabel}>
+                {point.label}
+              </text>
+            </g>
+          ))
+        ) : (
+          <>
+            {texture && <path d={`M${pad} ${cy} H${cx} V${edge}`} className={styles.plotGuides} />}
+            <circle cx={cx} cy={cy} r="9" className={styles.plotHalo} />
+            <circle cx={cx} cy={cy} r="4.5" className={styles.plotDot} />
+          </>
+        )}
       </svg>
       <div className={styles.mapLabels}>
         <span>{lowLow}</span>
@@ -58,7 +81,7 @@ export function AxisMap({ xLabel, yLabel, x, y, quadrantLabels, texture }: AxisM
       </div>
       {texture ? (
         <figcaption className={styles.mapFooter}>
-          <span className={styles.mapLegend}>Ваша точка</span>
+          <span className={styles.mapLegend}>{points ? "Ваши точки" : "Ваша точка"}</span>
           <span className={styles.mapAxis}>{xLabel} <span aria-hidden="true">→</span></span>
         </figcaption>
       ) : (

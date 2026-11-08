@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { CHAPTER_PRODUCTS, formatRub, isProduct, PRODUCT_PRICES } from "./pricing";
+import { CHAPTER_PRODUCTS, formatRub, isProduct, pairProductFor, PRODUCT_PRICES } from "./pricing";
 
 const NBSP = " ";
 
@@ -14,6 +14,8 @@ describe("PRODUCT_PRICES", () => {
       chapters_all: 24900,
       pair: 39900,
       attachment_solo: 19900,
+      attachment_pair: 34900,
+      attachment_pair_discount: 24900,
     });
   });
 
@@ -51,4 +53,11 @@ describe("formatRub", () => {
 
 test("attachment solo report costs 199 rubles", () => {
   expect(PRODUCT_PRICES.attachment_solo).toBe(19900);
+});
+
+test("the pair report is discounted for payers who own the solo report", () => {
+  expect(pairProductFor(false)).toBe("attachment_pair");
+  expect(pairProductFor(true)).toBe("attachment_pair_discount");
+  expect(PRODUCT_PRICES[pairProductFor(false)]).toBe(34900);
+  expect(PRODUCT_PRICES[pairProductFor(true)]).toBe(24900);
 });

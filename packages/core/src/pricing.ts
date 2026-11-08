@@ -8,6 +8,9 @@ export const PRODUCT_PRICES = {
   pair: 39900,
   // Личный разбор типа привязанности: собирается из готовых блоков, не генерируется
   attachment_solo: 19900,
+  // Разбор пары по привязанности. Скидка — отдельный продукт, чтобы у каждого продукта была одна цена
+  attachment_pair: 34900,
+  attachment_pair_discount: 24900,
 } as const;
 
 export type Product = keyof typeof PRODUCT_PRICES;
@@ -16,6 +19,14 @@ export const CHAPTER_PRODUCTS = ["chapter_money", "chapter_conflict", "chapter_s
 
 const KOPECKS_PER_RUBLE = 100;
 const NBSP = " ";
+
+export const ATTACHMENT_PAIR_PRODUCTS = ["attachment_pair", "attachment_pair_discount"] as const;
+export type AttachmentPairProduct = (typeof ATTACHMENT_PAIR_PRODUCTS)[number];
+
+// Скидка положена тому, кто уже купил личный разбор привязанности; продукт выбирает сервер
+export function pairProductFor(hasSolo: boolean): AttachmentPairProduct {
+  return hasSolo ? "attachment_pair_discount" : "attachment_pair";
+}
 
 export function isProduct(value: unknown): value is Product {
   return typeof value === "string" && Object.hasOwn(PRODUCT_PRICES, value);

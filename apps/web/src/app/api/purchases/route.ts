@@ -11,6 +11,7 @@ const STATUS: Record<Extract<StartPurchaseOutcome, { ok: false }>["error"], numb
   invalid_email: 400,
   not_found: 404,
   not_available: 409,
+  partner_paying: 409,
   payment_failed: 502,
 };
 

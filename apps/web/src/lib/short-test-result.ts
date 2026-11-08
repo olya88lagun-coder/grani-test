@@ -55,3 +55,13 @@ export function shortResultView(test: ShortTestDefinition, score: ShortTestScore
   });
   return { type, axes };
 }
+
+// Подписи квадрантов карты: [низкое x, низкое y], [высокое x, низкое y], [низкое x, высокое y], [высокое x, высокое y]
+export function quadrantLabels(test: ShortTestDefinition, xKey: string, yKey: string): [string, string, string, string] {
+  const name = (x: "low" | "high", y: "low" | "high") => {
+    const rule = test.scoring.types.find((r) => r.when[xKey] === x && r.when[yKey] === y);
+    const type = test.types.find((t) => t.key === rule?.key);
+    return type ? type.name.split(" ")[0]! : "";
+  };
+  return [name("low", "low"), name("high", "low"), name("low", "high"), name("high", "high")];
+}

@@ -148,6 +148,9 @@ describe("goals", () => {
       "temperament_start",
       "temperament_finish",
       "purchase_attachment",
+      "purchase_attachment_pair",
+      "attachment_invite",
+      "attachment_pair",
     ]);
   });
 
@@ -164,6 +167,8 @@ describe("goals", () => {
   it("maps products to purchase goals", () => {
     expect(goalForProduct("full")).toBe("purchase_full");
     expect(goalForProduct("chapter_money")).toBe("purchase_chapter");
+    expect(goalForProduct("attachment_pair")).toBe("purchase_attachment_pair");
+    expect(goalForProduct("attachment_pair_discount")).toBe("purchase_attachment_pair");
     expect(goalForProduct("chapters_all")).toBe("purchase_chapter");
     expect(goalForProduct("pair")).toBe("purchase_pair");
   });

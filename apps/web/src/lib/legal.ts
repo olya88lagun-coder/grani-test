@@ -14,7 +14,7 @@ export const OPERATOR_DETAILS: OperatorDetails = { address: null, rknNumber: nul
 // Адрес для претензий и корреспонденции: почтового адреса у оператора нет, поэтому им служит электронная почта (так решила владелица)
 export const correspondenceAddress = (details: OperatorDetails = OPERATOR_DETAILS): string => details.address ?? `электронная почта ${OPERATOR.email}`;
 
-export const LEGAL_VERSIONS = { consent: "2026-11-v4", privacy: "2026-11-v4", offer: "2026-11-v4" } as const;
+export const LEGAL_VERSIONS = { consent: "2026-11-v5", privacy: "2026-11-v5", offer: "2026-11-v5" } as const;
 export const OFFER_VERSION = LEGAL_VERSIONS.offer;
 export const LEGAL_DATE = "8 ноября 2026 года";
 

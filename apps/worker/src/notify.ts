@@ -1,8 +1,9 @@
 import { compatibilityScore, isExtraKind, type NotifyJob } from "@grani/core";
-import { getActivePair, getFriendAnsweredNotice, getNotifyTargets, getReportById, getResult, listReceiptsToSend, setCanNotify, type Database } from "@grani/db";
+import { getActivePair, getActiveShortPair, getFriendAnsweredNotice, getNotifyTargets, getReportById, getResult, listReceiptsToSend, setCanNotify, type Database } from "@grani/db";
 import type { Logger } from "./log";
 import type { Senders } from "./senders";
-import { chaptersReadyText, friendAnsweredText, pairCreatedText, receiptsPendingText, reportReadyText } from "./texts";
+import { getCombination } from "@grani/content/short-tests";
+import { chaptersReadyText, friendAnsweredText, pairCreatedText, receiptsPendingText, reportReadyText, shortPairCreatedText } from "./texts";
 
 export type NotifyDeps = { db: Database; senders: Senders; appUrl: string; log: Logger };
 
@@ -47,6 +48,17 @@ async function notifyPairCreated(deps: NotifyDeps, job: Extract<NotifyJob, { kin
   return outcomes.some((outcome) => outcome !== "failed");
 }
 
+// Пригласившему: партнёр в этот момент сам на сайте и видит карту
+async function notifyShortPairCreated(deps: NotifyDeps, job: Extract<NotifyJob, { kind: "short_pair_created" }>): Promise<boolean> {
+  const pair = await getActiveShortPair(deps.db, job.shortPairId);
+  if (!pair) return true;
+  const [inviter, partner] = pair.members;
+  const combination = getCombination(pair.testSlug, inviter.result.typeKey, partner.result.typeKey);
+  if (!combination) return true;
+  const url = new URL(`/short-pair/${pair.id}`, deps.appUrl).toString();
+  return (await deliver(deps, inviter.user.id, shortPairCreatedText(firstWord(partner.user.displayName), combination.name, url))) !== "failed";
+}
+
 async function notifyReportReady(deps: NotifyDeps, job: Extract<NotifyJob, { kind: "report_ready" }>): Promise<boolean> {
   const report = await getReportById(deps.db, job.reportId);
   if (!report) return true;
@@ -87,6 +99,8 @@ export async function runNotify(job: NotifyJob, deps: NotifyDeps): Promise<void>
       ? await notifyFriendAnswered(deps, job)
       : job.kind === "pair_created"
         ? await notifyPairCreated(deps, job)
+        : job.kind === "short_pair_created"
+          ? await notifyShortPairCreated(deps, job)
         : job.kind === "report_ready"
           ? await notifyReportReady(deps, job)
           : job.kind === "receipts_pending"

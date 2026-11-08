@@ -124,6 +124,27 @@ export default function PricingPage() {
             </ul>
           </section>
 
+          <section className="card stack pricing-card" data-band="night" aria-labelledby="price-attachment-pair">
+            <p className="eyebrow">Тест на привязанность вдвоём</p>
+            <h2 id="price-attachment-pair">Разбор пары по типу привязанности</h2>
+            <p className="pricing-card__price">{formatRub(PRODUCT_PRICES.attachment_pair)}</p>
+            <div className="pricing-card__cta">
+              <Link className="button button--ghost" href="/privyazannost">
+                Пройти тест вдвоём <span aria-hidden="true">→</span>
+              </Link>
+              <p className="muted">
+                Карта пары — бесплатно. Разбор открывается обоим, платит любой из вас. {formatRub(PRODUCT_PRICES.attachment_pair_discount)}, если вы уже купили личный разбор.
+              </p>
+            </div>
+            <ul className="pricing-card__list">
+              <li>Ваша динамика: что происходит между вами</li>
+              <li>Что делает каждый в ссоре</li>
+              <li>Что нужно каждому от другого</li>
+              <li>Разница по тревожности и избеганию</li>
+              <li>Фразы для разговора и 3–4 упражнения для двоих</li>
+            </ul>
+          </section>
+
           <section className="card stack pricing-card pricing-card--pair" data-band="night" aria-labelledby="price-together">
             <p className="eyebrow">Для двоих</p>
             <h2 id="price-together">Грани. Вдвоём</h2>

@@ -74,7 +74,7 @@ test("the pricing page and the offer list the attachment report at 199 rubles", 
   await expect(page.getByRole("region", { name: "Личный разбор типа привязанности" })).toContainText("199");
   await page.goto("/offer");
   await expect(page.getByText(/Личный разбор типа привязанности «Грани» — 199/)).toBeVisible();
-  await expect(page.getByText(/открывается сразу после оплаты/)).toBeVisible();
+  await expect(page.getByText(/Личный разбор типа привязанности покупается/)).toContainText("открывается сразу после оплаты");
 });
 
 test("the paid report texts are not shipped in the test page's JavaScript", async ({ page }) => {

@@ -8,7 +8,7 @@ const order: PurchaseRecord = {
   id: "00000000-0000-4000-8000-000000000001", userId: "owner", product: "full",
   status: "succeeded", amountKopecks: 16900, yookassaPaymentId: "provider-payment",
   paidAt: NOW, createdAt: NOW, confirmationUrl: null, receiptEmail: null, receiptSentAt: null,
-  resultId: "private-result", pairId: null, spaceId: null, shortResultId: null,
+  resultId: "private-result", pairId: null, spaceId: null, shortResultId: null, shortPairId: null,
 };
 const payment = {
   id: "provider-payment", purchaseId: order.id, status: "succeeded", paid: true,
