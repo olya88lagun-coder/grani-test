@@ -79,6 +79,35 @@
 .page :global(.home-section__copy) { max-width: 680px; }
 .page :global(.home-section__copy h2) { font-size: clamp(42px, 4.3vw, 62px); line-height: 1.08; margin-bottom: 0; color: var(--ink); letter-spacing: -.01em; }
 .page :global(.home-section__copy > p:not(.home-kicker)) { font-size: 16px; line-height: 1.75; max-width: 560px; color: var(--ink-soft); }
+.page .shortTests { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+.shortTestGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.shortTestCard {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  padding: clamp(20px, 3vw, 36px);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.shortTestCard img,
+.shortTestCard::before { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shortTestCard img { z-index: -2; object-fit: cover; object-position: 65% center; }
+.shortTestCard::before {
+  content: "";
+  z-index: -1;
+  background: linear-gradient(90deg, rgb(5 20 13 / 98%) 12%, rgb(5 20 13 / 84%) 65%, rgb(5 20 13 / 52%));
+}
+.shortTestCard:hover,
+.shortTestCard:focus-visible { border-color: var(--gold); }
+.shortTestCard:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+.shortTestCard h3 { margin: 0; color: var(--ink); font-size: clamp(30px, 3vw, 43px); line-height: 1.1; }
+.shortTestCard p { max-width: 37ch; margin: 0; color: var(--ink); font-size: 15px; line-height: 1.6; }
+.shortTestMeta { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; color: var(--gold); font-size: 14px; }
+@media (max-width: 680px) { .shortTestGrid { grid-template-columns: minmax(0, 1fr); } }
 
 .page :global(.home-result) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; }
 .page :global(.home-result-card),

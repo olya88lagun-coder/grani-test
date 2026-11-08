@@ -1,5 +1,16 @@
 import { expect, test } from "@playwright/test";
 
+test("the home page offers both short tests in its main content", async ({ page }) => {
+  await page.goto("/");
+  const tests = page.getByRole("region", { name: "Ещё тесты" });
+  const attachment = tests.getByRole("link", { name: /тест на тип привязанности/i });
+  const temperament = tests.getByRole("link", { name: /тест на темперамент/i });
+  await expect(attachment).toHaveAttribute("href", "/privyazannost");
+  await expect(temperament).toHaveAttribute("href", "/temperament");
+  await temperament.click();
+  await expect(page).toHaveURL(/\/temperament$/);
+});
+
 test("the account action stays inside the header at intermediate widths", async ({ page }) => {
   await page.setViewportSize({ width: 768, height: 1024 });
   for (const path of ["/big-five-test", "/articles"]) {

@@ -28,6 +28,12 @@ test("passes the test, logs in and sees the saved result with a story card", asy
   await expect(page.getByText("Чувствительность", { exact: true })).toBeVisible();
   // Название шкалы есть и в карточке первого экрана, и в пояснениях ниже
   await expect(page.getByText("Эмоциональная устойчивость", { exact: true }).first()).toBeVisible();
+  const temperament = page.locator(".result-temperament");
+  await expect(temperament.getByRole("link", { name: "Пройти тест на темперамент" })).toHaveAttribute("href", "/temperament");
+  await expect(temperament.getByRole("link").first()).toHaveAttribute("href", /\/temperament\/[^/]+$/);
+  const tags = await page.locator(".result-tags").boundingBox();
+  const row = await temperament.boundingBox();
+  expect(row!.y).toBeGreaterThanOrEqual(tags!.y + tags!.height);
 
   const card = page.getByRole("img", { name: "Карточка типа «Вдохновитель»" });
   await expect(card).toBeVisible();
