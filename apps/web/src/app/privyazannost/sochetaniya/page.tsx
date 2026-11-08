@@ -6,7 +6,7 @@ import { faqJsonLd, publicMetadata, webPageJsonLd } from "@/lib/seo";
 import styles from "@/components/short-tests/short-test-page.module.css";
 
 const PATH = "/privyazannost/sochetaniya";
-const TITLE = "Сочетания типов привязанности в паре — Грани";
+const TITLE = "Сочетания типов привязанности в паре";
 const DESCRIPTION = "Все 10 сочетаний типов привязанности в паре: как сходятся надёжный, тревожный, избегающий и тревожно-избегающий типы и что помогает каждой паре.";
 const H1 = "Сочетания типов привязанности в паре";
 const BRIEF =
