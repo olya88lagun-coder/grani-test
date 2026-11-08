@@ -105,6 +105,25 @@ export default function PricingPage() {
             <p className={`muted ${styles.included}`}><strong>Разовая покупка без подписки.</strong> Совместная анкета и общие договорённости — по отдельному согласию обоих; базовый PDF доступен без них.</p>
           </section>
 
+          <section className="card stack pricing-card" data-band="night" aria-labelledby="price-attachment">
+            <p className="eyebrow">После теста на привязанность</p>
+            <h2 id="price-attachment">Личный разбор типа привязанности</h2>
+            <p className="pricing-card__price">{formatRub(PRODUCT_PRICES.attachment_solo)}</p>
+            <div className="pricing-card__cta">
+              <Link className="button button--ghost" href="/privyazannost">
+                Пройти тест бесплатно <span aria-hidden="true">→</span>
+              </Link>
+              <p className="muted">Открывается сразу после оплаты и для всех ваших прохождений теста.</p>
+            </div>
+            <ul className="pricing-card__list">
+              <li>Откуда берётся ваша реакция в близких отношениях</li>
+              <li>Что вы делаете в ссоре и когда партнёр отдаляется</li>
+              <li>Какой партнёр даётся тяжелее всего</li>
+              <li>Разбор вашего уровня тревожности и избегания</li>
+              <li>3–4 упражнения на месяц</li>
+            </ul>
+          </section>
+
           <section className="card stack pricing-card pricing-card--pair" data-band="night" aria-labelledby="price-together">
             <p className="eyebrow">Для двоих</p>
             <h2 id="price-together">Грани. Вдвоём</h2>

@@ -9,6 +9,7 @@ export * from "./pairs";
 export * from "./notify-targets";
 export * from "./reports";
 export * from "./purchases";
+export * from "./short-results";
 export * from "./job-id";
 export * from "./delete-user";
 export * from "./handoffs";

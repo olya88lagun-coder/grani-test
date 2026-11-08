@@ -6,7 +6,10 @@ import type { Database } from "./types";
 import { isUuid } from "./uuid";
 
 export type { PurchaseStatus } from "./schema";
-export type PurchaseTarget = ReportTarget | { spaceId: string };
+export type ShortResultTarget = { shortResultId: string };
+// Цели, за которые продаются разборы: результат Big Five, пара или результат короткого теста
+export type OwnedTarget = ReportTarget | ShortResultTarget;
+export type PurchaseTarget = OwnedTarget | { spaceId: string };
 export type PurchaseRecord = {
   id: string;
   userId: string;
@@ -14,6 +17,7 @@ export type PurchaseRecord = {
   resultId: string | null;
   pairId: string | null;
   spaceId: string | null;
+  shortResultId: string | null;
   amountKopecks: number;
   status: PurchaseStatus;
   yookassaPaymentId: string | null;
@@ -28,12 +32,19 @@ type PurchaseRow = typeof purchases.$inferSelect;
 
 export const toPurchaseRecord = (row: PurchaseRow): PurchaseRecord => ({ ...row, product: row.product as PurchaseProduct });
 
-function targetWhere(target: ReportTarget) {
+function targetWhere(target: OwnedTarget) {
+  if ("shortResultId" in target) return eq(purchases.shortResultId, target.shortResultId);
   return "resultId" in target ? eq(purchases.resultId, target.resultId) : eq(purchases.pairId, target.pairId);
 }
 
-function purchaseTargetColumns(target: PurchaseTarget): { resultId: string | null; pairId: string | null; spaceId: string | null } {
-  return "spaceId" in target ? { resultId: null, pairId: null, spaceId: target.spaceId } : { ...targetColumns(target), spaceId: null };
+const ownedTargetId = (target: OwnedTarget): string => ("shortResultId" in target ? target.shortResultId : targetId(target));
+
+type TargetColumns = { resultId: string | null; pairId: string | null; spaceId: string | null; shortResultId: string | null };
+
+function purchaseTargetColumns(target: PurchaseTarget): TargetColumns {
+  if ("spaceId" in target) return { resultId: null, pairId: null, spaceId: target.spaceId, shortResultId: null };
+  if ("shortResultId" in target) return { resultId: null, pairId: null, spaceId: null, shortResultId: target.shortResultId };
+  return { ...targetColumns(target), spaceId: null, shortResultId: null };
 }
 
 export async function createPurchase(
@@ -64,9 +75,9 @@ export async function getPurchaseByPaymentId(db: Database, paymentId: string): P
 
 export async function findOpenPurchase(
   db: Database,
-  p: { userId: string; product: Product; target: ReportTarget; since: Date },
+  p: { userId: string; product: Product; target: OwnedTarget; since: Date },
 ): Promise<PurchaseRecord | null> {
-  if (!isUuid(targetId(p.target))) return null;
+  if (!isUuid(ownedTargetId(p.target))) return null;
   const [row] = await db
     .select()
     .from(purchases)
@@ -75,6 +86,27 @@ export async function findOpenPurchase(
         eq(purchases.userId, p.userId),
         eq(purchases.product, p.product),
         targetWhere(p.target),
+        eq(purchases.status, "pending"),
+        isNotNull(purchases.confirmationUrl),
+        gte(purchases.createdAt, p.since),
+      ),
+    )
+    .orderBy(desc(purchases.createdAt))
+    .limit(1);
+  return row ? toPurchaseRecord(row) : null;
+}
+
+// Продукт, который принадлежит пользователю целиком (личный разбор короткого теста): незавершённая оплата ищется
+// по пользователю и продукту, а не по результату — иначе после повторного прохождения можно оплатить дважды
+export async function findOpenPurchaseOfProduct(db: Database, p: { userId: string; product: Product; since: Date }): Promise<PurchaseRecord | null> {
+  if (!isUuid(p.userId)) return null;
+  const [row] = await db
+    .select()
+    .from(purchases)
+    .where(
+      and(
+        eq(purchases.userId, p.userId),
+        eq(purchases.product, p.product),
         eq(purchases.status, "pending"),
         isNotNull(purchases.confirmationUrl),
         gte(purchases.createdAt, p.since),
@@ -104,8 +136,8 @@ export async function markPurchaseCanceled(db: Database, purchaseId: string): Pr
   return updated.length > 0;
 }
 
-export async function listOwnedProducts(db: Database, target: ReportTarget): Promise<Product[]> {
-  if (!isUuid(targetId(target))) return [];
+export async function listOwnedProducts(db: Database, target: OwnedTarget): Promise<Product[]> {
+  if (!isUuid(ownedTargetId(target))) return [];
   const rows = await db
     .select({ product: purchases.product })
     .from(purchases)

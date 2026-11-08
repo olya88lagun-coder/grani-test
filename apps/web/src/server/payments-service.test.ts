@@ -333,3 +333,60 @@ describe("extra reports after payment", () => {
     expect(enqueue).not.toHaveBeenCalled();
   });
 });
+
+describe("attachment solo report", () => {
+  const sample = { testSlug: "attachment", answers: { an01: 4 }, scores: { anxiety: 75, avoidance: 25 }, typeKey: "anxious" };
+
+  test("is bought for an own short result at 199 rubles and is ready right after payment", async () => {
+    const { saveShortResult } = await import("@grani/db/testing");
+    const short = await saveShortResult(db, { userId: anna.userId, ...sample });
+    const outcome = await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: short.id, email: EMAIL });
+    expect(outcome.ok).toBe(true);
+    const payment = store.get(paymentOf(outcome.ok ? outcome.url : ""))!;
+    expect(payment.amountKopecks).toBe(19900);
+    expect(await getPurchase(db, payment.purchaseId!)).toMatchObject({ product: "attachment_solo", shortResultId: short.id, resultId: null });
+
+    gateway.complete(payment.id, "succeeded");
+    await syncPayment(deps, payment.id);
+    await syncPayment(deps, payment.id);
+    expect(enqueue).not.toHaveBeenCalled();
+    const view = await getPurchaseView(deps, { purchaseId: payment.purchaseId!, userId: anna.userId });
+    expect(view).toMatchObject({ status: "succeeded", ready: true, reportUrl: `/short/${short.id}` });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: short.id, email: EMAIL })).toEqual({ ok: false, error: "not_available" });
+  });
+
+  test("reuses one open payment across retaken tests, so the user cannot be charged twice", async () => {
+    const { saveShortResult } = await import("@grani/db/testing");
+    const first = await saveShortResult(db, { userId: anna.userId, ...sample });
+    const retaken = await saveShortResult(db, { userId: anna.userId, ...sample });
+    const a = await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: first.id, email: EMAIL });
+    const b = await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: retaken.id, email: EMAIL });
+    expect(b).toEqual(a);
+    expect(store.size).toBe(1);
+  });
+
+  test("is not sold again for a retaken test once the user has paid for it", async () => {
+    const { saveShortResult } = await import("@grani/db/testing");
+    const first = await saveShortResult(db, { userId: anna.userId, ...sample });
+    await buyAndPay("attachment_solo", first.id);
+    const retaken = await saveShortResult(db, { userId: anna.userId, ...sample });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: retaken.id, email: EMAIL })).toEqual({ ok: false, error: "not_available" });
+  });
+
+  test("is refused for someone else's short result and for a Big Five result id", async () => {
+    const { saveShortResult } = await import("@grani/db/testing");
+    const boris = await seedUserWithResult(db, { externalId: "boris" });
+    const borisShort = await saveShortResult(db, { userId: boris.userId, ...sample });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: borisShort.id, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
+    expect(await startPurchase(deps, { userId: anna.userId, product: "attachment_solo", targetId: anna.resultId, email: EMAIL })).toEqual({ ok: false, error: "not_found" });
+  });
+
+  test("is free and immediately paid for the owner", async () => {
+    const { saveShortResult } = await import("@grani/db/testing");
+    const short = await saveShortResult(db, { userId: anna.userId, ...sample });
+    const owner = { ...deps, isOwner: async () => true };
+    const outcome = await startPurchase(owner, { userId: anna.userId, product: "attachment_solo", targetId: short.id, email: null });
+    expect(outcome.ok).toBe(true);
+    expect(store.size).toBe(0);
+  });
+});

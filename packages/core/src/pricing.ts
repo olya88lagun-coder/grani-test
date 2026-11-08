@@ -6,6 +6,8 @@ export const PRODUCT_PRICES = {
   chapter_relationships: 9900,
   chapters_all: 24900,
   pair: 39900,
+  // Личный разбор типа привязанности: собирается из готовых блоков, не генерируется
+  attachment_solo: 19900,
 } as const;
 
 export type Product = keyof typeof PRODUCT_PRICES;

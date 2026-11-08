@@ -3,10 +3,12 @@ import {
   signConsent,
   signPending,
   signSession,
+  signShortPending,
   signVkState,
   verifyConsent,
   verifyPending,
   verifySession,
+  verifyShortPending,
   verifyVkState,
 } from "./tokens";
 
@@ -60,5 +62,18 @@ describe("audiences", () => {
     expect(await verifyPending(consent, SECRET)).toBeNull();
     expect(await verifySession(pending, SECRET)).toBeNull();
     expect(await verifyVkState(session, SECRET)).toBeNull();
+  });
+});
+
+describe("short test pending tokens", () => {
+  test("round-trip the test slug and answers", async () => {
+    const token = await signShortPending({ slug: "attachment", answers: { an01: 4 } }, SECRET);
+    expect(await verifyShortPending(token, SECRET)).toEqual({ slug: "attachment", answers: { an01: 4 } });
+  });
+
+  test("reject a Big Five pending token, a foreign secret and garbage", async () => {
+    expect(await verifyShortPending(await signPending({ o1: 3 }, SECRET), SECRET)).toBeNull();
+    expect(await verifyShortPending(await signShortPending({ slug: "attachment", answers: {} }, "b".repeat(64)), SECRET)).toBeNull();
+    expect(await verifyShortPending("garbage", SECRET)).toBeNull();
   });
 });

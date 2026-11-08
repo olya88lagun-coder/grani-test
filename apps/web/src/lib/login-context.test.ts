@@ -34,3 +34,11 @@ describe("LOGIN_INTRO", () => {
     }
   });
 });
+
+describe("short test login context", () => {
+  test("is chosen after pair and together, before the Big Five result", () => {
+    expect(pickLoginContext({ pairInvite: false, together: false, pendingResult: true, shortResult: true })).toBe("short");
+    expect(pickLoginContext({ pairInvite: false, together: true, pendingResult: false, shortResult: true })).toBe("together");
+    expect(LOGIN_INTRO.short.lead).toContain("разбор");
+  });
+});

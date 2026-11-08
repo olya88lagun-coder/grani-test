@@ -9,6 +9,8 @@ import {
   PENDING_COOKIE,
   pendingCookieOptions,
   SESSION_COOKIE,
+  SHORT_PENDING_COOKIE,
+  shortPendingCookieOptions,
   sessionCookieOptions,
   TOGETHER_COOKIE,
   togetherCookieOptions,
@@ -22,6 +24,7 @@ export function readLoginCookies(request: NextRequest): LoginCookies {
     consent: request.cookies.get(CONSENT_COOKIE)?.value ?? null,
     pairInvite: request.cookies.get(PAIR_COOKIE)?.value ?? null,
     together: request.cookies.get(TOGETHER_COOKIE)?.value ?? null,
+    shortPending: request.cookies.get(SHORT_PENDING_COOKIE)?.value ?? null,
   };
 }
 
@@ -33,6 +36,7 @@ export function loginResponse(env: AppEnv, outcome: LoginOutcome): NextResponse 
   const response = NextResponse.redirect(new URL(withLoginMark(outcome.redirectTo), env.APP_URL), 303);
   response.cookies.set(SESSION_COOKIE, outcome.sessionToken, sessionCookieOptions(env.APP_URL));
   response.cookies.set(PENDING_COOKIE, "", expiredCookieOptions(pendingCookieOptions(env.APP_URL)));
+  response.cookies.set(SHORT_PENDING_COOKIE, "", expiredCookieOptions(shortPendingCookieOptions(env.APP_URL)));
   response.cookies.set(CONSENT_COOKIE, "", expiredCookieOptions(consentCookieOptions(env.APP_URL)));
   response.cookies.set(TOGETHER_COOKIE, "", expiredCookieOptions(togetherCookieOptions(env.APP_URL)));
   return response;

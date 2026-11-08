@@ -7,7 +7,7 @@ const VK_STATE_TTL = "10m";
 const PENDING_TTL = "1d";
 const CONSENT_TTL = "1h";
 
-const AUDIENCE = { session: "session", vkState: "vk-state", pending: "pending-answers", consent: "consent" } as const;
+const AUDIENCE = { session: "session", vkState: "vk-state", pending: "pending-answers", shortPending: "short-pending-answers", consent: "consent" } as const;
 
 const key = (secret: string) => new TextEncoder().encode(secret);
 
@@ -55,6 +55,20 @@ export async function verifyPending(token: string, secret: string): Promise<Reco
   const answers = payload?.answers;
   if (typeof answers !== "object" || answers === null || Array.isArray(answers)) return null;
   return answers as Record<string, number>;
+}
+
+// Ответы короткого теста на время входа: отдельная аудитория, чтобы их нельзя было подставить вместо ответов Big Five
+export type ShortPending = { slug: string; answers: Record<string, number> };
+
+export async function signShortPending(pending: ShortPending, secret: string): Promise<string> {
+  return sign({ slug: pending.slug, answers: pending.answers }, AUDIENCE.shortPending, PENDING_TTL, secret);
+}
+
+export async function verifyShortPending(token: string, secret: string): Promise<ShortPending | null> {
+  const payload = await verify(token, AUDIENCE.shortPending, secret);
+  const { slug, answers } = payload ?? {};
+  if (typeof slug !== "string" || typeof answers !== "object" || answers === null || Array.isArray(answers)) return null;
+  return { slug, answers: answers as Record<string, number> };
 }
 
 export async function signConsent(consent: Consent, secret: string): Promise<string> {

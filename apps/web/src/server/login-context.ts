@@ -1,10 +1,10 @@
 import { pickLoginContext, type LoginContext } from "../lib/login-context";
-import { verifyPending } from "./auth/tokens";
+import { verifyPending, verifyShortPending } from "./auth/tokens";
 import { pairReturnPath } from "./pairs-service";
 import { parseAnswers } from "./results-service";
 import { togetherReturnPath } from "./together-return";
 
-export type LoginContextCookies = { pending?: string | null; pairInvite?: string | null; together?: string | null };
+export type LoginContextCookies = { pending?: string | null; pairInvite?: string | null; together?: string | null; shortPending?: string | null };
 
 // Контекст подтверждается самим содержимым cookie, а не её наличием: подпись и полнота ответов у отложенного результата,
 // формат токена у приглашения пары, перечисление у «Вдвоём»
@@ -18,5 +18,6 @@ export async function resolveLoginContext(cookies: LoginContextCookies, secret: 
     pairInvite: pairReturnPath(cookies.pairInvite) !== null,
     together: togetherReturnPath(cookies.together) !== null,
     pendingResult,
+    shortResult: cookies.shortPending ? (await verifyShortPending(cookies.shortPending, secret)) !== null : false,
   });
 }

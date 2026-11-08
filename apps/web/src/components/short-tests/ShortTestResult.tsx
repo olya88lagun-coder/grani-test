@@ -1,8 +1,9 @@
 "use client";
 
 import type { ShortTestDefinition } from "@grani/content/short-tests";
+import { formatRub, PRODUCT_PRICES } from "@grani/core";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ShortResultView } from "@/lib/short-test-result";
 import { AxisMap } from "./AxisMap";
 import styles from "./short-tests.module.css";
@@ -17,8 +18,35 @@ function quadrantLabels(test: ShortTestDefinition, xKey: string, yKey: string): 
   return [name("low", "low"), name("high", "low"), name("low", "high"), name("high", "high")];
 }
 
-export function ShortTestResult({ test, view, onRestart, focusOnMount = false }: { test: ShortTestDefinition; view: ShortResultView; onRestart: () => void; focusOnMount?: boolean }) {
+// saved — сохранённый результат на /short/[id]: без «Пройти заново» и без кнопки разбора (покупка там своя)
+export function ShortTestResult({
+  test,
+  view,
+  onRestart,
+  onOpenReport,
+  focusOnMount = false,
+  saved = false,
+}: {
+  test: ShortTestDefinition;
+  view: ShortResultView;
+  onRestart?: () => void;
+  onOpenReport?: () => Promise<string | null>;
+  focusOnMount?: boolean;
+  saved?: boolean;
+}) {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [opening, setOpening] = useState(false);
+  const [openError, setOpenError] = useState<string | null>(null);
+  async function openReport() {
+    if (!onOpenReport || opening) return;
+    setOpening(true);
+    setOpenError(null);
+    const error = await onOpenReport();
+    if (error) {
+      setOpenError(error);
+      setOpening(false);
+    }
+  }
   // Кнопка отправки исчезла вместе с тестом: фокус переводим на результат, чтобы клавиатура и читалка не потерялись.
   // При открытии сохранённого результата фокус не трогаем — человек только зашёл на страницу
   useEffect(() => {
@@ -53,16 +81,31 @@ export function ShortTestResult({ test, view, onRestart, focusOnMount = false }:
         <p className={styles.summary}>{view.type.summary}</p>
         <p className={styles.disclaimer}>{test.disclaimer}</p>
       </div>
+      {!saved && test.reportOffer && onOpenReport && (
+        <div className={styles.reportOffer}>
+          <button type="button" className="button" onClick={openReport} disabled={opening}>
+            {opening ? "Открываем…" : `Открыть личный разбор — ${formatRub(PRODUCT_PRICES.attachment_solo)}`}
+          </button>
+          <p className={styles.disclaimer}>{test.reportOffer.preview.slice(0, 4).join(" · ")}</p>
+          {openError && (
+            <p className="error" role="alert">
+              {openError}
+            </p>
+          )}
+        </div>
+      )}
       <div className={styles.actions}>
-        <Link className="button" href={`${test.path}/${view.type.slug}`}>
+        <Link className={saved ? "button button--ghost" : "button"} href={`${test.path}/${view.type.slug}`}>
           Подробнее о своём типе
         </Link>
         <Link className="button button--ghost" href="/big-five-test">
           Почему у вас так — тест Big Five
         </Link>
-        <button type="button" className="button button--ghost" onClick={onRestart}>
-          Пройти заново
-        </button>
+        {onRestart && !saved && (
+          <button type="button" className="button button--ghost" onClick={onRestart}>
+            Пройти заново
+          </button>
+        )}
       </div>
     </section>
   );

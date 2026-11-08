@@ -5,7 +5,7 @@ import { getShortTest } from "@grani/content/short-tests";
 import { useEffect, useState } from "react";
 import { Questionnaire } from "@/components/Questionnaire";
 import type { Goal } from "@/lib/analytics";
-import { parseStoredShortResult, serializeShortResult, shortProgressStorageKey, shortResultStorageKey, shortResultView } from "@/lib/short-test-result";
+import { parseStoredShortAnswers, parseStoredShortResult, serializeShortResult, shortProgressStorageKey, shortResultStorageKey, shortResultView } from "@/lib/short-test-result";
 import { ShortTestResult } from "./ShortTestResult";
 import styles from "./short-tests.module.css";
 
@@ -36,19 +36,24 @@ export function ShortTestRunner({ slug }: { slug: string }) {
   const test = getShortTest(slug);
   if (!test) throw new Error(`Unknown short test ${slug}`);
   const [score, setScore] = useState<ShortTestScore | null>(null);
+  const [answers, setAnswers] = useState<Answers | null>(null);
   const [restored, setRestored] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const [justCompleted, setJustCompleted] = useState(false);
 
   // Сохранённый результат читается после гидратации: на сервере localStorage нет
   useEffect(() => {
-    setScore(parseStoredShortResult(read(shortResultStorageKey(test.slug)), test));
+    const raw = read(shortResultStorageKey(test.slug));
+    setScore(parseStoredShortResult(raw, test));
+    setAnswers(parseStoredShortAnswers(raw, test));
     setRestored(true);
   }, [test]);
 
-  function complete(answers: Answers) {
+  function complete(given: Answers) {
+    const answers = given;
     try {
       setScore(scoreShortTest(test!.scoring, answers));
+      setAnswers(answers);
       setJustCompleted(true);
       write(shortResultStorageKey(test!.slug), serializeShortResult(test!.slug, answers, new Date()));
     } catch {
@@ -62,11 +67,29 @@ export function ShortTestRunner({ slug }: { slug: string }) {
   function restart() {
     write(shortResultStorageKey(test!.slug), null);
     setScore(null);
+    setAnswers(null);
     setAttempt((n) => n + 1);
   }
 
   if (!restored) return <p className="muted" role="status">Загружаем тест…</p>;
-  if (score) return <ShortTestResult test={test} view={shortResultView(test, score)} onRestart={restart} focusOnMount={justCompleted} />;
+  // Платный разбор: ответы уходят на сервер, гость сначала входит — после входа он попадает на /short/[id]
+  async function openReport(): Promise<string | null> {
+    if (!answers) return "Не нашли ответы. Пройдите тест ещё раз.";
+    try {
+      const response = await fetch("/api/short-results", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ slug: test!.slug, answers }) });
+      const body = (await response.json()) as { ok: boolean; redirect?: string };
+      if (body.ok && body.redirect) {
+        window.location.assign(body.redirect);
+        return null;
+      }
+    } catch {
+      // ниже — общий текст ошибки
+    }
+    return "Не получилось открыть разбор. Проверьте интернет и попробуйте ещё раз.";
+  }
+
+  if (score)
+    return <ShortTestResult test={test} view={shortResultView(test, score)} onRestart={restart} onOpenReport={answers ? openReport : undefined} focusOnMount={justCompleted} />;
 
   const goals = GOALS[test.slug];
   return (

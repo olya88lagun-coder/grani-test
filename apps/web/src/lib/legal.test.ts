@@ -21,9 +21,9 @@ describe("legal", () => {
   });
 
   it("uses the new document versions", () => {
-    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-10-v3", privacy: "2026-10-v3", offer: "2026-10-v3" });
-    expect(OFFER_VERSION).toBe("2026-10-v3");
-    expect(LEGAL_DATE).toBe("7 октября 2026 года");
+    expect(LEGAL_VERSIONS).toEqual({ consent: "2026-11-v4", privacy: "2026-11-v4", offer: "2026-11-v4" });
+    expect(OFFER_VERSION).toBe("2026-11-v4");
+    expect(LEGAL_DATE).toBe("8 ноября 2026 года");
   });
 
   it("keeps every operator in the recipient list a named legal entity", () => {

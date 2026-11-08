@@ -60,6 +60,23 @@ export const results = pgTable(
   (t) => [index("results_user_created_idx").on(t.userId, t.createdAt)],
 );
 
+// Результаты коротких тестов (привязанность, темперамент) — только вошедших: гость хранит результат в браузере
+export const shortTestResults = pgTable(
+  "short_test_results",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    testSlug: text("test_slug").notNull(),
+    answers: jsonb("answers").$type<Record<string, number>>().notNull(),
+    scores: jsonb("scores").$type<Record<string, number>>().notNull(),
+    typeKey: text("type_key").notNull(),
+    createdAt: createdAt(),
+  },
+  (t) => [index("short_test_results_user_test_idx").on(t.userId, t.testSlug, t.createdAt)],
+);
+
 export const practiceDrafts = pgTable("practice_drafts", {
   id: uuid("id").primaryKey().defaultRandom(),
   resultId: uuid("result_id").notNull().references(() => results.id, { onDelete: "cascade" }),
@@ -256,6 +273,7 @@ export const productEnum = pgEnum("product", [
   "chapters_all",
   "pair",
   "together_30d",
+  "attachment_solo",
 ]);
 export const purchaseStatusEnum = pgEnum("purchase_status", ["pending", "succeeded", "canceled", "refunded"]);
 export const reportKindEnum = pgEnum("report_kind", REPORT_KINDS);
@@ -276,6 +294,7 @@ export const purchases = pgTable(
     resultId: uuid("result_id").references(() => results.id, { onDelete: "set null" }),
     pairId: uuid("pair_id").references(() => pairs.id, { onDelete: "set null" }),
     spaceId: uuid("space_id").references(() => togetherSpaces.id, { onDelete: "set null" }),
+    shortResultId: uuid("short_result_id").references(() => shortTestResults.id, { onDelete: "set null" }),
     amountKopecks: integer("amount_kopecks").notNull(),
     status: purchaseStatusEnum("status").notNull().default("pending"),
     yookassaPaymentId: text("yookassa_payment_id").unique(),
@@ -291,7 +310,8 @@ export const purchases = pgTable(
     index("purchases_pair_idx").on(t.pairId),
     index("purchases_space_idx").on(t.spaceId),
     index("purchases_user_idx").on(t.userId, t.createdAt),
-    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}, ${t.spaceId}) <= 1`),
+    index("purchases_short_result_idx").on(t.shortResultId),
+    check("purchases_at_most_one_target", sql`num_nonnulls(${t.resultId}, ${t.pairId}, ${t.spaceId}, ${t.shortResultId}) <= 1`),
   ],
 );
 
