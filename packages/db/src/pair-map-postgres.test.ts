@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { eq, inArray } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 import { seedPair, type Database } from "./testing";
 import * as schema from "./schema";
 import { acceptPairMapConsent, readPairMap } from "./pair-map-context";
@@ -22,7 +22,8 @@ const now=new Date("2026-10-09T12:00:00Z");
 async function readLegacyRows(){
   return {
     pairs:await dbA.select().from(schema.pairs).where(eq(schema.pairs.id,legacyPair.pairId)),
-    purchases:await dbA.select().from(schema.purchases).where(eq(schema.purchases.pairId,legacyPair.pairId)),
+    // Only the columns that existed before the upgrade: later migrations add more
+    purchases:await dbA.select({id:schema.purchases.id,userId:schema.purchases.userId,pairId:schema.purchases.pairId,product:schema.purchases.product,status:schema.purchases.status,amountKopecks:schema.purchases.amountKopecks,paidAt:schema.purchases.paidAt}).from(schema.purchases).where(eq(schema.purchases.pairId,legacyPair.pairId)),
     results:await dbA.select().from(schema.results).where(inArray(schema.results.id,[legacyPair.a.resultId,legacyPair.b.resultId])),
     users:await dbA.select().from(schema.users).where(inArray(schema.users.id,[legacyPair.a.userId,legacyPair.b.userId])),
   };
@@ -47,7 +48,7 @@ beforeAll(async()=>{
     for(const entry of journal.entries)await cp(join(migrationsFolder,`${entry.tag}.sql`),join(baseFolder,`${entry.tag}.sql`));
     await migrate(database,{migrationsFolder:baseFolder});
     legacyPair=await seedPair(dbA);
-    await dbA.insert(schema.purchases).values({userId:legacyPair.a.userId,pairId:legacyPair.pairId,product:"pair",status:"succeeded",amountKopecks:39900,paidAt:now});
+    await dbA.execute(sql`insert into purchases (user_id, pair_id, product, status, amount_kopecks, paid_at) values (${legacyPair.a.userId}, ${legacyPair.pairId}, 'pair', 'succeeded', 39900, ${now.toISOString()})`);
     legacyRows=await readLegacyRows();
   }finally{await rm(baseFolder,{recursive:true,force:true});}
   await migrate(database,{migrationsFolder});
