@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { chaptersReadyText, friendAnsweredText, pairCreatedText, receiptsPendingText, reportReadyText } from "./texts";
+import { chaptersReadyText, friendAnsweredText, pairCreatedText, receiptsPendingText, reportReadyText, shortPairCreatedText } from "./texts";
 
 const URL = "https://grani-test.ru/result/1";
 
@@ -32,4 +32,10 @@ test("the receipts reminder gives the count, the sum and a link, and nothing abo
 
   expect(text).toBe("Чеков к отправке: 3 на 1\u00a0197\u00a0₽. Открыть: https://grani-test.ru/admin/receipts");
   expect(receiptsPendingText(1, 39_900, "u")).toContain("Чеков к отправке: 1 на 399");
+});
+
+test("the short pair text names the partner and the combination", () => {
+  expect(shortPairCreatedText("Борис", "Якорь и волна", "https://grani-test.ru/short-pair/9")).toBe(
+    "Общая карта готова: вы и Борис, тест на тип привязанности. Ваше сочетание — «Якорь и волна». Посмотреть: https://grani-test.ru/short-pair/9",
+  );
 });

@@ -1,6 +1,11 @@
 import { compatibilityScore, type TraitScores } from "@grani/core";
 import {
   acceptPairInvite,
+  acceptShortPairInvite,
+  getOrCreateShortPairInvite,
+  leaveShortPair,
+  saveShortResult,
+  seedUser,
   addFriendResponse,
   createPurchase,
   createTestDb,
@@ -210,5 +215,33 @@ describe("receipts_pending", () => {
     const { userId: ownerUserId } = await owner();
     vk.mockResolvedValue("failed");
     await expect(runNotify({ kind: "receipts_pending", bucket: 1, ownerUserId }, deps)).rejects.toThrow(/not delivered/);
+  });
+});
+
+describe("short_pair_created", () => {
+  async function createShortPair() {
+    const anna = await seedUser(db, { externalId: "301", displayName: "Аня Петрова" });
+    const boris = await seedUser(db, { externalId: "302", displayName: "Борис" });
+    const result = (userId: string, typeKey: string) => saveShortResult(db, { userId, testSlug: "attachment", answers: {}, scores: {}, typeKey });
+    const a = await result(anna, "anxious");
+    const b = await result(boris, "avoidant");
+    const { token } = await getOrCreateShortPairInvite(db, { userId: anna, shortResultId: a.id });
+    const outcome = await acceptShortPairInvite(db, { token, partnerUserId: boris, partnerShortResultId: b.id, consentAt: new Date(), consentVersion: "v1" });
+    if (!outcome.ok) throw new Error("pair was not created");
+    return { anna, boris, pairId: outcome.pairId };
+  }
+
+  test("tells only the inviter, with the partner's name, the combination and the link", async () => {
+    const { pairId } = await createShortPair();
+    await runNotify({ kind: "short_pair_created", shortPairId: pairId }, deps);
+    expect(telegram).toHaveBeenCalledExactlyOnceWith("301", `Общая карта готова: вы и Борис, тест на тип привязанности. Ваше сочетание — «Погоня и побег». Посмотреть: ${APP_URL}/short-pair/${pairId}`);
+  });
+
+  test("sends nothing for a pair that was left or does not exist", async () => {
+    const { pairId, boris } = await createShortPair();
+    await leaveShortPair(db, pairId, boris);
+    await runNotify({ kind: "short_pair_created", shortPairId: pairId }, deps);
+    await runNotify({ kind: "short_pair_created", shortPairId: "00000000-0000-0000-0000-000000000000" }, deps);
+    expect(telegram).not.toHaveBeenCalled();
   });
 });

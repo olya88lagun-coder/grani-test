@@ -12,6 +12,11 @@ export function pairCreatedText(partnerFirstName: string, score: number, url: st
   return `Пара готова: вы и ${partnerFirstName}, совместимость ${score}%. Посмотреть типы и шкалы рядом: ${url}`;
 }
 
+// Без глагола в прошедшем времени: пол партнёра неизвестен
+export function shortPairCreatedText(partnerFirstName: string, combinationName: string, url: string): string {
+  return `Общая карта готова: вы и ${partnerFirstName}, тест на тип привязанности. Ваше сочетание — «${combinationName}». Посмотреть: ${url}`;
+}
+
 // Дополнительные отчёты («В жизни», «Портрет») появляются на странице сами, сообщения о них нет
 type AnnouncedKind = Exclude<ReportKind, ExtraKind>;
 const READY_TITLES: Readonly<Record<AnnouncedKind, string>> = {
