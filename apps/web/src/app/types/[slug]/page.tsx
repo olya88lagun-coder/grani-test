@@ -10,8 +10,9 @@ import { PersonalityReading } from "@/components/PersonalityReading";
 import { TestCta } from "@/components/TestCta";
 import { GemPortrait } from "@/components/GemPortrait";
 import { gemAssetDir } from "@/lib/gem-assets";
-import { descriptionWithTail, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath, webPageJsonLd } from "@/lib/seo";
+import { descriptionWithTail, faqJsonLd, publicMetadata, traitPath, TYPE_SLUGS, typeBySlug, typePath, webPageJsonLd } from "@/lib/seo";
 import { POLE_WORDS, typeDisplayName, typePoles } from "@/lib/seo-pages";
+import { TYPE_FAQ } from "@/lib/type-faq";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
 import styles from "../../personality.module.css";
 import detail from "./type-detail.module.css";
@@ -47,6 +48,7 @@ export default async function TypePage({ params }: Props) {
   const visual = TYPE_VISUALS[typeCodeToDir(code)];
   if (!visual) notFound();
   const name = typeDisplayName(code);
+  const faq = TYPE_FAQ[code];
 
   return (
     <main className={detail.main} data-night-entry>
@@ -84,6 +86,18 @@ export default async function TypePage({ params }: Props) {
               Подробнее — о <Link href={traitPath("stability", "high")}>высокой</Link> и <Link href={traitPath("stability", "low")}>низкой</Link>{" "}
               устойчивости.
             </p>
+            {faq.length > 0 && (
+              <section className="stack" aria-labelledby="type-faq">
+                <h2 id="type-faq">Частые вопросы о типе</h2>
+                {faq.map((item) => (
+                  <article className="card stack" key={item.question}>
+                    <h3>{item.question}</h3>
+                    <p>{item.answer}</p>
+                  </article>
+                ))}
+                <JsonLd data={faqJsonLd(faq)} />
+              </section>
+            )}
           </div>
         </div>
         <section className={detail.closing} data-band="night" aria-label="Продолжение">
