@@ -261,7 +261,6 @@
 }
 
 /* Платный разбор: рабочий минимум, визуал — за Codex */
-.reportOffer { display: grid; gap: 8px; justify-items: start; }
 .savedPage { width: 100%; max-width: 880px; margin-inline: auto; padding: 24px 16px 64px; display: grid; gap: 40px; }
 .offer { display: grid; gap: 16px; justify-items: start; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .offer h2 { margin: 0; }
@@ -272,8 +271,19 @@
 .report p, .report li { margin: 0; font-size: 16px; line-height: 1.8; }
 .report ol { margin: 0; padding-left: 20px; display: grid; gap: 12px; }
 
-/* Подпись точки на карте пары; оформление — за Codex */
-.plotLabel {
-  font-size: 11px;
-  fill: currentColor;
+.pairPlotRing { fill: none; stroke: var(--ink); stroke-width: 2; }
+.pairPlotDiamond { fill: var(--gold); stroke: var(--bg); stroke-width: 1.5; }
+.pairMapFooter { display: grid; gap: 10px; }
+.pairMapLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
 }
+.pairMapLegend li { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 14px; overflow-wrap: anywhere; min-width: 0; }
+.pairLegendRing, .pairLegendDiamond { flex: none; width: 11px; height: 11px; }
+.pairLegendRing { border: 2px solid var(--ink); border-radius: 50%; }
+.pairLegendDiamond { background: var(--gold); transform: rotate(45deg) scale(.8); }

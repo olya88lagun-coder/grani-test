@@ -27,6 +27,14 @@ export default async function ShortResultPage({ params }: { params: Promise<{ id
       <div className={styles.savedPage}>
         <h1 className="display">Ваш результат: {page.test.h1.toLowerCase()}</h1>
         <ShortTestSavedResult slug={page.test.slug} axes={page.score.axes} typeKey={page.score.typeKey} mixedAxes={page.score.mixedAxes} />
+        {page.test.pairOffer && (
+          <ShortPairInvite
+            shortResultId={page.resultId}
+            title={page.test.pairOffer.title}
+            lead={page.test.pairOffer.lead}
+            pairs={pairs.map((pair) => ({ id: pair.id, partnerFirstName: firstName(pair.partner.displayName) }))}
+          />
+        )}
         {page.report ? (
           <ShortTestReport report={page.report} />
         ) : page.canBuy && page.product ? (
@@ -40,14 +48,6 @@ export default async function ShortResultPage({ params }: { params: Promise<{ id
             <BuyButton product={page.product} targetId={page.resultId} label={`Открыть за ${formatRub(PRODUCT_PRICES[page.product])}`} />
           </section>
         ) : null}
-        {page.test.pairOffer && (
-          <ShortPairInvite
-            shortResultId={page.resultId}
-            title={page.test.pairOffer.title}
-            lead={page.test.pairOffer.lead}
-            pairs={pairs.map((pair) => ({ id: pair.id, partnerFirstName: firstName(pair.partner.displayName) }))}
-          />
-        )}
       </div>
     </main>
   );

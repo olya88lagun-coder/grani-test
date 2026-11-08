@@ -3,14 +3,16 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { faqJsonLd, publicMetadata, webPageJsonLd } from "@/lib/seo";
-import styles from "@/components/short-tests/short-test-page.module.css";
+import styles from "@/components/short-tests/attachment-pair.module.css";
+import readingStyles from "@/components/short-tests/short-test-page.module.css";
 
 const PATH = "/privyazannost/sochetaniya";
 const TITLE = "Сочетания типов привязанности в паре";
 const DESCRIPTION = "Все 10 сочетаний типов привязанности в паре: как сходятся надёжный, тревожный, избегающий и тревожно-избегающий типы и что помогает каждой паре.";
 const H1 = "Сочетания типов привязанности в паре";
+const INTRO = "Типов привязанности четыре, поэтому сочетаний в паре — десять.";
 const BRIEF =
-  "Типов привязанности четыре, поэтому сочетаний в паре — десять. Ни одно из них не обречено: у каждого есть своя типичная ловушка и свои способы её обойти. " +
+  "Ни одно из них не обречено: у каждого есть своя типичная ловушка и свои способы её обойти. " +
   "Самое известное и самое трудное сочетание — тревожный и избегающий партнёры, «погоня и побег». Самое спокойное — два надёжных партнёра. Узнать своё сочетание можно, пройдя тест вдвоём.";
 const FAQ = [
   {
@@ -47,21 +49,35 @@ export default function AttachmentCombinationsPage() {
     return `${short(a)} и ${short(b).toLowerCase()}: ${name.toLowerCase()}`;
   };
   return (
-    <main className={styles.landing} data-palette="pair">
+    <main className={styles.page} data-palette="pair" data-night-entry>
       <JsonLd data={webPageJsonLd({ title: TITLE, description: DESCRIPTION, path: PATH })} />
       <JsonLd data={faqJsonLd(FAQ)} />
-      <div className={styles.container}>
-        <article className={styles.reading}>
+      <header className={`${styles.cover} ${styles.combinationsCover}`} data-band="night">
+        <div className={styles.wrap}>
           <Breadcrumbs items={[{ name: test.h1, path: test.path }, { name: H1, path: PATH }]} />
-          <h1 className={styles.title}>{H1}</h1>
-          <section className={styles.brief}>
+          <div className={styles.coverCopy}>
+            <h1 className="display">{H1}</h1>
+            <p className="lead">{INTRO}</p>
+          </div>
+        </div>
+      </header>
+      <div className={styles.flow}>
+        <article className={styles.combinationsReading}>
+          <section className={styles.lightPanel}>
             <h2>Кратко</h2>
             <p>{BRIEF}</p>
           </section>
+          <nav className={styles.combinationsNav} aria-label="Сочетания типов">
+            <ul>
+              {ATTACHMENT_COMBINATIONS.map((combination) => (
+                <li key={combination.key}><a href={`#${combination.key}`}>{heading(combination.key, combination.name)}</a></li>
+              ))}
+            </ul>
+          </nav>
           {ATTACHMENT_COMBINATIONS.map((combination) => (
-            <section key={combination.key} id={combination.key}>
+            <section className={styles.combination} key={combination.key} id={combination.key}>
               <h2>{heading(combination.key, combination.name)}</h2>
-              <p>
+              <p className={styles.combinationLead}>
                 <b>{combination.phrase}</b>
               </p>
               <p>{combination.text}</p>
@@ -70,7 +86,7 @@ export default function AttachmentCombinationsPage() {
           <section>
             <h2>Вопросы и ответы</h2>
             {FAQ.map((item) => (
-              <details key={item.question} className={styles.faq}>
+              <details key={item.question} className={readingStyles.faq}>
                 <summary>{item.question}</summary>
                 <p>{item.answer}</p>
               </details>

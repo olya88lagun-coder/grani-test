@@ -10,6 +10,7 @@ import { getDb } from "@/server/db";
 import { shortPairPage } from "@/server/short-pairs-service";
 import { requireUser } from "@/server/viewer";
 import styles from "@/components/short-tests/short-tests.module.css";
+import pairStyles from "@/components/short-tests/attachment-pair.module.css";
 
 export const metadata: Metadata = { title: "Карта пары", robots: { index: false, follow: false } };
 export const dynamic = "force-dynamic";
@@ -26,31 +27,36 @@ export default async function ShortPairPage({ params }: { params: Promise<{ id: 
   const point = (member: typeof page.me, label: string) => ({ x: member.score.axes[xKey] ?? 0, y: member.score.axes[yKey] ?? 0, label });
   const price = formatRub(PRODUCT_PRICES[page.product]);
   return (
-    <main className="inner-page" data-palette="pair">
-      <div className={styles.savedPage}>
-        <h1 className="display">Карта пары: {page.combination.name}</h1>
-        <AxisMap
-          xLabel={info(xKey).label}
-          yLabel={info(yKey).label}
-          points={[point(page.me, "Вы"), point(page.partner, page.partner.firstName)]}
-          quadrantLabels={quadrantLabels(page.test, xKey, yKey)}
-        />
-        <ul aria-label="Типы в паре">
-          <li>Вы: {page.me.typeName.toLowerCase()}</li>
-          <li>
-            {page.partner.firstName}: {page.partner.typeName.toLowerCase()}
-          </li>
-        </ul>
-        <p className="lead">{page.combination.phrase}</p>
-        <p>
-          <Link href={`${page.test.path}/sochetaniya#${page.combination.key}`}>Все сочетания типов в паре</Link>
-        </p>
+    <main className={pairStyles.page} data-palette="pair" data-night-entry>
+      <header className={pairStyles.mapCover} data-band="night">
+        <div className={`${pairStyles.wrap} ${pairStyles.mapLayout}`}>
+          <div className={`${pairStyles.coverCopy} ${pairStyles.mapTitle}`}>
+            <h1 className="display">Карта пары: {page.combination.name}</h1>
+          </div>
+          <AxisMap
+            xLabel={info(xKey).label}
+            yLabel={info(yKey).label}
+            points={[point(page.me, "Вы"), point(page.partner, page.partner.firstName)]}
+            quadrantLabels={quadrantLabels(page.test, xKey, yKey)}
+            texture="/attachment/pair-map.webp"
+          />
+          <div className={`${pairStyles.coverCopy} ${pairStyles.mapCaption}`}>
+            <p className="lead">{page.combination.phrase}</p>
+            <ul className={pairStyles.memberTypes} role="list" aria-label="Типы в паре">
+              <li><strong>Вы:</strong> {page.me.typeName.toLowerCase()}</li>
+              <li><strong>{page.partner.firstName}:</strong> {page.partner.typeName.toLowerCase()}</li>
+            </ul>
+            <Link href={`${page.test.path}/sochetaniya#${page.combination.key}`}>Все сочетания типов в паре</Link>
+          </div>
+        </div>
+      </header>
+      <div className={pairStyles.flow}>
         {page.report ? (
-          <ShortTestReport report={page.report} />
+          <div className={pairStyles.reportPanel}><ShortTestReport report={page.report} /></div>
         ) : page.canBuy ? (
-          <section className={styles.offer} aria-labelledby="pair-report-offer">
+          <section className={pairStyles.purchasePanel} aria-labelledby="pair-report-offer">
             <h2 id="pair-report-offer">{offer.reportTitle}</h2>
-            <ul className={styles.preview} aria-label="Что внутри разбора">
+            <ul className={pairStyles.purchasePreview} role="list" aria-label="Что внутри разбора">
               {offer.preview.map((heading) => (
                 <li key={heading}>{heading}</li>
               ))}
@@ -62,7 +68,7 @@ export default async function ShortPairPage({ params }: { params: Promise<{ id: 
             />
           </section>
         ) : null}
-        <form method="post" action={`/api/short-pairs/${page.pairId}/leave`}>
+        <form className={pairStyles.leave} method="post" action={`/api/short-pairs/${page.pairId}/leave`}>
           <button type="submit" className="button button--ghost">
             Выйти из пары
           </button>
