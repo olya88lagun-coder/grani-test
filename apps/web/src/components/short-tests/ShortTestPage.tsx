@@ -17,7 +17,16 @@ type ShortTestPageProps = {
   related: readonly RelatedLink[];
   palette?: string;
   heroImage?: HeroImage;
+  showContents?: boolean;
 };
+
+const CONTENT_LINKS = [
+  { id: "brief", label: "Кратко о темпераменте" },
+  { id: "guide", label: "Как устроен тест" },
+  { id: "types", label: "Четыре темперамента" },
+  { id: "faq", label: "Вопросы и ответы" },
+  { id: "sources", label: "Источники" },
+] as const;
 
 export function requireShortTest(slug: string): ShortTestDefinition {
   const test = getShortTest(slug);
@@ -32,11 +41,11 @@ export function shortTestPageMetadata(slug: string): Metadata {
 
 // Страница короткого теста. Первый экран и раскладка — по дизайну Codex для /privyazannost (PR #180),
 // вынесены сюда, чтобы все короткие тесты выглядели одинаково
-export function ShortTestPage({ slug, lead, facts, related, palette, heroImage }: ShortTestPageProps) {
+export function ShortTestPage({ slug, lead, facts, related, palette, heroImage, showContents }: ShortTestPageProps) {
   const test = requireShortTest(slug);
   const anchor = `${test.slug}-test`;
   return (
-    <main className={styles.landing} data-palette={palette ?? "default"} data-night-entry>
+    <main className={showContents ? `${styles.landing} ${styles.editorial}` : styles.landing} data-palette={palette ?? "default"} data-night-entry>
       <JsonLd data={webPageJsonLd({ title: test.title, description: test.description, path: test.path })} />
       <JsonLd data={faqJsonLd(test.faq)} />
       <header className={heroImage ? `${styles.hero} ${styles.heroWithImage}` : styles.hero} data-band="night">
@@ -69,20 +78,30 @@ export function ShortTestPage({ slug, lead, facts, related, palette, heroImage }
         <div className={styles.test} id={anchor} tabIndex={-1}>
           <ShortTestRunner slug={test.slug} />
         </div>
+        {showContents && (
+          <nav className={styles.contents} aria-label="На этой странице">
+            <p>На этой странице</p>
+            <ul>
+              {CONTENT_LINKS.map(({ id, label }) => (
+                <li key={id}><a href={`#${slug}-${id}`}>{label}</a></li>
+              ))}
+            </ul>
+          </nav>
+        )}
         <article className={styles.reading}>
-          <section className={styles.brief}>
+          <section className={styles.brief} id={showContents ? `${slug}-brief` : undefined}>
             <h2>Кратко</h2>
             <p>{test.brief}</p>
           </section>
 
-          {test.sections.map((section) => (
-            <section key={section.heading}>
+          {test.sections.map((section, index) => (
+            <section key={section.heading} id={showContents && index === 0 ? `${slug}-guide` : undefined}>
               <h2>{section.heading}</h2>
               <p>{section.text}</p>
             </section>
           ))}
 
-          <section>
+          <section id={showContents ? `${slug}-types` : undefined}>
             <h2>Все типы подробно</h2>
             <ul className={styles.types}>
               {test.types.map((type) => (
@@ -99,7 +118,7 @@ export function ShortTestPage({ slug, lead, facts, related, palette, heroImage }
             )}
           </section>
 
-          <section>
+          <section id={showContents ? `${slug}-faq` : undefined}>
             <h2>Вопросы и ответы</h2>
             {test.faq.map((item) => (
               <details key={item.question} className={styles.faq}>
@@ -109,7 +128,7 @@ export function ShortTestPage({ slug, lead, facts, related, palette, heroImage }
             ))}
           </section>
 
-          <section>
+          <section id={showContents ? `${slug}-sources` : undefined}>
             <h2>Источники</h2>
             <ol className={styles.sources}>
               {test.sources.map((source) => (

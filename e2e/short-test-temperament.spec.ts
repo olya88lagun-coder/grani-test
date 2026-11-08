@@ -21,6 +21,8 @@ test("temperament test shows a result without login and keeps it after reload", 
   const result = page.getByTestId("short-result");
   await expect(result).toBeVisible();
   await expect(result.getByRole("heading", { level: 2 })).toHaveText(/Сангвиник|Холерик|Флегматик|Меланхолик/);
+  await expect(result.getByRole("img", { name: /Экстраверсия.*Эмоциональность/i })).toBeVisible();
+  await expect(result.getByText("Ваша точка", { exact: true })).toBeVisible();
   await page.reload();
   await expect(page.getByTestId("short-result")).toBeVisible();
 });
@@ -61,6 +63,12 @@ test("temperament page has no horizontal scroll on a phone", async ({ page }) =>
   await page.goto(PATH);
   const width = await page.evaluate(() => document.documentElement.clientWidth);
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width + 1);
+  const start = page.locator("main > header").getByRole("link", { name: "Пройти тест", exact: true });
+  await expect(start).toBeInViewport({ ratio: 1 });
+  const contents = page.getByRole("navigation", { name: "На этой странице" });
+  await contents.getByRole("link", { name: "Четыре темперамента" }).click();
+  await expect(page).toHaveURL(/#temperament-types$/);
+  await expect(page.getByRole("heading", { name: "Все типы подробно" })).toBeInViewport();
 });
 
 test("the site footer links to both short tests from the home page", async ({ page }) => {

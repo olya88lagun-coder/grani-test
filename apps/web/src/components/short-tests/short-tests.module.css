@@ -173,8 +173,82 @@
 .plotHalo { fill: var(--bg); stroke: var(--gold); }
 .plotDot { fill: var(--gold); }
 
+.facetedResult[data-band] {
+  --result-pad: clamp(22px, 5vw, 54px);
+  position: relative;
+  isolation: isolate;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+  border-color: color-mix(in srgb, var(--gold), transparent 68%);
+  background: var(--page-start);
+}
+.facetedResult::before {
+  content: "";
+  grid-area: 1 / 1 / 2 / -1;
+  z-index: -1;
+  background: radial-gradient(ellipse at 93% 12%, var(--surface-3), transparent 65%), var(--bg);
+}
+.facetedResult .resultHeader {
+  grid-area: 1 / 1;
+  align-self: center;
+  padding: var(--result-pad) 18px var(--result-pad) var(--result-pad);
+  gap: 14px;
+}
+.facetedResult .resultTitle { font-size: clamp(42px, 6.3vw, 82px); }
+.facetedResult .summary { margin-top: 6px; color: var(--ink); }
+.facetedResult .resultGrid { display: contents; }
+.facetedResult .mapFaceted {
+  grid-area: 1 / 2;
+  align-self: center;
+  justify-self: stretch;
+  width: auto;
+  margin: var(--result-pad) var(--result-pad) var(--result-pad) 12px;
+}
+.facetedResult :is(.axes, .explanation, .actions) {
+  --ink: #10291f;
+  --ink-soft: #4f6055;
+  --gold: #254a37;
+  --accent: #123825;
+  --accent-ink: #f5f1e4;
+  --accent-hover: #224d39;
+  --surface-3: #d8e1d7;
+  grid-column: 1 / -1;
+  color: var(--ink);
+  padding-inline: var(--result-pad);
+}
+.facetedResult .axes {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(20px, 4vw, 48px);
+  padding-block: clamp(24px, 4vw, 44px) 22px;
+}
+.facetedResult .axisHead b { font-size: clamp(42px, 5vw, 58px); }
+.facetedResult .explanation { padding-bottom: 20px; }
+.facetedResult .actions { padding-bottom: clamp(24px, 4vw, 44px); }
+.facetedResult .actions :global(.button--ghost:hover) { background: var(--surface-3); }
+.plotOutline { fill: none; stroke: var(--gold); stroke-opacity: .45; }
+.mapFaceted .plotLine {
+  stroke: var(--ink);
+  stroke-opacity: .45;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+.plotGuides { fill: none; stroke: var(--gold); stroke-opacity: .72; vector-effect: non-scaling-stroke; }
+.mapFooter { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; align-items: center; margin-top: 8px; }
+.mapFooter .mapAxis { margin: 0; }
+.mapLegend { display: inline-flex; align-items: center; gap: 7px; color: var(--ink); font-size: 13px; }
+.mapLegend::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+
 @media (max-width: 680px) {
-  .resultGrid { grid-template-columns: minmax(0, 1fr); }
+  .resultGrid, .facetedResult[data-band] { grid-template-columns: minmax(0, 1fr); }
+  .facetedResult::before { grid-area: 1 / 1 / 5 / -1; }
+  .facetedResult .resultHeader { display: contents; }
+  .facetedResult .resultTitle { grid-area: 1 / 1; margin: var(--result-pad) var(--result-pad) 12px; }
+  .facetedResult .tagline { grid-area: 2 / 1; margin-inline: var(--result-pad); }
+  .facetedResult .mapFaceted { grid-area: 3 / 1; margin: 22px var(--result-pad); }
+  .facetedResult .summary { grid-area: 4 / 1; margin: 0 var(--result-pad) var(--result-pad); }
+  .facetedResult .axes { grid-template-columns: minmax(0, 1fr); }
   .runner :global(.choices) { grid-template-columns: minmax(0, 1fr); }
   .runner :global(.choice) {
     flex-direction: row;
