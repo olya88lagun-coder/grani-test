@@ -46,4 +46,19 @@ export type ShortTestDefinition = {
   // Что о платном разборе можно показать до оплаты. Сами тексты разбора — только на сервере (short-tests/report.ts):
   // это определение уходит в браузер вместе с тестом
   readonly reportOffer?: { readonly title: string; readonly preview: readonly string[] };
+  // Режим пары: что показать до оплаты разбора пары. Тексты разбора пары — тоже только на сервере
+  readonly pairOffer?: { readonly title: string; readonly lead: string; readonly reportTitle: string; readonly preview: readonly string[] };
+};
+
+// Сочетание двух типов: бесплатно, видно на карте пары и на странице сочетаний
+export type ShortPairCombination = { readonly key: string; readonly name: string; readonly phrase: string; readonly text: string };
+
+// Платный разбор пары из готовых блоков: по сочетанию, по типу каждого и по разнице баллов на каждой оси
+export type ShortPairReportBlocks = {
+  readonly title: string;
+  readonly preview: readonly string[];
+  readonly byCombination: Readonly<Record<string, { readonly dynamics: ShortTestSection; readonly phrases: ShortTestSection; readonly exercises: readonly ShortReportExercise[] }>>;
+  // Заголовок раздела строится с именем человека, поэтому здесь только тексты
+  readonly byType: Readonly<Record<string, { readonly inConflict: ShortTestSection; readonly needs: ShortTestSection }>>;
+  readonly axisGap: Readonly<Record<string, { readonly close: ShortTestSection; readonly far: ShortTestSection }>>;
 };
