@@ -254,7 +254,26 @@ const NGUYEN_RYAN_DECI_2018: Source = {
   note: "уединение снижало интенсивность активных эмоций, а желание побыть одному было связано с расслабленностью",
 };
 
+const STEEL_2007: Source = {
+  authors: "Steel P.",
+  year: 2007,
+  title: "The nature of procrastination: A meta-analytic and theoretical review of quintessential self-regulatory failure",
+  journal: "Psychological Bulletin",
+  url: "https://doi.org/10.1037/0033-2909.133.1.65",
+  note: "прокрастинация как сбой саморегуляции; сильнее всего она связана с низкой добросовестностью, особенно с импульсивностью",
+};
+
+const SIROIS_PYCHYL_2013: Source = {
+  authors: "Sirois F. M., Pychyl T. A.",
+  year: 2013,
+  title: "Procrastination and the priority of short-term mood regulation: Consequences for future self",
+  journal: "Social and Personality Psychology Compass",
+  url: "https://doi.org/10.1111/spc3.12011",
+  note: "откладывание как способ быстро улучшить настроение, убрав неприятную задачу из поля зрения",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
   "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
   "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
   "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
