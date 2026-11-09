@@ -5,6 +5,7 @@
 .title { font-family: var(--font-cormorant), Georgia, serif; font-weight: 300; font-size: clamp(48px, 4.6vw, 66px); line-height: 1.07; margin: 16px 0 24px; letter-spacing: -.02em; }
 .copy :global(.lead) { font-size: 17px; line-height: 1.75; max-width: 580px; }
 .actions { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-top: 28px; }
+.accessNote { max-width: 52ch; margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
 .page :global(.button) { min-height: 52px; padding: 14px 24px; font-size: 15px; }
 .preview { width: 100%; padding: 28px; border: 1px solid var(--line); background: var(--surface); border-radius: 20px; box-shadow: none; text-align: center; color: var(--ink); }
 .art { height: 170px; margin-bottom: 12px; }
@@ -57,7 +58,6 @@
 .night .title { color: var(--ink); }
 .night :global(.lead) { color: var(--ink-soft); }
 .night :global(.home-kicker) { color: var(--gold); }
-.night :global(.home-time) { color: var(--ink-soft); }
 .night .facts li { color: var(--ink); }
 .night .preview h2 { color: var(--ink); }
 .page .night :global(.button) { background: linear-gradient(135deg, #F6F1E3, #E7DDBF); color: #0A1F17; border-color: transparent; box-shadow: none; }

@@ -1,12 +1,14 @@
-import { METHOD_SOURCES, TRAIT_LABELS } from "@grani/content";
+import { METHOD_SOURCES, typeCodeToDir } from "@grani/content";
+import { formatRub, PRODUCT_PRICES, typeCodeOf, typeName } from "@grani/core";
 import Image from "next/image";
 import Link from "next/link";
-import { TestAccessNote } from "@/components/TestAccessNote";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { SourceList } from "@/components/SourceList";
 import { TestCta } from "@/components/TestCta";
+import { gemAssetDir, gemAssetPath } from "@/lib/gem-assets";
 import { faqJsonLd, publicMetadata, traitPath, webPageJsonLd } from "@/lib/seo";
+import { traitPageTitle } from "@/lib/seo-pages";
 
 import styles from "./big-five.module.css";
 
@@ -26,6 +28,10 @@ const TRAIT_LINKS = [
   ["agreeableness", "Доброжелательность"],
   ["stability", "Эмоциональная устойчивость"],
 ] as const;
+
+const EXAMPLE_SCORES = { openness: 88, conscientiousness: 43, extraversion: 75, agreeableness: 83, stability: 68 };
+const EXAMPLE_TYPE = typeCodeOf(EXAMPLE_SCORES);
+const ACCESS_NOTE = "Начать можно без регистрации. Чтобы увидеть и сохранить результат, понадобится VK ID.";
 
 // У каждой черты свой смысл — не один абзац с подменой названия
 const TRAIT_TEXTS: Readonly<Record<(typeof TRAIT_LINKS)[number][0], string>> = {
@@ -78,7 +84,7 @@ const FAQ = [
   },
   {
     question: "Нужно ли регистрироваться?",
-    answer: "Пройти тест можно без регистрации. Чтобы увидеть и сохранить результат, нужно войти через VK ID — так к нему можно вернуться позже.",
+    answer: ACCESS_NOTE,
   },
   {
     question: "Можно ли пройти повторно?",
@@ -100,29 +106,28 @@ export default function BigFiveTestPage() {
             </h1>
             <p className="lead">Бесплатно, 50 утверждений, около 10 минут. В результате — профиль по пяти чертам и один из 16 типов «Граней».</p>
             <div className={styles.actions}>
-              <Link className="button button--lg" href="/test">
+              <Link className="button button--lg" href="/test" aria-describedby="big-five-access">
                 Пройти тест бесплатно <span aria-hidden="true">→</span>
               </Link>
-              <span className="home-time">Результат после ответов и входа</span>
+              <p id="big-five-access" className={styles.accessNote}>{ACCESS_NOTE}</p>
             </div>
-            <TestAccessNote />
           </div>
           <article className={styles.preview} aria-label="Пример результата теста">
             <div className={styles.art}>
-              <Image src="/home/hero-crystal.webp" alt="" width={145} height={170} loading="eager" />
+              <Image src={gemAssetPath(gemAssetDir(typeCodeToDir(EXAMPLE_TYPE)))} alt="" width={170} height={170} loading="eager" />
             </div>
             <p className={styles.example}>Пример результата</p>
-            <h2>5 черт + тип</h2>
-            <span>Профиль личности простым языком</span>
+            <h2>{typeName(EXAMPLE_TYPE, null)}</h2>
+            <span>Быстро загорается новыми идеями, заряжается общением и вдохновляет окружающих.</span>
             <div className="home-result-card__scales">
-              {TRAIT_LINKS.map(([trait, label], index) => (
+              {TRAIT_LINKS.map(([trait, label]) => (
                 <div className="home-scale" key={trait}>
                   <div>
                     <span>{label}</span>
-                    <b>{70 - index * 7} / 100</b>
+                    <b>{EXAMPLE_SCORES[trait]} / 100</b>
                   </div>
-                  <i>
-                    <span style={{ width: `${70 - index * 7}%` }} />
+                  <i aria-hidden="true">
+                    <span style={{ width: `${EXAMPLE_SCORES[trait]}%` }} />
                   </i>
                 </div>
               ))}
@@ -149,8 +154,8 @@ export default function BigFiveTestPage() {
                 <div>
                   <p>{TRAIT_TEXTS[trait]}</p>
                   <p className="row">
-                    <Link href={traitPath(trait, "high")}>{TRAIT_LABELS[trait]}: высокая</Link>
-                    <Link href={traitPath(trait, "low")}>низкая</Link>
+                    <Link href={traitPath(trait, "high")}>{traitPageTitle(trait, "high")}</Link>
+                    <Link href={traitPath(trait, "low")}>{traitPageTitle(trait, "low")}</Link>
                   </p>
                 </div>
               </article>
@@ -171,16 +176,25 @@ export default function BigFiveTestPage() {
         </section>
 
         <section className={styles.reading} aria-labelledby="what-you-get">
-          <h2 id="what-you-get">Что ты получишь</h2>
+          <h2 id="what-you-get">Что входит в бесплатный результат</h2>
           <ul>
             <li>пять шкал личности с понятной расшифровкой;</li>
             <li>тип «Граней» и короткое описание сильных сторон;</li>
             <li>зоны роста без обесценивания и диагнозов;</li>
             <li>карточку результата, которой можно поделиться;</li>
-            <li>возможность сравнить самооценку с тем, как тебя видят друзья.</li>
+            <li>сравнение самооценки с тем, как тебя видят друзья, после ответов как минимум трёх друзей.</li>
           </ul>
           <p>Перед прохождением можно посмотреть, <Link href="/articles/rezultaty-big-five">как читать результаты Big Five</Link>.</p>
           <TestButton />
+        </section>
+
+        <section className={styles.reading} aria-labelledby="full-report">
+          <h2 id="full-report">Полный разбор личности</h2>
+          <p>
+            Если захочешь глубже понять свой профиль, на странице результата можно отдельно купить полный разбор за{" "}
+            <strong>{formatRub(PRODUCT_PRICES.full)}</strong>. В нём есть подробный портрет, сильные стороны, слепые зоны и рекомендации для повседневной жизни.
+          </p>
+          <p><Link href="/pricing#price-full">Что входит в полный разбор личности</Link></p>
         </section>
 
         <section className={styles.reading} aria-labelledby="accuracy">
