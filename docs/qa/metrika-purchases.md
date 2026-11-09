@@ -10,9 +10,9 @@
 | Отдельные главы Big Five | `chapter_money`, `chapter_conflict`, `chapter_stress`, `chapter_relationships` | `purchase_chapter` | 665025951 |
 | Все главы Big Five | `chapters_all` | `purchase_chapter` | 665025951 |
 | Разбор пары Big Five | `pair` | `purchase_pair` | 665026051 |
-| Личный разбор привязанности | `attachment_solo` | `purchase_attachment` | Требуется создать |
-| Парный разбор привязанности, включая цену со скидкой | `attachment_pair`, `attachment_pair_discount` | `purchase_attachment_pair` | Требуется создать |
-| Доступ «Грани. Вдвоём» на 30 дней и продление | `together_30d` | `purchase_together` | Требуется создать и включить отправку |
+| Личный разбор привязанности | `attachment_solo` | `purchase_attachment` | 679990145 |
+| Парный разбор привязанности, включая цену со скидкой | `attachment_pair`, `attachment_pair_discount` | `purchase_attachment_pair` | 679990187 |
+| Доступ «Грани. Вдвоём» на 30 дней и продление | `together_30d` | `purchase_together` | 679990296 |
 
 `checkout_start` отмечает переход к оплате. Автоцель возврата из платёжной системы фиксирует возврат. Для отчёта о подтверждённых покупках используются цели из таблицы.
 
@@ -29,4 +29,4 @@
 
 ## Отдельное включение на рабочем сайте
 
-После согласования создайте три отсутствующие цели в `112931559`. Для «Грани. Вдвоём» дополнительно задайте `METRIKA_TOGETHER_PURCHASES=1` в окружении приложения. Тестовый номер используется только на стенде.
+После согласования задайте `METRIKA_TOGETHER_PURCHASES=1` в окружении рабочего приложения для учёта покупок «Грани. Вдвоём». Тестовый номер используется только на стенде.

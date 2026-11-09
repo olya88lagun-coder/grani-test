@@ -1,7 +1,9 @@
 import { beforeAll, expect, test, vi } from "vitest";
 import { attachPayment, createPurchase, createTestDb, getPurchase, markPurchaseSucceeded, seedUserWithResult, type Database, type PurchaseRecord } from "@grani/db/testing";
 import type { GatewayPayment } from "./payments/gateway";
+import { createYooKassaGateway } from "./payments/yookassa";
 import { purchaseAnalyticsPayload, readPurchaseAnalytics } from "./purchase-analytics";
+import { getPurchaseView } from "./payments-service";
 
 const NOW = new Date("2026-10-19T10:00:00Z");
 const order: PurchaseRecord = {
@@ -59,6 +61,30 @@ test.each([
 
 let db: Database;
 beforeAll(async () => { db = await createTestDb(); });
+
+test("a bank decline reported by YooKassa cancels the order without a purchase event", async () => {
+  const owner = await seedUserWithResult(db, { externalId: "analytics-bank-decline" });
+  const purchase = await createPurchase(db, { userId: owner.userId, product: "full", target: { resultId: owner.resultId }, amountKopecks: 29900 });
+  const paymentId = "declined-test-payment";
+  await attachPayment(db, purchase.id, { paymentId, confirmationUrl: "https://provider.test" });
+  const fetchFn = vi.fn(async () => Response.json({
+    id: paymentId, status: "canceled", paid: false, test: true,
+    amount: { value: "299.00", currency: "RUB" },
+    metadata: { purchase_id: purchase.id },
+    cancellation_details: { party: "payment_network", reason: "insufficient_funds" },
+  }));
+  const deps = {
+    db, gateway: createYooKassaGateway({ shopId: "1", secretKey: "fixture", fetchFn }),
+    appUrl: "http://localhost:3000", now: () => NOW,
+    enqueueGenerate: vi.fn(), remindReceipts: vi.fn(), isOwner: async () => false,
+  };
+  const request = { purchaseId: purchase.id, userId: owner.userId };
+  expect(await getPurchaseView(deps, request)).toMatchObject({ status: "canceled" });
+  expect(fetchFn).toHaveBeenCalledOnce();
+  expect(await readPurchaseAnalytics(deps, request, { sandbox: true })).toEqual({ found: true, purchase: null });
+  expect(deps.enqueueGenerate).not.toHaveBeenCalled();
+});
+
 test("the read-only service checks ownership before the provider and never alters paid access", async () => {
   const owner = await seedUserWithResult(db, { externalId: "analytics-owner" });
   const purchase = await createPurchase(db, { userId: owner.userId, product: "full", target: { resultId: owner.resultId }, amountKopecks: 16900 });
