@@ -1,14 +1,14 @@
-import { CONSENT_KEY, goalForProduct, isAnalyticsReady, isOwnerDevice, METRIKA_ID, readChoice } from "./analytics";
+import { CONSENT_KEY, goalForProduct, isAnalyticsReady, isOwnerDevice, metrikaCounterId, readChoice } from "./analytics";
 import { isConfirmedPurchase, type ConfirmedPurchase } from "./confirmed-purchase";
-import { SITE_URL } from "./site";
 import type { PurchaseView } from "@/server/payments-service";
 
 const PREFIX = "grani-purchase-v2-";
 const QUEUE_AGE_MS = 7 * 24 * 60 * 60_000;
 type Delivery = { purchase: ConfirmedPurchase; state: "queued" | "sending" | "sent"; updatedAt: number };
+type PurchaseCandidate = Pick<PurchaseView, "id" | "status" | "free"> & { product: ConfirmedPurchase["product"] };
 type State = {
   win: Window;
-  views: Map<string, PurchaseView>;
+  views: Map<string, PurchaseCandidate>;
   lookups: Map<string, Promise<void>>;
   attempts: Map<string, number>;
   verified: Set<string>;
@@ -37,7 +37,7 @@ function storage(win: Window): Storage | null {
 
 function allowed(win: Window): boolean {
   const local = storage(win);
-  return win.location.origin === SITE_URL && !!local && readChoice(local) === "all" && !isOwnerDevice(local);
+  return metrikaCounterId(win.location.origin) !== null && !!local && readChoice(local) === "all" && !isOwnerDevice(local);
 }
 
 function readEntry(state: State, id: string): Delivery | null {
@@ -50,9 +50,16 @@ function readEntry(state: State, id: string): Delivery | null {
   } catch { return null; }
 }
 
-function saveEntry(state: State, entry: Delivery): void {
+function saveEntry(state: State, entry: Delivery): boolean {
   state.entries.set(entry.purchase.id, entry);
-  try { storage(state.win)?.setItem(PREFIX + entry.purchase.id, JSON.stringify(entry)); } catch { /* Memory still prevents repeated polls. */ }
+  const local = storage(state.win);
+  if (!local) return false;
+  try {
+    local.setItem(PREFIX + entry.purchase.id, JSON.stringify(entry));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function currentEntry(state: State, id: string): Delivery | null {
@@ -60,6 +67,12 @@ function currentEntry(state: State, id: string): Delivery | null {
   const memory = state.entries.get(id);
   const priority = { queued: 0, sending: 1, sent: 2 };
   return memory && (!persisted || priority[memory.state] >= priority[persisted.state]) ? memory : persisted;
+}
+
+async function withOrderLock(state: State, id: string, action: () => void): Promise<void> {
+  const locks = state.win.navigator?.locks;
+  if (locks) await locks.request(PREFIX + id, action);
+  else action();
 }
 
 function restoreQueue(state: State): void {
@@ -80,7 +93,7 @@ function restoreQueue(state: State): void {
   } catch { /* A restricted store does not affect paid access. */ }
 }
 
-async function verifyView(state: State, view: PurchaseView): Promise<void> {
+async function verifyView(state: State, view: PurchaseCandidate): Promise<void> {
   if (state.verified.has(view.id)) { state.views.delete(view.id); return; }
   const running = state.lookups.get(view.id);
   if (running) return running;
@@ -95,12 +108,19 @@ async function verifyView(state: State, view: PurchaseView): Promise<void> {
       if (generation !== state.generation) return;
       if (typeof body !== "object" || body === null || (body as { ok?: unknown }).ok !== true) return;
       const purchase = (body as { purchase?: unknown }).purchase;
-      state.views.delete(view.id);
       // Excluded/unknown payments can be checked on a later status poll, but never emitted here.
-      if (!isConfirmedPurchase(purchase) || purchase.product !== view.product || !allowed(state.win) || generation !== state.generation) return;
-      state.verified.add(view.id);
-      const existing = currentEntry(state, purchase.id);
-      if (!existing) saveEntry(state, { purchase, state: "queued", updatedAt: Date.now() });
+      if (!isConfirmedPurchase(purchase) || purchase.product !== view.product) {
+        state.views.delete(view.id);
+        return;
+      }
+      await withOrderLock(state, purchase.id, () => {
+        if (!allowed(state.win) || generation !== state.generation) return;
+        state.verified.add(view.id);
+        state.views.delete(view.id);
+        if (!currentEntry(state, purchase.id)) {
+          saveEntry(state, { purchase, state: "queued", updatedAt: Date.now() });
+        }
+      });
     } catch { /* A later bootstrap, online event or status poll may retry, at most three lookups per page. */ }
   })();
   state.lookups.set(view.id, lookup);
@@ -118,7 +138,8 @@ async function verifyView(state: State, view: PurchaseView): Promise<void> {
 
 async function deliver(state: State, original: Delivery): Promise<void> {
   const send = () => {
-    if (!allowed(state.win) || !isAnalyticsReady(state.win)) return;
+    const counter = metrikaCounterId(state.win.location.origin);
+    if (!counter || !allowed(state.win) || !isAnalyticsReady(state.win)) return;
     const entry = currentEntry(state, original.purchase.id);
     if (!entry || entry.state !== "queued") return;
     if (Date.now() - entry.updatedAt > QUEUE_AGE_MS) {
@@ -130,9 +151,13 @@ async function deliver(state: State, original: Delivery): Promise<void> {
     if (typeof ym !== "function") return;
     const sending: Delivery = { ...entry, state: "sending", updatedAt: Date.now() };
     const generation = state.generation;
-    saveEntry(state, sending);
+    // A reload can only respect the claim if it was saved before sending.
+    if (!saveEntry(state, sending)) {
+      state.entries.set(entry.purchase.id, entry);
+      return;
+    }
     try {
-      ym(METRIKA_ID, "reachGoal", goalForProduct(entry.purchase.product), {
+      ym(counter, "reachGoal", goalForProduct(entry.purchase.product), {
         order_price: entry.purchase.amountKopecks / 100, currency: entry.purchase.currency,
         product: entry.purchase.product, order_id: entry.purchase.id,
       }, () => {
@@ -144,12 +169,7 @@ async function deliver(state: State, original: Delivery): Promise<void> {
     }
   };
   // Web Locks serialize the journal claim across tabs. Older browsers keep best-effort protection.
-  const locks = state.win.navigator?.locks;
-  if (locks) {
-    try { await locks.request(PREFIX + original.purchase.id, send); } catch { /* Retry queued work on the next flush. */ }
-  } else {
-    send();
-  }
+  try { await withOrderLock(state, original.purchase.id, send); } catch { /* Retry queued work on the next flush. */ }
 }
 
 async function flushState(state: State): Promise<void> {
@@ -168,7 +188,7 @@ export async function flushPurchaseGoals(): Promise<void> {
   return flushState(stateFor(window));
 }
 
-export async function markPurchase(view: PurchaseView): Promise<void> {
+export async function markPurchase(view: PurchaseCandidate): Promise<void> {
   if (view.status !== "succeeded" || view.free) return;
   const state = stateFor(window);
   const local = storage(state.win);

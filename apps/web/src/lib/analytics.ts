@@ -1,8 +1,17 @@
-import { isFunnelStep, type Product } from "@grani/core";
+import { isFunnelStep, type PurchaseProduct } from "@grani/core";
+import { SITE_URL } from "./site";
 
 // Номер счётчика и код Вебмастера видны в коде страницы любому, это не секреты
 export const METRIKA_ID = 112931559;
 export const YANDEX_VERIFICATION = "358d0b8f55e03e89";
+
+export function metrikaCounterId(origin: string): number | null {
+  if (origin === SITE_URL) return METRIKA_ID;
+  const value = process.env.NEXT_PUBLIC_METRIKA_TEST_ID;
+  if (!value || !/^[1-9]\d*$/.test(value)) return null;
+  const id = Number(value);
+  return Number.isSafeInteger(id) && id !== METRIKA_ID ? id : null;
+}
 
 export const GOALS = [
   "test_start",
@@ -32,6 +41,7 @@ export const GOALS = [
   "temperament_finish",
   "purchase_attachment",
   "purchase_attachment_pair",
+  "purchase_together",
   "attachment_invite",
   "attachment_pair",
 ] as const;
@@ -138,12 +148,22 @@ export function sanitizeReferrer(referrer: string, origin: string): string | und
   }
 }
 
-export function goalForProduct(product: Product): Goal {
-  if (product === "full") return "purchase_full";
-  if (product === "pair") return "purchase_pair";
-  if (product === "attachment_solo") return "purchase_attachment";
-  if (product === "attachment_pair" || product === "attachment_pair_discount") return "purchase_attachment_pair";
-  return "purchase_chapter";
+const PURCHASE_GOALS = {
+  full: "purchase_full",
+  chapter_money: "purchase_chapter",
+  chapter_conflict: "purchase_chapter",
+  chapter_stress: "purchase_chapter",
+  chapter_relationships: "purchase_chapter",
+  chapters_all: "purchase_chapter",
+  pair: "purchase_pair",
+  attachment_solo: "purchase_attachment",
+  attachment_pair: "purchase_attachment_pair",
+  attachment_pair_discount: "purchase_attachment_pair",
+  together_30d: "purchase_together",
+} as const satisfies Record<PurchaseProduct, Goal>;
+
+export function goalForProduct(product: PurchaseProduct): Goal {
+  return PURCHASE_GOALS[product];
 }
 
 // Вход — серверный редирект, поэтому цель отмечается меткой в адресе и снимается на первой странице после входа
@@ -158,8 +178,9 @@ export function withLoginMark(path: string): string {
 type Ym = (id: number, method: string, ...args: unknown[]) => void;
 
 export function reachGoal(goal: Goal, params?: Record<string, string | number>): void {
-  const win = (globalThis as { window?: { ym?: Ym; localStorage?: Storage; navigator?: Navigator } }).window;
-  win?.ym?.(METRIKA_ID, "reachGoal", goal, params);
+  const win = (globalThis as { window?: { location: Location; ym?: Ym; localStorage?: Storage; navigator?: Navigator } }).window;
+  const counter = win?.location && metrikaCounterId(win.location.origin);
+  if (counter) win.ym?.(counter, "reachGoal", goal, params);
   // Свой счётчик шагов не зависит от согласия на cookie: он не хранит ничего, кроме числа за день
   if (isFunnelStep(goal) && win?.navigator?.sendBeacon && !(win.localStorage && isOwnerDevice(win.localStorage))) win.navigator.sendBeacon("/api/funnel", goal);
 }

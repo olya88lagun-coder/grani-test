@@ -17,6 +17,8 @@ export function createFakeGateway(p: { appUrl: string; store?: Map<string, Gatew
         id,
         status: "pending",
         paid: false,
+        test: true,
+        currency: "RUB",
         amountKopecks: input.amountKopecks,
         purchaseId: input.purchaseId,
         confirmationUrl: new URL(`/dev/pay/${id}`, p.appUrl).toString(),

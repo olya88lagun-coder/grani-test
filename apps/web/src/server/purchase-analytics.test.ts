@@ -24,6 +24,24 @@ test("verified real payment yields paid historical amount, product and an opaque
   expect(JSON.stringify(data)).not.toContain("private-result");
 });
 
+test("sandbox accepts confirmed test payments and keeps live and test payments separate", () => {
+  const testPayment = { ...payment, test: true };
+  expect(purchaseAnalyticsPayload(order, testPayment, { sandbox: true })).toMatchObject({
+    product: "full", amountKopecks: 16900, currency: "RUB",
+  });
+  expect(purchaseAnalyticsPayload(order, payment, { sandbox: true })).toBeNull();
+  expect(purchaseAnalyticsPayload(order, testPayment)).toBeNull();
+  expect(purchaseAnalyticsPayload({ ...order, status: "canceled" }, testPayment, { sandbox: true })).toBeNull();
+});
+
+test("Together has a separate rollout gate and keeps the stored order price", () => {
+  const together = { ...order, product: "together_30d" } as const;
+  expect(purchaseAnalyticsPayload(together, payment)).toBeNull();
+  expect(purchaseAnalyticsPayload(together, payment, { together: true })).toMatchObject({
+    product: "together_30d", amountKopecks: 16900, currency: "RUB",
+  });
+});
+
 test.each([
   { test: true }, { test: undefined }, { currency: undefined }, { currency: "USD" },
   { paid: false }, { status: "waiting_for_capture" }, { id: "other-payment" },

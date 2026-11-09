@@ -1,8 +1,9 @@
 "use client";
 
-import { formatRub, TOGETHER_INVITE_NOTE_MAX, TOGETHER_PRICE_KOPECKS } from "@grani/core";
+import { formatRub, TOGETHER_INVITE_NOTE_MAX, TOGETHER_PRICE_KOPECKS, TOGETHER_PRODUCT } from "@grani/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Footer } from "@/components/Footer";
+import { markPurchase } from "@/lib/purchase-analytics";
 import {
   inviteLine,
   isWaitingForPartner,
@@ -76,6 +77,9 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
         return;
       }
       if (status.ok) {
+        if (status.body.status === "succeeded") {
+          void markPurchase({ id: purchaseId, status: status.body.status, product: TOGETHER_PRODUCT, free: false });
+        }
         // Сначала актуальное пространство, затем статус: успех не показывается по одному историческому granted
         if (status.body.status === "succeeded" && status.body.granted) await refresh();
         if (cancelled) return;
