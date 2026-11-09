@@ -9,7 +9,7 @@
 .page :global(.button) { min-height: 52px; padding: 14px 24px; font-size: 15px; }
 .preview { width: 100%; padding: 28px; border: 1px solid var(--line); background: var(--surface); border-radius: 20px; box-shadow: none; text-align: center; color: var(--ink); }
 .art { height: 170px; margin-bottom: 12px; }
-.art img { width: 100%; height: 100%; object-fit: contain; }
+.art img { width: 170px; max-width: 100%; height: auto; }
 .example { color: var(--ink-soft); font-size: 12px; line-height: 1.6; }
 .preview h2 { font-size: 38px; margin: 6px 0; }
 .preview > span { font-size: 13px; color: var(--ink-soft); }
