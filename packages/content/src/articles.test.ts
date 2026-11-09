@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import { collectArticles } from "../scripts/build-library.mjs";
 import { parseArticle, parseArticles, publishedArticles } from "./articles";
@@ -102,7 +103,7 @@ describe("parseArticle", () => {
 
 describe("articles", () => {
   it("articles.json matches articles/ — run `pnpm build:library` after editing texts", () => {
-    expect(rawArticles).toEqual(collectArticles(ARTICLES_DIR.pathname.replace(/^\/([A-Za-z]:)/, "$1")));
+    expect(rawArticles).toEqual(collectArticles(fileURLToPath(ARTICLES_DIR)));
   });
 
   // Статьи добавляет конвейер, поэтому счёт не фиксирован — только нижняя граница и уникальность
