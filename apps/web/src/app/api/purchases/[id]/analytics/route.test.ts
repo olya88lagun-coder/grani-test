@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { beforeEach, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { GET } from "./route";
 
 const deps = vi.hoisted(() => ({ currentUser: vi.fn(), payments: vi.fn(), read: vi.fn() }));
@@ -13,8 +13,26 @@ const params = { params: Promise.resolve({ id: "fixture" }) };
 beforeEach(() => {
   vi.clearAllMocks();
   deps.currentUser.mockResolvedValue({ id: "owner" });
-  deps.payments.mockReturnValue({});
+  deps.payments.mockReturnValue({ appUrl: "https://grani-test.ru" });
   deps.read.mockResolvedValue({ found: true, purchase: null });
+});
+afterEach(() => vi.unstubAllEnvs());
+
+test("a non-production app cannot use the production counter for a test payment", async () => {
+  deps.payments.mockReturnValue({ appUrl: "http://localhost:3000" });
+  vi.stubEnv("NEXT_PUBLIC_METRIKA_TEST_ID", "112931559");
+  const response = await GET(request(), params);
+  expect(await response.json()).toEqual({ ok: true, purchase: null });
+  expect(deps.read).not.toHaveBeenCalled();
+});
+
+test("an isolated counter can verify sandbox payments", async () => {
+  deps.payments.mockReturnValue({ appUrl: "http://localhost:3000" });
+  vi.stubEnv("NEXT_PUBLIC_METRIKA_TEST_ID", "123456");
+  await GET(request(), params);
+  expect(deps.read).toHaveBeenCalledWith({ appUrl: "http://localhost:3000" }, { purchaseId: "fixture", userId: "owner" }, {
+    sandbox: true, together: false,
+  });
 });
 
 test("anonymous requests do not read payment data and cannot be cached", async () => {
@@ -30,7 +48,9 @@ test("a foreign or missing purchase returns only 404", async () => {
   const response = await GET(request(), params);
   expect(response.status).toBe(404);
   expect(await response.json()).toEqual({ ok: false });
-  expect(deps.read).toHaveBeenCalledWith({}, { purchaseId: "fixture", userId: "owner" });
+  expect(deps.read).toHaveBeenCalledWith({ appUrl: "https://grani-test.ru" }, { purchaseId: "fixture", userId: "owner" }, {
+    sandbox: false, together: false,
+  });
 });
 
 test("provider failures stay isolated in the analytics request", async () => {

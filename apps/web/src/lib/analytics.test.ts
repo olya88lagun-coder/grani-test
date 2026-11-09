@@ -149,6 +149,7 @@ describe("goals", () => {
       "temperament_finish",
       "purchase_attachment",
       "purchase_attachment_pair",
+      "purchase_together",
       "attachment_invite",
       "attachment_pair",
     ]);
@@ -171,13 +172,14 @@ describe("goals", () => {
     expect(goalForProduct("attachment_pair_discount")).toBe("purchase_attachment_pair");
     expect(goalForProduct("chapters_all")).toBe("purchase_chapter");
     expect(goalForProduct("pair")).toBe("purchase_pair");
+    expect(goalForProduct("together_30d")).toBe("purchase_together");
   });
 
   it("does nothing before Metrika is loaded and calls ym after", () => {
     vi.stubGlobal("window", {});
     expect(() => reachGoal("test_start")).not.toThrow();
     const ym = vi.fn();
-    vi.stubGlobal("window", { ym });
+    vi.stubGlobal("window", { ym, location: { origin: "https://grani-test.ru" } });
     reachGoal("login");
     expect(ym).toHaveBeenCalledWith(METRIKA_ID, "reachGoal", "login", undefined);
   });

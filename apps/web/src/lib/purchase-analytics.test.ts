@@ -88,11 +88,11 @@ test("a new page session shares acknowledged order markers", async () => {
   expect(next.ym).not.toHaveBeenCalled();
 });
 
-test("unavailable journal writes still deduplicate repeated polls in memory", async () => {
+test("no dispatch when the claim cannot survive a reload", async () => {
   const win = browser(); sdk(win);
   win.localStorage.setItem = () => { throw new Error("denied"); };
   await markPurchase(view()); await markPurchase(view());
-  expect(win.ym).toHaveBeenCalledTimes(1);
+  expect(win.ym).not.toHaveBeenCalled();
 });
 
 test("an SDK stub does not consume the order; confirmed queue survives navigation until SDK load", async () => {
@@ -164,10 +164,14 @@ test("a queued opaque order can be delivered after a page reload without a priva
   expect(fetch).not.toHaveBeenCalled();
 });
 
-test("a read-only journal cannot downgrade the in-memory sent marker", async () => {
+test("a queued purchase can dispatch when its journal becomes writable again", async () => {
   const win = browser(); await markPurchase(view());
+  const setItem = win.localStorage.setItem;
   win.localStorage.setItem = () => { throw new Error("became read-only"); };
-  sdk(win); await flushPurchaseGoals(); await flushPurchaseGoals();
+  sdk(win); await flushPurchaseGoals();
+  expect(win.ym).not.toHaveBeenCalled();
+  win.localStorage.setItem = setItem;
+  await flushPurchaseGoals(); await flushPurchaseGoals();
   expect(win.ym).toHaveBeenCalledTimes(1);
 });
 

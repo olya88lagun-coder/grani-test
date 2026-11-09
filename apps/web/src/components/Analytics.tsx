@@ -9,7 +9,7 @@ import {
   COOKIE_SETTINGS_EVENT,
   isOwnerDevice,
   LOGIN_MARK,
-  METRIKA_ID,
+  metrikaCounterId,
   notifyAnalyticsReady,
   reachGoal,
   readChoice,
@@ -18,14 +18,10 @@ import {
   type CookieChoice,
 } from "@/lib/analytics";
 import { flushPurchaseGoals, forgetPurchaseGoals } from "@/lib/purchase-analytics";
-import { SITE_URL } from "@/lib/site";
 
 type YmWindow = Window & { ym?: ((...args: unknown[]) => void) & { a?: unknown[][]; l?: number } };
 
-// Счётчик работает только на боевом домене: локальная разработка и сквозные тесты статистику не портят
-const isProductionHost = () => window.location.origin === SITE_URL;
-
-function loadMetrika(): void {
+function loadMetrika(counter: number): void {
   const w = window as YmWindow;
   if (w.ym) return;
   // Стандартная очередь Метрики: вызовы до загрузки tag.js сохраняются и выполняются после
@@ -40,14 +36,15 @@ function loadMetrika(): void {
   script.onload = notifyAnalyticsReady;
   document.head.appendChild(script);
   // defer: просмотры отправляем сами, с очищенным адресом
-  ym(METRIKA_ID, "init", { defer: true, clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: false });
+  ym(counter, "init", { defer: true, clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: false });
 }
 
 function sendHit(pathname: string): void {
   const ym = (window as YmWindow).ym;
   if (!ym) return;
   const origin = window.location.origin;
-  ym(METRIKA_ID, "hit", `${origin}${analyticsHitPath(pathname, window.location.search)}`, { referer: sanitizeReferrer(document.referrer, origin) });
+  const counter = metrikaCounterId(origin);
+  if (counter) ym(counter, "hit", `${origin}${analyticsHitPath(pathname, window.location.search)}`, { referer: sanitizeReferrer(document.referrer, origin) });
 }
 
 function takeLoginMark(): void {
@@ -81,8 +78,9 @@ export function Analytics() {
   }, []);
 
   useEffect(() => {
-    if (choice !== "all" || !isProductionHost() || isOwnerDevice(window.localStorage)) return;
-    loadMetrika();
+    const counter = metrikaCounterId(window.location.origin);
+    if (choice !== "all" || !counter || isOwnerDevice(window.localStorage)) return;
+    loadMetrika(counter);
     loaded.current = true;
     void flushPurchaseGoals();
   }, [choice]);
