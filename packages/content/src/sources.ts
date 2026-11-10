@@ -272,7 +272,26 @@ const SIROIS_PYCHYL_2013: Source = {
   note: "откладывание как способ быстро улучшить настроение, убрав неприятную задачу из поля зрения",
 };
 
+const STOEBER_OTTO_2006: Source = {
+  authors: "Joachim Stoeber, Kathleen Otto",
+  year: 2006,
+  title: "Positive Conceptions of Perfectionism: Approaches, Evidence, Challenges",
+  journal: "Personality and Social Psychology Review",
+  url: "https://doi.org/10.1207/s15327957pspr1004_2",
+  note: "различие между стремлением к высоким стандартам и беспокойством об ошибках и оценке",
+};
+
+const SMITH_ET_AL_2019: Source = {
+  authors: "Martin M. Smith, Simon B. Sherry, Vanja Vidovic, Donald H. Saklofske, Joachim Stoeber, Aryn Benoit",
+  year: 2019,
+  title: "Perfectionism and the Five-Factor Model of Personality: A Meta-Analytic Review",
+  journal: "Personality and Social Psychology Review",
+  url: "https://doi.org/10.1177/1088868318814973",
+  note: "связь высоких стандартов с добросовестностью, а беспокойства об ошибках — с нейротизмом",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "perfektsionizm-i-lichnost": [STOEBER_OTTO_2006, SMITH_ET_AL_2019],
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
   "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
   "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
