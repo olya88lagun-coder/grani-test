@@ -290,9 +290,37 @@ const LAHEY_2009: Source = {
   note: "обзор: эмоциональная чувствительность (нейротизм) связана с более частой тревогой и подавленностью и с нагрузкой на здоровье; черта устойчива и не равна текущему состоянию",
 };
 
+const STOEBER_OTTO_2006: Source = {
+  authors: "Stoeber J., Otto K.",
+  year: 2006,
+  title: "Positive Conceptions of Perfectionism: Approaches, Evidence, Challenges",
+  journal: "Personality and Social Psychology Review",
+  url: "https://doi.org/10.1207/s15327957pspr1004_2",
+  note: "обзор: у перфекционизма две стороны — стремление к высоким стандартам и опасения по поводу ошибок; изматывает в основном вторая",
+};
+
+const EGAN_2011: Source = {
+  authors: "Egan S. J., Wade T. D., Shafran R.",
+  year: 2011,
+  title: "Perfectionism as a transdiagnostic process: A clinical review",
+  journal: "Clinical Psychology Review",
+  url: "https://doi.org/10.1016/j.cpr.2010.04.009",
+  note: "обзор: перфекционизм поддерживает сам себя, когда самооценка привязана к достижениям и подпитывается самокритикой",
+};
+
+const CURRAN_HILL_2019: Source = {
+  authors: "Curran T., Hill A. P.",
+  year: 2019,
+  title: "Perfectionism is increasing over time: A meta-analysis of birth cohort differences from 1989 to 2016",
+  journal: "Psychological Bulletin",
+  url: "https://doi.org/10.1037/bul0000138",
+  note: "метаанализ когорт 1989–2016: у молодых поколений перфекционизм в среднем растёт, особенно ощущение завышенных требований со стороны других",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
   "trevozhnost-i-cherty": [KOTOV_2010, LAHEY_2009],
+  "perfektsionizm-i-lichnost": [STOEBER_OTTO_2006, EGAN_2011, CURRAN_HILL_2019],
   "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
   "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
   "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
