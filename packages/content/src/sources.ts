@@ -272,8 +272,27 @@ const SIROIS_PYCHYL_2013: Source = {
   note: "откладывание как способ быстро улучшить настроение, убрав неприятную задачу из поля зрения",
 };
 
+const KOTOV_2010: Source = {
+  authors: "Kotov R., Gamez W., Schmidt F., Watson D.",
+  year: 2010,
+  title: "Linking “big” personality traits to anxiety, depressive, and substance use disorders: A meta-analysis",
+  journal: "Psychological Bulletin",
+  url: "https://doi.org/10.1037/a0020327",
+  note: "метаанализ: из всех черт сильнее всего с частыми переживаниями тревоги связана эмоциональная чувствительность (обратная сторона устойчивости)",
+};
+
+const LAHEY_2009: Source = {
+  authors: "Lahey B. B.",
+  year: 2009,
+  title: "Public health significance of neuroticism",
+  journal: "American Psychologist",
+  url: "https://doi.org/10.1037/a0015309",
+  note: "обзор: эмоциональная чувствительность (нейротизм) связана с более частой тревогой и подавленностью и с нагрузкой на здоровье; черта устойчива и не равна текущему состоянию",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
+  "trevozhnost-i-cherty": [KOTOV_2010, LAHEY_2009],
   "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
   "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
   "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
