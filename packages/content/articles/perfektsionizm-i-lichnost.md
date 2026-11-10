@@ -3,8 +3,8 @@ title: Перфекционизм: обратная сторона доброс�
 description: Чем здоровое стремление к качеству отличается от изматывающего перфекционизма, почему он не равен высокой добросовестности и что говорят об этом обзоры исследований.
 date: 2026-11-10
 tag: Личность
-image: /images/articles/perfektsionizm-i-lichnost.webp
-imageAlt: Изумрудная гранёная фигура в тёмной оранжерее аккуратно выравнивает безупречный светящийся золотой камень на подставке
+image: /images/articles/perfektsionizm-i-lichnost-v2.webp
+imageAlt: Изумрудная фигура рассматривает грань кристалла, на которой золотой свет подсвечивает тонкую царапину
 status: published
 reviewed: true
 canonical: /articles/perfektsionizm-i-lichnost
