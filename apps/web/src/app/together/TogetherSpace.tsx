@@ -3,6 +3,8 @@
 import { formatRub, TOGETHER_INVITE_NOTE_MAX, TOGETHER_PRICE_KOPECKS, TOGETHER_PRODUCT } from "@grani/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Footer } from "@/components/Footer";
+import { PairFacetArt } from "@/components/PairFacetArt";
+import { reachGoalOnce } from "@/lib/analytics";
 import { markPurchase } from "@/lib/purchase-analytics";
 import {
   inviteLine,
@@ -195,6 +197,18 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
   const refreshSpace = useCallback(() => void refresh(), [refresh]);
 
   const screen = spaceScreen(space);
+  const waiting = isWaitingForPartner(screen);
+  const wasWaiting = useRef(false);
+  useEffect(() => {
+    if (waiting) {
+      wasWaiting.current = true;
+      reachGoalOnce("fx_wait_seen");
+    }
+  }, [waiting]);
+  const joinedNow = space?.status === "active" && wasWaiting.current;
+  useEffect(() => {
+    if (joinedNow) reachGoalOnce("fx_wait_confirmed");
+  }, [joinedNow]);
   useWaitingPoll(isWaitingForPartner(screen), setSpace);
   const outcome = purchase ? purchaseOutcome(purchase, space) : null;
 
@@ -223,6 +237,10 @@ export function TogetherSpace({ initial, firstName, purchaseId, referral }: Prop
             {working ? "Создаём пространство…" : "Создать и получить приглашение"}
           </button>
         </section>
+      )}
+
+      {(waiting || (space?.status === "active" && wasWaiting.current)) && (
+        <PairFacetArt joined={!waiting} waiting={waiting} animateJoin={!waiting} />
       )}
 
       {screen === "invite" && space && (

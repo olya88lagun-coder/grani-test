@@ -44,6 +44,15 @@ test("three friends answer anonymously and the owner sees the comparison", async
   await owner.page.reload();
   await expect(owner.page.getByText("Ответили 3 друга")).toBeVisible();
   await expect(owner.page.locator(".compare")).toHaveCount(5);
+  await expect(owner.page.locator("[data-friends-stones] [data-answered=true]")).toHaveCount(3);
+  await expect(owner.page.locator("[data-friends-comparison]")).toBeVisible();
+  if (process.env.WAVE_TWO_QA_OUTPUT) {
+    await owner.page.emulateMedia({ reducedMotion: "reduce" });
+    await owner.page.reload();
+    await owner.page.setViewportSize({ width: 375, height: 812 });
+    await owner.page.locator("[data-friends-stones]").scrollIntoViewIfNeeded();
+    await owner.page.screenshot({ path: `${process.env.WAVE_TWO_QA_OUTPUT}/friends-ready-375.png`, scale: "css" });
+  }
   await expect(owner.page.getByText("Друзья", { exact: true }).first()).toBeVisible();
 
   for (const { context } of friendContexts) await context.close();

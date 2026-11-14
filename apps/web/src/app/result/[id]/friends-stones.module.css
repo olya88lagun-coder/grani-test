@@ -1,0 +1,28 @@
+.figure {
+  margin: 0;
+  padding: 21px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  justify-items: center;
+  gap: 12px clamp(20px, 5vw, 68px);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+.figure[data-compared="true"] { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); }
+.owner, .comparison, .shelf { display: grid; justify-items: center; gap: 6px; font-size: 13px; min-width: 0; }
+.owner [data-gem-dir], .comparison svg { width: clamp(76px, 15vw, 144px); max-width: 100%; }
+.comparison svg { display: block; height: auto; }
+.legend, .legend span { display: flex; align-items: center; justify-content: center; gap: 6px; }
+.legend { flex-wrap: wrap; column-gap: 12px; text-align: center; }
+.legend span { flex-wrap: wrap; }
+.legend i { width: 12px; height: 2px; background: var(--ink); }
+.legend span + span i { background: var(--ink-soft); }
+.grid { fill: none; stroke: var(--ink-soft); stroke-opacity: .4; }
+.self { fill: none; stroke: var(--ink); stroke-width: 1.7; }
+.friends { fill: var(--surface-3); stroke: var(--ink-soft); stroke-width: 1.5; }
+.shelf { grid-column: 1 / -1; text-align: center; }
+.shelf ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.shelf li { display: grid; place-items: center; opacity: .34; }
+.shelf li[data-answered="true"] { opacity: .82; border-radius: 50%; background: var(--surface-3); }

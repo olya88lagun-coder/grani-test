@@ -10,6 +10,7 @@ import { GemPortrait } from "@/components/GemPortrait";
 import { gemAssetDir } from "@/lib/gem-assets";
 import styles from "./result-night.module.css";
 import { ScaleMeter } from "@/components/ScaleMeter";
+import { MyFacets } from "./MyFacets";
 import { REPORT_DISCLAIMER } from "@/lib/report-view";
 import { buildResultView } from "@/lib/result-view";
 import { TYPE_VISUALS } from "@/lib/type-visuals";
@@ -92,7 +93,9 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
           <aside className="result-card" aria-labelledby="scales">
             <div className="result-card__head">
-              <GemPortrait dir={gemAssetDir(view.dir)} size={260} priority />
+              <MyFacets dir={gemAssetDir(view.dir)} scales={view.scales.map(({ trait, label, score }) => ({ trait, label, score }))}>
+                <GemPortrait dir={gemAssetDir(view.dir)} size={260} priority />
+              </MyFacets>
               <p className="eyebrow">Твой тип</p>
               <p className="result-card__name">{view.name}</p>
             </div>
@@ -126,7 +129,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
           typeName={view.name}
         />
 
-        <FriendsBlock resultId={result.id} />
+        <FriendsBlock resultId={result.id} dir={gemAssetDir(view.dir)} />
 
         <PairsBlock userId={user.id} resultId={result.id} />
 

@@ -1,11 +1,14 @@
 import { InviteLink } from "@/components/InviteLink";
+import type { GemAssetDir } from "@/lib/gem-assets";
+import { FriendsStones } from "./FriendsStones";
 import { buildFriendsView } from "@/lib/friends-view";
 import { getDb } from "@/server/db";
 import { getEnv } from "@/server/env";
 import { getFriendsSummary } from "@/server/friends-service";
 
-export async function FriendsBlock({ resultId }: { resultId: string }) {
-  const view = buildFriendsView(await getFriendsSummary(getDb(), resultId), getEnv().APP_URL);
+export async function FriendsBlock({ resultId, dir }: { resultId: string; dir: GemAssetDir }) {
+  const summary = await getFriendsSummary(getDb(), resultId);
+  const view = buildFriendsView(summary, getEnv().APP_URL);
   const shareUrl = view.state === "no_link" ? null : view.shareUrl;
 
   return (
@@ -16,6 +19,7 @@ export async function FriendsBlock({ resultId }: { resultId: string }) {
         <p className="lead">Отправь ссылку трём друзьям или больше. Они ответят на 20 вопросов о тебе анонимно — ты увидишь только среднее.</p>
       )}
       {view.state !== "no_link" && <p className="tag">{view.counter}</p>}
+      <FriendsStones dir={dir} count={summary.friendsCount} rows={view.state === "ready" ? view.rows : undefined} />
 
       {view.state === "ready" && (
         <div className="stack">
