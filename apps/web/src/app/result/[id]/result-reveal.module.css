@@ -1,0 +1,37 @@
+.dialog { display: none; }
+.dialog[open] {
+  display: block;
+  width: min(440px, calc(100% - 32px));
+  max-height: calc(100% - 24px);
+  padding: 0;
+  margin: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+.dialog::backdrop { background: var(--bg); }
+.panel { display: grid; justify-items: center; gap: 14px; padding: 21px; text-align: center; }
+.panel > p { margin: 0; }
+.dialog .panel .skip,
+.dialog .panel .skip:hover { background: var(--bg); border: 1px solid var(--accent); color: var(--ink); }
+.dialog .panel .skip:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.art { position: relative; width: min(100%, 260px, 40vh); aspect-ratio: 1; }
+.cut, .light, .portrait { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cut { stroke: var(--gold); stroke-width: .7; stroke-linejoin: round; fill: none; animation: 520ms var(--ease-out) 660ms reverse both; }
+.outline { stroke-width: 1; animation: var(--dur-slow) var(--ease-out) both; }
+.facet { animation: var(--dur-slow) var(--ease-out) both; }
+.portrait { display: grid; place-items: center; animation: 620ms var(--ease-out) 660ms both; }
+.cut, .outline, .facet, .portrait { animation-name: var(--animation-fade-in); }
+.glint { fill: var(--ink); animation: reveal-glint 620ms var(--ease-out) 1240ms both; }
+.name { min-width: 0; font: 300 clamp(38px, 7vw, 56px) / 1.05 var(--font-display); overflow-wrap: anywhere; animation: var(--dur-slow) var(--ease-out) 1670ms both; animation-name: var(--animation-fade-rise); }
+@keyframes reveal-glint {
+  0% { transform: translateX(0) skewX(-18deg); opacity: 0; }
+  30% { opacity: .45; }
+  100% { transform: translateX(290px) skewX(-18deg); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dialog[open] { display: none; }
+  .dialog::backdrop { display: none; }
+  .cut, .outline, .facet, .portrait, .glint, .name { animation: none; }
+}

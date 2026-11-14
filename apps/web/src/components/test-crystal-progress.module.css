@@ -1,0 +1,25 @@
+.progress { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: center; }
+.count, .teaser { display: flex; gap: 12px; align-items: center; min-width: 0; min-height: 72px; color: var(--ink); font-variant-numeric: tabular-nums; }
+.teaser {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.teaser[data-visible="true"] { opacity: 1; }
+.teaser p { margin: 0; line-height: 1.35; font-size: 14px; }
+.teaser .masked { font: 300 26px / 1 var(--font-display); opacity: .75; filter: blur(3px); }
+.silhouette { display: block; }
+@media (max-width: 520px) {
+  .progress { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 6px; }
+  .count { gap: 6px; font-size: 13px; }
+  .count svg { width: 42px; }
+  .teaser { gap: 5px; grid-template-columns: 30px minmax(0, 1fr); padding: 6px; }
+  .teaser p { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .teaser { transition: none; }
+}

@@ -47,11 +47,28 @@
 /* Орбиту рисует сам фон, схема с кругами ему мешала бы */
 .page :global(.home-crystal__diagram) { display: none; }
 .page :global(.home-crystal__diagram circle) { vector-effect: non-scaling-stroke; }
-.heroGem { position: relative; width: 66%; max-width: 380px; animation: gem-float 9s ease-in-out infinite; }
-.heroGem > img { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 44px rgba(47,163,110,.4)); }
+.heroFloat { width: 66%; max-width: 380px; }
+.heroGem { position: relative; }
+.page :global(.home-hero[data-band="night"]) .heroGem > img { filter: drop-shadow(0 0 44px rgba(47,163,110,.4)); }
+.heroGem > img { display: block; width: 100%; height: auto; }
 .page :global([data-band="night"] svg > polygon:last-child) { vector-effect: non-scaling-stroke; stroke-width: 1px; }
 .sheenLayer { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
-.sheen { opacity: 0; animation: gem-sheen 8s var(--ease-out) infinite; }
+.sheen, .pointerSheen, .heroFacet { opacity: 0; }
+.heroFacet { fill: var(--ink); }
+.page :global(.home-crystal__label) { animation: none; }
+@media (prefers-reduced-motion: no-preference) {
+  .page :global([data-crystal-in-view]) .heroFloat { animation: gem-float 9s ease-in-out infinite; }
+  .page :global([data-crystal-in-view]) .sheen { animation: gem-sheen 8s var(--ease-out) infinite; }
+  .heroGem { transform: perspective(650px) rotateX(calc(var(--my, 0) * -5deg)) rotateY(calc(var(--mx, 0) * 7deg)) translateY(calc(var(--my, 0) * -5px)); }
+  .pointerSheen { opacity: calc(.13 + var(--mx, 0) * .055); transform: translateX(calc(var(--mx, 0) * 106px)) skewX(-18deg); }
+  .page :global([data-crystal-reveal="shown"] .home-crystal__label) { animation: var(--dur-slow) var(--ease-out) backwards;
+    animation-name: var(--animation-fade-rise); }
+  .page :global([data-crystal-reveal="shown"]) .heroFacet { animation: facet-light 570ms var(--ease-out) both; }
+}
+@keyframes facet-light {
+  0%, 100% { opacity: 0; }
+  32% { opacity: .38; }
+}
 @keyframes gem-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
@@ -171,7 +188,7 @@
   .page :global(.home-hero h1) { font-size: clamp(50px, 12vw, 68px); line-height: 1.04; }
   .page :global(.home-lead) { font-size: 16px; margin-top: 20px; }
   .page :global(.home-crystal) { max-width: 440px; width: 100%; aspect-ratio: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 21px; align-items: start; }
-  .heroGem { grid-column: 1 / -1; grid-row: 1; margin-block: 9%; }
+  .heroFloat { grid-column: 1 / -1; grid-row: 1; margin-block: 9%; }
   .page :global(.home-crystal__diagram) { height: auto; aspect-ratio: 1; }
   .page :global(.home-crystal__label) { position: static; width: 100%; line-height: 1.2; padding: 0; }
   .page :global(.home-crystal__label)::before { position: static; display: block; height: 1px; margin-bottom: 7px; transform: none; }
@@ -206,10 +223,7 @@
   .page :global(.home-crystal__label) { font-size: 15px; }
   .page :global(.home-pair__cards) { grid-template-columns: minmax(0, 1fr); }
 }
-@media (prefers-reduced-motion: reduce) {
-  .heroGem { animation: none; }
-  .sheen { animation: none; opacity: 0; }
-}
+
 
 @media (max-width: 760px) {
   .page :global(.home-types[data-band="night"]) { background: var(--bg) url("/home/types-night-mobile.webp") 50% 0 / cover no-repeat; }

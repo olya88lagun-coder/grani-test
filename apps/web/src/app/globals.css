@@ -2198,6 +2198,13 @@ body.has-cookie-banner .sticky-cta { display: none; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+/* Имена для CSS-модулей: сборщик локализует литералы в animation. */
+:root {
+  --animation-fade-in: fade-in;
+  --animation-fade-rise: fade-rise;
+  --animation-meter-fill: meter-fill;
+}
+
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fade-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 @keyframes meter-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }

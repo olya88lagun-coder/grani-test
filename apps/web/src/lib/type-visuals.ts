@@ -1,4 +1,4 @@
-import { ALL_TYPE_CODES, type TypeCode } from "@grani/core";
+import { ALL_TYPE_CODES, typeCodeOf, type TraitScores, type TypeCode } from "@grani/core";
 import { typeCodeToDir } from "@grani/content";
 import type { TypeShape } from "./gem-paths";
 
@@ -20,6 +20,10 @@ const FAMILIES: Readonly<Record<string, TypeFamily>> = { pp: 1, pm: 2, mp: 3, mm
 export const TYPE_VISUALS: Readonly<Record<string, TypeVisual>> = Object.fromEntries(
   Object.entries(SHAPES).map(([dir, shape]) => [dir, { family: FAMILIES[dir.slice(0, 2)] as TypeFamily, shape }]),
 );
+
+export function familyForScores(scores: TraitScores): TypeFamily {
+  return FAMILIES[typeCodeToDir(typeCodeOf(scores)).slice(0, 2)]!;
+}
 
 const CODE_BY_DIR: ReadonlyMap<string, TypeCode> = new Map(ALL_TYPE_CODES.map((code) => [typeCodeToDir(code), code]));
 

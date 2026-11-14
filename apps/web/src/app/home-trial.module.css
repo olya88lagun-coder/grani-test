@@ -1,0 +1,69 @@
+.section {
+  padding: 12px max(20px, calc((100vw - 1240px) / 2)) 60px;
+}
+.panel {
+  display: grid;
+  grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: 32px;
+  padding: clamp(21px, 4vw, 48px);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.intro {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+  min-width: 0;
+}
+.intro h2, .form legend {
+  color: var(--ink);
+  font: 300 clamp(35px, 4.2vw, 56px) / 1.05 var(--font-display);
+  margin: 0;
+}
+.crystal {
+  display: grid;
+  place-items: center;
+  justify-self: center;
+  width: 100%;
+  border-radius: var(--radius);
+  background: radial-gradient(ellipse closest-side, var(--surface-3), transparent);
+}
+.feedback { display: grid; width: 100%; }
+.feedback p {
+  grid-area: 1 / 1;
+  margin: 0;
+  color: var(--ink);
+  line-height: 1.45;
+  opacity: 0;
+}
+.feedback .active { opacity: 1; }
+.status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.form, .form fieldset { min-width: 0; }
+.form fieldset { margin: 0; padding: 0; border: 0; }
+.form legend { margin-bottom: 14px; font-size: clamp(30px, 3.2vw, 44px); }
+.options { display: grid; gap: 6px; }
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+.option input { margin: 0; flex: none; width: 20px; height: 20px; accent-color: var(--accent); }
+.option[data-selected="true"] { background: var(--surface-3); }
+.option:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.action { margin-top: 14px; }
+.section .action > * { min-height: 48px; border-radius: var(--radius); }
+.error { color: var(--danger); margin: 12px 0 0; }
+@media (max-width: 720px) {
+  .section { padding-bottom: 40px; }
+  .panel { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .intro { gap: 6px 12px; grid-template-columns: minmax(0, 1fr) 68px; }
+  .crystal { grid-column: 2; grid-row: 1 / span 2; }
+  .action > * { width: 100%; }
+}

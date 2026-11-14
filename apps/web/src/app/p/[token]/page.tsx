@@ -7,6 +7,7 @@ import { getEnv } from "@/server/env";
 import { getPairInvitePage } from "@/server/pairs-service";
 import { currentUser } from "@/server/viewer";
 import { GemPortrait } from "@/components/GemPortrait";
+import { PairGemStone, PairGemThread } from "@/components/PairGemThread";
 import { gemAssetDir } from "@/lib/gem-assets";
 import { typeCodeToDir } from "@grani/content";
 import { AcceptPairForm } from "./AcceptPairForm";
@@ -26,9 +27,9 @@ export default async function PairInvitePage({ params }: { params: Promise<{ tok
       <div className="page stack">
       {invited && (
         <div className={styles.gems} aria-hidden="true">
-          <GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={150} priority />
-          <span className={styles.thread} />
-          <GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={150} priority />
+          <PairGemStone side="left"><GemPortrait dir={gemAssetDir(typeCodeToDir("+-++"))} size={150} priority /></PairGemStone>
+          <PairGemThread className={styles.thread} />
+          <PairGemStone side="right"><GemPortrait dir={gemAssetDir(typeCodeToDir("++--"))} size={150} priority /></PairGemStone>
         </div>
       )}
       <p className="eyebrow">Грани · совместимость пары</p>

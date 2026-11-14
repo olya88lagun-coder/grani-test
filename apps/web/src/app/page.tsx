@@ -1,5 +1,5 @@
 import { formatRub, PRODUCT_PRICES, type TypeCode } from "@grani/core";
-import { typeCodeToDir } from "@grani/content";
+import { SELF_ITEMS, typeCodeToDir } from "@grani/content";
 import { getArticles } from "@grani/content/data";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -13,6 +13,8 @@ import { JsonLd } from "@/components/JsonLd";
 import { NewYearBanner } from "@/components/NewYearBanner";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
+import { HomeTrialClient } from "./HomeTrialClient";
+import { HeroCrystalMotion } from "./HeroCrystalMotion";
 import styles from "./home-refined.module.css";
 
 // Главная — бренд и продукт «Граней». Запрос «тест Big Five / большая пятёрка» отдан /big-five-test:
@@ -180,9 +182,9 @@ const HERO_GEM_OUTLINE = "100,3 183,53 183,142 100,197 17,142 17,53";
 
 function CrystalScene() {
   return (
-    <div className="home-crystal" aria-label="Гранёная схема личности">
-      {HERO_TRAITS.map((trait) => (
-        <span key={trait.className} className={`home-crystal__label ${trait.className}`}>
+    <HeroCrystalMotion>
+      {HERO_TRAITS.map((trait, index) => (
+        <span key={trait.className} className={`home-crystal__label ${trait.className}`} style={{ animationDelay: `${180 + index * 145}ms` }}>
           {trait.label.split("\n").map((line) => (
             <span key={line}>{line}</span>
           ))}
@@ -192,7 +194,7 @@ function CrystalScene() {
         <circle cx="260" cy="260" r="229" />
         <circle cx="260" cy="260" r="202" />
       </svg>
-      <div className={styles.heroGem}>
+      <div className={styles.heroFloat}><div className={styles.heroGem}>
         <Image src="/home/hero-gem.webp" width={900} height={900} alt="" loading="eager" fetchPriority="high" sizes="380px" />
         <svg className={styles.sheenLayer} viewBox="0 0 200 200" aria-hidden="true" focusable="false">
           <defs>
@@ -204,15 +206,24 @@ function CrystalScene() {
             </linearGradient>
           </defs>
           <g clipPath="url(#home-gem-cut)">
+            {[
+              "100,3 183,53 126,61 100,94",
+              "183,53 183,142 143,121 100,94 126,61",
+              "183,142 100,197 100,145 143,121",
+              "100,197 17,142 58,123 100,145",
+              "17,142 17,53 100,3 76,63 100,94 58,123",
+            ].map((points, index) => <polygon key={points} className={styles.heroFacet} points={points} style={{ animationDelay: `${180 + index * 145}ms` }} />)}
             <rect className={styles.sheen} x="-90" y="-40" width="70" height="280" fill="url(#home-gem-light)" />
+            <rect className={styles.pointerSheen} x="65" y="-40" width="70" height="280" fill="url(#home-gem-light)" />
           </g>
         </svg>
-      </div>
-    </div>
+      </div></div>
+    </HeroCrystalMotion>
   );
 }
 
 export default function HomePage() {
+  const { id, text } = SELF_ITEMS[0]!;
   return (
     <main className={`home-page ${styles.page}`}>
       <section className="home-hero" data-band="night" aria-labelledby="home-title">
@@ -247,6 +258,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      <HomeTrialClient item={{ id, text }} continueHref="/test" remaining={SELF_ITEMS.length - 1} />
       <NewYearBanner />
 
       <section className="home-feature-strip" data-band="night" aria-label="Что даёт тест">
