@@ -3,6 +3,8 @@ import type { Answer, Answers } from "@grani/core";
 export const PAGE_SIZE = 5;
 export const STORAGE_KEY = "grani:answers:v1";
 
+export const ANSWER_VALUES = [1, 2, 3, 4, 5] as const satisfies readonly Answer[];
+
 export const ANSWER_LABELS: Readonly<Record<Answer, string>> = {
   1: "Совсем не про меня",
   2: "Скорее не про меня",
@@ -60,6 +62,23 @@ export function isComplete(items: readonly WithId[], answers: Answers): boolean 
 
 export function withAnswer(answers: Answers, id: string, value: Answer): Answers {
   return { ...answers, [id]: value };
+}
+
+// Ответ мини-пробы с главной ложится в тот же черновик, что читает полный тест. Уже сохранённый ответ
+// на это утверждение не трогаем, чужие ключи сохраняем: повторный перенос безопасен.
+// started — в черновике не было ни одного ответа, то есть это начало теста
+export function mergeTrialAnswer(raw: string | null, itemId: string, value: Answer): { raw: string; started: boolean } {
+  if (!itemId || !isAnswer(value)) throw new Error("Invalid trial answer");
+  let stored: Record<string, unknown> = {};
+  try {
+    const parsed: unknown = raw ? JSON.parse(raw) : {};
+    if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) stored = parsed as Record<string, unknown>;
+  } catch {
+    // битый черновик полный тест всё равно прочтёт как пустой
+  }
+  const started = !Object.values(stored).some(isAnswer);
+  if (!isAnswer(stored[itemId])) stored[itemId] = value;
+  return { raw: JSON.stringify(stored), started };
 }
 
 function isAnswer(value: unknown): value is Answer {

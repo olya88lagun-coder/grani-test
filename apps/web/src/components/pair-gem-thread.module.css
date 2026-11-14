@@ -1,0 +1,28 @@
+.thread { display: block; position: relative; height: 1px; pointer-events: none; }
+:global([data-palette="pair"][data-band="night"]) .thread {
+  background: linear-gradient(90deg, transparent, var(--gold), var(--garnet), transparent);
+}
+:global([data-palette="pair"][data-band="night"]) .thread::after {
+  content: "";
+  position: absolute;
+  inset: -27px 10%;
+  background: radial-gradient(ellipse, var(--garnet), transparent 66%),
+    radial-gradient(ellipse at 37% 50%, var(--gold), transparent 68%);
+  opacity: .42;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .thread {
+    animation: 850ms var(--ease-out) 280ms backwards;
+    animation-name: var(--animation-meter-fill);
+  }
+  :global([data-palette="pair"][data-band="night"]) .thread::after {
+    animation: 700ms var(--ease-out) 620ms backwards;
+    animation-name: var(--animation-fade-in);
+  }
+  .stone[data-pair-stone="left"] { animation: pair-stone-meet 950ms var(--ease-out) backwards; --away: -16px; }
+  .stone[data-pair-stone="right"] { animation: pair-stone-meet 950ms var(--ease-out) backwards; --away: 16px; }
+}
+@keyframes pair-stone-meet {
+  from { transform: translateX(var(--away)) scale(.96); }
+  to { transform: none; }
+}

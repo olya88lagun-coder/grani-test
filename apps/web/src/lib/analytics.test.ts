@@ -152,6 +152,17 @@ describe("goals", () => {
       "purchase_together",
       "attachment_invite",
       "attachment_pair",
+      "fx_hero_seen",
+      "fx_hero_move",
+      "fx_hero_labels",
+      "fx_trial_seen",
+      "fx_trial_pick",
+      "fx_trial_handoff",
+      "fx_teaser_seen",
+      "fx_reveal_start",
+      "fx_reveal_skip",
+      "fx_reveal_done",
+      "fx_pair_seen",
     ]);
   });
 

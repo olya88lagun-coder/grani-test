@@ -9,13 +9,6 @@
 .page :global(.questionnaire) { display: grid; gap: 20px; }
 .page :global(.questionnaire > *) { margin: 0; }
 
-.page :global(.progress) { padding: 0 0 24px; border-radius: 0; background: transparent; box-shadow: none; gap: 14px; }
-.page :global(.progress__head) { display: flex; align-items: center; gap: 14px; }
-.page :global(.progress__head svg) { flex: none; filter: drop-shadow(0 0 14px rgba(47, 163, 110, .35)); }
-.page :global(.progress .muted) { font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums; }
-.page :global(.progress__bar) { height: 4px; background: rgba(239, 233, 218, .14); }
-.page :global(.progress__bar > span) { background: var(--gold); }
-
 .page :global(.questionnaire__screen) { font-family: var(--font-body); font-size: 12px; line-height: 1.4; letter-spacing: .16em; text-transform: uppercase; font-weight: 600; color: var(--gold); margin-bottom: 4px; }
 
 .page :global(.question-card) { padding: 30px 28px; border: 1px solid var(--line); border-radius: 16px; background: color-mix(in srgb, var(--surface) 72%, transparent); box-shadow: none; backdrop-filter: none; animation: none; }
@@ -53,5 +46,5 @@
   .page :global(.questionnaire__navigation .button) { min-width: 0; padding-inline: 20px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .page :global(.progress__bar > span), .page :global(.choice), .page :global(.choice input::after) { transition: none; }
+  .page :global(.choice), .page :global(.choice input::after) { transition: none; }
 }

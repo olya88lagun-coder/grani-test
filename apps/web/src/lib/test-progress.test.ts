@@ -5,6 +5,7 @@ import {
   firstIncompletePage,
   isComplete,
   isPageComplete,
+  mergeTrialAnswer,
   pageCount,
   pageItems,
   parseStoredProgress,
@@ -87,5 +88,31 @@ describe("submitErrorMessage", () => {
     expect(submitErrorMessage("rate_limited")).toMatch(/минуту/i);
     expect(submitErrorMessage(undefined)).toMatch(/интернет/i);
     expect(submitErrorMessage("something_new")).toMatch(/интернет/i);
+  });
+});
+
+describe("mergeTrialAnswer", () => {
+  test("starts an empty draft", () => {
+    expect(mergeTrialAnswer(null, "q1", 4)).toEqual({ raw: '{"q1":4}', started: true });
+  });
+
+  test("keeps other answers and an existing answer to the same item", () => {
+    const result = mergeTrialAnswer('{"q1":2,"q7":5}', "q1", 4);
+    expect(JSON.parse(result.raw)).toEqual({ q1: 2, q7: 5 });
+    expect(result.started).toBe(false);
+  });
+
+  test("a repeated call changes nothing", () => {
+    const once = mergeTrialAnswer(null, "q1", 4);
+    expect(mergeTrialAnswer(once.raw, "q1", 4).raw).toBe(once.raw);
+  });
+
+  test("a broken draft is replaced", () => {
+    expect(mergeTrialAnswer("{oops", "q1", 3)).toEqual({ raw: '{"q1":3}', started: true });
+  });
+
+  test("rejects a bad id or value", () => {
+    expect(() => mergeTrialAnswer(null, "", 3)).toThrow();
+    expect(() => mergeTrialAnswer(null, "q1", 9 as never)).toThrow();
   });
 });

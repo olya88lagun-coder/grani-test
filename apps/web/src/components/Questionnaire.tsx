@@ -1,14 +1,14 @@
 "use client";
 
-import type { Answer, Answers } from "@grani/core";
+import type { Answer, Answers, ItemKey } from "@grani/core";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { GemStone } from "@/components/GemStone";
+import { TestCrystalProgress } from "@/components/TestCrystalProgress";
 import { type Goal, progressGoalsCrossed, reachGoal } from "@/lib/analytics";
-import type { TypeShape } from "@/lib/gem-paths";
-import { gemStone, type GemFamily } from "@/lib/gem-stone";
+
 import {
   ANSWER_LABELS,
+  ANSWER_VALUES,
   PAGE_SIZE,
   answeredCount,
   firstIncompletePage,
@@ -33,16 +33,14 @@ type QuestionnaireBase = {
   finishGoal?: Goal;
   // Цели 25/50/75% — только для своего теста, не для анкеты друзей
   trackProgress?: boolean;
-  // Камень рядом со счётчиком: грани закрашиваются по мере ответов. Без него остаётся только полоса
-  progressGem?: { shape: TypeShape; family: GemFamily };
+  // Ключи нужны визуальному превью Big Five. Остальные анкеты используют полосу.
+  crystalKeys?: readonly ItemKey[];
   // На странице со своим H1 (короткие тесты) заголовок экрана — h2
   screenHeading?: "h1" | "h2";
 };
 
 // Либо ответы уходят на сервер, либо результат считает сам вызывающий (короткие тесты, без сервера)
 export type QuestionnaireProps = QuestionnaireBase & ({ submitUrl: string; onComplete?: never } | { onComplete: (answers: Answers) => void; submitUrl?: never });
-
-const ANSWER_VALUES = [1, 2, 3, 4, 5] as const satisfies readonly Answer[];
 
 function readStorage(key: string): string | null {
   try {
@@ -63,7 +61,7 @@ function writeStorage(key: string, value: string | null): boolean {
   }
 }
 
-export function Questionnaire({ items, storageKey, submitUrl, onComplete, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, progressGem, screenHeading = "h1" }: QuestionnaireProps) {
+export function Questionnaire({ items, storageKey, submitUrl, onComplete, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, crystalKeys, screenHeading = "h1" }: QuestionnaireProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [page, setPage] = useState(0);
@@ -86,7 +84,6 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
   const pages = pageCount(items.length, pageSize);
   const isLastPage = page === pages - 1;
   const done = answeredCount(items, answers);
-  const facetCount = progressGem ? gemStone(progressGem.shape, progressGem.family).facets.length : 0;
 
   function choose(id: string, value: Answer) {
     // Начало — первый ответ в пустом тесте; восстановленный прогресс не считается новым началом
@@ -141,13 +138,12 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
 
   const ScreenHeading = screenHeading;
 
-  if (!restored) return <p className="muted questionnaire__loading" role="status">Загружаем вопросы…</p>;
+  if (!restored && !crystalKeys) return <p className="muted questionnaire__loading" role="status">Загружаем вопросы…</p>;
 
   return (
-    <div className="stack questionnaire" aria-busy={sending}>
-      <div className="progress">
+    <div className="stack questionnaire" aria-busy={sending || !restored}>
+      {crystalKeys ? <TestCrystalProgress items={crystalKeys} answers={answers} done={done} /> : <div className="progress">
         <div className="progress__head">
-          {progressGem && <GemStone shape={progressGem.shape} family={progressGem.family} size={52} lit={Math.round((done / items.length) * facetCount)} />}
           <span className="muted">
             Ответов: {done} из {items.length}
           </span>
@@ -155,14 +151,14 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
         <div className="progress__bar" role="progressbar" aria-label="Прогресс ответов" aria-valuemin={0} aria-valuemax={items.length} aria-valuenow={done}>
           <span style={{ transform: `scaleX(${done / items.length})` }} />
         </div>
-      </div>
+      </div>}
 
       <ScreenHeading className="eyebrow questionnaire__screen" ref={headingRef} tabIndex={-1}>
         Экран {page + 1} из {pages}
       </ScreenHeading>
 
       {pageItems(items, page, pageSize).map((item) => (
-        <fieldset key={item.id} className="card question-card">
+        <fieldset key={item.id} className="card question-card" disabled={!restored}>
           <legend className="question">{item.text}</legend>
           <div className="choices">
             {ANSWER_VALUES.map((value) => (
@@ -200,11 +196,11 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
           </button>
         )}
         {isLastPage ? (
-          <button type="button" className="button" disabled={!isComplete(items, answers) || sending} onClick={submit}>
+          <button type="button" className="button" disabled={!restored || !isComplete(items, answers) || sending} onClick={submit}>
             {sending ? "Отправляем…" : submitLabel}
           </button>
         ) : (
-          <button type="button" className="button" disabled={!isPageComplete(items, answers, page, pageSize)} onClick={() => goTo(page + 1)}>
+          <button type="button" className="button" disabled={!restored || !isPageComplete(items, answers, page, pageSize)} onClick={() => goTo(page + 1)}>
             Дальше
           </button>
         )}

@@ -44,6 +44,18 @@ export const GOALS = [
   "purchase_together",
   "attachment_invite",
   "attachment_pair",
+  // Визуальные эффекты: только Метрика, без идентификатора ответа, типа, результата и токена
+  "fx_hero_seen",
+  "fx_hero_move",
+  "fx_hero_labels",
+  "fx_trial_seen",
+  "fx_trial_pick",
+  "fx_trial_handoff",
+  "fx_teaser_seen",
+  "fx_reveal_start",
+  "fx_reveal_skip",
+  "fx_reveal_done",
+  "fx_pair_seen",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 
@@ -173,6 +185,15 @@ export function withLoginMark(path: string): string {
   const url = new URL(path, "https://grani-test.ru");
   url.searchParams.set(LOGIN_MARK.param, LOGIN_MARK.value);
   return `${url.pathname}${url.search}${url.hash}`;
+}
+
+const reachedOnce = new Set<Goal>();
+
+// Эффект сообщает о себе один раз за загрузку страницы, а не на каждое движение или перерисовку
+export function reachGoalOnce(goal: Goal): void {
+  if (reachedOnce.has(goal)) return;
+  reachedOnce.add(goal);
+  reachGoal(goal);
 }
 
 type Ym = (id: number, method: string, ...args: unknown[]) => void;

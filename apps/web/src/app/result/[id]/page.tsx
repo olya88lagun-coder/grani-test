@@ -19,6 +19,7 @@ import { FriendsBlock } from "./FriendsBlock";
 import { NotificationsBlock } from "./NotificationsBlock";
 import { PairsBlock } from "./PairsBlock";
 import { ReportOffer } from "./ReportOffer";
+import { ResultReveal } from "./ResultReveal";
 import { ScaleDetails } from "./ScaleDetails";
 import { ShareCard } from "./ShareCard";
 import { StickyReportCta } from "./StickyReportCta";
@@ -52,11 +53,12 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
   return (
     <main className={`inner-page inner-page--result ${styles.page}`} data-night-entry data-band="night">
       <GoalOnView goal="result_view" />
+      <ResultReveal key={result.id} dir={gemAssetDir(view.dir)} name={view.name} />
       <div className="page page--result stack">
         <section data-band="night" className="result-hero" aria-labelledby="result-name">
           <div className="result-hero__copy">
             <p className="eyebrow">Твой результат</p>
-            <h1 id="result-name" className={`display ${nameSizeClass(view.name)}`}>
+            <h1 id="result-name" tabIndex={-1} className={`display ${nameSizeClass(view.name)}`}>
               {view.name}
             </h1>
             <p className="lead">{view.shortText}</p>

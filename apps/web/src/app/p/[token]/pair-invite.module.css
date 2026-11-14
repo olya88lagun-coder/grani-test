@@ -29,7 +29,8 @@
 .invite.invite::after { top: 100px; width: 960px; height: 340px; border-color: rgba(227, 179, 160, .08); transform: translateX(-50%) rotate(14deg); }
 .invite.invite :global(.page) { position: relative; z-index: 1; padding-top: 0; }
 .gems { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px; filter: drop-shadow(0 0 40px rgba(227, 179, 160, .2)); }
-.thread { width: 56px; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); }
+.gems > [data-pair-stone] { display: grid; min-width: 0; }
+.thread { flex: 0 0 min(56px, 16%); }
 .invite :global(.eyebrow) { color: var(--gold); text-align: center; }
 .invite h1 { color: var(--ink); text-align: center; text-wrap: balance; }
 .invite :global(.lead) { color: var(--ink-soft); }

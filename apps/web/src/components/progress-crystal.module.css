@@ -1,0 +1,9 @@
+.crystal { display: block; max-width: 100%; height: auto; flex: none; }
+.back { fill: var(--surface-2); }
+.facet { opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
+.facet[data-lit="true"] { opacity: 1; }
+.lines { stroke: var(--ink); stroke-opacity: .2; stroke-width: 1.5; stroke-linejoin: round; }
+.outline { stroke-opacity: .65; stroke-width: 2; }
+@media (prefers-reduced-motion: reduce) {
+  .facet { transition: none; }
+}
