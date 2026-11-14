@@ -19,7 +19,7 @@ for (const viewport of [mobile, desktop]) {
   test.describe(`visual effects at ${viewport.width}px`, () => {
     test.use({ viewport, isMobile: viewport === mobile, hasTouch: viewport === mobile, deviceScaleFactor: 1 });
 
-    test("the first answer colors one facet without moving the layout or saving a draft", async ({ page }) => {
+    test("the first answer colors one facet without moving the layout and carries over on continue", async ({ page }) => {
       await page.goto("/");
       const trial = page.getByRole("region", { name: "Открой первую грань" });
       await expectNoOverflow(page);
@@ -35,10 +35,12 @@ for (const viewport of [mobile, desktop]) {
       await expect(trial.locator("[data-lit=true]")).toHaveCSS("opacity", "1");
       await screenshot(page, `mini-trial-${viewport.width}-after`);
       expect(await trial.evaluate(el => el.offsetHeight)).toBe(before);
+      // Выбор живёт в состоянии компонента: черновик появляется только при переходе в тест
       expect(await page.evaluate(() => localStorage.getItem("grani:answers:v1"))).toBeNull();
-      await trial.getByRole("link", { name: "Перейти к тесту" }).click();
+      await trial.getByRole("button", { name: "Продолжить тест" }).click();
       await expect(page).toHaveURL(/\/test$/);
-      await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "0");
+      expect(await page.evaluate(() => JSON.parse(localStorage.getItem("grani:answers:v1") ?? "{}"))).toEqual({ [SELF_ITEMS[0]!.id]: 5 });
+      await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "1");
       await expectNoOverflow(page);
     });
   });
