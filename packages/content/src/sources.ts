@@ -317,10 +317,67 @@ const CURRAN_HILL_2019: Source = {
   note: "метаанализ когорт 1989–2016: у молодых поколений перфекционизм в среднем растёт, особенно ощущение завышенных требований со стороны других",
 };
 
+const SWIDER_ZIMMERMAN_2010: Source = {
+  authors: "Swider B. W., Zimmerman R. D.",
+  year: 2010,
+  title: "Born to burnout: A meta-analytic path model of personality, job burnout, and work outcomes",
+  journal: "Journal of Vocational Behavior",
+  url: "https://doi.org/10.1016/j.jvb.2010.01.003",
+  note: "метаанализ: из черт сильнее всего с выгоранием связана эмоциональная чувствительность; нагрузка и поддержка на работе значат не меньше черт",
+};
+
+const ALARCON_2009: Source = {
+  authors: "Alarcon G., Eschleman K. J., Bowling N. A.",
+  year: 2009,
+  title: "Relationships between personality variables and burnout: A meta-analysis",
+  journal: "Work & Stress",
+  url: "https://doi.org/10.1080/02678370903282600",
+  note: "метаанализ: выгорание связано с несколькими чертами, но черты объясняют лишь часть различий — условия работы остаются ключевыми",
+};
+
+const RICK_SMALL_FINKEL_2011: Source = {
+  authors: "Rick S. I., Small D. A., Finkel E. J.",
+  year: 2011,
+  title: "Fatal (Fiscal) Attraction: Spendthrifts and Tightwads in Marriage",
+  journal: "Journal of Marketing Research",
+  url: "https://doi.org/10.1509/jmkr.48.2.228",
+  note: "исследование браков: транжиры и экономные люди чаще выбирают друг друга, и это несовпадение связано с более частыми спорами о деньгах",
+};
+
+const DEW_BRITT_HUSTON_2012: Source = {
+  authors: "Dew J., Britt S., Huston S.",
+  year: 2012,
+  title: "Examining the Relationship Between Financial Issues and Divorce",
+  journal: "Family Relations",
+  url: "https://doi.org/10.1111/j.1741-3729.2012.00715.x",
+  note: "панельные данные: споры о деньгах — один из самых сильных предикторов распада пары, сильнее многих других тем конфликтов",
+};
+
+const MATZ_GLADSTONE_STILLWELL_2016: Source = {
+  authors: "Matz S. C., Gladstone J. J., Stillwell D.",
+  year: 2016,
+  title: "Money Buys Happiness When Spending Fits Our Personality",
+  journal: "Psychological Science",
+  url: "https://doi.org/10.1177/0956797616635200",
+  note: "исследование банковских трат: покупки, совпадающие с чертами человека, связаны с большей удовлетворённостью, чем сама сумма трат",
+};
+
+const DONNELLY_IYER_HOWELL_2012: Source = {
+  authors: "Donnelly G., Iyer R., Howell R. T.",
+  year: 2012,
+  title: "The Big Five personality traits, material values, and financial well-being of self-described money managers",
+  journal: "Journal of Economic Psychology",
+  url: "https://doi.org/10.1016/j.joep.2012.08.001",
+  note: "исследование: добросовестность связана с лучшим финансовым благополучием, а выраженный материализм — с большими долгами",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
   "trevozhnost-i-cherty": [KOTOV_2010, LAHEY_2009],
   "perfektsionizm-i-lichnost": [STOEBER_OTTO_2006, EGAN_2011, CURRAN_HILL_2019],
+  "vygoranie-i-lichnost": [SWIDER_ZIMMERMAN_2010, ALARCON_2009],
+  "dengi-v-pare": [RICK_SMALL_FINKEL_2011, DEW_BRITT_HUSTON_2012],
+  "lichnost-i-dengi": [MATZ_GLADSTONE_STILLWELL_2016, DONNELLY_IYER_HOWELL_2012],
   "kak-vosstanavlivatsya-introvertu": [LEIKAS_ILMARINEN_2017, NGUYEN_RYAN_DECI_2018],
   "lichnost-i-stress": [LUO_2023, BOLGER_SCHILLING_1991],
   "otkrytost-i-karera": [BARRICK_MOUNT_1991, HUANG_2014],
