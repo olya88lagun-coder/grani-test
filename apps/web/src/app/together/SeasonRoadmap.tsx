@@ -1,14 +1,16 @@
 import { TOGETHER_SEASON } from "@grani/content/together-season";
+import { RoadmapTrail } from "./RoadmapTrail";
+import { RoadmapStone } from "./RoadmapStone";
 
 type Props = { from?: number; compact?: boolean };
 
-// Маршрут на полгода: тема каждого месяца и два настоящих вопроса из него. Без состояния и без клиентского кода,
-// поэтому годится и для публичной страницы, и для закрытой карточки
+// Тема и вопросы берутся из каталога. В закрытой карточке from задаёт следующий месяц.
 export function SeasonRoadmap({ from = 1, compact = false }: Props) {
   return (
-    <ol className="tc-season">
+    <RoadmapTrail className="tc-season">
       {TOGETHER_SEASON.filter((month) => month.month >= from).map((month) => (
         <li key={month.month} className="tc-season__item">
+          <RoadmapStone month={month.month} next={month.month === Math.max(2, from)} />
           <p className="eyebrow">Месяц {month.month}</p>
           <p className="tc-season__title">{month.title}</p>
           <p>{month.promise}</p>
@@ -26,6 +28,6 @@ export function SeasonRoadmap({ from = 1, compact = false }: Props) {
           )}
         </li>
       ))}
-    </ol>
+    </RoadmapTrail>
   );
 }

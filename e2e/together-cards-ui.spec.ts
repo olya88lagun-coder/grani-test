@@ -52,7 +52,17 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await boris.getByLabel(/Какой небольшой поступок/).fill("Борис ответил");
   await boris.getByRole("button", { name: "Отправить ответ" }).click();
   await expect(boris.getByText("Борис ответил")).toBeVisible();
+  const opening = boris.locator("[data-reply-opening]");
+  const skipAnimation = opening.getByRole("button", { name: "Пропустить", exact: true });
+  await expect(skipAnimation).toBeEnabled();
+  await skipAnimation.click();
+  await expect(opening).toHaveAttribute("data-reply-opening", "ready");
   await expect(boris.getByText(secret)).toBeVisible();
+  if (process.env.WAVE_TWO_QA_OUTPUT) {
+    await boris.setViewportSize({ width: 375, height: 812 });
+    await opening.scrollIntoViewIfNeeded();
+    await boris.screenshot({ path: `${process.env.WAVE_TWO_QA_OUTPUT}/answers-opening-375.png`, scale: "css" });
+  }
   await anna.getByRole("button", { name: "Проверить ответы" }).click();
   await expect(anna.getByText("Борис ответил")).toBeVisible();
 
@@ -65,6 +75,7 @@ test("two people play cards on the screens: wait, reveal, edit flag, continue, s
   await expect(anna.getByLabel("Хочу выбрать свой ответ для будущей книги")).toBeChecked();
   await boris.reload();
   await expect(boris.getByText(secret)).toBeVisible();
+  await expect(opening).toHaveAttribute("data-reply-opening", "ready");
   await expect(boris.getByText("изменено")).toHaveCount(0);
 
   // Правка текста после раскрытия показывается партнёру отметкой

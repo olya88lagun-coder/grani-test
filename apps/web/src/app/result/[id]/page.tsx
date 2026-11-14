@@ -131,7 +131,7 @@ export default async function ResultPage({ params }: { params: Promise<{ id: str
 
         <FriendsBlock resultId={result.id} dir={gemAssetDir(view.dir)} />
 
-        <PairsBlock userId={user.id} resultId={result.id} />
+        <PairsBlock userId={user.id} resultId={result.id} dir={gemAssetDir(view.dir)} />
 
         <NotificationsBlock userId={user.id} />
 
