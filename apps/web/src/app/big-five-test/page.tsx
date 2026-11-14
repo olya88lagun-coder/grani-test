@@ -14,7 +14,7 @@ import styles from "./big-five.module.css";
 
 const TITLE = "Тест Big Five бесплатно — 50 вопросов на русском";
 const DESCRIPTION =
-  "Пройди тест «Большая пятёрка»: 50 утверждений, около 10 минут. Бесплатно — тип и пять шкал личности. Для просмотра результата нужен вход через VK ID.";
+  "Пройди тест «Большая пятёрка»: 50 утверждений, около 10 минут. Тип личности, пять шкал и расшифровка каждой — бесплатно. Результат сохраняется через вход с VK ID.";
 const PATH = "/big-five-test";
 
 export const metadata = publicMetadata({ title: TITLE, description: DESCRIPTION, path: PATH });

@@ -10,8 +10,8 @@ import { TestCta } from "@/components/TestCta";
 import { PAIR_GUIDE_CONTENTS } from "@/lib/pair-guide";
 import { faqJsonLd, publicMetadata, webPageJsonLd } from "@/lib/seo";
 
-const DESCRIPTION = "Пройдите тест вдвоём и узнайте процент совместимости по Большой пятёрке. Бесплатно — типы обоих и процент, подробный разбор пары — по желанию.";
-const TITLE = "Тест на совместимость пары по Big Five";
+const DESCRIPTION = "Пройдите тест вдвоём, по 10 минут каждый, и узнайте, на сколько процентов вы совместимы. Типы обоих, процент и из чего он сложился — бесплатно.";
+const TITLE = "Тест на совместимость для двоих — на сколько % вы совместимы";
 const PATH = "/compatibility";
 
 export const metadata = publicMetadata({ title: TITLE, description: DESCRIPTION, path: PATH });
