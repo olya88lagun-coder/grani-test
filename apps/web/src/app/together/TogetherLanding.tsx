@@ -6,6 +6,7 @@ import { TOGETHER_SEASON } from "@grani/content/together-season";
 import { formatRub, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/core";
 import { DATA_STORAGE, TOGETHER_REFUND_DAYS } from "@/lib/legal";
 import styles from "./together-landing.module.css";
+import { TogetherCardDemo } from "./TogetherCardDemo";
 
 const question = TOGETHER_TRACK.find((card) => card.id === "m01-d01")!;
 // В макете это идея для свидания из месяца 4, но в каталоге она является вопросом.
@@ -98,7 +99,7 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
         <p className={styles.eyebrow}>Что внутри</p><h2 id="inside-title">Один вопрос. Время для вас.</h2>
         <p className={styles.sectionLead}>Можно начать с воспоминания. Или выйти на небольшое свидание — без большого плана.</p>
         <div className={styles.samples}>
-          <Example kind="Разговор · месяц 1" title={question.prompt} text={question.hint} />
+          <TogetherCardDemo prompt={question.prompt} className={styles.example} />
           <article className={styles.example}><span className={styles.badge}>Пример</span><p className={styles.cardKind}>Свидание · месяц 1</p><h3>{date.title}</h3><p>{date.prompt}</p><p className={styles.dateSteps}>{date.hint}</p></article>
         </div>
       </div>

@@ -1,0 +1,52 @@
+.facets { width: 100%; min-width: 0; position: relative; }
+.art { width: min(100%, 250px); aspect-ratio: 1; margin-inline: auto; position: relative; isolation: isolate; }
+.portrait { position: absolute; inset: 0; display: grid; place-items: center; }
+.drawing { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  -webkit-mask: var(--portrait-mask) center / contain no-repeat;
+  mask: var(--portrait-mask) center / contain no-repeat;
+}
+.drawing polygon { fill: var(--ink); fill-opacity: .18; stroke: var(--ink); stroke-opacity: .7; stroke-width: 1; opacity: 0; pointer-events: all; cursor: pointer; }
+.drawing polygon[data-current="true"] { opacity: 1; }
+.score {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  min-width: 1.65em;
+  min-height: 1.65em;
+  padding-inline: 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 300 clamp(36px, 6vw, 54px) / 1 var(--font-display);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+.labels { display: grid; gap: 5px; margin-top: 10px; text-align: left; }
+.labels button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  min-width: 0;
+  padding: 5px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.labels button[data-current="true"] { background: var(--surface-3); border-color: var(--accent); }
+.labels button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.labels b { flex: none; white-space: nowrap; font: 300 24px / 1 var(--font-display); font-variant-numeric: tabular-nums; }
+.status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+@media (prefers-reduced-motion: no-preference) {
+  .drawing polygon { transition: opacity var(--dur-base) var(--ease-out); }
+}

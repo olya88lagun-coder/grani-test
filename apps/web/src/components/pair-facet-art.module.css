@@ -1,0 +1,61 @@
+.scene {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 410px);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(26px, .34fr) minmax(0, 1fr);
+  align-items: center;
+  padding: 4px 0;
+  color: var(--accent);
+}
+.left, .right { display: grid; place-items: center; width: 100%; min-width: 0; aspect-ratio: 1; }
+.right > span, .left > span { width: 100%; }
+.center { position: relative; }
+.orbit {
+  position: absolute;
+  z-index: -1;
+  inset: 24% 2%;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  transform: rotate(-9deg);
+}
+.empty {
+  width: 100%;
+  max-width: 156px;
+  fill: none;
+  stroke: currentColor;
+  stroke-opacity: .35;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+.solid { stroke-opacity: .75; fill: var(--surface-2); }
+.spark {
+  position: absolute;
+  display: block;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font: 300 26px / 1 var(--font-display);
+  opacity: 0;
+}
+:global([data-band="night"]) .scene[data-joined="true"] .spark { color: var(--gold); opacity: 1; }
+@media (prefers-reduced-motion: no-preference) {
+  .scene[data-waiting="true"] .empty {
+    animation: 3.8s ease-in-out infinite;
+    animation-name: var(--animation-breathe);
+  }
+  .scene[data-joined="true"] .right {
+    animation: var(--dur-slow) var(--ease-out) both;
+    animation-name: var(--animation-fade-in);
+  }
+  .scene[data-confirmed="true"] .spark {
+    animation: confirm-spark 1.35s var(--ease-out) 260ms both;
+  }
+}
+
+@keyframes confirm-spark {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.6); }
+  38% { opacity: 1; transform: translate(-50%, -50%) scale(1.45); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}

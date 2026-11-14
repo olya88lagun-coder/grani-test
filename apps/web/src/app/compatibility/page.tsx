@@ -1,8 +1,9 @@
 import { COMPATIBILITY_LEVELS, formatRub, PRODUCT_PRICES, RESOURCE_TRAITS, SIMILARITY_TRAITS, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/core";
-import { compatibilityTexts, TRAIT_LABELS } from "@grani/content";
+import { compatibilityTexts, SELF_ITEMS, TRAIT_LABELS } from "@grani/content";
 import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
 import styles from "./compatibility.module.css";
+import { PartnerGuessClient } from "./PartnerGuessClient";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
@@ -55,6 +56,7 @@ function PairActions() {
 export default function CompatibilityPage() {
   const library = getLibrary();
   const price = formatRub(PRODUCT_PRICES.pair);
+  const { id, text } = SELF_ITEMS.find(({ id }) => id === "ipip-11")!;
   return (
     <main className={`inner-page ${styles.page}`} data-night-entry>
       <article>
@@ -90,6 +92,7 @@ export default function CompatibilityPage() {
           <p className={styles.note}>Без согласия партнёра пара не создаётся. Выйти можно в любой момент: страница пары и разбор скроются у обоих.</p>
         </section>
 
+        <PartnerGuessClient item={{ id, text }} inviteHref="/me?to=pairs" />
         </div>
         <section className={`${styles.report} stack`} data-band="night" aria-labelledby="pair-report-inside">
         <div className={styles.wrap}>

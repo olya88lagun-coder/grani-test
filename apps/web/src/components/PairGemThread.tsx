@@ -6,6 +6,6 @@ export function PairGemStone({ side, className, children }: { side: "left" | "ri
   return <span className={[styles.stone, className].filter(Boolean).join(" ")} data-pair-stone={side}>{children}</span>;
 }
 
-export function PairGemThread({ className }: { className?: string }) {
-  return <span className={[styles.thread, className].filter(Boolean).join(" ")} data-pair-thread aria-hidden="true"><GoalOnView goal="fx_pair_seen" /></span>;
+export function PairGemThread({ className, analytics = true }: { className?: string; analytics?: boolean }) {
+  return <span className={[styles.thread, className].filter(Boolean).join(" ")} data-pair-thread aria-hidden="true">{analytics && <GoalOnView goal="fx_pair_seen" />}</span>;
 }
