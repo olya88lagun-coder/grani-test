@@ -65,6 +65,12 @@ export const GOALS = [
   "fx_wait_confirmed",
   "fx_facet_pick",
   "fx_friends_seen",
+  "fx_compat_stones_meet",
+  "fx_roadmap_seen",
+  "fx_answers_open",
+  "fx_answers_skip",
+  "fx_pair_shelf_seen",
+  "fx_pair_shelf_open",
 ] as const;
 export type Goal = (typeof GOALS)[number];
 

@@ -1,0 +1,18 @@
+.opening { min-width: 0; overflow: hidden; }
+.opening:focus-visible { outline-offset: 2px; }
+.head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 10px; color: var(--ink); }
+.head p { margin: 0; font: 300 25px / 1.1 var(--font-display); }
+.skip { min-height: 44px; padding: 4px 10px; border: 1px solid var(--accent); border-radius: var(--radius); background: var(--bg); color: var(--ink); font: inherit; font-size: 13px; cursor: pointer; }
+.skip:disabled { visibility: hidden; }
+@media (prefers-reduced-motion: no-preference) {
+  .opening[data-reply-opening="playing"] :global(.tc-replies) > section {
+    animation: replies-meet 1.4s var(--ease-out) both;
+    --from-x: -22px;
+  }
+  .opening[data-reply-opening="playing"] :global(.tc-replies) > section + section { --from-x: 22px; }
+}
+@keyframes replies-meet {
+  0% { opacity: .12; transform: translateX(var(--from-x)) scale(.975); }
+  45% { opacity: .85; }
+  100% { opacity: 1; transform: none; }
+}

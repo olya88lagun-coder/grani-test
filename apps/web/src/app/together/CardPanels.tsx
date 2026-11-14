@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { lockTitle, partnerStatusText, type AnswerValues, type CardLockView, type CardView } from "@/lib/together-cards-view";
 import { SeasonRoadmap } from "./SeasonRoadmap";
+import { ReplyOpening } from "./ReplyOpening";
 
 export function CardHeader({ card }: { card: CardView }) {
   const compact = card.state === "answer" && !card.locked;
@@ -110,6 +111,7 @@ export function WaitingPanel({ card, partnerName, working, onEdit, onDelete, onC
 
 type RevealProps = {
   card: CardView;
+  animate: boolean;
   partnerName: string;
   working: boolean;
   doneIntent: boolean;
@@ -119,14 +121,14 @@ type RevealProps = {
   onContinue: () => void;
 };
 
-export function RevealPanel({ card, partnerName, working, doneIntent, onDoneIntent, onToggle, onEdit, onContinue }: RevealProps) {
+export function RevealPanel({ card, animate, partnerName, working, doneIntent, onDoneIntent, onToggle, onEdit, onContinue }: RevealProps) {
   const mine = card.mine;
   const partner = card.partner;
   const booleans = card.fields.filter((field) => field.type === "boolean" && field.availableAt === "after_reveal");
   const alreadyDone = mine?.done === true;
   return (
     <div className="stack">
-      <div className="tc-replies">
+      <ReplyOpening animate={animate}>
         <section className="tc-paper stack">
           <p className="eyebrow">Ваш ответ{mine && mine.revision > 1 ? " · изменён" : ""}</p>
           {mine && <AnswerTexts card={card} values={mine.fields} />}
@@ -147,7 +149,7 @@ export function RevealPanel({ card, partnerName, working, doneIntent, onDoneInte
           <p className="eyebrow">{partnerName}{partner.edited ? " · изменено" : ""}</p>
           {partner.fields && <AnswerTexts card={card} values={partner.fields} />}
         </section>
-      </div>
+      </ReplyOpening>
       <section className="tc-paper stack">
         <p className="eyebrow">Маленький шаг</p>
         <p className="tc-flow">{card.jointAction}</p>

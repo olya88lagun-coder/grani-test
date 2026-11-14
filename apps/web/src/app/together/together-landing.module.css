@@ -101,7 +101,7 @@
 .roadmap summary { display: grid; grid-template-columns: 72px minmax(0, 1fr) 28px; align-items: center; column-gap: 24px; padding: 24px 4px; cursor: pointer; list-style: none; }
 .roadmap summary::-webkit-details-marker { display: none; }
 .roadmap summary:focus-visible { outline: 2px solid var(--landing-gold); outline-offset: 2px; }
-.monthNo { font-family: var(--font-display); font-size: 48px; line-height: 1; color: var(--landing-gold); }
+.roadmap [data-roadmap-stone] { justify-self: start; margin-left: 10px; }
 .monthMain { display: grid; gap: 4px; min-width: 0; }
 .monthMain h3 { margin: 0; font-size: 30px; line-height: 1.12; }
 .monthMain p { margin: 0; font-size: 15px; line-height: 1.6; color: var(--landing-soft); }
@@ -113,7 +113,8 @@
 .result strong { color: var(--landing-gold); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
 @media (max-width: 600px) {
   .roadmap summary { grid-template-columns: 44px minmax(0, 1fr) 20px; column-gap: 14px; padding: 20px 0; }
-  .monthNo { font-size: 34px; }
+  .roadmap [data-roadmap-stone] { margin-left: 0; }
+  .roadmap > li { padding: 0; }
   .monthMain h3 { font-size: 26px; }
   .monthMore { padding: 0 0 24px 0; }
 }
