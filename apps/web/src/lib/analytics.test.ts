@@ -172,6 +172,12 @@ describe("goals", () => {
       "fx_wait_confirmed",
       "fx_facet_pick",
       "fx_friends_seen",
+      "fx_compat_stones_meet",
+      "fx_roadmap_seen",
+      "fx_answers_open",
+      "fx_answers_skip",
+      "fx_pair_shelf_seen",
+      "fx_pair_shelf_open",
     ]);
   });
 
@@ -202,6 +208,16 @@ describe("goals", () => {
     vi.stubGlobal("window", { ym, location: { origin: "https://grani-test.ru" } });
     reachGoal("login");
     expect(ym).toHaveBeenCalledWith(METRIKA_ID, "reachGoal", "login", undefined);
+  });
+
+  it("sends visual events with no payload and leaves the internal funnel untouched", () => {
+    const ym = vi.fn();
+    const sendBeacon = vi.fn();
+    vi.stubGlobal("window", { ym, location: { origin: "https://grani-test.ru" }, navigator: { sendBeacon } });
+    const effects = GOALS.filter(goal => goal.startsWith("fx_"));
+    for (const goal of effects) reachGoal(goal);
+    expect(ym.mock.calls).toEqual(effects.map(goal => [METRIKA_ID, "reachGoal", goal, undefined]));
+    expect(sendBeacon).not.toHaveBeenCalled();
   });
 
   it("counts funnel steps on the site except on the owner's device", () => {

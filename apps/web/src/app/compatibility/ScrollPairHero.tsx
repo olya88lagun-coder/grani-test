@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { reachGoalOnce } from "@/lib/analytics";
 
 export function ScrollPairHero({ className, children }: { className?: string; children: ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -28,6 +29,7 @@ export function ScrollPairHero({ className, children }: { className?: string; ch
       scene.style.setProperty("--approach", progress.toFixed(3));
       scene.style.setProperty("--contact", Math.max(0, (progress - .68) / .32).toFixed(3));
       scene.dataset.pairInMotion = "";
+      if (progress >= .85 && stones.getBoundingClientRect().bottom > 0) reachGoalOnce("fx_compat_stones_meet");
     }
 
     function schedule() {

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, type ReactNode } from "react";
+import { reachGoal, reachGoalOnce } from "@/lib/analytics";
 import styles from "./pair-shelf.module.css";
 
 export function PairShelfLink({ href, recent, children }: { href: string; recent: boolean; children: ReactNode }) {
@@ -9,15 +10,16 @@ export function PairShelfLink({ href, recent, children }: { href: string; recent
 
   useEffect(() => {
     const link = ref.current;
-    if (!recent || !link || !("IntersectionObserver" in window)) return;
+    if (!link || !("IntersectionObserver" in window)) return;
     const observer = new IntersectionObserver(([entry]) => {
       if (!entry?.isIntersecting) return;
-      link.dataset.newPairFlash = "";
+      reachGoalOnce("fx_pair_shelf_seen");
+      if (recent) link.dataset.newPairFlash = "";
       observer.disconnect();
     }, { threshold: .5 });
     observer.observe(link);
     return () => observer.disconnect();
   }, [recent]);
 
-  return <Link ref={ref} href={href} className={`pair-block__item ${styles.item}`}>{children}</Link>;
+  return <Link ref={ref} href={href} onClick={() => reachGoal("fx_pair_shelf_open")} className={`pair-block__item ${styles.item}`}>{children}</Link>;
 }

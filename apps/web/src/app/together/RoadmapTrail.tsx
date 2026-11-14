@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { reachGoalOnce } from "@/lib/analytics";
 import styles from "./roadmap-trail.module.css";
 
 export function RoadmapTrail({ className, children }: { className?: string; children: ReactNode }) {
@@ -11,8 +12,9 @@ export function RoadmapTrail({ className, children }: { className?: string; chil
     const motion = window.matchMedia("(prefers-reduced-motion: no-preference)");
     const observer = new IntersectionObserver(entries => {
       for (const entry of entries) {
-        if (!entry.isIntersecting || !motion.matches) continue;
-        entry.target.closest("li")?.setAttribute("data-lit-stop", "");
+        if (!entry.isIntersecting) continue;
+        reachGoalOnce("fx_roadmap_seen");
+        if (motion.matches) entry.target.closest("li")?.setAttribute("data-lit-stop", "");
         observer.unobserve(entry.target);
       }
     }, { rootMargin: "0px 0px -12% 0px" });
