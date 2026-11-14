@@ -172,6 +172,12 @@ describe("goals", () => {
       "fx_wait_confirmed",
       "fx_facet_pick",
       "fx_friends_seen",
+      "fx_pair_contact",
+      "fx_trail_seen",
+      "fx_reply_reveal",
+      "fx_reply_skip",
+      "fx_shelf_seen",
+      "fx_shelf_open",
     ]);
   });
 

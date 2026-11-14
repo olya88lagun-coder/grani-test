@@ -1,0 +1,35 @@
+.trail { --stone-axis: 34px; --stop-top: 48px; }
+.trail > li { position: relative; }
+:global(.tc-season).trail { --stone-axis: 20px; --stop-top: 36px; --stop-gap: 21px; }
+:global(.tc-season).trail > li { padding-inline-start: 54px; }
+:global(.tc-season).trail > li > .stop { position: absolute; top: 14px; left: 0; }
+:global(.tc-season).trail > li:first-child > .stop { top: 0; }
+.trail > li:not(:last-child)::before,
+.trail > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  width: 1px;
+  left: var(--stone-axis);
+  top: var(--stop-top, 40px);
+  height: calc(100% + var(--stop-gap, 0px));
+  background: var(--line);
+}
+.trail > li:not(:last-child)::after { background: var(--accent); opacity: .25; }
+:global([data-band="night"]) .trail > li:not(:last-child)::after { background: var(--gold); }
+.stop { position: relative; z-index: 1; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; background: var(--bg); color: var(--accent); }
+.stone { display: grid; place-items: center; width: 36px; height: 36px; background: var(--surface-2); border-radius: 50%; }
+.lock { position: absolute; bottom: 1px; right: 1px; background: var(--bg); border-radius: 2px; }
+.stop[data-next="true"] .stone { opacity: .55; }
+@media (max-width: 600px) {
+  .trail { --stone-axis: 20px; --stop-top: 40px; }
+  .stop { width: 40px; height: 40px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .trail > li[data-lit-stop]:not(:last-child)::after { transform-origin: top; animation: path-grow 760ms var(--ease-out) both; }
+  .trail > li[data-lit-stop] .stone { animation: var(--dur-slow) var(--ease-out) both; animation-name: var(--animation-fade-rise); }
+  .trail > li[data-lit-stop] .stop[data-next="true"] .stone { animation: next-stone 2.1s var(--ease-out) .3s 2; }
+}
+@keyframes path-grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes next-stone { 50% { opacity: 1; transform: scale(1.07); } }

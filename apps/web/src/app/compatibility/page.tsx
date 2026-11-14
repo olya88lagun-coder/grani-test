@@ -4,6 +4,8 @@ import { getLibrary } from "@grani/content/data";
 import Link from "next/link";
 import styles from "./compatibility.module.css";
 import { PartnerGuessClient } from "./PartnerGuessClient";
+import { ScrollPairHero } from "./ScrollPairHero";
+import { GemPortrait } from "@/components/GemPortrait";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
@@ -60,11 +62,12 @@ export default function CompatibilityPage() {
   return (
     <main className={`inner-page ${styles.page}`} data-night-entry>
       <article>
-        <section className={styles.hero} data-band="night">
+        <div data-pair-scroll-section>
+        <section className={styles.hero} data-band="night" data-palette="pair">
         <div className={styles.art} aria-hidden="true">
           <picture>
-            <source media="(max-width: 759px)" srcSet="/compatibility/hero-night-mobile.webp" />
-            <img src="/compatibility/hero-night-desktop.webp" alt="" width={2400} height={1200} fetchPriority="high" />
+            <source media="(max-width: 759px)" srcSet="/home/hero-night-mobile.webp" />
+            <img src="/home/hero-night-desktop.webp" alt="" width={2400} height={1200} fetchPriority="high" />
           </picture>
         </div>
         <div className={styles.wrap}>
@@ -76,7 +79,15 @@ export default function CompatibilityPage() {
             <p className="lead">{DESCRIPTION}</p>
             <PairActions />
           </div>
-          <p className={styles.percent}>78%<span>пример · индекс сочетания профилей</span><span>Сочетание профилей, не прогноз отношений.</span></p>
+          <ScrollPairHero className={styles.heroScene}>
+            <div className={styles.heroStones} aria-hidden="true">
+              <span className={styles.heroOrbit} />
+              <span className={styles.heroStone}><GemPortrait dir="ppmp" size={224} priority /></span>
+              <span className={styles.heroStone}><GemPortrait dir="ppmp" size={224} priority /></span>
+              <span className={styles.heroContact}>✧</span>
+            </div>
+            <p className={styles.percent}>78%<span>пример · индекс сочетания профилей</span><span>Сочетание профилей, не прогноз отношений.</span></p>
+          </ScrollPairHero>
         </header>
         </div>
         </section>
@@ -91,10 +102,12 @@ export default function CompatibilityPage() {
           </ol>
           <p className={styles.note}>Без согласия партнёра пара не создаётся. Выйти можно в любой момент: страница пары и разбор скроются у обоих.</p>
         </section>
-
+        </div>
+        </div>
+        <div className={`${styles.content} ${styles.guessWrap}`}>
         <PartnerGuessClient item={{ id, text }} inviteHref="/me?to=pairs" />
         </div>
-        <section className={`${styles.report} stack`} data-band="night" aria-labelledby="pair-report-inside">
+        <section className={`${styles.report} stack`} data-band="night" data-palette="pair" aria-labelledby="pair-report-inside">
         <div className={styles.wrap}>
           <p className="eyebrow">Разбор пары</p>
           <h2 id="pair-report-inside">Карта вашей пары — инструкция друг к другу</h2>

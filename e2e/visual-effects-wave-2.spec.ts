@@ -21,6 +21,15 @@ for (const viewport of [mobile, desktop]) {
 
     test("partner guess fills a stone and keeps the invitation route", async ({ page }) => {
       await page.goto("/compatibility");
+      const scene = page.locator("[data-scroll-pair]");
+      await expect(scene.locator("[data-gem-dir=ppmp]")).toHaveCount(2);
+      const approach = () => scene.evaluate(el => Number((el as HTMLElement).style.getPropertyValue("--approach")));
+      await scene.scrollIntoViewIfNeeded();
+      await expect(scene).toHaveAttribute("data-pair-in-motion", "");
+      const initial = await approach();
+      await page.evaluate(() => window.scrollBy(0, 160));
+      await expect.poll(approach).toBeGreaterThan(initial);
+      await capture(page, `pair-hero-${viewport.width}`);
       const guess = page.getByRole("region", { name: "Угадай партнёра" });
       await guess.scrollIntoViewIfNeeded();
       const pair = guess.locator("[data-pair-facets]");
@@ -71,6 +80,37 @@ test("Together demo reveals the sample answer after both steps", async ({ page }
   await capture(page, "together-card-375");
   await card.getByRole("button", { name: "Показать заново" }).click();
   await expect(turn).toBeFocused();
+});
+
+test("the season trail has six milestones and lights as it enters view", async ({ page }) => {
+  await page.setViewportSize(mobile);
+  await page.goto("/together");
+  const trail = page.locator("[data-season-trail]");
+  const stones = trail.locator("[data-roadmap-stone]");
+  await expect(stones).toHaveCount(6);
+  await expect(stones.nth(1)).toHaveAttribute("data-next", "true");
+  await stones.nth(1).scrollIntoViewIfNeeded();
+  await expect(trail.locator("li[data-lit-stop]").first()).toBeAttached();
+  await expect(stones.nth(1).locator("xpath=ancestor::li[1]")).toHaveAttribute("data-lit-stop", "");
+  expect(await overflow(page)).toBeLessThanOrEqual(0);
+  await capture(page, "season-trail-375");
+  await trail.locator("summary").nth(1).click();
+  await expect(trail.locator("details").nth(1)).toHaveAttribute("open", "");
+});
+
+test("the compatibility stones and route stay readable with reduced motion", async ({ page }) => {
+  await page.setViewportSize(mobile);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/compatibility");
+  const scene = page.locator("[data-scroll-pair]");
+  await scene.scrollIntoViewIfNeeded();
+  await expect(scene).not.toHaveAttribute("data-pair-in-motion", "");
+  await expect(scene.getByText("78%", { exact: false }).first()).toBeVisible();
+  await page.goto("/together");
+  const next = page.locator("[data-roadmap-stone][data-next=true]");
+  await next.scrollIntoViewIfNeeded();
+  await expect(next).toBeVisible();
+  await expect(next.locator("xpath=ancestor::li[1]")).not.toHaveAttribute("data-lit-stop", "");
 });
 
 test("waiting stone joins after the real partner confirmation", async ({ page, browser }) => {

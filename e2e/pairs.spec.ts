@@ -36,8 +36,18 @@ test("a partner takes the test, consents, both see the pair, leaving hides it fo
   // Ссылка одноразовая, пара видна пригласившей
   await anna.page.goto(inviteUrl);
   await expect(anna.page.getByRole("heading", { name: "Ссылка уже использована" })).toBeVisible();
-  await anna.page.goto(resultUrl);
-  await anna.page.getByRole("link", { name: /^Пара: вы и Борис/ }).click();
+  await anna.page.goto(`${resultUrl.split("#")[0]}#pairs`);
+  const pairLink = anna.page.getByRole("link", { name: /^Пара: вы и Борис/ });
+  await expect(pairLink.locator("[data-partner-stone] [data-gem-dir]")).toHaveCount(1);
+  await pairLink.scrollIntoViewIfNeeded();
+  await expect(pairLink).toHaveAttribute("data-new-pair-flash", "");
+  if (process.env.WAVE_TWO_QA_OUTPUT) {
+    await anna.page.setViewportSize({ width: 375, height: 812 });
+    await pairLink.scrollIntoViewIfNeeded();
+    await expect(pairLink.locator("[data-gem-dir]")).toHaveAttribute("data-loaded", "true");
+    await anna.page.screenshot({ path: `${process.env.WAVE_TWO_QA_OUTPUT}/pair-shelf-375.png`, scale: "css" });
+  }
+  await pairLink.click();
   await expect(anna.page).toHaveURL(pairUrl);
   await expect(anna.page.locator(".pair-person").getByText(/^Вы · Аня/)).toBeVisible();
 

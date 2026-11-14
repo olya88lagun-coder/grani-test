@@ -47,6 +47,9 @@ const without = <T,>(record: Record<string, T>, key: string): Record<string, T> 
 export function TogetherCards({ partnerName, price, accessActive, renderPayment, onGone, onAccessCheck, space, firstName, renew, extras }: Props) {
   const [load, setLoad] = useState<Load>("loading");
   const [card, setCard] = useState<CardView | null>(null);
+  const loadedCard = useRef<CardView | null>(null);
+  const playedReveal = useRef(new Set<string>());
+  const [revealCardId, setRevealCardId] = useState<string | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [drafts, setDrafts] = useState<Record<string, AnswerValues>>({});
   const [doneIntent, setDoneIntent] = useState<Record<string, boolean>>({});
@@ -67,6 +70,8 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
   const gone = useCallback(() => {
     setLoad("gone");
     setCard(null);
+    loadedCard.current = null;
+    setRevealCardId(null);
     setDrafts({});
     setDoneIntent({});
     onGone();
@@ -76,7 +81,14 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
   const reload = useCallback(async (clearError = false) => {
     const result = await readCurrentCard();
     if (result.ok) {
-      setCard(result.body.card);
+      const next = result.body.card;
+      const previous = loadedCard.current;
+      if (next?.state === "revealed" && previous?.id === next.id && (previous.state === "answer" || previous.state === "waiting") && !playedReveal.current.has(next.id)) {
+        playedReveal.current.add(next.id);
+        setRevealCardId(next.id);
+      }
+      loadedCard.current = next;
+      setCard(next);
       setProgress(result.body.progress);
       setLoad("ready");
       setCareRefresh((revision) => revision + 1);
@@ -233,12 +245,14 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
       setCareRevision((revision) => revision + 1);
       setDoneIntent((current) => without(current, card.id));
       setEditing(false);
+      setEditStart(null);
       focusAfterLoad.current = true;
       await reload();
     });
 
   const startEdit = () => {
     if (!card?.mine) return;
+    setRevealCardId(null);
     setDrafts((current) => ({ ...current, [card.id]: { ...card.mine!.fields } }));
     setEditStart(card.state);
     setNotice(null);
@@ -325,6 +339,7 @@ export function TogetherCards({ partnerName, price, accessActive, renderPayment,
               ) : (
                 <RevealPanel
                   card={card}
+                  animate={revealCardId === card.id}
                   partnerName={partnerName}
                   working={working}
                   doneIntent={doneIntent[card.id] === true}

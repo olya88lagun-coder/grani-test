@@ -7,6 +7,8 @@ import { formatRub, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS } from "@grani/
 import { DATA_STORAGE, TOGETHER_REFUND_DAYS } from "@/lib/legal";
 import styles from "./together-landing.module.css";
 import { TogetherCardDemo } from "./TogetherCardDemo";
+import { RoadmapTrail } from "./RoadmapTrail";
+import { RoadmapStone } from "./RoadmapStone";
 
 const question = TOGETHER_TRACK.find((card) => card.id === "m01-d01")!;
 // В макете это идея для свидания из месяца 4, но в каталоге она является вопросом.
@@ -108,10 +110,10 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
     <section className={styles.section} aria-labelledby="route-title">
       <p className={styles.eyebrow}>Шесть тем для двоих</p><h2 id="route-title">Маршрут на полгода</h2>
       <p className={styles.sectionLead}>Новые месяцы открываются по очереди: каждый следующий — после {TOGETHER_PERIOD_DAYS} дней накопленного оплаченного доступа.</p>
-      <ol className={styles.roadmap}>{TOGETHER_SEASON.map((month) => <li key={month.month}>
+      <RoadmapTrail className={styles.roadmap}>{TOGETHER_SEASON.map((month) => <li key={month.month}>
         <details>
           <summary>
-            <span className={styles.monthNo} aria-hidden="true">{String(month.month).padStart(2, "0")}</span>
+            <RoadmapStone month={month.month} next={month.month === 2} />
             <span className={styles.monthMain}>
               <span className={styles.eyebrow}>Месяц {month.month}</span>
               <h3>{month.title}</h3>
@@ -125,7 +127,7 @@ export function TogetherLanding({ enterQuery, ctaHref, member = false, notice }:
             <p className={styles.result}><strong>{month.resultReady ? "Уже доступно" : "Мы готовим"}</strong><br />{month.result}</p>
           </div>
         </details>
-      </li>)}</ol>
+      </li>)}</RoadmapTrail>
     </section>
 
     <section className={styles.offer} aria-labelledby="price-title">
