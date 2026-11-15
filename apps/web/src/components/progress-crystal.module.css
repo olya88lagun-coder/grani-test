@@ -2,6 +2,16 @@
 .back { fill: var(--surface-2); }
 .facet { opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); }
 .facet[data-lit="true"] { opacity: 1; }
+/* Новая грань «встаёт на место»: проявляется с лёгким перелётом масштаба */
+@media (prefers-reduced-motion: no-preference) {
+  .facet { transform-box: fill-box; transform-origin: center; }
+  .facet[data-lit="true"] { animation: facet-set 900ms var(--ease-out); }
+}
+@keyframes facet-set {
+  0% { opacity: 0; transform: scale(.7); }
+  55% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: 1; transform: none; }
+}
 .lines { stroke: var(--ink); stroke-opacity: .2; stroke-width: 1.5; stroke-linejoin: round; }
 .outline { stroke-opacity: .65; stroke-width: 2; }
 @media (prefers-reduced-motion: reduce) {

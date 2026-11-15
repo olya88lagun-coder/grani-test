@@ -2194,6 +2194,86 @@ body.has-cookie-banner .sticky-cta { display: none; }
   .meter:nth-child(5) .meter__fill { animation-delay: 320ms; }
 }
 
+/* Тест: выбранный ответ откликается «пульсом» точки, отвеченный вопрос отступает на второй план */
+@media (prefers-reduced-motion: no-preference) {
+  .choice input:checked::after { animation: choice-pop 260ms var(--ease-out); }
+  .question-card { transition: opacity var(--dur-base) var(--ease-out); }
+  .question-card:has(input:checked):not(:hover, :focus-within) { opacity: .72; }
+}
+@keyframes choice-pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+/* Главная: шкалы примера заполняются, когда карточка доезжает до экрана (data-inview ставит InView) */
+@media (prefers-reduced-motion: no-preference) {
+  .home-scale i span { transform-origin: left; }
+  [data-inview="false"] .home-scale i span { transform: scaleX(0); }
+  [data-inview="true"] .home-scale i span { animation: meter-fill 800ms var(--ease-out) backwards; }
+  [data-inview="true"] .home-scale:nth-child(2) i span { animation-delay: 90ms; }
+  [data-inview="true"] .home-scale:nth-child(3) i span { animation-delay: 180ms; }
+  [data-inview="true"] .home-scale:nth-child(4) i span { animation-delay: 270ms; }
+  [data-inview="true"] .home-scale:nth-child(5) i span { animation-delay: 360ms; }
+}
+
+/* Главная: блоки проявляются при скролле. Только где браузер умеет scroll-driven animations, иначе всё видно сразу */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .home-section__copy,
+    .home-result-card,
+    .home-note-card,
+    .home-type-card,
+    .home-person-card,
+    .home-pair-score,
+    .home-pair-list,
+    .home-article-card {
+      animation: section-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    /* Соседние карточки в ряду приходят лесенкой */
+    .home-note-card:nth-child(2), .home-type-card:nth-child(2), .home-article-card:nth-child(2) { animation-range: entry 8% entry 65%; }
+    .home-note-card:nth-child(3), .home-type-card:nth-child(3), .home-article-card:nth-child(3) { animation-range: entry 16% entry 75%; }
+  }
+}
+@keyframes section-reveal {
+  /* translate, а не transform: иначе заполнение анимации перебьёт подъём карточки при наведении */
+  from { opacity: 0; translate: 0 28px; }
+  to { opacity: 1; translate: none; }
+}
+
+/* Главная: карточки откликаются на наведение и касание */
+@media (prefers-reduced-motion: no-preference) {
+  .home-note-card,
+  .home-type-card,
+  .home-person-card,
+  .home-article-card,
+  .home-result-card {
+    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out);
+  }
+  .home-type-card__art > *, .home-article-card__image { transition: transform 500ms var(--ease-out); }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .home-note-card:hover,
+  .home-type-card:hover,
+  .home-person-card:hover,
+  .home-article-card:hover,
+  .home-result-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px rgba(10, 34, 14, 0.22);
+    border-color: color-mix(in srgb, var(--gold, #c9a85a) 55%, transparent);
+  }
+  .home-type-card:hover .home-type-card__art > * { transform: scale(1.06) rotate(-2deg); }
+  .home-article-card:hover .home-article-card__image { transform: scale(1.03); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .home-note-card:active,
+  .home-type-card:active,
+  .home-person-card:active,
+  .home-article-card:active { transform: translateY(-2px) scale(0.985); transition-duration: 90ms; }
+}
+
 @keyframes crystal-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
