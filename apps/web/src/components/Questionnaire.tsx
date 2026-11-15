@@ -42,6 +42,14 @@ type QuestionnaireBase = {
 // Либо ответы уходят на сервер, либо результат считает сам вызывающий (короткие тесты, без сервера)
 export type QuestionnaireProps = QuestionnaireBase & ({ submitUrl: string; onComplete?: never } | { onComplete: (answers: Answers) => void; submitUrl?: never });
 
+// Первый ответ на вопрос мягко подводит к следующему на экране; при reduced-motion страница не двигается сама
+function revealNext(id: string) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const next = document.querySelector(`[data-item="${CSS.escape(id)}"]`)?.nextElementSibling;
+  if (!(next instanceof HTMLFieldSetElement)) return;
+  window.setTimeout(() => next.scrollIntoView({ behavior: "smooth", block: "center" }), 220);
+}
+
 function readStorage(key: string): string | null {
   try {
     return window.localStorage.getItem(key);
@@ -93,6 +101,7 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
     if (trackProgress) for (const goal of progressGoalsCrossed(before, answeredCount(items, next), items.length)) reachGoal(goal);
     setAnswers(next);
     setStorageFailed(!writeStorage(storageKey, JSON.stringify(next)));
+    if (answers[id] === undefined) revealNext(id);
   }
 
   function goTo(nextPage: number) {
@@ -158,7 +167,7 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
       </ScreenHeading>
 
       {pageItems(items, page, pageSize).map((item) => (
-        <fieldset key={item.id} className="card question-card" disabled={!restored}>
+        <fieldset key={item.id} className="card question-card" disabled={!restored} data-item={item.id}>
           <legend className="question">{item.text}</legend>
           <div className="choices">
             {ANSWER_VALUES.map((value) => (

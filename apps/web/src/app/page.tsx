@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { GemPortrait } from "@/components/GemPortrait";
+import { CountUp, InView } from "@/components/InView";
 import { gemAssetDir } from "@/lib/gem-assets";
 import { HomeHeader } from "@/components/PublicHeader";
 import { TestAccessNote } from "@/components/TestAccessNote";
@@ -296,19 +297,19 @@ export default function HomePage() {
           <p>Твой тип</p>
           <h3>Искра</h3>
           <span>Энергия · Вдохновение · Новые идеи</span>
-          <div className="home-result-card__scales">
+          <InView className="home-result-card__scales">
             {RESULT_TRAITS.map((trait) => (
               <div className="home-scale" key={trait.label}>
                 <div>
                   <span>{trait.label}</span>
-                  <b>{trait.value}%</b>
+                  <b><CountUp value={trait.value} suffix="%" /></b>
                 </div>
                 <i>
                   <span style={{ width: `${trait.value}%` }} />
                 </i>
               </div>
             ))}
-          </div>
+          </InView>
         </article>
 
         <div className="home-note-cards">
@@ -370,7 +371,7 @@ export default function HomePage() {
           <div className="home-pair-score">
             <span className="home-example">Пример</span>
             <span aria-hidden="true">♥</span>
-            <strong>78%</strong>
+            <strong><CountUp value={78} suffix="%" /></strong>
             <p>Индекс сочетания профилей</p>
             <small>Сочетание профилей, не прогноз отношений.</small>
           </div>
