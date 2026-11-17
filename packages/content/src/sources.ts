@@ -398,7 +398,35 @@ const WOOD_TAM_WITT_2005: Source = {
   note: "при переводе в другой университет привычные действия сохранялись, если сохранялись связанные с ними обстоятельства",
 };
 
+const HOOK_2021: Source = {
+  authors: "Joshua N. Hook, Todd W. Hall, Don E. Davis, Daryl R. Van Tongeren, Mackenzie Conner",
+  year: 2021,
+  title: "The Enneagram: A systematic review of the literature and directions for future research",
+  journal: "Journal of Clinical Psychology",
+  url: "https://doi.org/10.1002/jclp.23097",
+  note: "обзор: данные о надёжности и валидности неоднородны, а факторный анализ обычно выявлял меньше девяти факторов",
+};
+
+const ALSOUDI_2025: Source = {
+  authors: "Sharif Alsoudi, Amina Benkouider, Amjad Joma, Mohammed Al Tobi, Amer Al Habsi",
+  year: 2025,
+  title: "Constructing an Arabic version of the Enneagram personality type scale",
+  journal: "Social Sciences & Humanities Open",
+  url: "https://doi.org/10.1016/j.ssaho.2025.102150",
+  note: "предварительные данные о надёжности и валидности конкретного арабоязычного опросника",
+};
+
+const SOTO_JOHN_2017: Source = {
+  authors: "Christopher J. Soto, Oliver P. John",
+  year: 2017,
+  title: "The next Big Five Inventory (BFI-2): Developing and assessing a hierarchical model with 15 facets to enhance bandwidth, fidelity, and predictive power.",
+  journal: "Journal of Personality and Social Psychology",
+  url: "https://doi.org/10.1037/pspp0000096",
+  note: "как разработчики BFI-2 построили пять шкал с пятнадцатью составляющими и проверили их на отдельных выборках",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "enneagramma-i-big-five": [HOOK_2021, ALSOUDI_2025, SOTO_JOHN_2017],
   "privychki-i-harakter": [MCCLOSKEY_JOHNSON_2021, LALLY_2010, WOOD_TAM_WITT_2005],
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
   "trevozhnost-i-cherty": [KOTOV_2010, LAHEY_2009],
