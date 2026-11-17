@@ -425,7 +425,17 @@ const SOTO_JOHN_2017: Source = {
   note: "как разработчики BFI-2 построили пять шкал с пятнадцатью составляющими и проверили их на отдельных выборках",
 };
 
+const MARTINUSSEN_RICHARDSEN_VARUM_2001: Source = {
+  authors: "Monica Martinussen, Astrid M. Richardsen, Helge W. Vårum",
+  year: 2001,
+  title: "Validation of an ipsative personality measure (DISCUS)",
+  journal: "Scandinavian Journal of Psychology",
+  url: "https://doi.org/10.1111/1467-9450.00253",
+  note: "две версии DISCUS не были взаимозаменяемы, а четыре оценки DISCUS были связаны с сочетаниями черт Big Five",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "disc-i-big-five": [MARTINUSSEN_RICHARDSEN_VARUM_2001, BARRICK_MOUNT_1991],
   "enneagramma-i-big-five": [HOOK_2021, ALSOUDI_2025, SOTO_JOHN_2017],
   "privychki-i-harakter": [MCCLOSKEY_JOHNSON_2021, LALLY_2010, WOOD_TAM_WITT_2005],
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
