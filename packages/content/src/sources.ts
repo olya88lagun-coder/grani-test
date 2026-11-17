@@ -371,7 +371,35 @@ const DONNELLY_IYER_HOWELL_2012: Source = {
   note: "исследование: добросовестность связана с лучшим финансовым благополучием, а выраженный материализм — с большими долгами",
 };
 
+const MCCLOSKEY_JOHNSON_2021: Source = {
+  authors: "Kiran McCloskey, Blair T. Johnson",
+  year: 2021,
+  title: "You are what you repeatedly do: Links between personality and habit",
+  journal: "Personality and Individual Differences",
+  url: "https://doi.org/10.1016/j.paid.2021.111000",
+  note: "связь добросовестности с автоматичностью различалась в зависимости от действия в самоотчётах участников",
+};
+
+const LALLY_2010: Source = {
+  authors: "Phillippa Lally, Cornelia H. M. van Jaarsveld, Henry W. W. Potts, Jane Wardle",
+  year: 2010,
+  title: "How are habits formed: Modelling habit formation in the real world",
+  journal: "European Journal of Social Psychology",
+  url: "https://doi.org/10.1002/ejsp.674",
+  note: "автоматичность при повторении в стабильном контексте росла с разной скоростью; один пропуск существенно не менял процесс",
+};
+
+const WOOD_TAM_WITT_2005: Source = {
+  authors: "Wendy Wood, Leona Tam, Melissa Guerrero Witt",
+  year: 2005,
+  title: "Changing circumstances, disrupting habits.",
+  journal: "Journal of Personality and Social Psychology",
+  url: "https://doi.org/10.1037/0022-3514.88.6.918",
+  note: "при переводе в другой университет привычные действия сохранялись, если сохранялись связанные с ними обстоятельства",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "privychki-i-harakter": [MCCLOSKEY_JOHNSON_2021, LALLY_2010, WOOD_TAM_WITT_2005],
   "prokrastinatsiya-i-lichnost": [STEEL_2007, SIROIS_PYCHYL_2013],
   "trevozhnost-i-cherty": [KOTOV_2010, LAHEY_2009],
   "perfektsionizm-i-lichnost": [STOEBER_OTTO_2006, EGAN_2011, CURRAN_HILL_2019],
