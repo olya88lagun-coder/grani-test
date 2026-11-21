@@ -452,7 +452,17 @@ const JOEL_EASTWICK_FINKEL_2017: Source = {
   note: "в двух студенческих выборках анкеты до четырёхминутных свиданий не позволили предсказать особый интерес к конкретному партнёру",
 };
 
+const WILSON_DUNN_2004: Source = {
+  authors: "Timothy D. Wilson, Elizabeth W. Dunn",
+  year: 2004,
+  title: "Self-Knowledge: Its Limits, Value, and Potential for Improvement",
+  journal: "Annual Review of Psychology",
+  url: "https://doi.org/10.1146/annurev.psych.55.090902.141954",
+  note: "обзор ограничений самоанализа и возможностей дополнять его наблюдением за поведением и взглядом других",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "lichnost-i-samoznanie": [WILSON_DUNN_2004, FLEESON_2001],
   "sovmestimost-na-svidaniyah": [EASTWICK_FINKEL_2008, JOEL_EASTWICK_FINKEL_2017],
   "disc-i-big-five": [MARTINUSSEN_RICHARDSEN_VARUM_2001, BARRICK_MOUNT_1991],
   "enneagramma-i-big-five": [HOOK_2021, ALSOUDI_2025, SOTO_JOHN_2017],
