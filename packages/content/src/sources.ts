@@ -434,7 +434,26 @@ const MARTINUSSEN_RICHARDSEN_VARUM_2001: Source = {
   note: "две версии DISCUS не были взаимозаменяемы, а четыре оценки DISCUS были связаны с сочетаниями черт Big Five",
 };
 
+const EASTWICK_FINKEL_2008: Source = {
+  authors: "Paul W. Eastwick, Eli J. Finkel",
+  year: 2008,
+  title: "Sex differences in mate preferences revisited: Do people know what they initially desire in a romantic partner?",
+  journal: "Journal of Personality and Social Psychology",
+  url: "https://doi.org/10.1037/0022-3514.94.2.245",
+  note: "на быстрых свиданиях предварительно заявленные идеальные предпочтения не предсказывали, какие изучавшиеся качества вызывали реальный интерес",
+};
+
+const JOEL_EASTWICK_FINKEL_2017: Source = {
+  authors: "Samantha Joel, Paul W. Eastwick, Eli J. Finkel",
+  year: 2017,
+  title: "Is Romantic Desire Predictable? Machine Learning Applied to Initial Romantic Attraction",
+  journal: "Psychological Science",
+  url: "https://doi.org/10.1177/0956797617714580",
+  note: "в двух студенческих выборках анкеты до четырёхминутных свиданий не позволили предсказать особый интерес к конкретному партнёру",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "sovmestimost-na-svidaniyah": [EASTWICK_FINKEL_2008, JOEL_EASTWICK_FINKEL_2017],
   "disc-i-big-five": [MARTINUSSEN_RICHARDSEN_VARUM_2001, BARRICK_MOUNT_1991],
   "enneagramma-i-big-five": [HOOK_2021, ALSOUDI_2025, SOTO_JOHN_2017],
   "privychki-i-harakter": [MCCLOSKEY_JOHNSON_2021, LALLY_2010, WOOD_TAM_WITT_2005],
