@@ -394,8 +394,12 @@ export default function HomePage() {
 
       <section className={`home-section ${styles.shortTests}`} aria-labelledby="short-tests-title">
         <div className="home-section__copy">
+          <p className="home-kicker">Без регистрации</p>
           <h2 id="short-tests-title">Ещё тесты</h2>
-          <p>Бесплатные короткие тесты. Результат сразу, без регистрации.</p>
+          <p>Короткие бесплатные тесты: результат сразу в браузере, вход не нужен. Big Five и остальные — на странице всех тестов.</p>
+          <Link className="button" href="/tests">
+            Все тесты <span aria-hidden="true">→</span>
+          </Link>
         </div>
         <div className={styles.shortTestGrid}>
           {SHORT_TEST_CARDS.map((test) => (
@@ -403,7 +407,10 @@ export default function HomePage() {
               <img src={test.image} alt="" width={test.width} height={test.height} loading="lazy" decoding="async" />
               <h3>{test.title}</h3>
               <p>{test.description}</p>
-              <span className={styles.shortTestMeta}>{test.duration} <span aria-hidden="true">→</span></span>
+              <span className={styles.shortTestMeta}>
+                <span>Без регистрации · {test.duration}</span>
+                <span aria-hidden="true">→</span>
+              </span>
             </Link>
           ))}
         </div>

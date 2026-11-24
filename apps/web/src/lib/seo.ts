@@ -66,6 +66,7 @@ export function PUBLIC_PATHS(): string[] {
   return [
     "/",
     "/big-five-test",
+    "/tests",
     "/types",
     ...ALL_TYPE_CODES.map(typePath),
     "/traits",
@@ -196,7 +197,7 @@ export function llmsTxt(): string {
   return [
     `# ${SITE_NAME}`,
     `> ${LLMS_INTRO}`,
-    ["## Тест", llmsLink("Big Five тест", "/big-five-test"), llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility"), ...SHORT_TESTS.map((test) => llmsLink(test.h1, test.path))].join("\n"),
+    ["## Тест", llmsLink("Все тесты", "/tests"), llmsLink("Big Five тест", "/big-five-test"), llmsLink("Пройти тест", "/"), llmsLink("Совместимость пары", "/compatibility"), ...SHORT_TESTS.map((test) => llmsLink(test.h1, test.path))].join("\n"),
     ["## 16 типов личности", llmsLink("Все типы", "/types"), ...ALL_TYPE_CODES.map((code) => llmsLink(typeDisplayName(code), typePath(code)))].join("\n"),
     ["## Черты Большой пятёрки", ...TRAIT_PAGES.map((page) => llmsLink(traitPageTitle(page.trait, page.pole), traitPath(page.trait, page.pole)))].join("\n"),
     ["## Статьи", ...getArticles().map((article) => llmsLink(article.title, article.canonical))].join("\n"),

@@ -3,12 +3,40 @@ import { expect, test } from "@playwright/test";
 test("the home page offers both short tests in its main content", async ({ page }) => {
   await page.goto("/");
   const tests = page.getByRole("region", { name: "Ещё тесты" });
+  await expect(tests.getByRole("link", { name: /все тесты/i })).toHaveAttribute("href", "/tests");
   const attachment = tests.getByRole("link", { name: /тест на тип привязанности/i });
   const temperament = tests.getByRole("link", { name: /тест на темперамент/i });
   await expect(attachment).toHaveAttribute("href", "/privyazannost");
   await expect(temperament).toHaveAttribute("href", "/temperament");
   await temperament.click();
   await expect(page).toHaveURL(/\/temperament$/);
+});
+
+test("the tests hub lists Big Five and both free short tests", async ({ page }) => {
+  await page.goto("/tests");
+  await expect(page).toHaveTitle(/тесты личности/i);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Тесты личности");
+  await expect(page.getByRole("heading", { name: "Big Five — Большая пятёрка" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест на темперамент" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест на тип привязанности" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /пройти big five/i })).toHaveAttribute("href", "/test");
+  const cards = page.locator("main li");
+  await expect(cards.nth(1).getByRole("link", { name: /пройти тест/i })).toHaveAttribute("href", "/temperament");
+  await expect(cards.nth(2).getByRole("link", { name: /пройти тест/i })).toHaveAttribute("href", "/privyazannost");
+});
+
+test("desktop and mobile navigation open the tests hub", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/articles");
+  await page.getByRole("navigation", { name: "Основная навигация" }).filter({ visible: true }).getByRole("link", { name: "Тесты", exact: true }).click();
+  await expect(page).toHaveURL(/\/tests$/);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/about");
+  const header = page.locator("header").filter({ has: page.getByRole("link", { name: "Грани — на главную" }) });
+  await header.locator("summary").click();
+  await header.getByRole("navigation", { name: "Основная навигация" }).getByRole("link", { name: "Тесты", exact: true }).click();
+  await expect(page).toHaveURL(/\/tests$/);
 });
 
 test("the account action stays inside the header at intermediate widths", async ({ page }) => {

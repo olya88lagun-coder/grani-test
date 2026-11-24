@@ -1,0 +1,124 @@
+.page.page { background: var(--bg); }
+.page::before { display: none; }
+
+.wrap { max-width: 1240px; margin-inline: auto; padding-inline: 28px; }
+.hero {
+  padding: 28px 0 48px;
+  background:
+    linear-gradient(90deg, var(--bg) 0%, var(--bg) 58%, transparent 88%),
+    var(--bg) url("/home/types-night-desktop.webp") 78% 0 / cover no-repeat;
+}
+.hero :global(.crumbs) { margin-bottom: 20px; font-size: 14px; color: var(--ink-soft); }
+.hero :global(.crumbs a) { color: var(--ink-soft); }
+.intro { max-width: 720px; padding: 24px 0 8px; }
+.eyebrow {
+  margin: 0 0 16px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.intro h1 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(44px, 5.4vw, 76px);
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  text-wrap: balance;
+}
+.lead { margin: 24px 0 0; font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
+
+.body { max-width: 1240px; margin: 0 auto; padding: 8px 28px 80px; }
+.list {
+  display: grid;
+  gap: 18px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card,
+.cardFeatured {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px 40px;
+  align-items: end;
+  padding: clamp(24px, 3vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.cardFeatured { border-color: var(--gold); }
+.cardCopy { display: grid; gap: 12px; min-width: 0; }
+.cardEyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.card h2,
+.cardFeatured h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -.02em;
+  text-wrap: balance;
+}
+.benefit { margin: 0; max-width: 48ch; color: var(--ink); font-size: 16px; line-height: 1.65; }
+.meta { margin: 0; color: var(--gold); font-size: 14px; line-height: 1.5; }
+.access { margin: 0; max-width: 52ch; color: var(--ink-soft); font-size: 14px; line-height: 1.6; }
+
+.cardActions {
+  display: grid;
+  gap: 12px;
+  justify-items: stretch;
+  min-width: min(100%, 220px);
+}
+.cardActions :global(.button) {
+  min-height: 52px;
+  justify-content: center;
+  border-radius: var(--radius);
+  box-shadow: none;
+  text-align: center;
+}
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  color: var(--ink);
+  font-size: 15px;
+  text-decoration: none;
+  border-bottom: 1px solid var(--gold);
+}
+.secondary:hover { color: var(--accent-hover); }
+.secondary:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+
+@media (max-width: 899px) {
+  .hero {
+    background:
+      linear-gradient(180deg, var(--bg) 0%, var(--bg) 70%, transparent 100%),
+      var(--bg) url("/home/types-night-mobile.webp") 50% 0 / cover no-repeat;
+  }
+  .card,
+  .cardFeatured {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .cardActions { min-width: 0; width: 100%; }
+  .cardActions :global(.button) { width: 100%; }
+}
+
+@media (max-width: 759px) {
+  .wrap,
+  .body { padding-inline: 21px; }
+  .hero { padding: 20px 0 32px; }
+  .lead { font-size: 16px; }
+  .body { padding-bottom: 56px; }
+  .card,
+  .cardFeatured { padding: 21px; }
+}

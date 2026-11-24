@@ -14,6 +14,7 @@ test("public pages are indexable and private ones are not", async ({ page, reque
   expect(sitemap.match(/<loc>/g)?.length ?? 0).toBeGreaterThanOrEqual(45);
   expect(sitemap.match(/<lastmod>/g)?.length ?? 0).toBeGreaterThanOrEqual(9);
   expect(sitemap).toContain("/big-five-test</loc>");
+  expect(sitemap).toContain("/tests</loc>");
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /result/");
   expect((await request.get("/types/unknown")).status()).toBe(404);

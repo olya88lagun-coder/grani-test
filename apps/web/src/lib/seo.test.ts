@@ -61,7 +61,8 @@ describe("PUBLIC_PATHS", () => {
     // Статьи публикует автопилот: их число выводится из данных, а не записано в тест
     const articles = getArticles().length;
     expect(paths.filter((p) => p.startsWith("/articles"))).toHaveLength(articles + 1);
-    expect(paths).toHaveLength(40 + articles + shortTestPaths().length);
+    expect(paths).toHaveLength(41 + articles + shortTestPaths().length);
+    expect(paths).toEqual(expect.arrayContaining(["/tests"]));
     expect(new Set(paths).size).toBe(paths.length);
     expect(paths).toEqual(expect.arrayContaining(getArticles().map((article) => article.canonical)));
     expect(paths.some((p) => /^\/(result|report|pair|p|f|me|test|login|purchases|cards|dev|api)(\/|$)/.test(p))).toBe(false);
@@ -240,5 +241,9 @@ describe("short test paths", () => {
 
   it("mentions the attachment test in llms.txt", () => {
     expect(llmsTxt()).toContain("/privyazannost");
+  });
+
+  it("lists the tests hub in llms.txt", () => {
+    expect(llmsTxt()).toContain("/tests");
   });
 });

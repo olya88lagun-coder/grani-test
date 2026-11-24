@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/seo";
 
-// Результаты, разборы, пары и ссылки-приглашения личные: в поиск они попадать не должны
+// Результаты, разборы, пары и ссылки-приглашения личные: в поиск они попадать не должны.
+// /test — анкета Big Five (noindex); /tests — публичный хаб, длиннее Allow перекрывает префикс Disallow: /test
 const PRIVATE = ["/api/", "/test", "/login", "/me", "/result/", "/report/", "/pair/", "/p/", "/f/", "/together/invite/", "/purchases/", "/cards/", "/dev/", "/continue/", "/short/", "/short-pair/", "/sp/"];
 
 export default function robots(): MetadataRoute.Robots {
-  return { rules: [{ userAgent: "*", allow: "/", disallow: PRIVATE }], sitemap: `${SITE_URL}/sitemap.xml`, host: SITE_URL };
+  return { rules: [{ userAgent: "*", allow: ["/", "/tests"], disallow: PRIVATE }], sitemap: `${SITE_URL}/sitemap.xml`, host: SITE_URL };
 }
