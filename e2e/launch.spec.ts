@@ -177,9 +177,9 @@ test("the compatibility page spells out what the paid pair report contains and w
 
 test("the offer, the policy and the consent name the e-mail as the correspondence address", async ({ page }) => {
   for (const [path, pattern] of [
-    ["/offer", /Адрес для претензий и корреспонденции: электронная почта lagutenkova\.olga@yandex\.ru\./],
-    ["/privacy", /Адрес для корреспонденции: электронная почта lagutenkova\.olga@yandex\.ru\./],
-    ["/consent", /адрес для корреспонденции: электронная почта lagutenkova\.olga@yandex\.ru, далее — оператор/],
+    ["/offer", /Адрес для претензий и корреспонденции: электронная почта support@trackermeal\.ru\./],
+    ["/privacy", /Адрес для корреспонденции: электронная почта support@trackermeal\.ru\./],
+    ["/consent", /адрес для корреспонденции: электронная почта support@trackermeal\.ru, далее — оператор/],
   ] as const) {
     await page.goto(path);
     await expect(page.getByRole("main")).toContainText(pattern);
