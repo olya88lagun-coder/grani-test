@@ -4,9 +4,17 @@
   padding: 8px 0 24px;
 }
 
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: 40px;
+  align-items: center;
+}
+
 .header {
   display: grid;
-  gap: 10px;
+  gap: 16px;
+  min-width: 0;
   max-width: 36rem;
 }
 
@@ -24,9 +32,10 @@
   margin: 0;
   color: var(--ink);
   font-family: var(--font-display);
-  font-size: clamp(36px, 6vw, 52px);
+  font-size: clamp(36px, 6vw, 64px);
   font-weight: 300;
-  line-height: 1.12;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
 }
 
 .lead {
@@ -36,13 +45,70 @@
   line-height: 1.6;
 }
 
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
 .card {
+  min-width: 0;
   display: grid;
   gap: 20px;
   padding: 28px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: color-mix(in srgb, var(--surface) 78%, transparent);
+}
+
+.cardHead {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--gold);
+  text-align: center;
+}
+
+.cardHead::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 32px;
+  left: 50%;
+  width: min(100%, 260px);
+  height: 150px;
+  border: 1px solid rgba(205, 181, 123, 0.28);
+  border-radius: 50%;
+  transform: translateX(-50%) rotate(-19deg);
+  background: radial-gradient(ellipse, rgba(47, 163, 110, 0.13), transparent 70%);
+}
+
+.cardHead :global([data-gem-dir]) {
+  position: relative;
+  margin-bottom: 4px;
+}
+
+.cardEyebrow {
+  margin: 0;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cardName {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 38px);
+  font-weight: 300;
+  line-height: 1.12;
 }
 
 .cardTitle {
@@ -82,7 +148,24 @@
   line-height: 1.6;
 }
 
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    justify-self: center;
+  }
+}
+
 @media (max-width: 640px) {
   .card { padding: 22px 20px; }
   .title { font-size: 34px; }
+  .cardName { font-size: 28px; }
+  .heroActions { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .heroActions :global(.button) { width: 100%; text-align: center; }
+  .cardHead :global([data-gem-dir]) { max-width: 220px; }
 }
