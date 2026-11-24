@@ -50,7 +50,7 @@ export function ShortTestPage({ slug, lead, facts, related, palette, heroImage, 
       <JsonLd data={faqJsonLd(test.faq)} />
       <header className={heroImage ? `${styles.hero} ${styles.heroWithImage}` : styles.hero} data-band="night">
         <div className={styles.heroWrap}>
-          <Breadcrumbs items={[{ name: test.h1, path: test.path }]} />
+          <Breadcrumbs items={[{ name: "Тесты", path: "/tests" }, { name: test.h1, path: test.path }]} />
           <div className={styles.heroGrid}>
             <div className={styles.heroCopy}>
               <h1 className={styles.title}>{test.h1}</h1>

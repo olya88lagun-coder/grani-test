@@ -7,7 +7,7 @@ import { BrandMark } from "./BrandMark";
 import styles from "./PublicHeader.module.css";
 
 const LINKS = [
-  { href: "/test", label: "Пройти тест" },
+  { href: "/tests", label: "Тесты" },
   { href: "/types", label: "16 типов" },
   { href: "/compatibility", label: "Совместимость" },
   { href: "/together", label: "Вдвоём" },

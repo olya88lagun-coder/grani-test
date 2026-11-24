@@ -97,7 +97,7 @@ export default function BigFiveTestPage() {
     <main className={`inner-page ${styles.page}`} data-night-entry>
       <section className={styles.night} data-band="night">
       <div className={`page page--wide ${styles.nightInner}`}>
-        <Breadcrumbs items={[{ name: "Тест Big Five", path: PATH }]} />
+        <Breadcrumbs items={[{ name: "Тесты", path: "/tests" }, { name: "Тест Big Five", path: PATH }]} />
         <section className={styles.hero} aria-labelledby="big-five-title">
           <div className={styles.copy}>
             <p className="home-kicker">Big Five · OCEAN · IPIP-50</p>

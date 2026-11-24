@@ -7,6 +7,7 @@ const GROUPS = [
   {
     title: "Разделы",
     links: [
+      { href: "/tests", label: "Все тесты" },
       { href: "/big-five-test", label: "Тест Big Five" },
       { href: "/privyazannost", label: "Тест на тип привязанности" },
       { href: "/temperament", label: "Тест на темперамент" },
