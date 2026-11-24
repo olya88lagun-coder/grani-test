@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { BigFiveTestRunner } from "@/components/BigFiveTestRunner";
 import styles from "./test.module.css";
 
-export const metadata: Metadata = { title: "Тест" };
+// Анкета не для поиска: SEO-лендинг — /big-five-test; robots.txt тоже Disallow: /test
+export const metadata: Metadata = { title: "Тест", robots: { index: false, follow: true } };
 
 export default function TestPage() {
   const items = SELF_ITEMS.map(({ id, text }) => ({ id, text }));

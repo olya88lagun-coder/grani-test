@@ -152,6 +152,7 @@ describe("goals", () => {
       "purchase_together",
       "attachment_invite",
       "attachment_pair",
+      "short_result_share",
       "fx_hero_seen",
       "fx_hero_move",
       "fx_hero_labels",

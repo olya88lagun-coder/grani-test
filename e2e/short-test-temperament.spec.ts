@@ -23,8 +23,14 @@ test("temperament test shows a result without login and keeps it after reload", 
   await expect(result.getByRole("heading", { level: 2 })).toHaveText(/Сангвиник|Холерик|Флегматик|Меланхолик/);
   await expect(result.getByRole("img", { name: /Экстраверсия.*Эмоциональность/i })).toBeVisible();
   await expect(result.getByText("Ваша точка", { exact: true })).toBeVisible();
+  const share = result.getByTestId("short-result-share");
+  await expect(share).toBeVisible();
+  await expect(share.getByRole("button", { name: "Поделиться" })).toBeVisible();
+  await expect(share.getByRole("button", { name: /Скопировать ссылку|Скопировано/ })).toBeVisible();
+  await expect(share.locator("textarea")).toHaveValue(/\/temperament\//);
   await page.reload();
   await expect(page.getByTestId("short-result")).toBeVisible();
+  await expect(page.getByTestId("short-result-share")).toBeVisible();
 });
 
 test("an attachment result does not show up on the temperament page", async ({ page }) => {

@@ -28,6 +28,10 @@ test("attachment test shows a result without login and keeps answers in the brow
   await expect(result).toBeVisible();
   await expect(result.getByRole("heading", { level: 2 })).toContainText("тип привязанности");
   await expect(result).toContainText("%");
+  const share = result.getByTestId("short-result-share");
+  await expect(share).toBeVisible();
+  await expect(share.getByRole("button", { name: "Поделиться" })).toBeVisible();
+  await expect(share.locator("textarea")).toHaveValue(/\/privyazannost\//);
   await expect.poll(() => posts.some((p) => p.startsWith("/api/funnel attachment_finish"))).toBe(true);
   // Кроме счётчика воронки, никаких запросов с ответами
   expect(posts.filter((p) => !p.startsWith("/api/funnel"))).toEqual([]);

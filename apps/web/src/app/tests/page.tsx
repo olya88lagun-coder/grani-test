@@ -13,15 +13,16 @@ export const metadata = publicMetadata({ title: TITLE, description: DESCRIPTION,
 
 const TESTS = [
   {
-    href: "/test",
-    aboutHref: "/big-five-test",
-    aboutLabel: "О тесте Big Five",
+    // Discovery → индексируемый лендинг; анкета /test закрыта в robots и открывается с лендинга
+    href: "/big-five-test",
+    aboutHref: "/test",
+    aboutLabel: "Сразу к анкете",
     eyebrow: "Главный тест",
     title: "Big Five — Большая пятёрка",
     benefit: "Тип личности и пять черт характера: как ты устроен в целом.",
     meta: "50 утверждений · ≈ 10 минут · бесплатно",
     access: "Результат видно сразу. VK ID — чтобы сохранить, поделиться карточкой или купить разбор.",
-    cta: "Пройти Big Five",
+    cta: "О тесте и пройти",
     featured: true,
   },
   {

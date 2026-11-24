@@ -44,6 +44,8 @@ export const GOALS = [
   "purchase_together",
   "attachment_invite",
   "attachment_pair",
+  // Шаринг бесплатного результата короткого теста (ссылка на страницу типа, без логина)
+  "short_result_share",
   // Визуальные эффекты: только Метрика, без идентификатора ответа, типа, результата и токена
   "fx_hero_seen",
   "fx_hero_move",

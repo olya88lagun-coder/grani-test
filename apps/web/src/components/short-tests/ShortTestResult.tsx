@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { quadrantLabels, type ShortResultView } from "@/lib/short-test-result";
 import { AxisMap } from "./AxisMap";
 import { AttachmentPairArt } from "./AttachmentPairArt";
+import { ShortResultShare } from "./ShortResultShare";
 import pairStyles from "./attachment-pair.module.css";
 import styles from "./short-tests.module.css";
 
@@ -89,6 +90,17 @@ export function ShortTestResult({
         {!faceted && <p className={styles.summary}>{view.type.summary}</p>}
         <p className={styles.disclaimer}>{test.disclaimer}</p>
       </div>
+      <ShortResultShare
+        path={`${test.path}/${view.type.slug}`}
+        typeName={view.type.name}
+        shareTitle={
+          test.slug === "attachment"
+            ? `Мой тип привязанности — ${view.type.name}`
+            : test.slug === "temperament"
+              ? `Мой темперамент — ${view.type.name}`
+              : `Мой тип — ${view.type.name}`
+        }
+      />
       {!saved && partnerInvite && onOpenReport && (
         <div className={pairStyles.partnerAction}>
           <button type="button" className="button" onClick={() => openReport("pair")} disabled={opening}>

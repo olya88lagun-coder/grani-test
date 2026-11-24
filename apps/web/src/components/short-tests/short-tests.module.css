@@ -133,6 +133,33 @@
 }
 .meter > span { display: block; height: 100%; background: var(--gold); }
 .disclaimer { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-soft); }
+.share {
+  display: grid;
+  gap: 12px;
+  max-width: 40rem;
+  padding-block: 4px;
+}
+.shareEyebrow {
+  margin: 0;
+  color: var(--gold);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.shareTitle {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 28px);
+  font-weight: 400;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+.shareLead {
+  margin: 0;
+  max-width: 52ch;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.55;
+}
 .actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .actions :global(.button) { text-align: center; }
 
@@ -206,7 +233,7 @@
   width: auto;
   margin: var(--result-pad) var(--result-pad) var(--result-pad) 12px;
 }
-.facetedResult :is(.axes, .explanation, .actions) {
+.facetedResult :is(.axes, .explanation, .share, .actions) {
   --ink: #10291f;
   --ink-soft: #4f6055;
   --gold: #254a37;
@@ -225,6 +252,7 @@
 }
 .facetedResult .axisHead b { font-size: clamp(42px, 5vw, 58px); }
 .facetedResult .explanation { padding-bottom: 20px; }
+.facetedResult .share { padding-bottom: 20px; }
 .facetedResult .actions { padding-bottom: clamp(24px, 4vw, 44px); }
 .facetedResult .actions :global(.button--ghost:hover) { background: var(--surface-3); }
 .plotOutline { fill: none; stroke: var(--gold); stroke-opacity: .45; }

@@ -13,6 +13,8 @@ test("short test pair invites and pair pages are kept out of search", () => {
 
 test("the tests hub is allowed while the Big Five questionnaire stays disallowed", () => {
   const [rule] = robots().rules as { allow: string | string[]; disallow: string[] }[];
-  expect(rule!.allow).toEqual(expect.arrayContaining(["/tests"]));
+  expect(rule!.allow).toEqual(expect.arrayContaining(["/", "/tests"]));
   expect(rule!.disallow).toContain("/test");
+  // /big-five-test не в Disallow — это SEO-лендинг; префикс /test его не закрывает
+  expect(rule!.disallow.some((path) => path.startsWith("/big-five"))).toBe(false);
 });

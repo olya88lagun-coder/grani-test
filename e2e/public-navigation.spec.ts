@@ -19,7 +19,8 @@ test("the tests hub lists Big Five and both free short tests", async ({ page }) 
   await expect(page.getByRole("heading", { name: "Big Five — Большая пятёрка" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Тест на темперамент" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Тест на тип привязанности" })).toBeVisible();
-  await expect(page.getByRole("link", { name: /пройти big five/i })).toHaveAttribute("href", "/test");
+  await expect(page.getByRole("link", { name: /о тесте и пройти/i })).toHaveAttribute("href", "/big-five-test");
+  await expect(page.getByRole("link", { name: /сразу к анкете/i })).toHaveAttribute("href", "/test");
   const cards = page.locator("main li");
   await expect(cards.nth(1).getByRole("link", { name: /пройти тест/i })).toHaveAttribute("href", "/temperament");
   await expect(cards.nth(2).getByRole("link", { name: /пройти тест/i })).toHaveAttribute("href", "/privyazannost");
