@@ -12,6 +12,7 @@ import { HomeHeader } from "@/components/PublicHeader";
 import { TestAccessNote } from "@/components/TestAccessNote";
 import { JsonLd } from "@/components/JsonLd";
 import { NewYearBanner } from "@/components/NewYearBanner";
+import { TrustBlock } from "@/components/TrustBlock";
 import { articleDate, firstSentences, publicMetadata, siteJsonLd, typePath } from "@/lib/seo";
 import { DeletedNotice } from "./DeletedNotice";
 import { HomeTrialClient } from "./HomeTrialClient";
@@ -326,6 +327,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      <TrustBlock />
 
       <section className="home-section home-types" data-band="night" aria-labelledby="types-title">
         <div className="home-section__copy">

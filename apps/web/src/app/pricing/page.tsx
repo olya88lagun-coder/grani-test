@@ -5,6 +5,7 @@ import Image from "next/image";
 import styles from "./pricing.module.css";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { PairProductsCompare } from "@/components/PairProductsCompare";
+import { TrustBlock } from "@/components/TrustBlock";
 import { publicMetadata } from "@/lib/seo";
 
 const DESCRIPTION = "Тест, тип и пять шкал — бесплатно. Платно — подробные разборы по результату: личный портрет, главы о деньгах, конфликтах, стрессе и отношениях, разбор пары, пространство «Вдвоём».";
@@ -49,6 +50,7 @@ export default function PricingPage() {
         </div>
       </section>
       <article className="page page--wide stack pricing-page">
+        <TrustBlock compact />
 
         <div className={styles.featured}>
           <section className="card stack pricing-card pricing-card--featured" data-band="night" aria-labelledby="price-full">

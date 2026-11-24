@@ -1,0 +1,138 @@
+.block {
+  width: 100%;
+  padding: 56px 0;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+.inner {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.kicker {
+  margin: 0 0 12px;
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 32px;
+  border-top: 1px solid var(--line);
+}
+
+.part {
+  min-width: 0;
+  padding: 28px 28px 8px 0;
+  border-right: 1px solid var(--line);
+}
+
+.part:last-child {
+  border-right: 0;
+  padding-right: 0;
+}
+
+.part:not(:first-child) {
+  padding-left: 28px;
+}
+
+.partTitle {
+  margin: 0 0 12px;
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.part p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.part p + p {
+  margin-top: 12px;
+}
+
+/* Главная красит все ссылки в --home-green — для ночного блока оставляем золото */
+:global(.home-page) .part a:any-link,
+.part a:any-link {
+  color: var(--gold);
+}
+
+.compact {
+  padding: 8px 0 0;
+  background: transparent;
+}
+
+.compact .inner {
+  width: 100%;
+}
+
+.compact .title {
+  font-size: clamp(28px, 3.4vw, 36px);
+}
+
+.compact .grid {
+  margin-top: 24px;
+}
+
+.compact .part {
+  padding-top: 24px;
+}
+
+@media (max-width: 899px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .part,
+  .part:not(:first-child) {
+    padding: 24px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .part:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 759px) {
+  .block {
+    padding: 40px 0;
+  }
+
+  .inner {
+    width: calc(100% - 32px);
+  }
+
+  .part p {
+    font-size: 14px;
+  }
+
+  .compact {
+    padding-top: 0;
+  }
+}
