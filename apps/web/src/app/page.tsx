@@ -22,7 +22,7 @@ import styles from "./home-refined.module.css";
 // две страницы под один запрос сменяли бы друг друга в выдаче
 const HOME_TITLE = "Грани — тест личности по модели Big Five";
 const HOME_DESCRIPTION =
-  "«Грани»: бесплатный тест личности, 50 утверждений и пять шкал Big Five. Тип и карточка результата за 10 минут. Просмотр результата — после входа через VK ID.";
+  "«Грани»: бесплатный тест личности, 50 утверждений и пять шкал Big Five. Тип и шкалы — сразу после теста. Сохранение и карточка — через вход с VK ID.";
 
 const HOME = publicMetadata({ title: HOME_TITLE, description: HOME_DESCRIPTION, path: "/" });
 

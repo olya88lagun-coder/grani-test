@@ -23,7 +23,7 @@ describe("pickLoginContext", () => {
 describe("LOGIN_INTRO", () => {
   test("has the approved intro for each context", () => {
     expect(LOGIN_INTRO.default).toEqual({ title: "Войди в «Грани»", lead: "Здесь можно вернуться к своему результату и продолжить знакомство с собой" });
-    expect(LOGIN_INTRO.result).toEqual({ title: "Осталось увидеть результат", lead: "Войди, чтобы увидеть свой тип личности и пять ключевых черт" });
+    expect(LOGIN_INTRO.result).toEqual({ title: "Сохраним твой результат", lead: "Войди, чтобы сохранить результат, поделиться карточкой для сторис, позвать друзей или купить разбор" });
     expect(LOGIN_INTRO.pair).toEqual({ title: "Продолжим сравнение", lead: "Войди, чтобы продолжить сравнение ваших результатов" });
     expect(LOGIN_INTRO.together).toEqual({ title: "Продолжим во «Вдвоём»", lead: "Войди, чтобы продолжить в пространстве «Грани. Вдвоём»" });
   });

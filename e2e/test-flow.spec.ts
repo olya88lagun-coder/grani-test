@@ -16,8 +16,13 @@ test("passes the test, logs in and sees the saved result with a story card", asy
 
   await answerSelfTest(page);
 
+  await expect(page).toHaveURL(/\/test$/);
+  await expect(page.getByTestId("guest-big-five-result")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Вдохновитель" })).toBeVisible();
+  await page.getByRole("link", { name: "Сохранить результат" }).click();
+
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Осталось увидеть результат" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Сохраним твой результат" })).toBeVisible();
   await expect(page.getByRole("checkbox")).not.toBeChecked();
   await expect(page.getByRole("button", { name: "Продолжить" })).toBeDisabled();
 

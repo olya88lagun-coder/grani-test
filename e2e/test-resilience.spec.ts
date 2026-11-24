@@ -15,7 +15,7 @@ test("a network failure while sending keeps the answers and lets the person try 
 
   await page.unroute("**/api/results");
   await page.getByRole("button", { name: "Узнать результат" }).click();
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByTestId("guest-big-five-result")).toBeVisible();
 });
 
 test("a server error, a rate limit and an unreadable answer are all shown without losing anything", async ({ page }) => {
@@ -43,7 +43,7 @@ test("a double click on the final button sends the answers once", async ({ page 
   // answerSelfTest уже нажал кнопку один раз; ещё два быстрых щелчка по ней не должны отправить ответы повторно
   const button = submitButton(page);
   await button.dblclick({ force: true }).catch(() => undefined);
-  await expect(page).toHaveURL(/\/login$/);
+  await expect(page.getByTestId("guest-big-five-result")).toBeVisible();
   expect(requests).toBe(1);
 });
 
@@ -61,8 +61,8 @@ test("answers survive leaving the test and coming back, and are gone after a suc
 
   await page.getByRole("button", { name: "Назад" }).click();
   await answerSelfTest(page);
-  await expect(page).toHaveURL(/\/login$/);
-  await page.goto("/test");
+  await expect(page.getByTestId("guest-big-five-result")).toBeVisible();
+  await page.getByRole("button", { name: "Пройти заново" }).click();
   await expect(page.getByText("Ответов: 0 из 50")).toBeVisible();
 });
 

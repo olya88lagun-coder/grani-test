@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { VK_COMMUNITY_LINK } from "@/lib/site-links";
 import { BrandMark } from "./BrandMark";
 import { CookieSettingsButton } from "./CookieSettingsButton";
 
@@ -20,6 +21,7 @@ const GROUPS = [
       { href: "/about", label: "О проекте и методике" },
       { href: "/pricing", label: "Разборы и цены" },
       { href: "/contacts", label: "Контакты и услуги" },
+      { href: VK_COMMUNITY_LINK.href, label: VK_COMMUNITY_LINK.label, external: true },
       { href: "/me", label: "Мой результат" },
     ],
   },
@@ -48,11 +50,17 @@ export function Footer() {
           {GROUPS.map((group) => (
             <div key={group.title} className="footer__group">
               <p className="footer__title">{group.title}</p>
-              {group.links.map((link) => (
-                <Link key={link.href} href={link.href}>
-                  {link.label}
-                </Link>
-              ))}
+              {group.links.map((link) =>
+                "external" in link && link.external ? (
+                  <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer">
+                    {link.label}
+                  </a>
+                ) : (
+                  <Link key={link.href} href={link.href}>
+                    {link.label}
+                  </Link>
+                ),
+              )}
               {group.title === "Документы" && <CookieSettingsButton />}
             </div>
           ))}

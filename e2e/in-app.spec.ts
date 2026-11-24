@@ -13,6 +13,9 @@ test("a result taken in the VK app browser moves to Safari by the page link", as
   await expect(inApp.getByRole("heading", { name: "Откройте сайт в Safari или Chrome" })).toBeVisible();
   await answerSelfTest(inApp);
 
+  await expect(inApp.getByTestId("guest-big-five-result")).toBeVisible();
+  await inApp.getByRole("link", { name: "Сохранить результат" }).click();
+
   // Страница входа сразу подменяет адрес ссылкой переноса — её и откроет «Открыть в Safari»
   await expect(inApp.getByText("внутри приложения ВКонтакте")).toBeVisible();
   await expect(inApp).toHaveURL(/\/continue\/[A-Za-z0-9_-]{24}$/);
@@ -23,7 +26,7 @@ test("a result taken in the VK app browser moves to Safari by the page link", as
   const page = await safari.newPage();
   await page.goto(handoffUrl);
   await expect(page).toHaveURL(/\/login$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Осталось увидеть результат" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Сохраним твой результат" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Откройте сайт в Safari или Chrome" })).toHaveCount(0);
 
   await page.goto(`/api/dev/login?name=${encodeURIComponent(uniqueName("Сафари"))}`);

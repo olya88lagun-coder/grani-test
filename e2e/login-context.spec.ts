@@ -12,13 +12,16 @@ test("a plain visit to the sign-in page gets the plain intro", async ({ page }) 
   await expect(page.getByText("Результат посчитан")).toHaveCount(0);
 });
 
-test("after a finished test the intro talks about seeing the result, and only then", async ({ page }) => {
+test("after a finished test the intro talks about saving the result, and only then", async ({ page }) => {
   await page.goto("/test");
   await answerSelfTest(page);
 
+  await expect(page.getByTestId("guest-big-five-result")).toBeVisible();
+  await page.getByRole("link", { name: "Сохранить результат" }).click();
+
   await expect(page).toHaveURL(/\/login$/);
-  await expect(title(page, "Осталось увидеть результат")).toBeVisible();
-  await expect(page.getByText("Войди, чтобы увидеть свой тип личности и пять ключевых черт")).toBeVisible();
+  await expect(title(page, "Сохраним твой результат")).toBeVisible();
+  await expect(page.getByText("Войди, чтобы сохранить результат, поделиться карточкой для сторис, позвать друзей или купить разбор")).toBeVisible();
 });
 
 test("coming from Together gives the Together intro, for the space and for an invite alike, and sign-in returns to the first action", async ({ page }) => {
@@ -37,6 +40,7 @@ test("coming from Together gives the Together intro, for the space and for an in
 test("Together beats a finished test when both are present, and a tampered cookie gives nothing", async ({ page, context }) => {
   await page.goto("/test");
   await answerSelfTest(page);
+  await expect(page.getByTestId("guest-big-five-result")).toBeVisible();
   await page.goto("/api/together/enter?next=space");
   await expect(title(page, "Продолжим во «Вдвоём»")).toBeVisible();
 
