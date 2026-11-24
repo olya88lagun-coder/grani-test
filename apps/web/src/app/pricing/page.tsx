@@ -50,8 +50,6 @@ export default function PricingPage() {
         </div>
       </section>
       <article className="page page--wide stack pricing-page">
-        <TrustBlock compact />
-
         <div className={styles.heroes}>
           <div className={styles.featured}>
             <section className="card stack pricing-card pricing-card--featured" data-band="night" aria-labelledby="price-full">
@@ -128,6 +126,8 @@ export default function PricingPage() {
             </section>
           </div>
         </div>
+
+        <TrustBlock compact />
 
         <section className={styles.extra} aria-labelledby="price-extra">
           <header className={styles.extraIntro}>
