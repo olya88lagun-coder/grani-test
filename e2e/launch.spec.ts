@@ -75,13 +75,20 @@ test.describe("cookie banner", () => {
         await page.evaluate(() => document.fonts.ready);
         const dimensions = await banner.evaluate(element => {
           const buttons = Array.from(element.querySelectorAll("button"));
+          const box = element.getBoundingClientRect();
           return {
-            height: element.getBoundingClientRect().height,
+            height: box.height,
+            width: box.width,
+            right: window.innerWidth - box.right,
             fontSize: parseFloat(getComputedStyle(element).fontSize),
             buttons: buttons.map(button => ({ height: button.getBoundingClientRect().height, width: button.getBoundingClientRect().width, background: getComputedStyle(button).backgroundColor, color: getComputedStyle(button).color })),
           };
         });
-        if (width === 390) expect(dimensions.height).toBeLessThanOrEqual(120);
+        // Угловая плашка: ниже прежних ~130px, не на всю ширину (кроме самых узких)
+        expect(dimensions.height).toBeLessThanOrEqual(112);
+        expect(dimensions.height / 844).toBeLessThanOrEqual(0.14);
+        if (width >= 390) expect(dimensions.width).toBeLessThanOrEqual(380);
+        expect(dimensions.right).toBeLessThanOrEqual(16);
         expect(dimensions.fontSize).toBeGreaterThanOrEqual(13);
         expect(dimensions.buttons).toHaveLength(2);
         expect(dimensions.buttons[0]!.height).toBeGreaterThanOrEqual(44);
@@ -94,6 +101,20 @@ test.describe("cookie banner", () => {
         }
       }
     }
+  });
+
+  test("first scroll without a choice keeps only necessary cookies", async ({ page }) => {
+    const metrika: string[] = [];
+    page.on("request", (request) => {
+      if (request.url().includes("mc.yandex")) metrika.push(request.url());
+    });
+    await page.goto("/");
+    const banner = page.getByRole("dialog", { name: "Cookie" });
+    await expect(banner).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 240));
+    await expect(banner).toBeHidden();
+    expect(await page.evaluate(() => localStorage.getItem("grani-cookie-consent"))).toBe("necessary");
+    expect(metrika).toEqual([]);
   });
 
   test("loads nothing until accepted and can be reopened from the footer", async ({ page }) => {
