@@ -13,17 +13,23 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
     await page.evaluate(() => document.fonts.ready);
 
     const cards = page.locator('.pricing-card');
-    await expect(cards).toHaveCount(4);
-    await expect(cards.locator('.pricing-card__price')).toHaveText(['299 ₽', '399 ₽', '399 ₽', '99 ₽ за главу']);
+    await expect(cards).toHaveCount(3);
+    await expect(cards.locator('.pricing-card__price')).toHaveText(['299 ₽', '399 ₽', '199 ₽']);
     for (const card of await cards.all()) {
       await expect(card).toHaveAttribute('data-band', 'night');
       await expect(card.locator('.pricing-card__price')).toHaveCSS('font-weight', '600');
     }
-    for (const card of (await cards.all()).slice(0, 3)) {
+    for (const card of await cards.all()) {
       const action = await card.locator('.pricing-card__cta').boundingBox();
       const list = await card.locator('ul').boundingBox();
       expect(action!.y + action!.height).toBeLessThanOrEqual(list!.y);
     }
+
+    await expect(page.getByRole('heading', { level: 2, name: 'Дополнительно' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'Грани. Вдвоём' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Главы' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Разбор пары по типу привязанности' })).toBeVisible();
+
     const compare = await page.locator('[aria-labelledby="pair-products"]').boundingBox();
     const grid = await cards.first().boundingBox();
     const example = page.getByRole('figure');
@@ -36,7 +42,6 @@ for (const width of [320, 375, 390, 768, 1024, 1280, 1440]) {
     if (width < 760) expect(exampleBox!.y).toBeGreaterThanOrEqual(grid!.y + grid!.height);
     if (width >= 1100) {
       expect(boxes[1]!.y).toBe(boxes[2]!.y);
-      expect(boxes[2]!.y).toBe(boxes[3]!.y);
       expect(boxes[1]!.width).toBeCloseTo(boxes[2]!.width, 0);
       expect(boxes[0]!.width).toBeGreaterThan(boxes[1]!.width);
     }

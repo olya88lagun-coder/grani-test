@@ -4,16 +4,16 @@
 .page :global(.pricing-page) { max-width: 1240px; padding: 48px 28px 80px; gap: 48px; }
 .page :global(.pricing-page > header) { max-width: 800px; }
 .page :global(.card) { min-width: 0; padding: 28px; background: var(--surface); border: 0; border-radius: var(--radius); box-shadow: none; backdrop-filter: none; }
-.page .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 21px; align-items: stretch; }
+.heroes { display: grid; gap: 21px; }
+.page .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 21px; align-items: stretch; }
 .page :is(.grid, .featured) :global(.pricing-card) { display: flex; flex-direction: column; gap: 21px; padding: 28px; background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
 .page :is(.grid, .featured) h2 { font-size: clamp(30px, 2.5vw, 36px); line-height: 1.15; color: var(--ink); }
 .page :is(.grid, .featured) :global(.eyebrow) { color: var(--ink-soft); }
 .page :is(.grid, .featured) :global(.pricing-card__price) { font-family: var(--font-body); font-size: clamp(32px, 3.6vw, 48px); font-weight: 600; letter-spacing: -.03em; line-height: 1.15; color: var(--gold); }
-.page .grid .priceUnit { display: inline-block; color: var(--ink-soft); font-size: 16px; font-weight: 400; letter-spacing: 0; white-space: nowrap; }
+.page .priceUnit { display: inline-block; color: var(--ink-soft); font-size: 16px; font-weight: 400; letter-spacing: 0; white-space: nowrap; }
 .page :is(.grid, .featured) :global(.pricing-card__cta) { display: grid; gap: 14px; margin: 0 0 7px; }
 .page .grid :global(.pricing-card__cta .muted) { min-height: 3.1em; }
 .page :is(.grid, .featured) :global(.pricing-card__list) { padding-top: 21px; border-top: 1px solid var(--line); gap: 10px; }
-.page .grid :global(.pricing-card__bundle) { padding: 14px; background: var(--surface-2); color: var(--ink); border-radius: var(--radius); }
 .page :global(.button) { min-height: 52px; border-radius: var(--radius); box-shadow: none; white-space: normal; text-align: center; }
 .page :global(.button--ghost) { background: transparent; border: 1px solid var(--accent); }
 .page :global(.pricing-page > .inner-block .pricing-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -36,7 +36,7 @@
 .eyebrow { margin: 0 0 16px; color: var(--gold); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
 .page .intro h1 { margin: 0; color: var(--ink); font-size: clamp(44px, 5.4vw, 76px); line-height: 1.05; letter-spacing: -.03em; text-wrap: balance; }
 .lead { margin: 24px 0 0; font-size: 18px; line-height: 1.7; color: var(--ink-soft); }
-.productNav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-top: 32px; border-block: 1px solid var(--line); }
+.productNav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 32px; border-block: 1px solid var(--line); }
 .productNav a { display: flex; flex-direction: column; justify-content: center; gap: 6px; min-width: 0; min-height: 92px; padding: 16px 14px; color: var(--ink); text-decoration: none; }
 .productNav span { font-size: 14px; line-height: 1.5; text-decoration: underline; text-underline-offset: 4px; }
 .productNav strong { color: var(--gold); font-size: 17px; font-weight: 500; line-height: 1.5; }
@@ -53,8 +53,8 @@
   .page .hero { padding: 20px 0 32px; }
   .lead { font-size: 16px; }
   .page :global(.pricing-page) { padding-top: 32px; }
-  .productNav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .productNav a { padding-inline: 8px; }
+  .productNav { grid-template-columns: minmax(0, 1fr); }
+  .productNav a { padding-inline: 8px; min-height: 72px; }
 }
 .page :global(.pricing-page) :is(h2, h3), .page :global(.pricing-page .inner-block) :is(h2, h3, p, li) { color: var(--ink); }
 .page :global(.pricing-page .muted), .page :global(.pricing-page .inner-block .muted) { color: var(--ink-soft); }
@@ -78,12 +78,27 @@
 .page .trust .muted { color: var(--ink); font-size: 16px; line-height: 1.7; }
 .productNav a { position: relative; padding-right: 24px; }
 .productNav a::after { content: "↓"; position: absolute; right: 8px; top: 20px; color: var(--gold); }
+.extra { display: grid; gap: 28px; padding-top: 8px; border-top: 1px solid var(--line); }
+.extraIntro { max-width: 720px; display: grid; gap: 12px; }
+.extraEyebrow { margin: 0; color: var(--ink-soft); font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; }
+.extraIntro h2 { margin: 0; font-size: clamp(28px, 3vw, 36px); line-height: 1.15; color: var(--ink); }
+.extraLead { margin: 0; color: var(--ink-soft); font-size: 16px; line-height: 1.7; }
+.extraGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+.extraCard { display: flex; flex-direction: column; gap: 16px; padding: 22px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+.extraCard :global(.eyebrow) { color: var(--ink-soft); }
+.extraCard h2, .extraCard h3 { margin: 0; font-size: clamp(22px, 2vw, 26px); line-height: 1.2; color: var(--ink); scroll-margin-top: 104px; }
+.extraPrice { margin: 0; font-family: var(--font-body); font-size: clamp(26px, 2.4vw, 34px); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; color: var(--gold); }
+.extraBundle { margin: 0; padding: 12px; background: var(--surface-2); color: var(--ink); border-radius: var(--radius); font-size: 15px; }
+.extraCta { display: grid; gap: 12px; }
+.extraCard :global(.pricing-card__list) { padding-top: 14px; border-top: 1px solid var(--line); gap: 8px; }
+.extraCard :global(.button) { min-height: 48px; }
 @media (min-width: 760px) and (max-width: 1099px) {
   .page .grid { grid-template-columns: minmax(0, 1fr); }
   .featured { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .examplePages { grid-template-columns: minmax(0, 1fr); }
   .lifeExample { margin-top: 0; }
   .page .featured :global(.pricing-card--featured) { padding: 28px; }
+  .extraGrid { grid-template-columns: minmax(0, 1fr); }
 }
 @media (max-width: 759px) {
   .featured { grid-template-columns: minmax(0, 1fr); }
@@ -93,8 +108,10 @@
   .example { padding: 20px 16px; border-left: 0; border-top: 1px solid var(--line); }
   .examplePages { grid-template-columns: minmax(0, 1fr); gap: 20px; }
   .lifeExample { margin-top: 0; }
+  .extraGrid { grid-template-columns: minmax(0, 1fr); }
+  .extraCard { padding: 18px; }
   .trust { padding: 20px 0; gap: 14px; background: transparent; }
   .page .trust .muted { font-size: 15px; }
-  .productNav a { min-height: 86px; padding-right: 22px; }
+  .productNav a { padding-right: 22px; }
   .productNav strong { font-size: 16px; }
 }

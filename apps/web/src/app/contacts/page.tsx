@@ -1,4 +1,4 @@
-import { formatRub, PRODUCT_PRICES, type Product } from "@grani/core";
+import { formatRub, PRODUCT_PRICES, TOGETHER_PERIOD_DAYS, TOGETHER_PRICE_KOPECKS, type Product } from "@grani/core";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { NightHero } from "@/components/NightHero";
@@ -13,7 +13,10 @@ export const metadata: Metadata = publicMetadata({
   path: "/contacts",
 });
 
-const PRODUCTS = Object.keys(PRODUCT_PRICES) as Product[];
+const MAIN_PRODUCTS = ["full", "pair", "attachment_solo"] as const satisfies readonly Product[];
+const EXTRA_PRODUCTS = (Object.keys(PRODUCT_PRICES) as Product[]).filter(
+  (product) => !(MAIN_PRODUCTS as readonly string[]).includes(product),
+);
 
 export default function ContactsPage() {
   return (
@@ -45,15 +48,28 @@ export default function ContactsPage() {
           «Как меня видят другие». Платно — подробные текстовые разборы по результату теста. Они открываются на сайте сразу после оплаты.
         </p>
         <h2>Платные услуги</h2>
+        <p>Основные разборы:</p>
         <ul>
-          {PRODUCTS.map((product) => (
+          {MAIN_PRODUCTS.map((product) => (
             <li key={product}>
               {PRODUCT_DESCRIPTIONS[product]} — {formatRub(PRODUCT_PRICES[product])}
             </li>
           ))}
         </ul>
+        <p>Дополнительно (главы, парный разбор привязанности и связанные позиции):</p>
+        <ul>
+          {EXTRA_PRODUCTS.map((product) => (
+            <li key={product}>
+              {PRODUCT_DESCRIPTIONS[product]} — {formatRub(PRODUCT_PRICES[product])}
+            </li>
+          ))}
+          <li>
+            Доступ к «Грани. Вдвоём» на {TOGETHER_PERIOD_DAYS} дней для двоих — {formatRub(TOGETHER_PRICE_KOPECKS)}
+          </li>
+        </ul>
         <p>
-          Что входит в каждый разбор — на странице <Link href="/pricing">«Разборы и цены»</Link>.
+          Что входит в каждый разбор — на странице <Link href="/pricing">«Разборы и цены»</Link>. Полный перечень цен также в{" "}
+          <Link href="/offer">оферте</Link>.
         </p>
         <p>
           Оплата картой через ЮKassa, чек самозанятого из «Мой налог» оформляется после оплаты. Условия, возвраты и порядок оказания — в <Link href="/offer">оферте</Link>,

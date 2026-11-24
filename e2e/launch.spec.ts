@@ -191,6 +191,10 @@ test("the offer, the policy and the consent name the e-mail as the correspondenc
 
 test("the pricing, compatibility and Together pages explain how the two pair products differ", async ({ page }) => {
   await page.goto("/pricing");
+  await expect(page.getByRole("heading", { level: 2, name: "Полный разбор личности" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Разбор совместимости пары" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Личный разбор типа привязанности" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "Дополнительно" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 2, name: "Грани. Вдвоём" })).toBeVisible();
   const compare = page.getByRole("region", { name: "Чем отличаются два продукта для пары" });
   await expect(compare.getByText("Тест нужен вам обоим.")).toBeVisible();
