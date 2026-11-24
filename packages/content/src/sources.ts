@@ -461,7 +461,26 @@ const WILSON_DUNN_2004: Source = {
   note: "обзор ограничений самоанализа и возможностей дополнять его наблюдением за поведением и взглядом других",
 };
 
+const LARSON_ROTTINGHAUS_BORGEN_2002: Source = {
+  authors: "Lisa M. Larson, Patrick J. Rottinghaus, Fred H. Borgen",
+  year: 2002,
+  title: "Meta-analyses of Big Six Interests and Big Five Personality Factors",
+  journal: "Journal of Vocational Behavior",
+  url: "https://doi.org/10.1006/jvbe.2001.1854",
+  note: "профессиональные интересы и черты Big Five частично пересекаются, но не заменяют друг друга",
+};
+
+const NYE_SU_ROUNDS_DRASGOW_2012: Source = {
+  authors: "Christopher D. Nye, Rong Su, James Rounds, Fritz Drasgow",
+  year: 2012,
+  title: "Vocational Interests and Performance",
+  journal: "Perspectives on Psychological Science",
+  url: "https://doi.org/10.1177/1745691612449021",
+  note: "интересы связаны с результатами и продолжением деятельности; соответствие интересов среде связано с результатами сильнее одних интересов",
+};
+
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "vybor-professii-po-lichnosti": [LARSON_ROTTINGHAUS_BORGEN_2002, NYE_SU_ROUNDS_DRASGOW_2012],
   "kak-opisat-sebya": [GOLDBERG_1992, FLEESON_2001],
   "lichnost-i-samoznanie": [WILSON_DUNN_2004, FLEESON_2001],
   "sovmestimost-na-svidaniyah": [EASTWICK_FINKEL_2008, JOEL_EASTWICK_FINKEL_2017],
