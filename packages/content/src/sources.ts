@@ -462,6 +462,7 @@ const WILSON_DUNN_2004: Source = {
 };
 
 export const ARTICLE_SOURCES: Readonly<Record<string, readonly Source[]>> = {
+  "kak-opisat-sebya": [GOLDBERG_1992, FLEESON_2001],
   "lichnost-i-samoznanie": [WILSON_DUNN_2004, FLEESON_2001],
   "sovmestimost-na-svidaniyah": [EASTWICK_FINKEL_2008, JOEL_EASTWICK_FINKEL_2017],
   "disc-i-big-five": [MARTINUSSEN_RICHARDSEN_VARUM_2001, BARRICK_MOUNT_1991],
