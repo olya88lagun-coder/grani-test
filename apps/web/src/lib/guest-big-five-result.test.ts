@@ -1,4 +1,4 @@
-import { SELF_ITEMS } from "@grani/content";
+import { SELF_ITEMS, typeCodeToDir } from "@grani/content";
 import type { Answers } from "@grani/core";
 import { describe, expect, test } from "vitest";
 import {
@@ -25,9 +25,10 @@ describe("parseGuestBigFiveAnswers", () => {
 });
 
 describe("guestBigFiveView", () => {
-  test("returns a type name and five scales", () => {
+  test("returns a type name, dir, and five scales", () => {
     const view = guestBigFiveView(all(3));
     expect(view.name.length).toBeGreaterThan(0);
+    expect(view.dir).toBe(typeCodeToDir(view.typeCode));
     expect(view.scales).toHaveLength(5);
     expect(view.scales.map((scale) => scale.trait)).toEqual([
       "openness",
