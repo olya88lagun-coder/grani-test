@@ -11,7 +11,7 @@ export function TestCta({ title = "Узнай свой тип" }: { title?: stri
         </Link>
         <span className="muted">10 минут, бесплатно</span>
       </div>
-      <p className="muted">Для просмотра и сохранения результата нужен вход через VK ID.</p>
+      <p className="muted">Результат видно сразу. Чтобы сохранить, поделиться или купить разбор — войди через VK ID.</p>
     </section>
   );
 }

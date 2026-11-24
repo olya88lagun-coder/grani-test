@@ -39,8 +39,12 @@ type QuestionnaireBase = {
   screenHeading?: "h1" | "h2";
 };
 
-// Либо ответы уходят на сервер, либо результат считает сам вызывающий (короткие тесты, без сервера)
-export type QuestionnaireProps = QuestionnaireBase & ({ submitUrl: string; onComplete?: never } | { onComplete: (answers: Answers) => void; submitUrl?: never });
+// Либо ответы уходят на сервер, либо результат считает сам вызывающий (короткие тесты, без сервера).
+// onPendingResult — гостевой Big Five: сервер вернул pending и cookie, остаёмся на странице теста
+export type QuestionnaireProps = QuestionnaireBase & (
+  | { submitUrl: string; onPendingResult?: (answers: Answers) => void; onComplete?: never }
+  | { onComplete: (answers: Answers) => void; submitUrl?: never; onPendingResult?: never }
+);
 
 // Первый ответ на вопрос мягко подводит к следующему на экране; при reduced-motion страница не двигается сама
 function revealNext(id: string) {
@@ -69,7 +73,7 @@ function writeStorage(key: string, value: string | null): boolean {
   }
 }
 
-export function Questionnaire({ items, storageKey, submitUrl, onComplete, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, crystalKeys, screenHeading = "h1" }: QuestionnaireProps) {
+export function Questionnaire({ items, storageKey, submitUrl, onComplete, onPendingResult, submitLabel, pageSize = PAGE_SIZE, startGoal, finishGoal, trackProgress = false, crystalKeys, screenHeading = "h1" }: QuestionnaireProps) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({});
   const [page, setPage] = useState(0);
@@ -130,11 +134,23 @@ export function Questionnaire({ items, storageKey, submitUrl, onComplete, submit
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ answers }),
       });
-      const body = (await response.json()) as { ok: boolean; redirect?: string; error?: string };
+      const body = (await response.json()) as { ok: boolean; redirect?: string; pending?: boolean; error?: string };
       if (body.ok && body.redirect) {
         writeStorage(storageKey, null);
         if (finishGoal) reachGoal(finishGoal);
         router.push(body.redirect);
+        return;
+      }
+      if (body.ok && body.pending) {
+        writeStorage(storageKey, null);
+        if (finishGoal) reachGoal(finishGoal);
+        if (onPendingResult) {
+          onPendingResult(answers);
+          sendingRef.current = false;
+          setSending(false);
+          return;
+        }
+        router.push("/login");
         return;
       }
       setError(submitErrorMessage(body.error));

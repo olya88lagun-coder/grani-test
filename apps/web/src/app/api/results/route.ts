@@ -24,7 +24,8 @@ export async function POST(request: NextRequest) {
     const redirect = pairReturnPath(request.cookies.get(PAIR_COOKIE)?.value) ?? `/result/${outcome.resultId}`;
     return NextResponse.json({ ok: true, redirect });
   }
-  const response = NextResponse.json({ ok: true, redirect: "/login" });
+  // Гость сразу видит бесплатный результат на /test; cookie нужна, чтобы после входа сохранить ответы
+  const response = NextResponse.json({ ok: true, pending: true });
   response.cookies.set(PENDING_COOKIE, outcome.pendingToken, pendingCookieOptions(env.APP_URL));
   return response;
 }

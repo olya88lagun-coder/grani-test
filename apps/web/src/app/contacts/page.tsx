@@ -4,6 +4,7 @@ import Link from "next/link";
 import { NightHero } from "@/components/NightHero";
 import { OPERATOR } from "@/lib/legal";
 import { publicMetadata } from "@/lib/seo";
+import { VK_COMMUNITY_LINK } from "@/lib/site-links";
 import { PRODUCT_DESCRIPTIONS } from "@/server/payments-service";
 
 export const metadata: Metadata = publicMetadata({
@@ -30,6 +31,13 @@ export default function ContactsPage() {
         </p>
         <p>
           Почта: <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>. Отвечаем в течение двух рабочих дней.
+        </p>
+        <p>
+          {VK_COMMUNITY_LINK.label}:{" "}
+          <a href={VK_COMMUNITY_LINK.href} target="_blank" rel="noopener noreferrer">
+            {VK_COMMUNITY_LINK.href.replace(/^https:\/\//, "")}
+          </a>
+          .
         </p>
         <h2>Что это за сайт</h2>
         <p>

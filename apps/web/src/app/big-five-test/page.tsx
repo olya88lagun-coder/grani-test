@@ -14,7 +14,7 @@ import styles from "./big-five.module.css";
 
 const TITLE = "Тест Big Five бесплатно — 50 вопросов на русском";
 const DESCRIPTION =
-  "Пройди тест «Большая пятёрка»: 50 утверждений, около 10 минут. Тип личности, пять шкал и расшифровка каждой — бесплатно. Результат сохраняется через вход с VK ID.";
+  "Пройди тест «Большая пятёрка»: 50 утверждений, около 10 минут. Тип личности и пять шкал — сразу и бесплатно. Сохранить результат можно через вход с VK ID.";
 const PATH = "/big-five-test";
 
 export const metadata = publicMetadata({ title: TITLE, description: DESCRIPTION, path: PATH });
@@ -31,7 +31,7 @@ const TRAIT_LINKS = [
 
 const EXAMPLE_SCORES = { openness: 88, conscientiousness: 43, extraversion: 75, agreeableness: 83, stability: 68 };
 const EXAMPLE_TYPE = typeCodeOf(EXAMPLE_SCORES);
-const ACCESS_NOTE = "Начать можно без регистрации. Чтобы увидеть и сохранить результат, понадобится VK ID.";
+const ACCESS_NOTE = "Начать можно без регистрации: тип и шкалы видно сразу. Чтобы сохранить результат, поделиться или купить разбор, понадобится VK ID.";
 
 // У каждой черты свой смысл — не один абзац с подменой названия
 const TRAIT_TEXTS: Readonly<Record<(typeof TRAIT_LINKS)[number][0], string>> = {

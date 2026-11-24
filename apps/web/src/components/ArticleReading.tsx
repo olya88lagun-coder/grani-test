@@ -30,7 +30,7 @@ export function ArticleReading({ body }: { body: string }) {
             <aside className="article-inline-cta" aria-label="Пройти тест">
               <p>Хочешь узнать, как эти черты выражены у тебя?</p>
               <Link className="button" href="/test">Пройти тест Big Five бесплатно <span aria-hidden="true">→</span></Link>
-              <p className="muted">50 утверждений, около 10 минут. Для просмотра результата нужен вход через VK ID.</p>
+              <p className="muted">50 утверждений, около 10 минут. Результат видно сразу; чтобы сохранить или поделиться — войди через VK ID.</p>
             </aside>
             <RichText text={parts[1].text} headingIdPrefix={parts[1].prefix} />
           </>
