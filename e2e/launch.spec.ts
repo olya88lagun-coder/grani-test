@@ -84,10 +84,11 @@ test.describe("cookie banner", () => {
             buttons: buttons.map(button => ({ height: button.getBoundingClientRect().height, width: button.getBoundingClientRect().width, background: getComputedStyle(button).backgroundColor, color: getComputedStyle(button).color })),
           };
         });
-        // Угловая плашка: ниже прежних ~130px, не на всю ширину (кроме самых узких)
+        // Угловая ночная плашка: компактнее на ~390, не доминирует первый экран
         expect(dimensions.height).toBeLessThanOrEqual(112);
         expect(dimensions.height / 844).toBeLessThanOrEqual(0.14);
-        if (width >= 390) expect(dimensions.width).toBeLessThanOrEqual(380);
+        if (width >= 390) expect(dimensions.width).toBeLessThanOrEqual(340);
+        if (width === 390) expect(dimensions.width).toBeLessThanOrEqual(300);
         expect(dimensions.right).toBeLessThanOrEqual(16);
         expect(dimensions.fontSize).toBeGreaterThanOrEqual(13);
         expect(dimensions.buttons).toHaveLength(2);
