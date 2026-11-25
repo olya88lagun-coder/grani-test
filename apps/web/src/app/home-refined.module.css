@@ -123,32 +123,35 @@
   94%, 100% { transform: translateX(330px) skewX(-18deg); opacity: 0; }
 }
 
-/* Черты Big Five — под героем, не стикеры на камне */
+/* Черты Big Five — под героем, не стикеры на камне; контраст на зелёном небуле */
 .traitTease {
   grid-area: traits;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 18px;
+  gap: 10px 20px;
   margin: 12px 0 0;
   padding: 18px 0 0;
   list-style: none;
-  border-top: 1px solid rgba(205, 181, 123, .22);
+  border-top: 1px solid rgba(232, 208, 154, .42);
 }
 .traitTease li {
-  font-family: var(--font-display);
-  font-size: clamp(15px, 1.3vw, 18px);
-  line-height: 1.2;
-  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: .01em;
+  color: #fbf7ec;
   padding: 0;
+  text-shadow: 0 1px 14px rgba(0, 0, 0, .55);
 }
 .traitTease li::before {
   content: "";
   display: inline-block;
-  width: 14px;
+  width: 16px;
   height: 1px;
   margin-right: 8px;
   vertical-align: middle;
-  background: var(--gold);
+  background: #e8d09a;
 }
 
 .page :global(.home-feature-strip) { padding: 28px max(24px, calc((100vw - 1240px) / 2)); gap: 24px; border-top: 1px solid var(--line); border-bottom: 0; box-shadow: none; }
