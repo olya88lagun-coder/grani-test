@@ -18,10 +18,11 @@
   --gold: #CDB57B;
   --danger: #B42318;
   --radius: 14px;
-  --page-start: #F5F1E4;
-  --page-end: #EEF2E4;
-  --home-page-end: #F8F1DF;
-  --page-panel: #EEEBDC;
+  /* Дневной лён: холодный sage/green-gray, дальше от WishList #f6f1e7 */
+  --page-start: #E9EEE8;
+  --page-end: #E4E9E3;
+  --home-page-end: #E6EBE4;
+  --page-panel: #E2E7E1;
   --page-rule: rgba(15,62,23,.14);
   --chrome-bg: var(--bg);
   --font-display: var(--font-cormorant), Georgia, serif;
@@ -277,21 +278,21 @@ body.has-cookie-banner .footer { padding-bottom: calc(88px + env(safe-area-inset
 
 /* Home visual refresh: append to apps/web/src/app/globals.css */
 .home-page {
-  --home-bg: #f3f1e6;
-  --home-paper: rgba(255, 253, 244, 0.72);
+  --home-bg: #E9EEE8;
+  --home-paper: rgba(246, 249, 245, 0.72);
   --home-ink: #111912;
   --home-green: #0f3e17;
-  --home-muted: #5d685c;
+  --home-muted: #526053;
   --home-line: rgba(15, 62, 23, 0.14);
   --home-shadow: 0 26px 70px rgba(20, 47, 23, 0.14);
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 38% 9% at 78% 30%, rgba(255, 246, 214, 0.75), transparent 70%),
-    radial-gradient(ellipse 34% 8% at 12% 48%, rgba(255, 250, 232, 0.8), transparent 70%),
-    radial-gradient(ellipse 40% 10% at 88% 66%, rgba(255, 243, 208, 0.6), transparent 70%),
-    radial-gradient(ellipse 36% 9% at 20% 86%, rgba(214, 226, 199, 0.55), transparent 70%),
-    linear-gradient(180deg, var(--page-start) 0%, #f1f3e6 34%, #f7f1df 58%, var(--page-end) 80%, var(--chrome-bg) 100%);
+    radial-gradient(ellipse 38% 9% at 78% 30%, rgba(214, 226, 199, 0.55), transparent 70%),
+    radial-gradient(ellipse 34% 8% at 12% 48%, rgba(232, 238, 230, 0.75), transparent 70%),
+    radial-gradient(ellipse 40% 10% at 88% 66%, rgba(214, 226, 199, 0.45), transparent 70%),
+    radial-gradient(ellipse 36% 9% at 20% 86%, rgba(214, 226, 199, 0.5), transparent 70%),
+    linear-gradient(180deg, var(--page-start) 0%, #E7EBE6 34%, #E6EBE4 58%, var(--page-end) 80%, var(--chrome-bg) 100%);
   color: var(--home-ink);
 }
 
@@ -304,7 +305,7 @@ body.has-cookie-banner .footer { padding-bottom: calc(88px + env(safe-area-inset
   min-height: 660px;
   padding: 22px clamp(18px, 5vw, 92px) 64px;
   background:
-    linear-gradient(90deg, rgba(248, 246, 231, 0.92) 0%, rgba(248, 246, 231, 0.62) 42%, rgba(248, 246, 231, 0.18) 100%),
+    linear-gradient(90deg, rgba(233, 238, 232, 0.92) 0%, rgba(233, 238, 232, 0.62) 42%, rgba(233, 238, 232, 0.18) 100%),
     url("/home/hero-atrium.webp") center / cover no-repeat;
 }
 
@@ -318,7 +319,7 @@ body.has-cookie-banner .footer { padding-bottom: calc(88px + env(safe-area-inset
   bottom: -46px;
   height: 96px;
   border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-  background: rgba(255, 253, 244, 0.72);
+  background: rgba(246, 249, 245, 0.72);
   transform: rotate(-2.5deg);
   pointer-events: none;
 }
@@ -1167,10 +1168,10 @@ body.has-cookie-banner .footer { padding-bottom: calc(88px + env(safe-area-inset
   overflow: hidden;
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 40% 26% at 86% 6%, rgba(255, 246, 214, 0.9), transparent 70%),
-    radial-gradient(ellipse 36% 22% at 6% 40%, rgba(255, 250, 232, 0.85), transparent 70%),
-    radial-gradient(ellipse 40% 26% at 94% 76%, rgba(214, 226, 199, 0.55), transparent 70%),
-    linear-gradient(180deg, var(--page-start) 0%, #f1f3e6 40%, #f7f1df 75%, var(--chrome-bg) 100%);
+    radial-gradient(ellipse 40% 26% at 86% 6%, rgba(214, 226, 199, 0.55), transparent 70%),
+    radial-gradient(ellipse 36% 22% at 6% 40%, rgba(232, 238, 230, 0.75), transparent 70%),
+    radial-gradient(ellipse 40% 26% at 94% 76%, rgba(214, 226, 199, 0.5), transparent 70%),
+    linear-gradient(180deg, var(--page-start) 0%, #E7EBE6 40%, #E6EBE4 75%, var(--chrome-bg) 100%);
 }
 
 /* Тени листьев в правом верхнем углу: участок стены атриума примерно с 19 по 55% ширины фото — без окна и арки */
@@ -1570,10 +1571,10 @@ body:has(.inner-text) {
   isolation: isolate;
   min-height: 100vh;
   background:
-    radial-gradient(ellipse 40% 18% at 86% 4%, rgba(255, 246, 214, 0.9), transparent 70%),
-    radial-gradient(ellipse 36% 16% at 6% 38%, rgba(255, 250, 232, 0.85), transparent 70%),
+    radial-gradient(ellipse 40% 18% at 86% 4%, rgba(214, 226, 199, 0.55), transparent 70%),
+    radial-gradient(ellipse 36% 16% at 6% 38%, rgba(232, 238, 230, 0.75), transparent 70%),
     radial-gradient(ellipse 40% 18% at 94% 74%, rgba(214, 226, 199, 0.5), transparent 70%),
-    linear-gradient(180deg, var(--page-start) 0%, #f1f3e6 40%, #f7f1df 75%, var(--page-end) 100%);
+    linear-gradient(180deg, var(--page-start) 0%, #E7EBE6 40%, #E6EBE4 75%, var(--page-end) 100%);
 }
 
 /* Тени листьев в правом верхнем углу — тот же фрагмент стены атриума, что у .inner-page */

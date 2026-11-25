@@ -107,6 +107,12 @@
   .heroGem { transform: perspective(650px) rotateX(calc(var(--my, 0) * -5deg)) rotateY(calc(var(--mx, 0) * 7deg)) translateY(calc(var(--my, 0) * -5px)); }
   .pointerSheen { opacity: calc(.13 + var(--mx, 0) * .055); transform: translateX(calc(var(--mx, 0) * 106px)) skewX(-18deg); }
   .page :global([data-crystal-reveal="shown"]) .heroFacet { animation: facet-light 570ms var(--ease-out) both; }
+
+  /* Вход героя: бренд → лид → CTA, затем мягко строка черт; камень парит отдельно */
+  .heroHeading { animation: hero-fade-rise 720ms var(--ease-out) both; }
+  .page :global(.home-lead) { animation: hero-fade-rise 720ms var(--ease-out) 140ms both; }
+  .page :global(.home-hero__actions) { animation: hero-fade-rise 720ms var(--ease-out) 280ms both; }
+  .traitTease { animation: hero-fade-in 900ms var(--ease-out) 520ms both; }
 }
 @keyframes facet-light {
   0%, 100% { opacity: 0; }
@@ -121,6 +127,14 @@
   77% { transform: translateX(0) skewX(-18deg); opacity: 1; }
   91% { transform: translateX(330px) skewX(-18deg); opacity: 1; }
   94%, 100% { transform: translateX(330px) skewX(-18deg); opacity: 0; }
+}
+@keyframes hero-fade-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes hero-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Черты Big Five — под героем, не стикеры на камне; контраст на зелёном небуле */
