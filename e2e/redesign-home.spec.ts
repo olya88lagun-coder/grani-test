@@ -13,7 +13,10 @@ for (const width of [320, 390, 1024, 1440]) {
     await expect(hero).toHaveAttribute("data-band", "night");
     await expect(page.locator(".home-types")).toHaveAttribute("data-band", "night");
     for (const selector of [".home-result", ".home-articles"]) await expect(page.locator(selector)).not.toHaveAttribute("data-band", "night");
-    await expect(hero.getByRole("heading", { level: 1 })).toHaveText("Тест личности «Грани»Узнай себя глубже");
+    await expect(hero.getByRole("heading", { level: 1 })).toHaveText("ГраниУзнай себя глубже");
+    await expect(hero.getByRole("heading", { level: 1 })).toContainText("Грани");
+    await expect(hero.getByRole("list", { name: "Пять черт Big Five" })).toBeVisible();
+    await expect(hero.locator(".home-crystal__label")).toHaveCount(0);
     const actions = hero.locator(".home-hero__actions");
     await expect(actions.getByRole("link", { name: "Пройти тест" })).toHaveAttribute("href", "/test");
     await expect(actions.getByRole("link", { name: "о тесте Big Five" })).toHaveAttribute("href", "/big-five-test");
@@ -22,7 +25,7 @@ for (const width of [320, 390, 1024, 1440]) {
     await expect(page.locator(".home-type-card__art img")).toHaveCount(5);
     await expect(page.locator(".home-article-card img")).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width);
-    const gemBox = await hero.locator(".home-crystal > div > img").boundingBox();
+    const gemBox = await hero.locator(".home-crystal img").boundingBox();
     const sceneBox = await hero.locator(".home-crystal").boundingBox();
     expect(gemBox!.width).toBeGreaterThan(150);
     expect(gemBox!.width / sceneBox!.width).toBeGreaterThan(.6);
@@ -51,7 +54,7 @@ for (const width of [320, 390, 1024, 1440]) {
       await expect(outline).toHaveCSS("stroke", await card.evaluate((node) => getComputedStyle(node).color));
       await expect(card.locator("[data-gem-dir] > span > svg")).toHaveCSS("filter", "none");
     }
-    const samples = await page.locator(".home-kicker, .home-hero h1, .home-lead, .home-time, .home-crystal__label, .home-section__copy h2, .home-section__copy > p, .home-type-card h3, .home-type-card p, .home-type-card > a").evaluateAll((elements) => {
+    const samples = await page.locator(".home-kicker, .home-hero h1, .home-lead, .home-time, .home-hero [aria-label='Пять черт Big Five'] li, .home-section__copy h2, .home-section__copy > p, .home-type-card h3, .home-type-card p, .home-type-card > a").evaluateAll((elements) => {
       // CSS color-mix may compute to oklab(). Let the browser convert to sRGB.
       const canvas = document.createElement("canvas");
       canvas.width = canvas.height = 1;
