@@ -54,6 +54,31 @@ describe("article covers", () => {
     expect(new Set(cards.map((card) => card.image)).size).toBe(dedicatedSlugs.length);
   });
 
+  it("uses dedicated covers for the seven former homepage-stub articles", () => {
+    const expected = {
+      "kak-opisat-sebya": "kak-opisat-sebya.webp",
+      "lichnost-i-samoznanie": "lichnost-i-samoznanie.webp",
+      "vybor-professii-po-lichnosti": "vybor-professii-po-lichnosti.webp",
+      "disc-i-big-five": "disc-i-big-five.webp",
+      "sovmestimost-na-svidaniyah": "sovmestimost-na-svidaniyah.webp",
+      "enneagramma-i-big-five": "enneagramma-i-big-five.webp",
+      "privychki-i-harakter": "privychki-i-harakter.webp",
+    } as const;
+    const dedicatedSlugs = Object.keys(expected);
+    const cards = getArticles().map(articleCard).filter((card) => dedicatedSlugs.includes(card.slug));
+
+    expect(cards).toHaveLength(dedicatedSlugs.length);
+    for (const card of cards) {
+      expect(card.image, card.slug).toBe(`/images/articles/${expected[card.slug as keyof typeof expected]}`);
+      expect(card.imageAlt.length, card.slug).toBeGreaterThan(20);
+      expect(
+        existsSync(new URL(`../../public${card.image}`, import.meta.url)),
+        card.image,
+      ).toBe(true);
+    }
+    expect(new Set(cards.map((card) => card.image)).size).toBe(dedicatedSlugs.length);
+  });
+
   it("uses dedicated covers for the twelve legacy fallback articles", () => {
     const expected = {
       "big-five-v-otnosheniyah": "big-five-v-otnosheniyah.webp",
