@@ -133,7 +133,7 @@ export function Analytics() {
 
   if (!open) return null;
   return (
-    <div className="cookie-banner" role="dialog" aria-label="Cookie">
+    <div className="cookie-banner" data-band="night" role="dialog" aria-label="Cookie">
       <p>
         Cookie для работы сайта; Метрика — с согласия. Подробнее — в{" "}
         <Link href="/privacy">политике</Link>.

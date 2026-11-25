@@ -12,6 +12,19 @@ async function tokenColor(element: Locator, token: string) {
   }, token);
 }
 
+// Ночное стекло cookie: color-mix(--surface 92%, transparent), не сплошной --bg/--page-start
+async function cookieGlassBackground(element: Locator) {
+  return element.evaluate((node) => {
+    const surface = getComputedStyle(node).getPropertyValue("--surface").trim();
+    const probe = document.createElement("span");
+    probe.style.background = `color-mix(in srgb, ${surface} 92%, transparent)`;
+    node.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+}
+
 for (const width of [320, 390, 1024, 1440]) {
   test(`redesign chrome fits ${width}px and keeps keyboard controls`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
@@ -41,12 +54,15 @@ for (const width of [320, 390, 1024, 1440]) {
       await consent.press("Enter");
       const banner = page.getByRole("dialog", { name: "Cookie" });
       await expect(banner).toBeVisible();
+      await expect(banner).toHaveAttribute("data-band", "night");
       await expect(banner).toHaveCSS("box-shadow", "none");
-      await expect(banner).toHaveCSS("background-color", await tokenColor(page.locator("main"), name === "pair" ? "--bg" : "--page-start"));
+      await expect(banner).toHaveCSS("background-color", await cookieGlassBackground(banner));
+      await expect(banner).toHaveCSS("color", await tokenColor(footer, "--ink"));
       const box = await banner.boundingBox();
       expect(box!.x).toBeGreaterThanOrEqual(0);
       expect(box!.x + box!.width).toBeLessThanOrEqual(width);
       expect(box!.height).toBeLessThanOrEqual(868);
+      if (width <= 390) expect(box!.width).toBeLessThanOrEqual(300);
       await banner.screenshot({ path: testInfo.outputPath(`${name}-cookie-${width}.png`), scale: "css", style: "nextjs-portal { display: none; }" });
       await banner.getByRole("button", { name: "Только необходимые" }).focus();
       await page.keyboard.press("Enter");
@@ -104,7 +120,8 @@ test("pair chrome uses rose gold when it is outside the page palette wrapper", a
   for (const selector of [".public-header", ".footer", ".cookie-banner"]) {
     const element = page.locator(selector);
     const reference = page.locator("#pair-night");
-    await expect(element).toHaveCSS("background-color", await tokenColor(reference, "--bg"));
+    if (selector === ".cookie-banner") await expect(element).toHaveCSS("background-color", await cookieGlassBackground(element));
+    else await expect(element).toHaveCSS("background-color", await tokenColor(reference, "--bg"));
     for (const token of ["--gold", "--garnet"]) expect(await tokenColor(element, token)).toBe(await tokenColor(reference, token));
   }
 });
@@ -124,7 +141,7 @@ test("page endpoint token updates the final page surface", async ({ page }) => {
   }
 });
 
-test("cookie keeps page tokens without the body has bridge", async ({ page }) => {
+test("cookie keeps night glass without the body has bridge", async ({ page }) => {
   await page.route("**/api/session", (route) => route.fulfill({ json: { signedIn: true } }));
   for (const path of ["/", "/articles", "/together"]) {
     await page.goto(path);
@@ -138,7 +155,8 @@ test("cookie keeps page tokens without the body has bridge", async ({ page }) =>
       document.body.append(wrapper);
       for (const node of document.querySelectorAll("body > main, body > .footer, body > .cookie-banner")) wrapper.append(node);
     });
-    const main = page.locator("main");
-    await expect(banner).toHaveCSS("background-color", await tokenColor(main, path === "/together" ? "--bg" : "--page-start"));
+    // data-band="night" на самой плашке держит ночное стекло без body:has
+    await expect(banner).toHaveAttribute("data-band", "night");
+    await expect(banner).toHaveCSS("background-color", await cookieGlassBackground(banner));
   }
 });
