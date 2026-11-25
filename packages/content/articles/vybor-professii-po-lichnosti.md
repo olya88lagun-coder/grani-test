@@ -3,8 +3,8 @@ title: Как выбрать профессию по чертам личност
 description: Как учесть характер при выборе профессии: отделить черты Big Five от интересов и навыков, сравнить реальные задачи и проверить несколько направлений на практике.
 date: 2026-11-24
 tag: Работа
-image: /home/cover-work.webp
-imageAlt: Прямоугольный изумрудный кристалл на тёмной каменной поверхности с тонкой золотой линией позади
+image: /images/articles/vybor-professii-po-lichnosti.webp
+imageAlt: Изумрудная гранёная фигура на мраморном постаменте у развилки золотых путей, ведущих к разным кристаллам
 status: published
 reviewed: true
 canonical: /articles/vybor-professii-po-lichnosti

@@ -4,8 +4,8 @@ seoTitle: Эннеаграмма и Big Five: что выбрать
 description: Чем девять типов эннеаграммы отличаются от пяти шкал Big Five, что показали исследования и какой результат поможет ответить на твой вопрос о себе.
 date: 2026-11-17
 tag: Наука
-image: /home/cover-science.webp
-imageAlt: Изумрудный кристалл на тёмной поверхности рядом с сетью золотых точек и линий
+image: /images/articles/enneagramma-i-big-five.webp
+imageAlt: Золотая эннеаграмма на мраморном постаменте рядом с пятью изумрудными кристаллами разной формы
 status: published
 reviewed: true
 canonical: /articles/enneagramma-i-big-five

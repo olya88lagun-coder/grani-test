@@ -4,8 +4,8 @@ seoTitle: DISC и Big Five: в чём разница
 description: Чем стили DISC отличаются от черт Big Five, почему буквы нельзя переводить в баллы и как обсуждать рабочие привычки на примере обычной встречи.
 date: 2026-11-17
 tag: Работа
-image: /home/cover-work.webp
-imageAlt: Прямоугольный изумруд на тёмном камне, за ним проходит тонкая золотая линия
+image: /images/articles/disc-i-big-five.webp
+imageAlt: На мраморном постаменте четыре золотых куба рядом с пятью изумрудными кристаллами и золотыми весами между ними
 status: published
 reviewed: true
 canonical: /articles/disc-i-big-five

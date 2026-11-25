@@ -4,8 +4,8 @@ seoTitle: Привычки и характер: что легче менять
 description: Как привычки связаны с характером, почему одного желания бывает мало и как изменить повторяющееся действие, опираясь на знакомую ситуацию.
 date: 2026-11-17
 tag: Психология
-image: /home/article-friends.webp
-imageAlt: Гранёный изумруд и небольшие зелёные кристаллы на тёмном фоне с золотыми линиями
+image: /images/articles/privychki-i-harakter.webp
+imageAlt: Изумрудная гранёная фигура ухаживает за ростком кристального растения, вокруг кружатся золотые кольца и листья
 status: published
 reviewed: true
 canonical: /articles/privychki-i-harakter
