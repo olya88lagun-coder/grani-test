@@ -3,8 +3,8 @@ title: Как понять совместимость на первых свид
 description: Совместимость в начале отношений: что замечать на свиданиях, какие вопросы задавать и почему симпатия или совпадение анкет ещё не говорят о будущем пары.
 date: 2026-11-21
 tag: Отношения
-image: /home/article-relationship.webp
-imageAlt: Изумрудная звезда и золотой круглый кристалл соединены тонкой золотой линией на тёмном фоне
+image: /images/articles/sovmestimost-na-svidaniyah.webp
+imageAlt: Две изумрудные гранёные фигуры сидят за круглым столом со свечой и кристальными бокалами под золотым куполом
 status: published
 reviewed: true
 canonical: /articles/sovmestimost-na-svidaniyah
