@@ -41,11 +41,11 @@ export const metadata: Metadata = {
 };
 
 const HERO_TRAITS = [
-  { label: "Открытость\nк новому", className: "home-crystal__label--openness" },
-  { label: "Экстраверсия", className: "home-crystal__label--extra" },
-  { label: "Доброжелательность", className: "home-crystal__label--agree" },
-  { label: "Добросовестность", className: "home-crystal__label--conscience" },
-  { label: "Эмоциональная\nустойчивость", className: "home-crystal__label--stable" },
+  "Открытость к новому",
+  "Экстраверсия",
+  "Доброжелательность",
+  "Добросовестность",
+  "Эмоциональная устойчивость",
 ] as const;
 
 const FEATURES = [
@@ -185,13 +185,6 @@ const HERO_GEM_OUTLINE = "100,3 183,53 183,142 100,197 17,142 17,53";
 function CrystalScene() {
   return (
     <HeroCrystalMotion>
-      {HERO_TRAITS.map((trait, index) => (
-        <span key={trait.className} className={`home-crystal__label ${trait.className}`} style={{ animationDelay: `${180 + index * 145}ms` }}>
-          {trait.label.split("\n").map((line) => (
-            <span key={line}>{line}</span>
-          ))}
-        </span>
-      ))}
       <svg className="home-crystal__diagram" viewBox="0 0 520 520" aria-hidden="true" focusable="false">
         <circle cx="260" cy="260" r="229" />
         <circle cx="260" cy="260" r="202" />
@@ -232,15 +225,17 @@ export default function HomePage() {
         <HomeHeader />
 
         <div className="home-hero__grid">
+          <Suspense>
+            <DeletedNotice />
+          </Suspense>
+          {/* Бренд — геройский сигнал; запрос про Big Five ведёт на /big-five-test */}
+          <h1 id="home-title" className={styles.heroHeading}>
+            <span className={styles.brandSignal}>Грани</span>
+            <span className="home-title__main">Узнай себя <em>глубже</em></span>
+          </h1>
+          <CrystalScene />
           <div className="home-hero__copy">
-            <Suspense>
-              <DeletedNotice />
-            </Suspense>
-            {/* Подпись над крупной фразой — часть заголовка; поисковый запрос про Big Five ведёт на /big-five-test */}
-            <h1 id="home-title">
-              <span className="home-kicker">Тест личности «Грани»</span>
-              <span className="home-title__main">Узнай себя <em>глубже</em></span>
-            </h1>
+            <p className="home-kicker">Тест личности</p>
             <p className="home-lead">
               <span>50 утверждений — твой тип личности.</span>
               <span>Пять ключевых черт, взгляд друзей и карточка для сторис.</span>
@@ -256,7 +251,11 @@ export default function HomePage() {
             </div>
             <TestAccessNote />
           </div>
-          <CrystalScene />
+          <ul className={styles.traitTease} aria-label="Пять черт Big Five">
+            {HERO_TRAITS.map((trait) => (
+              <li key={trait}>{trait}</li>
+            ))}
+          </ul>
         </div>
       </section>
 

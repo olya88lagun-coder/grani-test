@@ -74,7 +74,8 @@ test("the hero follows the desktop pointer and reveals five facets in view", asy
     const hero = page.locator("[data-hero-crystal]");
     await expect(hero).toHaveAttribute("data-crystal-reveal", "shown");
     await expect(hero.locator("svg polygon[style]")).toHaveCount(5);
-    await expect(hero.locator(".home-crystal__label--extra")).toHaveCSS("animation-name", "fade-rise");
+    await expect(page.getByRole("list", { name: "Пять черт Big Five" })).toBeVisible();
+    await expect(hero.locator(".home-crystal__label")).toHaveCount(0);
     const offsetX = () => hero.evaluate(el => Number((el as HTMLElement).style.getPropertyValue("--mx")));
     await page.mouse.move(250, 300);
     await expect.poll(offsetX).toBeLessThan(-.2);
@@ -104,9 +105,8 @@ test("reduced motion keeps the hero static and the mini trial usable", async ({ 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const hero = page.locator("[data-hero-crystal]");
-  const label = hero.locator(".home-crystal__label--extra");
-  await expect(label).toBeVisible();
-  await expect(label).toHaveCSS("animation-name", "none");
+  await expect(hero.locator(".home-crystal__label")).toHaveCount(0);
+  await expect(page.getByRole("list", { name: "Пять черт Big Five" })).toBeVisible();
   await expect(hero).not.toHaveAttribute("data-crystal-reveal", "shown");
   await page.getByRole("region", { name: "Открой первую грань" }).getByRole("radio", { name: "Отчасти" }).check();
   await expect(page.locator("[data-lit=true]")).toHaveCount(1);
