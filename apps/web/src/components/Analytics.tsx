@@ -60,18 +60,12 @@ export function Analytics() {
   const [choice, setChoice] = useState<CookieChoice | null | undefined>(undefined);
   const [open, setOpen] = useState(false);
   const loaded = useRef(false);
-  // Первое появление: прокрутка = «только необходимые». Повтор из подвала — без автовыбора.
-  const firstAsk = useRef(false);
 
   useEffect(() => {
     const saved = readChoice(window.localStorage);
     setChoice(saved);
     setOpen(saved === null);
-    firstAsk.current = saved === null;
-    const reopen = () => {
-      firstAsk.current = false;
-      setOpen(true);
-    };
+    const reopen = () => setOpen(true);
     const flush = () => { void flushPurchaseGoals(); };
     window.addEventListener(COOKIE_SETTINGS_EVENT, reopen);
     window.addEventListener(ANALYTICS_READY_EVENT, flush);
@@ -103,23 +97,7 @@ export function Analytics() {
     document.body.classList.toggle("has-cookie-banner", open);
   }, [open]);
 
-  // Один заметный скролл без выбора → необходимые cookie; аналитику не включаем сами
-  useEffect(() => {
-    if (!open || !firstAsk.current) return;
-    const onScroll = () => {
-      if (!firstAsk.current || window.scrollY < 200) return;
-      firstAsk.current = false;
-      saveChoice(window.localStorage, "necessary");
-      forgetPurchaseGoals();
-      setOpen(false);
-      setChoice("necessary");
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [open]);
-
   function decide(next: CookieChoice) {
-    firstAsk.current = false;
     saveChoice(window.localStorage, next);
     if (next === "necessary") forgetPurchaseGoals();
     setOpen(false);
