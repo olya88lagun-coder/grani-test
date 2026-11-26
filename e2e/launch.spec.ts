@@ -104,7 +104,7 @@ test.describe("cookie banner", () => {
     }
   });
 
-  test("first scroll without a choice keeps only necessary cookies", async ({ page }) => {
+  test("scrolling leaves the cookie choice open until the visitor decides", async ({ page }) => {
     const metrika: string[] = [];
     page.on("request", (request) => {
       if (request.url().includes("mc.yandex")) metrika.push(request.url());
@@ -113,9 +113,12 @@ test.describe("cookie banner", () => {
     const banner = page.getByRole("dialog", { name: "Cookie" });
     await expect(banner).toBeVisible();
     await page.evaluate(() => window.scrollTo(0, 240));
+    await expect(banner).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem("grani-cookie-consent"))).toBeNull();
+    expect(metrika).toEqual([]);
+    await banner.getByRole("button", { name: "Только необходимые" }).click();
     await expect(banner).toBeHidden();
     expect(await page.evaluate(() => localStorage.getItem("grani-cookie-consent"))).toBe("necessary");
-    expect(metrika).toEqual([]);
   });
 
   test("loads nothing until accepted and can be reopened from the footer", async ({ page }) => {
